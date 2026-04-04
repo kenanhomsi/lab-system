@@ -13,7 +13,10 @@
   },
   "header": {
     "brand": "مخبر المتوالي",
-    "ctaNewLab": "طلب تحليل جديد"
+    "ctaNewLab": "طلب تحليل جديد",
+    "menuTitle": "القائمة",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة"
   },
   "footer": {
     "brand": "مخبر المتوالي",

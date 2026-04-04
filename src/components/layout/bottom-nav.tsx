@@ -6,48 +6,9 @@ import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { Icon } from "@/components/ui/icon";
+import { guestServiceMenu, serviceMenus } from "@/components/layout/mobile-service-menus";
 import { cn } from "@/lib/cn";
 import type { UserRole } from "@/types/user";
-
-interface ServiceMenuItem {
-  href: string;
-  label: string;
-  icon: string;
-}
-
-const serviceMenus: Record<UserRole, ServiceMenuItem[]> = {
-  patient: [
-    { href: "/book-appointment", label: "bookAppointment", icon: "calendar_month" },
-    { href: "/my-results", label: "myResults", icon: "lab_research" },
-    { href: "/dashboard/price-calculator", label: "priceCalculator", icon: "calculate" },
-    { href: "/insurance-request", label: "insuranceRequest", icon: "health_and_safety" },
-    { href: "/subscriptions", label: "subscriptions", icon: "card_membership" },
-  ],
-  doctor: [
-    { href: "/doctor/request-tests", label: "requestTests", icon: "assignment_add" },
-    { href: "/doctor/patient-list", label: "patientList", icon: "group" },
-    { href: "/my-results", label: "myResults", icon: "lab_research" },
-  ],
-  lab: [
-    { href: "/lab/order-tests", label: "orderTests", icon: "science" },
-    { href: "/lab/accounting", label: "accounting", icon: "payments" },
-    { href: "/lab/store", label: "store", icon: "storefront" },
-    { href: "/my-results", label: "myResults", icon: "lab_research" },
-  ],
-  special: [
-    { href: "/special/new-payment", label: "newPayment", icon: "add_card" },
-    { href: "/special/new-expense", label: "newExpense", icon: "receipt_long" },
-    { href: "/special/account-statement", label: "accountStatement", icon: "account_balance" },
-    { href: "/special/daily-tasks", label: "dailyTasks", icon: "task_alt" },
-  ],
-};
-
-const guestMenu: ServiceMenuItem[] = [
-  { href: "/tests", label: "testsCatalog", icon: "biotech" },
-  { href: "/offers", label: "offers", icon: "local_offer" },
-  { href: "/price-calculator", label: "priceCalculator", icon: "calculate" },
-  { href: "/lab-encyclopedia", label: "labEncyclopedia", icon: "menu_book" },
-];
 
 export function BottomNav() {
   const [showServices, setShowServices] = useState(false);
@@ -57,7 +18,7 @@ export function BottomNav() {
   const t = useTranslations("bottomNav");
 
   const userRole = session?.user?.role as UserRole | undefined;
-  const menu = userRole ? serviceMenus[userRole] : guestMenu;
+  const menu = userRole ? serviceMenus[userRole] : guestServiceMenu;
 
   const tabs = [
     { id: "home", href: `/${locale}`, icon: "home", label: t("home") },

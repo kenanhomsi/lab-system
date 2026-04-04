@@ -13,7 +13,10 @@
   },
   "header": {
     "brand": "Al Mutawali Lab",
-    "ctaNewLab": "New lab request"
+    "ctaNewLab": "New lab request",
+    "menuTitle": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "footer": {
     "brand": "Al Mutawali Lab",
