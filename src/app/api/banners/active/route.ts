@@ -7,13 +7,13 @@ export async function GET() {
   if (isUpstreamReady) {
     try {
       const res = await fetch(`${backendUrl}/banners/active`);
-      if (!res.ok) return NextResponse.json(null, { status: 204 });
+      if (!res.ok) return new NextResponse(null, { status: 204 });
       const data = await res.json();
       return NextResponse.json(data);
     } catch {
-      return NextResponse.json(null, { status: 204 });
+      return new NextResponse(null, { status: 204 });
     }
   }
 
-  return NextResponse.json(null, { status: 204 });
+  return new NextResponse(null, { status: 204 });
 }

@@ -62,6 +62,7 @@ export async function ContactForm() {
                   id="name"
                   name="name"
                   placeholder={t("namePlaceholder")}
+                  suppressHydrationWarning
                   className="w-full rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               </div>
@@ -77,6 +78,7 @@ export async function ContactForm() {
                   id="phone"
                   name="phone"
                   placeholder={t("phonePlaceholder")}
+                  suppressHydrationWarning
                   className="w-full rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               </div>
@@ -91,6 +93,7 @@ export async function ContactForm() {
                   type="date"
                   id="date"
                   name="date"
+                  suppressHydrationWarning
                   className="w-full rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               </div>
@@ -106,11 +109,13 @@ export async function ContactForm() {
                   name="details"
                   rows={4}
                   placeholder={t("detailsPlaceholder")}
+                  suppressHydrationWarning
                   className="w-full resize-none rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               </div>
               <button
                 type="submit"
+                suppressHydrationWarning
                 className="clinical-gradient w-full rounded-xl px-8 py-4 text-sm font-bold tracking-widest text-on-primary shadow-lg shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.98]"
               >
                 {t("submit")}

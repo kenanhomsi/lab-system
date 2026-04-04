@@ -34,6 +34,7 @@ export function LocaleSwitcher({ className, stretch }: Props) {
         <button
           key={loc}
           type="button"
+          suppressHydrationWarning
           onClick={() => switchLocale(loc)}
           className={cn(
             "rounded-md px-2 py-1 uppercase transition-colors",

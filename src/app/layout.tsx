@@ -87,6 +87,7 @@ export default async function RootLayout({
             ? "min-h-full flex flex-col bg-background text-on-surface [font-family:var(--font-qomra-arabic),system-ui,sans-serif]"
             : "min-h-full flex flex-col bg-background text-on-surface"
         }
+        suppressHydrationWarning
       >
         {children}
       </body>

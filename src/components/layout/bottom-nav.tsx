@@ -16,16 +16,29 @@ export function BottomNav() {
   const locale = useLocale();
   const { data: session } = useSession();
   const t = useTranslations("bottomNav");
+  const tAbout = useTranslations("about");
 
   const userRole = session?.user?.role as UserRole | undefined;
   const menu = userRole ? serviceMenus[userRole] : guestServiceMenu;
 
-  const tabs = [
+  const authenticatedTabs = [
     { id: "home", href: `/${locale}`, icon: "home", label: t("home") },
     { id: "services", href: "#", icon: "apps", label: t("services") },
-    { id: "account", href: session ? `/${locale}/dashboard` : `/${locale}/login`, icon: "person", label: t("account") },
+    { id: "account", href: `/${locale}/dashboard`, icon: "person", label: t("account") },
     { id: "settings", href: `/${locale}/dashboard`, icon: "settings", label: t("settings") },
   ];
+
+  const guestTabs = [
+    { id: "home", href: `/${locale}`, icon: "home", label: t("home") },
+    {
+      id: "login",
+      href: `/${locale}/login`,
+      icon: "person",
+      label: tAbout("loginRegister"),
+    },
+  ];
+
+  const tabs = session ? authenticatedTabs : guestTabs;
 
   return (
     <>
