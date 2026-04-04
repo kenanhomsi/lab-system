@@ -1,0 +1,139 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
+import { Icon } from "@/components/ui/icon";
+import { cn } from "@/lib/cn";
+import type { UserRole } from "@/types/user";
+
+interface ServiceMenuItem {
+  href: string;
+  label: string;
+  icon: string;
+}
+
+const serviceMenus: Record<UserRole, ServiceMenuItem[]> = {
+  patient: [
+    { href: "/book-appointment", label: "bookAppointment", icon: "calendar_month" },
+    { href: "/my-results", label: "myResults", icon: "lab_research" },
+    { href: "/dashboard/price-calculator", label: "priceCalculator", icon: "calculate" },
+    { href: "/insurance-request", label: "insuranceRequest", icon: "health_and_safety" },
+    { href: "/subscriptions", label: "subscriptions", icon: "card_membership" },
+  ],
+  doctor: [
+    { href: "/doctor/request-tests", label: "requestTests", icon: "assignment_add" },
+    { href: "/doctor/patient-list", label: "patientList", icon: "group" },
+    { href: "/my-results", label: "myResults", icon: "lab_research" },
+  ],
+  lab: [
+    { href: "/lab/order-tests", label: "orderTests", icon: "science" },
+    { href: "/lab/accounting", label: "accounting", icon: "payments" },
+    { href: "/lab/store", label: "store", icon: "storefront" },
+    { href: "/my-results", label: "myResults", icon: "lab_research" },
+  ],
+  special: [
+    { href: "/special/new-payment", label: "newPayment", icon: "add_card" },
+    { href: "/special/new-expense", label: "newExpense", icon: "receipt_long" },
+    { href: "/special/account-statement", label: "accountStatement", icon: "account_balance" },
+    { href: "/special/daily-tasks", label: "dailyTasks", icon: "task_alt" },
+  ],
+};
+
+const guestMenu: ServiceMenuItem[] = [
+  { href: "/tests", label: "testsCatalog", icon: "biotech" },
+  { href: "/offers", label: "offers", icon: "local_offer" },
+  { href: "/price-calculator", label: "priceCalculator", icon: "calculate" },
+  { href: "/lab-encyclopedia", label: "labEncyclopedia", icon: "menu_book" },
+];
+
+export function BottomNav() {
+  const [showServices, setShowServices] = useState(false);
+  const pathname = usePathname();
+  const locale = useLocale();
+  const { data: session } = useSession();
+  const t = useTranslations("bottomNav");
+
+  const userRole = session?.user?.role as UserRole | undefined;
+  const menu = userRole ? serviceMenus[userRole] : guestMenu;
+
+  const tabs = [
+    { id: "home", href: `/${locale}`, icon: "home", label: t("home") },
+    { id: "services", href: "#", icon: "apps", label: t("services") },
+    { id: "account", href: session ? `/${locale}/dashboard` : `/${locale}/login`, icon: "person", label: t("account") },
+    { id: "settings", href: `/${locale}/dashboard`, icon: "settings", label: t("settings") },
+  ];
+
+  return (
+    <>
+      {showServices && (
+        <div className="fixed inset-0 z-40 bg-black/30 lg:hidden" onClick={() => setShowServices(false)} />
+      )}
+
+      {showServices && (
+        <div className="fixed bottom-16 inset-x-0 z-50 mx-4 mb-2 rounded-2xl bg-surface shadow-2xl lg:hidden">
+          <div className="p-4">
+            <h3 className="mb-3 font-headline text-sm font-bold text-secondary">{t("services")}</h3>
+            <div className="grid grid-cols-3 gap-2">
+              {menu.map((item) => (
+                <Link
+                  key={item.href}
+                  href={`/${locale}${item.href}`}
+                  onClick={() => setShowServices(false)}
+                  className="flex flex-col items-center gap-1 rounded-xl p-3 transition-colors hover:bg-surface-container-low"
+                >
+                  <Icon name={item.icon} className="text-primary" size="sm" />
+                  <span className="text-[10px] font-medium text-secondary text-center leading-tight">
+                    {t(`menu.${item.label}`)}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-outline-variant bg-surface lg:hidden">
+        <div className="flex items-center justify-around py-2">
+          {tabs.map((tab) => {
+            const isActive = tab.id === "home" ? pathname === `/${locale}` : false;
+            const isServices = tab.id === "services";
+
+            if (isServices) {
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setShowServices(!showServices)}
+                  className={cn(
+                    "flex flex-col items-center gap-0.5 px-3 py-1 transition-colors",
+                    showServices ? "text-primary" : "text-secondary",
+                  )}
+                >
+                  <Icon name={tab.icon} filled={showServices} size="sm" />
+                  <span className="text-[10px] font-medium">{tab.label}</span>
+                </button>
+              );
+            }
+
+            return (
+              <Link
+                key={tab.id}
+                href={tab.href}
+                className={cn(
+                  "flex flex-col items-center gap-0.5 px-3 py-1 transition-colors",
+                  isActive ? "text-primary" : "text-secondary",
+                )}
+              >
+                <Icon name={tab.icon} filled={isActive} size="sm" />
+                <span className="text-[10px] font-medium">{tab.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+    </>
+  );
+}

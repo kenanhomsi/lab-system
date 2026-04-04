@@ -1,0 +1,36 @@
+import { NextResponse } from "next/server";
+import { getMockTestById } from "@/lib/api/bff-public-mock-data";
+
+type RouteContext = { params: Promise<{ id: string }> };
+
+export async function GET(_request: Request, context: RouteContext) {
+  const backendUrl = process.env.BACKEND_URL || "http://localhost:4000";
+  const isUpstreamReady = process.env.UPSTREAM_BACKEND_READY === "true";
+  const { id } = await context.params;
+
+  if (isUpstreamReady) {
+    try {
+      const res = await fetch(`${backendUrl}/tests/${encodeURIComponent(id)}`, {
+        cache: "no-store",
+      });
+      if (res.status === 404) {
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+      }
+      if (!res.ok) {
+        return NextResponse.json(
+          { error: "Upstream request failed" },
+          { status: res.status },
+        );
+      }
+      return NextResponse.json(await res.json());
+    } catch {
+      return NextResponse.json({ error: "Upstream unavailable" }, { status: 502 });
+    }
+  }
+
+  const test = getMockTestById(id);
+  if (!test) {
+    return NextResponse.json({ error: "Test not found" }, { status: 404 });
+  }
+  return NextResponse.json(test);
+}

@@ -1,0 +1,374 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Light theme (Clinical Curator) — default */
+:root {
+  --background: #f7f9fb;
+  --foreground: #191c1e;
+  --surface-container-lowest: #ffffff;
+  --surface: #f7f9fb;
+  --surface-bright: #f7f9fb;
+  --surface-container-low: #f2f4f6;
+  --surface-container: #eceef0;
+  --surface-container-high: #e6e8ea;
+  --surface-container-highest: #e0e3e5;
+  --surface-dim: #d8dadc;
+  --surface-variant: #e0e3e5;
+  --on-surface: #191c1e;
+  --on-surface-variant: #3e484d;
+  --on-background: #191c1e;
+  --primary: #00647e;
+  --on-primary: #ffffff;
+  --primary-container: #007f9e;
+  --on-primary-container: #fafdff;
+  --primary-fixed: #b9eaff;
+  --primary-fixed-dim: #62d4fc;
+  --on-primary-fixed: #001f29;
+  --on-primary-fixed-variant: #004d62;
+  --secondary: #5e5e5f;
+  --on-secondary: #ffffff;
+  --secondary-container: #e0dfdf;
+  --on-secondary-container: #626363;
+  --secondary-fixed: #e3e2e2;
+  --secondary-fixed-dim: #c7c6c6;
+  --on-secondary-fixed: #1a1c1c;
+  --on-secondary-fixed-variant: #464747;
+  --tertiary: #705d00;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #c8a900;
+  --on-tertiary-container: #4b3e00;
+  --tertiary-fixed: #ffe16d;
+  --tertiary-fixed-dim: #e9c400;
+  --on-tertiary-fixed: #221b00;
+  --on-tertiary-fixed-variant: #544600;
+  --outline: #6e797e;
+  --outline-variant: #bdc8ce;
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+  --inverse-surface: #2d3133;
+  --inverse-on-surface: #eff1f3;
+  --inverse-primary: #62d4fc;
+  --surface-tint: #006781;
+}
+
+/* Dark theme (Digital Sanctuary / About) */
+html.dark {
+  --background: #131313;
+  --foreground: #e5e2e1;
+  --surface-container-lowest: #0e0e0e;
+  --surface: #131313;
+  --surface-bright: #393939;
+  --surface-container-low: #1c1b1b;
+  --surface-container: #201f1f;
+  --surface-container-high: #2a2a2a;
+  --surface-container-highest: #353534;
+  --surface-dim: #131313;
+  --surface-variant: #353534;
+  --on-surface: #e5e2e1;
+  --on-surface-variant: #bdc8ce;
+  --on-background: #e5e2e1;
+  --primary: #62d4fc;
+  --on-primary: #003544;
+  --primary-container: #059dc3;
+  --on-primary-container: #002e3b;
+  --primary-fixed: #b9eaff;
+  --primary-fixed-dim: #62d4fc;
+  --on-primary-fixed: #001f29;
+  --on-primary-fixed-variant: #004d62;
+  --secondary: #c7c6c6;
+  --on-secondary: #2f3131;
+  --secondary-container: #484949;
+  --on-secondary-container: #b8b8b8;
+  --secondary-fixed: #e3e2e2;
+  --secondary-fixed-dim: #c7c6c6;
+  --on-secondary-fixed: #1a1c1c;
+  --on-secondary-fixed-variant: #464747;
+  --tertiary: #e9c400;
+  --on-tertiary: #3a3000;
+  --tertiary-container: #c8a900;
+  --on-tertiary-container: #4b3e00;
+  --tertiary-fixed: #ffe16d;
+  --tertiary-fixed-dim: #e9c400;
+  --on-tertiary-fixed: #221b00;
+  --on-tertiary-fixed-variant: #544600;
+  --outline: #879298;
+  --outline-variant: #3e484d;
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffdad6;
+  --inverse-surface: #e5e2e1;
+  --inverse-on-surface: #313030;
+  --inverse-primary: #006781;
+  --surface-tint: #62d4fc;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface: var(--surface);
+  --color-surface-bright: var(--surface-bright);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-variant: var(--surface-variant);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-on-background: var(--on-background);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-primary-fixed: var(--primary-fixed);
+  --color-primary-fixed-dim: var(--primary-fixed-dim);
+  --color-on-primary-fixed: var(--on-primary-fixed);
+  --color-on-primary-fixed-variant: var(--on-primary-fixed-variant);
+  --color-secondary: var(--secondary);
+  --color-on-secondary: var(--on-secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-secondary-fixed: var(--secondary-fixed);
+  --color-secondary-fixed-dim: var(--secondary-fixed-dim);
+  --color-on-secondary-fixed: var(--on-secondary-fixed);
+  --color-on-secondary-fixed-variant: var(--on-secondary-fixed-variant);
+  --color-tertiary: var(--tertiary);
+  --color-on-tertiary: var(--on-tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-tertiary-fixed: var(--tertiary-fixed);
+  --color-tertiary-fixed-dim: var(--tertiary-fixed-dim);
+  --color-on-tertiary-fixed: var(--on-tertiary-fixed);
+  --color-on-tertiary-fixed-variant: var(--on-tertiary-fixed-variant);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-error: var(--error);
+  --color-on-error: var(--on-error);
+  --color-error-container: var(--error-container);
+  --color-on-error-container: var(--on-error-container);
+  --color-inverse-surface: var(--inverse-surface);
+  --color-inverse-on-surface: var(--inverse-on-surface);
+  --color-inverse-primary: var(--inverse-primary);
+  --color-surface-tint: var(--surface-tint);
+  --font-sans: var(--font-inter);
+  --font-headline: var(--font-plus-jakarta);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Design utilities */
+.clinical-gradient {
+  background: linear-gradient(135deg, #00647e 0%, #007f9e 100%);
+}
+
+html.dark .clinical-gradient {
+  background: linear-gradient(135deg, #62d4fc 0%, #059dc3 100%);
+}
+
+.glass-effect {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+html.dark .glass-effect {
+  background: rgba(53, 53, 52, 0.4);
+}
+
+.glass-card {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+html.dark .glass-card {
+  background: rgba(53, 53, 52, 0.4);
+}
+
+.gold-glow {
+  box-shadow: 0 0 20px rgba(255, 225, 109, 0.3);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+  vertical-align: middle;
+}
+
+.text-gradient-primary {
+  background: linear-gradient(to right, #62d4fc, #059dc3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-gradient-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(19, 19, 19, 0.4) 0%,
+    rgba(19, 19, 19, 1) 100%
+  );
+}
+
+.font-headline {
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+}
+
+html[dir="rtl"] .font-headline {
+  font-family: var(--font-qomra-arabic), system-ui, sans-serif;
+}
+
+/* Leaflet + Tailwind: map tiles are <img>; preflight max-width breaks OSM display */
+.leaflet-container img.leaflet-tile,
+.leaflet-container img.leaflet-marker-icon,
+.leaflet-container img.leaflet-image-layer {
+  max-width: none !important;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  background: var(--surface-container);
+}
+
+/* Arch / dome top for labs map (reference UI) */
+.map-arch-frame {
+  overflow: hidden;
+  border-top-left-radius: clamp(5rem, 32vw, 18rem);
+  border-top-right-radius: clamp(5rem, 32vw, 18rem);
+}
+
+/* Labs showcase CTA — chocolate brown (reference UI) */
+.labs-map-cta {
+  background-color: #5c4033;
+}
+.labs-map-cta:hover {
+  background-color: #4a3429;
+}
+
+/* Lightweight motion system for website sections */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-zoom {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes float-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(20px, -24px, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes float-drift-reverse {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-18px, 20px, 0) scale(0.96);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Initial hidden state — animation fires only when .is-visible is added by ScrollRevealObserver */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(22px);
+  will-change: opacity, transform;
+}
+
+.reveal-up.is-visible {
+  animation: fade-up 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.reveal-in {
+  opacity: 0;
+  will-change: opacity;
+}
+
+.reveal-in.is-visible {
+  animation: fade-in 700ms ease forwards;
+}
+
+.hero-image-enter {
+  animation: hero-zoom 1100ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.bg-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(40px);
+  pointer-events: none;
+  animation:
+    float-drift 12s ease-in-out infinite,
+    glow-pulse 8s ease-in-out infinite;
+}
+
+.bg-orb-reverse {
+  animation:
+    float-drift-reverse 14s ease-in-out infinite,
+    glow-pulse 10s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up,
+  .reveal-up.is-visible,
+  .reveal-in,
+  .reveal-in.is-visible,
+  .hero-image-enter,
+  .bg-orb,
+  .bg-orb-reverse {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

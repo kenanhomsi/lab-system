@@ -1,7 +1,44 @@
-import type { NextConfig } from "next";
+import { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "metwalilabs.com",
+        pathname: "/**",
+      },
+    ],
+  },
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: ["@svgr/webpack"],
+        as: "*.js",
+      },
+    },
+  },
+  webpack(config) {
+    // Find the default file-loader rule for SVGs
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const fileLoaderRule = config.module.rules.find((rule: any) =>
+      rule.test?.test?.(".svg"),
+    );
+    // Add SVGR loader before the file-loader
+    config.module.rules.push({
+      test: /\.svg$/i,
+      issuer: fileLoaderRule.issuer,
+      use: ["@svgr/webpack"], // <- SVGR loader
+    });
+    return config;
+  },
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+export default withNextIntl(nextConfig);
