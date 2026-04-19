@@ -1,0 +1,1 @@
+export { default as SidebarFactory } from "./factory";

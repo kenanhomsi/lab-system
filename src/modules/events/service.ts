@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { Event } from "./logic";
-import { IEvents } from "./types";
+import { IEvents } from "./logic";
 import { names } from "./names";
 
 type EventListener<T> = (payload: T) => void;

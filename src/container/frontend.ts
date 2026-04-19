@@ -1,13 +1,33 @@
 import { Container } from "inversify";
 import { container } from "./container";
 import { pipe } from "ramda";
-import { bindAxiosFrontend } from "./bindings/axios-frontend";
-import { bindProjectsFrontend } from "./bindings/projects-frontend";
-import { bindEventsFrontend } from "./bindings/events-frontend";
+import {
+  bindFrontAppointmentDependencies,
+  bindFrontAppointmentTypeDependencies,
+  bindFrontAuthDependencies,
+  bindFrontAxiosDependencies,
+  bindFrontComplaintDependencies,
+  bindFrontEventDependencies,
+  bindFrontPermissionDependencies,
+  bindFrontRoleDependencies,
+  bindFrontSubscriptionPackageDependencies,
+  bindFrontUserDependencies,
+  bindFrontValidatorDependencies,
+} from "./bindings";
 
 const c = new Container({ parent: container });
 const frontendContainer = pipe(
-bindAxiosFrontend, bindProjectsFrontend, bindEventsFrontend
+  bindFrontAxiosDependencies,
+  bindFrontEventDependencies,
+  bindFrontAuthDependencies,
+  bindFrontValidatorDependencies,
+  bindFrontUserDependencies,
+  bindFrontSubscriptionPackageDependencies,
+  bindFrontRoleDependencies,
+  bindFrontPermissionDependencies,
+  bindFrontAppointmentTypeDependencies,
+  bindFrontComplaintDependencies,
+  bindFrontAppointmentDependencies,
 )(c);
-  
+
 export { frontendContainer };

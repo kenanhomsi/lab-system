@@ -12,3 +12,4 @@ export * from "./special";
 export * from "./store";
 export * from "./career";
 export * from "./tracking";
+export * from "./banner";

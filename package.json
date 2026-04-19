@@ -9,12 +9,23 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
+    "@mantine/charts": "^9.0.1",
+    "@mantine/core": "^9.0.1",
+    "@mantine/dates": "^9.0.1",
+    "@mantine/form": "^9.0.1",
+    "@mantine/hooks": "^9.0.1",
+    "@mantine/modals": "^9.0.1",
+    "@mantine/notifications": "^9.0.1",
     "@react-pdf/renderer": "^4.3.2",
+    "@tabler/icons-react": "^3.41.1",
     "@tanstack/react-query": "^5.96.2",
     "@types/react-datepicker": "^6.2.0",
     "axios": "^1.14.0",
+    "dayjs": "^1.11.20",
     "inversify": "^8.1.0",
     "leaflet": "^1.9.4",
+    "mantine-datatable": "^8.3.13",
     "next": "16.2.2",
     "next-auth": "^4.24.13",
     "next-intl": "^4.8.4",
@@ -22,10 +33,14 @@
     "react": "19.2.4",
     "react-datepicker": "^9.1.0",
     "react-dom": "19.2.4",
+    "react-icons": "^5.6.0",
     "react-leaflet": "^5.0.0",
+    "recharts": "^3.8.1",
     "reflect-metadata": "^0.2.2",
     "sanitize-html": "^2.17.2",
-    "zod": "^4.3.6"
+    "sass": "^1.99.0",
+    "zod": "^4.3.6",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -37,6 +52,9 @@
     "@types/sanitize-html": "^2.16.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
+    "postcss": "^8.5.9",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

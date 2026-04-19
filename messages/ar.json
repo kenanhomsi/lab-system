@@ -263,7 +263,8 @@
       "patient": "مريض",
       "doctor": "طبيب",
       "lab": "مخبر",
-      "special": "حساب خاص"
+      "special": "حساب خاص",
+      "admin": "مسؤول النظام"
     },
     "identifier": "الهوية الطبية / البريد",
     "identifierPlaceholder": "أدخل بريدك أو رقم هاتفك",
@@ -271,8 +272,13 @@
     "forgotPassword": "نسيت كلمة المرور؟",
     "togglePassword": "إظهار/إخفاء كلمة المرور",
     "rememberMe": "إبقائي مسجلاً لمدة 30 يوماً",
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح",
+    "passwordMinLength": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
     "signIn": "تسجيل الدخول",
     "signingIn": "جاري تسجيل الدخول...",
+    "orContinueWith": "أو المتابعة باستخدام",
+    "signInWithGoogle": "تسجيل الدخول باستخدام Google",
     "loginError": "بيانات الدخول غير صحيحة",
     "noAccount": "ليس لديك حساب؟",
     "createAccount": "إنشاء حساب",
@@ -356,7 +362,27 @@
     "newPayment": "دفعة جديدة",
     "newExpense": "مصروف جديد",
     "accountStatement": "كشف حساب",
-    "dailyTasks": "المهام اليومية"
+    "dailyTasks": "المهام اليومية",
+    "adminOverview": "نظرة إدارية",
+    "adminUsers": "المستخدمون والصلاحيات",
+    "adminSubscriptions": "خطط الاشتراك",
+    "adminAppointments": "المواعيد",
+    "adminComplaints": "الشكاوى",
+    "adminAppointmentTypes": "أنواع المواعيد",
+    "adminSettings": "الإعدادات",
+    "expandSidebar": "توسيع القائمة",
+    "collapseSidebar": "طي القائمة",
+    "apps": "التطبيقات"
+  },
+  "navbar": {
+    "searchPlaceholder": "ابحث في نتائج المرضى أو سجلات المختبر...",
+    "notifications": "الإشعارات",
+    "help": "المساعدة",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج",
+    "lightMode": "الوضع الفاتح",
+    "darkMode": "الوضع الداكن"
   },
   "bottomNav": {
     "home": "الرئيسية",
@@ -380,7 +406,642 @@
       "dailyTasks": "المهام اليومية",
       "testsCatalog": "دليل التحاليل",
       "offers": "العروض",
-      "labEncyclopedia": "اعرف تحليلك"
+      "labEncyclopedia": "اعرف تحليلك",
+      "adminOverview": "الإدارة",
+      "adminUsers": "المستخدمون",
+      "adminSubscriptions": "الخطط",
+      "adminAppointments": "المواعيد",
+      "adminComplaints": "الشكاوى",
+      "adminAppointmentTypes": "الأنواع",
+      "adminSettings": "الإعدادات"
+    }
+  },
+  "admin": {
+    "designNote": "معاينة تصميم — البيانات تجريبية حتى ربط الـ API.",
+    "overview": {
+      "eyebrow": "العمليات",
+      "title": "مركز التحكم الإداري",
+      "description": "متابعة الحسابات والصلاحيات والاشتراكات وسير العمل السريري من مكان واحد.",
+      "statUsers": "مستخدمون نشطون",
+      "statAppointments": "مواعيد (الأسبوع)",
+      "statComplaints": "شكاوى مفتوحة",
+      "statPackages": "خطط فعّالة",
+      "team": "حمولة الفريق",
+      "journeyTitle": "رحلة العمليات",
+      "journeySubtitle": "مراحل توضيحية لسير العمل الإداري (تجريبي).",
+      "stage1": "الاستقبال",
+      "stage2": "الفرز",
+      "stage3": "المعالجة",
+      "stage4": "اختصارات",
+      "knowledgeTitle": "إجراءات مقترحة",
+      "knowledgeSubtitle": "عناصر أخيرة — تُستبدل بقائمة من الـ API",
+      "journeyStatsTitle": "توزيع تذكرة",
+      "journeyStatsSubtitle": "منفذ مقابل نشط (توضيحي)",
+      "executed": "منفذ",
+      "active": "نشط",
+      "colSubject": "الموضوع",
+      "colStatus": "الحالة",
+      "colStart": "البداية",
+      "colEnd": "النهاية",
+      "colAssignee": "المسؤول",
+      "quickAllocate": "تخصيص الحالة",
+      "quickAck": "تأكيد الاستلام",
+      "taskSample1": "التحقق من شريك مخبر جديد",
+      "taskSample2": "مراجعة شكوى حساسة",
+      "shortcutUsers": "تجهيز المستخدمين",
+      "shortcutPlans": "خطط الاشتراك",
+      "shortcutTypes": "أنواع المواعيد",
+      "shortcutComplaints": "طابور الشكاوى",
+      "shortcutAppointments": "لوحة الجدولة",
+      "shortcutProcessing": "معالجة الطلب"
+    },
+    "dashboard": {
+      "eyebrow": "مخبر المتوالي",
+      "flowTitle": "مسار طلبات المختبر",
+      "liveMonitoringChip": "مراقبة مباشرة",
+      "stats": {
+        "labOrders": "طلبات المختبر (فترة متحركة)",
+        "partners": "عيادات وشركاء محيلون",
+        "pendingRelease": "نتائج بانتظار الإصدار"
+      },
+      "queue": {
+        "new": {
+          "label": "طلب جديد",
+          "subtitle": "مسجّل في البوابة",
+          "badge": "+12٪"
+        },
+        "received": {
+          "label": "استلام العينة",
+          "subtitle": "التسجيل وفحص الجودة",
+          "badge": "في الانتظار"
+        },
+        "processing": {
+          "label": "داخل المختبر",
+          "subtitle": "التحليل وتشغيل الأجهزة",
+          "badge": "قيد التنفيذ"
+        },
+        "ready": {
+          "label": "جاهز للإصدار",
+          "subtitle": "مراجعة الأخصائي والاعتماد",
+          "badge": "موثّق"
+        }
+      },
+      "chartTitle": "حجم طلبات المختبر",
+      "chartSubtitle": "الإنتاجية الشهرية عبر سير عمل المتوالي (تجريبي)",
+      "chartToggleDay": "يوم",
+      "chartToggleMonth": "شهر",
+      "chartMonths": {
+        "jan": "يناير",
+        "feb": "فبراير",
+        "mar": "مارس",
+        "apr": "أبريل",
+        "may": "مايو",
+        "jun": "يونيو",
+        "jul": "يوليو",
+        "aug": "أغسطس",
+        "sep": "سبتمبر"
+      },
+      "testDistTitle": "توزيع فئات الفحوصات",
+      "testDist": {
+        "molecular": "بيولوجيا جزيئية",
+        "hematology": "أمراض الدم",
+        "immunology": "مناعة",
+        "chemistry": "كيمياء سريرية"
+      },
+      "healthTitle": "حالة المنصة",
+      "healthLatency": "زمن الاستجابة",
+      "healthUptime": "مدة التشغيل",
+      "healthFooter": "مسارات النتائج وأنظمة المختبر تعمل",
+      "qaTitle": "مراقبة الجودة واعتماد الأخصائي",
+      "qaDesc": "مواد الضبط والمعايرة ومراجعة الأخصائي متوافقة مع توقعات أيزو 15189 لمخبر المتوالي.",
+      "qaChipQc": "جودة",
+      "qaChipPath": "مختبر",
+      "qaChipMore": "+2",
+      "qaFooterPrimary": "فريق أخصائيي التشريح مُتاح",
+      "qaFooterSecondary": "سلسلة إصدار موثّقة",
+      "recentTitle": "نشاط المختبر الأخير",
+      "recentViewAll": "عرض كل السجلات",
+      "recentCols": {
+        "patient": "المريض / رقم المختبر",
+        "test": "الفحص",
+        "time": "الوقت",
+        "status": "الحالة",
+        "action": "إجراء"
+      },
+      "recent": {
+        "row1": {
+          "patientSub": "زيارة مباشرة — مرجع داخلي",
+          "testType": "صورة دم كاملة",
+          "timestamp": "12 نيسان 2026",
+          "timeSub": "09:42",
+          "status": "قيد المعالجة"
+        },
+        "row2": {
+          "patientSub": "إحالة — عيادة قلب",
+          "testType": "تسلسل DNA · لوحة R1",
+          "timestamp": "12 نيسان 2026",
+          "timeSub": "08:15",
+          "status": "حرج"
+        },
+        "row3": {
+          "patientSub": "فحص دوري",
+          "testType": "لوحة دهون",
+          "timestamp": "11 نيسان 2026",
+          "timeSub": "16:10",
+          "status": "مكتمل"
+        }
+      },
+      "rowMenu": "المزيد"
+    },
+    "common": {
+      "search": "بحث",
+      "filter": "عوامل التصفية",
+      "export": "تصدير",
+      "add": "إضافة",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "edit": "تعديل",
+      "actions": "إجراءات",
+      "view": "عرض",
+      "mockBadge": "تجريبي",
+      "allRoles": "كل الأدوار",
+      "allStatuses": "كل الحالات",
+      "activeOnly": "النشط فقط",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "next": "التالي",
+      "back": "السابق",
+      "close": "إغلاق",
+      "resetFilters": "إعادة ضبط المرشحات",
+      "sortBy": "ترتيب حسب",
+      "newestFirst": "الأحدث أولاً",
+      "oldestFirst": "الأقدم أولاً",
+      "confirmed": "مؤكد",
+      "unconfirmed": "غير مؤكد",
+      "open": "فتح",
+      "all": "الكل",
+      "create": "إنشاء"
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "description": "إدارة الأدوار والصلاحيات وأنواع المواعيد.",
+      "tabRoles": "الأدوار",
+      "tabPermissions": "الصلاحيات",
+      "tabAppointmentTypes": "أنواع المواعيد",
+      "tabBanners": "الإعلانات",
+      "roles": {
+        "columnName": "الاسم",
+        "columnActions": "",
+        "title": "الأدوار",
+        "subtitle": "أدوار مسماة للتحكم بالوصول.",
+        "totalBadge": "{count} دور",
+        "showing": "عرض {count} سجل",
+        "create": "إنشاء دور",
+        "edit": "تعديل",
+        "delete": "حذف",
+        "modalCreateTitle": "إنشاء دور",
+        "modalEditTitle": "تعديل الدور",
+        "modalDeleteTitle": "حذف الدور",
+        "modalDeleteBody": "لا يمكن التراجع عن هذا الإجراء. هل تريد حذف الدور؟",
+        "nameLabel": "الاسم",
+        "cancel": "إلغاء",
+        "save": "حفظ"
+      },
+      "permissions": {
+        "columnName": "الاسم",
+        "columnDescription": "الوصف",
+        "columnActions": "",
+        "title": "الصلاحيات",
+        "subtitle": "أعلام وصول تفصيلية.",
+        "totalBadge": "{count} صلاحية",
+        "showing": "عرض {count} سجل",
+        "create": "إنشاء صلاحية",
+        "edit": "تعديل",
+        "delete": "حذف",
+        "modalCreateTitle": "إنشاء صلاحية",
+        "modalEditTitle": "تعديل الصلاحية",
+        "modalDeleteTitle": "حذف الصلاحية",
+        "modalDeleteBody": "لا يمكن التراجع عن هذا الإجراء. هل تريد حذف الصلاحية؟",
+        "nameLabel": "الاسم",
+        "descriptionLabel": "الوصف",
+        "cancel": "إلغاء",
+        "save": "حفظ"
+      },
+      "appointmentTypes": {
+        "columnName": "الاسم",
+        "columnStatus": "الحالة",
+        "columnCreatedAt": "تاريخ الإنشاء",
+        "columnActions": "",
+        "title": "أنواع المواعيد",
+        "subtitle": "أنواع الزيارات للجدولة.",
+        "totalBadge": "{count} نوع",
+        "showing": "عرض {count} سجل",
+        "create": "إنشاء نوع",
+        "edit": "تعديل",
+        "modalCreateTitle": "إنشاء نوع موعد",
+        "modalEditTitle": "تعديل نوع الموعد",
+        "nameLabel": "الاسم",
+        "activeLabel": "نشط",
+        "cancel": "إلغاء",
+        "save": "حفظ",
+        "active": "نشط",
+        "inactive": "غير نشط"
+      },
+      "banners": {
+        "columnTitle": "العنوان",
+        "columnType": "النوع",
+        "columnLocation": "الموقع",
+        "columnStatus": "الحالة",
+        "columnOrder": "الترتيب",
+        "columnActions": "",
+        "title": "الإعلانات",
+        "subtitle": "إدارة الإعلانات الترويجية والإعلانات.",
+        "totalBadge": "{count} إعلان",
+        "showing": "عرض {count} سجل",
+        "create": "إنشاء إعلان",
+        "edit": "تعديل",
+        "delete": "حذف",
+        "modalCreateTitle": "إنشاء إعلان",
+        "modalCreateDescription": "أنشئ إعلاناً ترويجياً جديداً مع خيارات الوسائط والاستهداف.",
+        "modalEditTitle": "تعديل الإعلان",
+        "modalEditDescription": "قم بتحديث إعدادات محتوى الإعلان.",
+        "modalDeleteTitle": "حذف الإعلان",
+        "modalDeleteBody": "لا يمكن التراجع عن هذا الإجراء. هل تريد حذف الإعلان؟",
+        "modalDeleteWarning": "هذا الإجراء دائم.",
+        "newBadge": "إعلان جديد",
+        "editBadge": "تعديل الإعلان",
+        "titleLabel": "العنوان",
+        "typeLabel": "النوع",
+        "locationLabel": "الموقع",
+        "displayOrderLabel": "ترتيب العرض",
+        "internalLinkLabel": "الرابط الداخلي",
+        "externalLinkLabel": "الرابط الخارجي",
+        "targetTypeLabel": "نوع الهدف",
+        "visibilityRulesLabel": "قواعد الرؤية (JSON)",
+        "startDateLabel": "تاريخ البداية",
+        "endDateLabel": "تاريخ النهاية",
+        "mediaLabel": "الوسائط (صورة/فيديو)",
+        "isActiveLabel": "نشط",
+        "errorMediaRequired": "الوسائط مطلوبة للإعلانات الجديدة",
+        "optional": "اختياري",
+        "cancel": "إلغاء",
+        "save": "حفظ",
+        "active": "نشط",
+        "inactive": "غير نشط"
+      }
+    },
+    "users": {
+      "title": "المستخدمون والصلاحيات",
+      "description": "إنشاء الحسابات وتعيين الأدوار وإدارة الصلاحيات.",
+      "createTitle": "مستخدم جديد",
+      "createDescription": "نموذج تصميم فقط — يطابق حقول CreateUserRequest.",
+      "email": "البريد",
+      "password": "كلمة المرور",
+      "fullName": "الاسم الكامل",
+      "city": "المدينة",
+      "phone": "الهاتف",
+      "roles": "الأدوار",
+      "tableEmail": "البريد",
+      "tableName": "الاسم",
+      "tableRole": "الدور",
+      "tableStatus": "الحالة",
+      "tableCreated": "تاريخ الإنشاء",
+      "detailTitle": "تفاصيل المستخدم",
+      "sectionProfile": "الملف",
+      "sectionRoles": "الأدوار",
+      "sectionPermissions": "الصلاحيات",
+      "assignRoles": "تعيين أدوار",
+      "assignPermissions": "تعيين صلاحيات",
+      "permissionHint": "مفاتيح الصلاحيات من الخادم (قائمة تجريبية).",
+      "activate": "تفعيل",
+      "deactivate": "تعطيل",
+      "notFound": "المستخدم غير موجود.",
+      "colFullName": "الاسم الكامل",
+      "colCity": "المدينة",
+      "colPhone": "الهاتف",
+      "colConfirmed": "مؤكد",
+      "colCreatedAt": "تاريخ الإنشاء",
+      "searchPlaceholder": "البحث بالاسم أو البريد",
+      "roleFilterPlaceholder": "الدور",
+      "sortByField": "ترتيب حسب",
+      "newestFirst": "الأحدث أولاً",
+      "oldestFirst": "الأقدم أولاً",
+      "createModalTitle": "إنشاء مستخدم",
+      "createModalSubtitle": "إعداد حساب جديد مع تفاصيل الوصول والملف الشخصي.",
+      "stepAccount": "بيانات الدخول",
+      "stepAccountDesc": "بيانات تسجيل الدخول",
+      "stepProfile": "تفاصيل الملف",
+      "stepProfileDesc": "المعلومات الشخصية",
+      "stepAccountSection": "بيانات الدخول",
+      "stepAccountSectionDesc": "تحديد بيانات تسجيل الدخول الآمنة والأدوار الأولية.",
+      "stepProfileSection": "تفاصيل الملف",
+      "stepProfileSectionDesc": "إضافة المعلومات الشخصية والتشغيلية المعروضة في النظام.",
+      "emailPlaceholder": "doctor@clinic.com",
+      "passwordPlaceholder": "أنشئ كلمة مرور قوية",
+      "rolesPlaceholder": "admin, doctor",
+      "rolesDescription": "افصل الأدوار بفاصلة.",
+      "fullNamePlaceholder": "د. سارة أحمد",
+      "phoneNumberLabel": "رقم الهاتف",
+      "phoneNumberPlaceholder": "+963 900 000 000",
+      "cityPlaceholder": "دمشق",
+      "profileMetadataLabel": "بيانات إضافية",
+      "profileMetadataPlaceholder": "ملاحظات اختيارية أو JSON",
+      "profileMetadataDescription": "استخدم هذا لإضافة تفاصيل إضافية للملف عند الحاجة.",
+      "createUser": "إنشاء مستخدم"
+    },
+    "subscriptions": {
+      "title": "باقات الاشتراك",
+      "filterAudience": "الجمهور: الكل",
+      "description": "إنشاء وإدارة الخطط (الجمهور، السعر، المدة).",
+      "name": "الاسم",
+      "price": "السعر",
+      "validityDays": "الصلاحية (أيام)",
+      "audience": "الجمهور",
+      "includedTests": "التحاليل المشمولة",
+      "active": "فعّال",
+      "activate": "تفعيل",
+      "deactivate": "تعطيل",
+      "createTitle": "باقة جديدة",
+      "editTitle": "تعديل الباقة",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "status": "الحالة",
+      "allStatuses": "كل الحالات",
+      "allAudiences": "كل الجماهير",
+      "filtersApplied": "تم تطبيق المرشحات",
+      "recordsShowing": "عرض {count} سجل",
+      "colName": "الاسم",
+      "colPrice": "السعر",
+      "colValidityDays": "الصلاحية (أيام)",
+      "colAudience": "الجمهور",
+      "colIncludedTests": "التحاليل المشمولة",
+      "colStatus": "الحالة",
+      "colCreatedAt": "تاريخ الإنشاء",
+      "createModalTitle": "إنشاء باقة",
+      "createModalSubtitle": "إعداد باقة اشتراك جديدة مع خيارات التسعير والتوافر.",
+      "editModalSubtitle": "تحديث تفاصيل وتسعير باقة الاشتراك.",
+      "stepPackageInfo": "معلومات الباقة",
+      "stepPackageInfoDesc": "الاسم والمحتويات",
+      "stepPricing": "التسعير والتوافر",
+      "stepPricingDesc": "السعر والمدة والجمهور",
+      "packageInfoSection": "معلومات الباقة",
+      "packageInfoSectionDesc": "حدد الاسم وما يتضمنه هذا الاشتراك.",
+      "pricingSectionDesc": "حدد السعر والمدة والجمهور المستهدف وحالة التفعيل.",
+      "namePlaceholder": "مثال: خطة أساسية شهرية",
+      "includedTestsPlaceholder": "مثال: CBC، تحاليل الكبد",
+      "pricePlaceholder": "0.00",
+      "validityDaysPlaceholder": "30",
+      "targetAudience": "الجمهور المستهدف"
+    },
+    "appointments": {
+      "title": "المواعيد",
+      "description": "إدارة المواعيد الطبية مع التصفية والتأكيد والإلغاء.",
+      "createTitle": "إضافة موعد",
+      "searchPlaceholder": "ابحث باسم الموعد",
+      "status": "الحالة",
+      "allStatuses": "كل الحالات",
+      "patientId": "معرّف المريض",
+      "doctorId": "معرّف الطبيب",
+      "labPartnerId": "معرّف شريك المختبر",
+      "recordsShowing": "عرض {count} سجل",
+      "filtersApplied": "تم تطبيق المرشحات",
+      "colName": "الاسم",
+      "colType": "النوع",
+      "colSlot": "الموعد",
+      "colStatus": "الحالة",
+      "colLocationType": "نوع الموقع",
+      "colAddress": "العنوان",
+      "colPatient": "المريض",
+      "colDoctor": "الطبيب",
+      "colLabPartner": "شريك المختبر",
+      "colCreatedAt": "تاريخ الإنشاء",
+      "appointmentTypeId": "نوع الموعد",
+      "name": "الاسم",
+      "descriptionField": "الوصف",
+      "notes": "الملاحظات",
+      "slot": "تاريخ ووقت الموعد",
+      "locationType": "نوع الموقع",
+      "address": "العنوان",
+      "latitude": "خط العرض",
+      "longitude": "خط الطول",
+      "create": "إنشاء",
+      "confirm": "تأكيد",
+      "confirmTitle": "تأكيد الموعد",
+      "confirmMessage": "هل أنت متأكد من تأكيد هذا الموعد؟",
+      "confirmSubtitle": "سيتم تحديد هذا الموعد كمؤكد.",
+      "confirmAlertTitle": "تأكيد هذا الموعد؟",
+      "confirmAlertBody": "أنت على وشك تأكيد هذا الموعد. سيتم إشعار المريض.",
+      "confirmAlertBodyNamed": "أنت على وشك تأكيد \"{name}\". سيتم إشعار المريض.",
+      "cancel": "إلغاء",
+      "cancelTitle": "إلغاء الموعد",
+      "cancelMessage": "هل أنت متأكد من إلغاء هذا الموعد؟",
+      "cancelSubtitle": "سيتم تحديد هذا الموعد كملغى.",
+      "cancelAlertTitle": "إلغاء هذا الموعد؟",
+      "cancelAlertBody": "أنت على وشك إلغاء هذا الموعد. لا يمكن التراجع عن هذا الإجراء.",
+      "cancelAlertBodyNamed": "أنت على وشك إلغاء \"{name}\". لا يمكن التراجع عن هذا الإجراء.",
+      "cancelAppointment": "إلغاء الموعد",
+      "createSubtitle": "جدول موعداً جديداً مع النوع والوقت والموقع وتفاصيل التعيين.",
+      "stepDetails": "تفاصيل الموعد",
+      "stepDetailsDesc": "النوع، الاسم والوقت",
+      "stepLocation": "الموقع",
+      "stepLocationDesc": "العنوان والإحداثيات",
+      "stepAssignment": "التعيين",
+      "stepAssignmentDesc": "المريض، الطبيب والمختبر",
+      "stepDetailsSection": "تفاصيل الموعد",
+      "stepDetailsSectionDesc": "حدد نوع الموعد والاسم وأي ملاحظات أو وصف إضافي.",
+      "stepLocationSection": "الموقع",
+      "stepLocationSectionDesc": "حدد نوع الموقع والعنوان وإحداثيات GPS الاختيارية.",
+      "stepAssignmentSection": "التعيين",
+      "stepAssignmentSectionDesc": "اربط هذا الموعد اختيارياً بمريض أو طبيب أو شريك مختبر.",
+      "appointmentTypeIdPlaceholder": "1",
+      "namePlaceholder": "مثال: فحص صباحي",
+      "descriptionPlaceholder": "وصف موجز للموعد...",
+      "notesPlaceholder": "أي ملاحظات إضافية...",
+      "locationTypePlaceholder": "مثال: عيادة، منزل، أونلاين",
+      "addressPlaceholder": "العنوان الكامل",
+      "patientIdPlaceholder": "معرّف المريض",
+      "doctorIdPlaceholder": "معرّف الطبيب",
+      "labPartnerIdPlaceholder": "معرّف شريك المختبر",
+      "statusConfirmed": "مؤكد",
+      "statusInProgress": "قيد المعالجة",
+      "statusCompleted": "مكتمل",
+      "statusCancelled": "ملغى",
+      "statusPending": "قيد الانتظار"
+    },
+    "complaints": {
+      "title": "الشكاوى",
+      "description": "مراجعة الشكاوى المرسلة وتحديث حالتها.",
+      "searchPlaceholder": "ابحث بالعنوان أو الوصف",
+      "userIdPlaceholder": "تصفية بمعرّف المستخدم",
+      "allStatuses": "كل الحالات",
+      "received": "تم الاستلام",
+      "inProgress": "قيد المعالجة",
+      "resolved": "تم الحل",
+      "recordsShowing": "عرض {count} سجل",
+      "filtersApplied": "تم تطبيق المرشحات",
+      "attachment": "المرفق",
+      "createdAt": "تاريخ الإنشاء",
+      "updatedAt": "آخر تحديث",
+      "markAsReceived": "تحديد كـ تم الاستلام",
+      "markAsInProgress": "تحديد كـ قيد المعالجة",
+      "markAsResolved": "تحديد كـ تم الحل",
+      "colTitle": "العنوان",
+      "colDescription": "الوصف",
+      "colUser": "معرّف المستخدم",
+      "colStatus": "الحالة",
+      "colAttachment": "المرفق",
+      "colCreated": "تاريخ الإنشاء",
+      "colUpdated": "آخر تحديث",
+      "openAttachment": "فتح",
+      "updateStatus": "تحديث الحالة"
+    },
+    "appointmentTypes": {
+      "title": "أنواع المواعيد",
+      "description": "إدارة أنواع الزيارة/الخدمة المعروضة للمرضى والطاقم.",
+      "name": "الاسم",
+      "active": "فعّال",
+      "created": "تاريخ الإنشاء"
+    }
+  },
+  "patient": {
+    "dashboard": {
+      "eyebrow": "نظرة على رعايتك",
+      "stats": {
+        "upcomingAppointments": "مواعيد قادمة",
+        "completedVisits": "زيارات مكتملة",
+        "pendingResults": "نتائج مخبرية قيد الانتظار"
+      },
+      "upcomingTitle": "الزيارات القادمة",
+      "upcomingViewAll": "عرض التقويم",
+      "upcomingStatus": {
+        "confirmed": "مؤكد",
+        "pending": "قيد التأكيد"
+      },
+      "upcoming": {
+        "row1": {
+          "note": "استشارة عامة — متابعة"
+        },
+        "row2": {
+          "note": "قلب — مراجعة النتائج"
+        },
+        "row3": {
+          "note": "مراجعة مخبر روتينية"
+        }
+      },
+      "healthTitle": "لمحة صحية",
+      "healthLastCheckup": "آخر فحص",
+      "healthBloodType": "فصيلة الدم",
+      "healthNextReminder": "التذكير القادم",
+      "recentResultsTitle": "أحدث نتائج المختبر",
+      "recentViewAll": "فتح نتائجي",
+      "recentCols": {
+        "test": "الفحص / المرجع",
+        "status": "الحالة",
+        "detail": "ملاحظات"
+      },
+      "resultStatus": {
+        "ready": "جاهز",
+        "processing": "قيد المعالجة",
+        "scheduled": "مجدول"
+      },
+      "recent": {
+        "r1": {
+          "detail": "صدرت للبوابة — يتوفر PDF"
+        },
+        "r2": {
+          "detail": "متوقع خلال 24–48 ساعة"
+        },
+        "r3": {
+          "detail": "حجز سحب العينة"
+        }
+      },
+      "activityTitle": "نشاط حديث",
+      "activity": {
+        "a1": {
+          "body": "تم تأكيد الموعد مع د. ليلى كريم",
+          "time": "اليوم · 09:12"
+        },
+        "a2": {
+          "body": "نتيجة جديدة: تعداد الدم الكامل",
+          "time": "أمس · 16:40"
+        },
+        "a3": {
+          "body": "تذكير: الصيام مطلوب قبل لوحة الدهون",
+          "time": "منذ يومين"
+        }
+      }
+    }
+  },
+  "doctor": {
+    "dashboard": {
+      "eyebrow": "ممارستك اليوم",
+      "stats": {
+        "todayPatients": "مرضى مجدولون اليوم",
+        "pendingReferrals": "إحالات مخبرية معلّقة",
+        "completedToday": "زيارات مكتملة اليوم"
+      },
+      "scheduleTitle": "جدول اليوم",
+      "scheduleViewAll": "فتح التقويم الكامل",
+      "scheduleCols": {
+        "patient": "المريض",
+        "time": "الوقت",
+        "type": "نوع الزيارة",
+        "status": "الحالة"
+      },
+      "scheduleStatus": {
+        "confirmed": "مؤكد",
+        "inProgress": "قيد التنفيذ",
+        "waiting": "في الانتظار"
+      },
+      "visitTypes": {
+        "followUp": "متابعة",
+        "newPatient": "مريض جديد",
+        "labReview": "مراجعة مخبرية"
+      },
+      "referralsTitle": "الإحالات المعلّقة",
+      "referralsSubtitle": "طلبات بانتظار مراجعتك أو توقيعك.",
+      "referralStatus": {
+        "pending": "معلّق",
+        "urgent": "عاجل"
+      },
+      "referrals": {
+        "r1": {
+          "note": "المريض يشكو إرهاقاً — أولوية للتحاليل"
+        },
+        "r2": {
+          "note": "متابعة روتينية لمرض السكري"
+        },
+        "r3": {
+          "note": "فحص سنوي"
+        }
+      },
+      "chartTitle": "حجم المرضى أسبوعياً",
+      "chartSubtitle": "الزيارات المكتملة لكل يوم عمل (بيانات تجريبية)",
+      "chartDays": {
+        "mon": "الإثنين",
+        "tue": "الثلاثاء",
+        "wed": "الأربعاء",
+        "thu": "الخميس",
+        "fri": "الجمعة"
+      },
+      "recentTitle": "شوهدوا مؤخراً",
+      "recentViewAll": "قائمة المرضى",
+      "recentCols": {
+        "patient": "المريض",
+        "lastVisit": "آخر زيارة",
+        "notes": "ملاحظات سريرية"
+      },
+      "recentPatients": {
+        "p1": {
+          "notes": "ضغط دموي — مراجعة العلاج"
+        },
+        "p2": {
+          "notes": "متابعة بعد نتائج المختبر مجدولة"
+        },
+        "p3": {
+          "notes": "مستقر — فحص سنوي الربع القادم"
+        }
+      }
     }
   },
   "dashboard": {
@@ -415,6 +1076,7 @@
       "titlePatient": "بوابة المريض",
       "titleLab": "بوابة المختبر",
       "titleSpecial": "الحساب الخاص",
+      "titleAdmin": "الإدارة",
       "titleSubscriptions": "الاشتراكات والعروض",
       "userName": "د. المتوالي",
       "userRole": "طبيب",
@@ -463,6 +1125,39 @@
       "goToSubscriptions": "الاشتراكات",
       "goToResults": "نتائجي",
       "goToBook": "حجز موعد"
+    },
+    "ads": {
+      "regionAria": "إعلان",
+      "dismissAria": "إغلاق الإعلان",
+      "siteName": "مخبر المتوالي",
+      "ownBadge": "عرضنا",
+      "externalBadge": "معلن خارجي",
+      "sponsoredBy": "من {partner}",
+      "disclaimerExternal": "هذا العرض من جهة أخرى. {siteName} يعرضه فقط للمعلومات ولا يديره أو يضمنه أو يوصي به.",
+      "disclaimerShort": "محتوى شريك · {siteName} لا يدير هذا العرض ولا يوصي به.",
+      "banner": {
+        "badge": "إعلان تجريبي",
+        "headline": "باقة الفحص السنوي — خصم ٢٠٪ هذا الشهر",
+        "sub": "تخطيط تجريبي؛ سيستبدله المسؤول بحملات حقيقية",
+        "cta": "عرض العرض",
+        "imageAlt": "مختص رعاية صحية مع مريض — شريط إعلاني"
+      },
+      "card": {
+        "title": "إعلان",
+        "sponsored": "مُموَّل",
+        "kicker": "مميّز",
+        "heading": "جمع عينات من المنزل",
+        "desc": "احجز زيارة ممرض — نتائج المختبر خلال ٢٤ ساعة. بطاقة عرض تجريبية.",
+        "cta": "اعرف المزيد",
+        "imageAlt": "طاقم طبي — صورة إعلانية"
+      },
+      "floating": {
+        "badge": "عرض سريع",
+        "title": "نتائج مختبر أولوية خلال ٦ ساعات",
+        "desc": "إعلان عائم تجريبي — يمكنك لاحقاً ربط المنطق والمحتوى من لوحة التحكم.",
+        "cta": "التفاصيل",
+        "imageAlt": "مجهر مخبري — صورة إعلانية"
+      }
     },
     "main": {
       "title": "بوابة الطبيب",

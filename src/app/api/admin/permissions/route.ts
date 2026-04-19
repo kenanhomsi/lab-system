@@ -1,0 +1,37 @@
+import { NextRequest, NextResponse } from "next/server";
+import { jsonError } from "@/lib/api/bff-errors";
+import { backendContainer } from "@/container";
+import { permissionModuleNames, PermissionBackendService } from "@/modules/permission";
+import { resolveAccessToken } from "@/lib/api/resolve-access-token";
+
+const permissionService = backendContainer.get<PermissionBackendService>(
+  permissionModuleNames.service,
+);
+
+export async function GET(req: NextRequest) {
+  try {
+    const token = await resolveAccessToken(req);
+    if (!token) {
+      throw new Error("Missing authorization token");
+    }
+    const query = Object.fromEntries(req.nextUrl.searchParams.entries());
+    const res = await permissionService.findAll({ token, query });
+    return NextResponse.json(res);
+  } catch (error: unknown) {
+    return jsonError(error);
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const token = await resolveAccessToken(req);
+    if (!token) {
+      throw new Error("Missing authorization token");
+    }
+    const body = await req.json();
+    const res = await permissionService.create({ token, ...body });
+    return NextResponse.json(res, { status: 201 });
+  } catch (error: unknown) {
+    return jsonError(error, 400);
+  }
+}

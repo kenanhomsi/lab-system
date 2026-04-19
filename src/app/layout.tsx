@@ -1,11 +1,23 @@
 import "reflect-metadata";
+import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
+import "@mantine/charts/styles.css";
+import "@mantine/notifications/styles.css";
 import "./globals.css";
 import type { ReactNode } from "react";
 import { cookies, headers } from "next/headers";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
+import Script from "next/script";
 import { routing } from "@/i18n/routing";
 
+const MANTINE_COLOR_SCHEME_BOOTSTRAP = `try {
+  var _colorScheme = window.localStorage.getItem("color-scheme");
+  var colorScheme = _colorScheme === "light" || _colorScheme === "dark" || _colorScheme === "auto" ? _colorScheme : "light";
+  var computedColorScheme = colorScheme !== "auto" ? colorScheme : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  document.documentElement.setAttribute("data-mantine-color-scheme", computedColorScheme);
+  if (computedColorScheme === "dark") document.documentElement.classList.add("dark");
+} catch (e) {}`;
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -82,13 +94,14 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={
-          locale === "ar"
-            ? "min-h-full flex flex-col bg-background text-on-surface [font-family:var(--font-qomra-arabic),system-ui,sans-serif]"
-            : "min-h-full flex flex-col bg-background text-on-surface"
-        }
+        data-locale-ar={locale === "ar" ? "true" : "false"}
         suppressHydrationWarning
       >
+        <Script
+          id="mantine-color-scheme-bootstrap"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: MANTINE_COLOR_SCHEME_BOOTSTRAP }}
+        />
         {children}
       </body>
     </html>

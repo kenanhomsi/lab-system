@@ -1,7 +1,11 @@
 import { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import path from "path";
 
 const nextConfig: NextConfig = {
+  sassOptions: {
+    includePaths: [path.join(process.cwd())],
+  },
   images: {
     remotePatterns: [
       {
@@ -12,6 +16,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "metwalilabs.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
         pathname: "/**",
       },
     ],

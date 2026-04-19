@@ -7,6 +7,13 @@ export type ServiceMenuItem = {
 };
 
 export const serviceMenus: Record<UserRole, ServiceMenuItem[]> = {
+  admin: [
+    { href: "/admin/dashboard", label: "adminOverview", icon: "dashboard" },
+    { href: "/admin/users", label: "adminUsers", icon: "group" },
+    { href: "/admin/subscription-packages", label: "adminSubscriptions", icon: "card_membership" },
+    { href: "/admin/complaints", label: "adminComplaints", icon: "support_agent" },
+    { href: "/admin/settings", label: "adminSettings", icon: "settings" },
+  ],
   patient: [
     { href: "/book-appointment", label: "bookAppointment", icon: "calendar_month" },
     { href: "/my-results", label: "myResults", icon: "lab_research" },

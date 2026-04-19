@@ -1,29 +1,23 @@
 import { EventEmitter } from "events";
 import { injectable } from "inversify";
-import type { EventName, EventPayload } from "./types";
-
+import type { authEvents,
+ } from "./types";
+type IEvents = authEvents
 @injectable()
 class Event {
-  private readonly emitter = new EventEmitter();
-
-  send<K extends EventName>(event: K, payload: EventPayload<K>): void {
-    this.emitter.emit(event, payload);
+  events = new EventEmitter();
+  send<T extends keyof IEvents>(event: T, payload: IEvents[T]) {
+    this.events.emit(event, payload);
   }
-
-  register<K extends EventName>(
-    event: K,
-    callback: (payload: EventPayload<K>) => void,
-  ): void {
-    this.emitter.on(event, callback as (payload: unknown) => void);
+  register<T extends keyof IEvents>(
+    event: T,
+    cb: (payload: IEvents[T]) => void,
+  ) {
+    this.events.addListener(event, cb);
   }
-
-  remove<K extends EventName>(
-    event: K,
-    callback: (payload: EventPayload<K>) => void,
-  ): void {
-    this.emitter.off(event, callback as (payload: unknown) => void);
+  remove<T extends keyof IEvents>(event: T, cb: (payload: IEvents[T]) => void) {
+    this.events.off(event, cb);
   }
-
-  
 }
 export { Event };
+export type { IEvents };

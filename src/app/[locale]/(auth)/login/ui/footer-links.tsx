@@ -1,23 +1,18 @@
 import Link from "next/link";
+import styles from "../scss/footer-links.module.scss";
 
 export function LoginFooterLinks() {
   return (
-    <footer className="mt-auto w-full p-6 lg:p-8">
-      <div className="flex flex-col items-center justify-between gap-4 border-t border-surface-container-high pt-6 md:flex-row">
-        <p className="text-center text-[10px] uppercase tracking-widest text-outline">
+    <footer className={styles.footer}>
+      <div className={styles.footerInner}>
+        <p className={styles.footerCopyright}>
           © {new Date().getFullYear()} Al Mutawali Lab. Precision in Diagnostics.
         </p>
-        <div className="flex space-x-6">
-          <Link
-            href="#"
-            className="text-[10px] uppercase tracking-widest text-outline transition-colors hover:text-primary"
-          >
+        <div className={styles.footerLinks}>
+          <Link href="#" className={styles.footerLink}>
             Privacy Policy
           </Link>
-          <Link
-            href="#"
-            className="text-[10px] uppercase tracking-widest text-outline transition-colors hover:text-primary"
-          >
+          <Link href="#" className={styles.footerLink}>
             Patient Rights
           </Link>
         </div>

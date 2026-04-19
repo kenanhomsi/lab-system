@@ -1,0 +1,79 @@
+﻿
+> doctor-system@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.2.2 (Turbopack)
+- Environments: .env.local
+
+node.exe : ΓÜá The "middleware" file convention is deprecated. Please use 
+"proxy" instead. Learn more: 
+https://nextjs.org/docs/messages/middleware-to-proxy
+At C:\Program Files\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ΓÜá The "middle...leware-to-proxy 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 2 errors:
+./src/app/api/projects/[id]/route.ts:3:1
+Module not found: Can't resolve '@/modules/projects'
+  [90m1 |[0m [36mimport[0m { [33mNextRequest[0m, [33mNextResponse[0m } 
+[36mfrom[0m [32m"next/server"[0m;
+  [90m2 |[0m [36mimport[0m { backendContainer } [36mfrom[0m 
+[32m"@/container/backend"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m {
+  [90m  |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m4 |[0m   [33mPROJECTS_BACKEND_SERVICE[0m,
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m5 |[0m   [36mtype[0m [33mProjectUpdateInput[0m,
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m6 |[0m } [36mfrom[0m [32m"@/modules/projects"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m [36mimport[0m { [33mProjectsBackendService[0m } 
+[36mfrom[0m [32m"@/modules/projects/backend/service"[0m;
+  [90m8 |[0m [36mimport[0m { extractBearerToken, jsonError } [36mfrom[0m 
+[32m"@/lib/api/bff-errors"[0m;
+  [90m9 |[0m [36mimport[0m { isUpstreamBackendReady } [36mfrom[0m 
+[32m"@/lib/api/upstream-config"[0m;
+
+Import map: aliased to relative './src/modules/projects' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/api/projects/route.ts:3:1
+Module not found: Can't resolve '@/modules/projects'
+  [90m1 |[0m [36mimport[0m { [33mNextRequest[0m, [33mNextResponse[0m } 
+[36mfrom[0m [32m"next/server"[0m;
+  [90m2 |[0m [36mimport[0m { backendContainer } [36mfrom[0m 
+[32m"@/container/backend"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m {
+  [90m  |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m4 |[0m   [33mPROJECTS_BACKEND_SERVICE[0m,
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m5 |[0m   [36mtype[0m [33mProjectCreateInput[0m,
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m6 |[0m } [36mfrom[0m [32m"@/modules/projects"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m [36mimport[0m { [33mProjectsBackendService[0m } 
+[36mfrom[0m [32m"@/modules/projects/backend/service"[0m;
+  [90m8 |[0m [36mimport[0m { extractBearerToken, jsonError } [36mfrom[0m 
+[32m"@/lib/api/bff-errors"[0m;
+  [90m9 |[0m [36mimport[0m { isUpstreamBackendReady } [36mfrom[0m 
+[32m"@/lib/api/upstream-config"[0m;
+
+Import map: aliased to relative './src/modules/projects' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./src/app/api/projects/[id]/route.ts:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/api/projects/route.ts:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)

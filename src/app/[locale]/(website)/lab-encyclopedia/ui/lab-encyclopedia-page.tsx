@@ -24,7 +24,6 @@ export function LabEncyclopediaPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     fetch("/api/tests")
       .then((res) => res.json())
       .then((data) => setTests(data))

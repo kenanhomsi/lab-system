@@ -263,7 +263,8 @@
       "patient": "Patient",
       "doctor": "Doctor",
       "lab": "Lab",
-      "special": "Special"
+      "special": "Special",
+      "admin": "Administrator"
     },
     "identifier": "Medical ID / Email",
     "identifierPlaceholder": "Enter your email or phone number",
@@ -271,8 +272,13 @@
     "forgotPassword": "Forgot password?",
     "togglePassword": "Show/hide password",
     "rememberMe": "Keep me signed in for 30 days",
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address",
+    "passwordMinLength": "Password must be at least 8 characters",
     "signIn": "Sign in",
     "signingIn": "Signing in...",
+    "orContinueWith": "or continue with",
+    "signInWithGoogle": "Sign in with Google",
     "loginError": "Invalid credentials",
     "noAccount": "Don't have an account?",
     "createAccount": "Create an account",
@@ -356,7 +362,27 @@
     "newPayment": "New Payment",
     "newExpense": "New Expense",
     "accountStatement": "Account Statement",
-    "dailyTasks": "Daily Tasks"
+    "dailyTasks": "Daily Tasks",
+    "adminOverview": "Admin overview",
+    "adminUsers": "Users & access",
+    "adminSubscriptions": "Subscription plans",
+    "adminAppointments": "Appointments",
+    "adminComplaints": "Complaints",
+    "adminAppointmentTypes": "Appointment types",
+    "adminSettings": "Settings",
+    "expandSidebar": "Expand navigation",
+    "collapseSidebar": "Collapse navigation",
+    "apps": "Apps"
+  },
+  "navbar": {
+    "searchPlaceholder": "Search patient results or lab records...",
+    "notifications": "Notifications",
+    "help": "Help",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode"
   },
   "bottomNav": {
     "home": "Home",
@@ -380,7 +406,641 @@
       "dailyTasks": "Daily Tasks",
       "testsCatalog": "Tests Catalog",
       "offers": "Offers",
-      "labEncyclopedia": "Lab Encyclopedia"
+      "labEncyclopedia": "Lab Encyclopedia",
+      "adminOverview": "Admin",
+      "adminUsers": "Users",
+      "adminSubscriptions": "Plans",
+      "adminAppointments": "Appointments",
+      "adminComplaints": "Complaints",
+      "adminAppointmentTypes": "Types",
+      "adminSettings": "Settings"
+    }
+  },
+  "admin": {
+    "designNote": "Design preview — data is mock until API wiring.",
+    "overview": {
+      "eyebrow": "Operations",
+      "title": "Admin control center",
+      "description": "Monitor accounts, access, subscriptions, and clinical workflows from one place.",
+      "statUsers": "Active users",
+      "statAppointments": "Appointments (week)",
+      "statComplaints": "Open complaints",
+      "statPackages": "Active plans",
+      "team": "Team load",
+      "journeyTitle": "Operational journey",
+      "journeySubtitle": "Stages map to admin workflows (mock).",
+      "stage1": "Intake",
+      "stage2": "Triage",
+      "stage3": "Resolution",
+      "stage4": "Shortcuts",
+      "knowledgeTitle": "Suggested actions",
+      "knowledgeSubtitle": "Recent items — replace with API list",
+      "journeyStatsTitle": "Ticket-style split",
+      "journeyStatsSubtitle": "Executed vs active (illustrative)",
+      "executed": "Executed",
+      "active": "Active",
+      "colSubject": "Subject",
+      "colStatus": "Status",
+      "colStart": "Start",
+      "colEnd": "End",
+      "colAssignee": "Assignee",
+      "quickAllocate": "Allocate case",
+      "quickAck": "Acknowledge receipt",
+      "taskSample1": "Verify new lab partner",
+      "taskSample2": "Review elevated complaint",
+      "shortcutUsers": "User provisioning",
+      "shortcutPlans": "Subscription plans",
+      "shortcutTypes": "Appointment types",
+      "shortcutComplaints": "Complaints queue",
+      "shortcutAppointments": "Schedule board",
+      "shortcutProcessing": "Request processing"
+    },
+    "dashboard": {
+      "eyebrow": "Al Mutawali Lab",
+      "flowTitle": "Lab order pipeline",
+      "liveMonitoringChip": "LIVE MONITORING",
+      "stats": {
+        "labOrders": "Lab orders (rolling)",
+        "partners": "Referring clinics & partners",
+        "pendingRelease": "Results pending release"
+      },
+      "queue": {
+        "new": {
+          "label": "New order",
+          "subtitle": "Registered in the portal",
+          "badge": "+12%"
+        },
+        "received": {
+          "label": "Sample received",
+          "subtitle": "Accessioning & QC check",
+          "badge": "Waiting"
+        },
+        "processing": {
+          "label": "In the lab",
+          "subtitle": "Analysis & instrument run",
+          "badge": "Active"
+        },
+        "ready": {
+          "label": "Ready for release",
+          "subtitle": "Pathologist review & sign-off",
+          "badge": "Verified"
+        }
+      },
+      "chartTitle": "Lab order volume",
+      "chartSubtitle": "Monthly throughput across Al Mutawali workflows (mock)",
+      "chartToggleDay": "Day",
+      "chartToggleMonth": "Month",
+      "chartMonths": {
+        "jan": "Jan",
+        "feb": "Feb",
+        "mar": "Mar",
+        "apr": "Apr",
+        "may": "May",
+        "jun": "Jun",
+        "jul": "Jul",
+        "aug": "Aug",
+        "sep": "Sep"
+      },
+      "testDistTitle": "Test category mix",
+      "testDist": {
+        "molecular": "Molecular biology",
+        "hematology": "Hematology",
+        "immunology": "Immunology",
+        "chemistry": "Clinical chemistry"
+      },
+      "healthTitle": "Platform status",
+      "healthLatency": "Latency",
+      "healthUptime": "Uptime",
+      "healthFooter": "Resulting and LIS paths operational",
+      "qaTitle": "QC & pathologist sign-off",
+      "qaDesc": "Control materials, calibration, and specialist review stay aligned with ISO 15189 expectations for Al Mutawali Lab.",
+      "qaChipQc": "QC",
+      "qaChipPath": "PATH",
+      "qaChipMore": "+2",
+      "qaFooterPrimary": "Pathologist pool on duty",
+      "qaFooterSecondary": "Validated release chain",
+      "recentTitle": "Recent lab activity",
+      "recentViewAll": "View all records",
+      "recentCols": {
+        "patient": "Patient / lab ID",
+        "test": "Test",
+        "time": "Time",
+        "status": "Status",
+        "action": "Action"
+      },
+      "recent": {
+        "row1": {
+          "patientSub": "Walk-in — internal reference",
+          "testType": "Full blood count (FBC)",
+          "timestamp": "12 Apr 2026",
+          "timeSub": "09:42",
+          "status": "Processing"
+        },
+        "row2": {
+          "patientSub": "Referral — cardiology clinic",
+          "testType": "DNA sequencing · panel R1",
+          "timestamp": "12 Apr 2026",
+          "timeSub": "08:15",
+          "status": "Critical"
+        },
+        "row3": {
+          "patientSub": "Routine health check",
+          "testType": "Lipid profile panel",
+          "timestamp": "11 Apr 2026",
+          "timeSub": "16:10",
+          "status": "Completed"
+        }
+      },
+      "rowMenu": "More"
+    },
+    "common": {
+      "search": "Search",
+      "filter": "Filters",
+      "export": "Export",
+      "add": "Add",
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "actions": "Actions",
+      "view": "View",
+      "mockBadge": "Mock",
+      "allRoles": "All roles",
+      "allStatuses": "All statuses",
+      "activeOnly": "Active only",
+      "active": "Active",
+      "inactive": "Inactive",
+      "next": "Next",
+      "back": "Back",
+      "close": "Close",
+      "resetFilters": "Reset filters",
+      "sortBy": "Sort by",
+      "newestFirst": "Newest first",
+      "oldestFirst": "Oldest first",
+      "confirmed": "Confirmed",
+      "unconfirmed": "Unconfirmed",
+      "open": "Open",
+      "all": "All",
+      "create": "Create"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Manage roles, permissions, and appointment types.",
+      "tabRoles": "Roles",
+      "tabPermissions": "Permissions",
+      "tabAppointmentTypes": "Appointment types",
+      "tabBanners": "Banners",
+      "roles": {
+        "columnName": "Name",
+        "columnActions": "",
+        "title": "Roles",
+        "subtitle": "Named roles for access control.",
+        "totalBadge": "{count} roles",
+        "showing": "Showing {count} records",
+        "create": "Create role",
+        "edit": "Edit",
+        "delete": "Delete",
+        "modalCreateTitle": "Create role",
+        "modalEditTitle": "Edit role",
+        "modalDeleteTitle": "Delete role",
+        "modalDeleteBody": "This action cannot be undone. Delete this role?",
+        "nameLabel": "Name",
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "permissions": {
+        "columnName": "Name",
+        "columnDescription": "Description",
+        "columnActions": "",
+        "title": "Permissions",
+        "subtitle": "Fine-grained access flags.",
+        "totalBadge": "{count} permissions",
+        "showing": "Showing {count} records",
+        "create": "Create permission",
+        "edit": "Edit",
+        "delete": "Delete",
+        "modalCreateTitle": "Create permission",
+        "modalEditTitle": "Edit permission",
+        "modalDeleteTitle": "Delete permission",
+        "modalDeleteBody": "This action cannot be undone. Delete this permission?",
+        "nameLabel": "Name",
+        "descriptionLabel": "Description",
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "appointmentTypes": {
+        "columnName": "Name",
+        "columnStatus": "Status",
+        "columnCreatedAt": "Created",
+        "columnActions": "",
+        "title": "Appointment types",
+        "subtitle": "Visit types for scheduling.",
+        "totalBadge": "{count} types",
+        "showing": "Showing {count} records",
+        "create": "Create type",
+        "edit": "Edit",
+        "modalCreateTitle": "Create appointment type",
+        "modalEditTitle": "Edit appointment type",
+        "nameLabel": "Name",
+        "activeLabel": "Active",
+        "cancel": "Cancel",
+        "save": "Save",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "banners": {
+        "columnTitle": "Title",
+        "columnType": "Type",
+        "columnLocation": "Location",
+        "columnStatus": "Status",
+        "columnOrder": "Order",
+        "columnActions": "",
+        "title": "Banners",
+        "subtitle": "Manage promotional banners and ads.",
+        "totalBadge": "{count} banners",
+        "showing": "Showing {count} records",
+        "create": "Create banner",
+        "edit": "Edit",
+        "delete": "Delete",
+        "modalCreateTitle": "Create banner",
+        "modalCreateDescription": "Create a new promotional banner with media and targeting options.",
+        "modalEditTitle": "Edit banner",
+        "modalEditDescription": "Update banner settings and content.",
+        "modalDeleteTitle": "Delete banner",
+        "modalDeleteBody": "This action cannot be undone. Delete this banner?",
+        "modalDeleteWarning": "This action is permanent.",
+        "newBadge": "New banner",
+        "editBadge": "Edit banner",
+        "titleLabel": "Title",
+        "typeLabel": "Type",
+        "locationLabel": "Location",
+        "displayOrderLabel": "Display Order",
+        "internalLinkLabel": "Internal Link",
+        "externalLinkLabel": "External Link",
+        "targetTypeLabel": "Target Type",
+        "visibilityRulesLabel": "Visibility Rules (JSON)",
+        "startDateLabel": "Start Date",
+        "endDateLabel": "End Date",
+        "mediaLabel": "Media (Image/Video)",
+        "isActiveLabel": "Active",
+        "errorMediaRequired": "Media is required for new banners",
+        "optional": "Optional",
+        "cancel": "Cancel",
+        "save": "Save",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "users": {
+      "title": "Users & access",
+      "description": "Create accounts, assign roles, and manage permissions.",
+      "createTitle": "New user",
+      "createDescription": "Design-only form — matches CreateUserRequest fields.",
+      "email": "Email",
+      "password": "Password",
+      "fullName": "Full name",
+      "city": "City",
+      "phone": "Phone",
+      "roles": "Roles",
+      "tableEmail": "Email",
+      "tableName": "Name",
+      "tableRole": "Role",
+      "tableStatus": "Status",
+      "tableCreated": "Created",
+      "detailTitle": "User detail",
+      "sectionProfile": "Profile",
+      "sectionRoles": "Roles",
+      "sectionPermissions": "Permissions",
+      "assignRoles": "Assign roles",
+      "assignPermissions": "Assign permissions",
+      "permissionHint": "Permission keys from backend (mock list).",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "notFound": "User not found.",
+      "colFullName": "Full Name",
+      "colCity": "City",
+      "colPhone": "Phone",
+      "colConfirmed": "Confirmed",
+      "colCreatedAt": "Created At",
+      "searchPlaceholder": "Search by name or email",
+      "roleFilterPlaceholder": "Role",
+      "sortByField": "Sort by",
+      "newestFirst": "Newest first",
+      "oldestFirst": "Oldest first",
+      "createModalTitle": "Create User",
+      "createModalSubtitle": "Set up a new account with access details and profile information.",
+      "stepAccount": "Account Access",
+      "stepAccountDesc": "Sign-in credentials",
+      "stepProfile": "Profile Details",
+      "stepProfileDesc": "Personal information",
+      "stepAccountSection": "Account Access",
+      "stepAccountSectionDesc": "Define secure sign-in details and initial access roles.",
+      "stepProfileSection": "Profile Details",
+      "stepProfileSectionDesc": "Add the personal and operational information shown in the system.",
+      "emailPlaceholder": "doctor@clinic.com",
+      "passwordPlaceholder": "Create a secure password",
+      "rolesPlaceholder": "admin, doctor",
+      "rolesDescription": "Separate roles with commas.",
+      "fullNamePlaceholder": "Dr. Sarah Ahmed",
+      "phoneNumberLabel": "Phone number",
+      "phoneNumberPlaceholder": "+20 100 000 0000",
+      "cityPlaceholder": "Cairo",
+      "profileMetadataLabel": "Profile metadata",
+      "profileMetadataPlaceholder": "Optional notes or JSON",
+      "profileMetadataDescription": "Use this for extra profile details when needed.",
+      "createUser": "Create user"
+    },
+    "subscriptions": {
+      "title": "Subscription packages",
+      "filterAudience": "Audience: All",
+      "description": "Create and manage plans (target audience, price, validity).",
+      "name": "Name",
+      "price": "Price",
+      "validityDays": "Validity (days)",
+      "audience": "Audience",
+      "includedTests": "Included tests",
+      "active": "Active",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "createTitle": "New package",
+      "editTitle": "Edit package",
+      "save": "Save",
+      "cancel": "Cancel",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "allAudiences": "All audiences",
+      "filtersApplied": "Filters applied",
+      "recordsShowing": "Showing {count} records",
+      "colName": "Name",
+      "colPrice": "Price",
+      "colValidityDays": "Validity (days)",
+      "colAudience": "Audience",
+      "colIncludedTests": "Included Tests",
+      "colStatus": "Status",
+      "colCreatedAt": "Created At",
+      "createModalTitle": "Create Package",
+      "createModalSubtitle": "Set up a new subscription package with pricing and availability options.",
+      "editModalSubtitle": "Update the subscription package details and pricing.",
+      "stepPackageInfo": "Package Info",
+      "stepPackageInfoDesc": "Name & contents",
+      "stepPricing": "Pricing & Availability",
+      "stepPricingDesc": "Price, validity & audience",
+      "packageInfoSection": "Package Info",
+      "packageInfoSectionDesc": "Define the name and what is included in this subscription package.",
+      "pricingSectionDesc": "Set the price, validity period, target audience, and active status for this package.",
+      "namePlaceholder": "e.g. Basic Monthly Plan",
+      "includedTestsPlaceholder": "e.g. CBC, Liver Panel",
+      "pricePlaceholder": "0.00",
+      "validityDaysPlaceholder": "30",
+      "targetAudience": "Target Audience"
+    },
+    "appointments": {
+      "title": "Appointments",
+      "filterPatient": "Patient ID",
+      "description": "Manage appointment records and quickly confirm or cancel requests.",
+      "colName": "Name",
+      "colType": "Type",
+      "colSlot": "Slot",
+      "colStatus": "Status",
+      "colPatient": "Patient",
+      "colDoctor": "Doctor",
+      "colLocationType": "Location Type",
+      "colAddress": "Address",
+      "colLabPartner": "Lab Partner",
+      "colCreatedAt": "Created At",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "createTitle": "Create Appointment",
+      "createSubtitle": "Schedule a new appointment with type, time, location, and assignment details.",
+      "searchPlaceholder": "Search by appointment name",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "patientId": "Patient ID",
+      "doctorId": "Doctor ID",
+      "labPartnerId": "Lab Partner ID",
+      "recordsShowing": "Showing {count} records",
+      "filtersApplied": "Filters applied",
+      "appointmentTypeId": "Appointment Type ID",
+      "name": "Name",
+      "descriptionField": "Description",
+      "notes": "Notes",
+      "slot": "Date & Time",
+      "locationType": "Location Type",
+      "address": "Address",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "create": "Create",
+      "confirmTitle": "Confirm Appointment",
+      "confirmSubtitle": "Mark this appointment as confirmed.",
+      "confirmAlertTitle": "Confirm this appointment?",
+      "confirmAlertBody": "You are about to confirm this appointment. The patient will be notified.",
+      "confirmAlertBodyNamed": "You are about to confirm \"{name}\". The patient will be notified.",
+      "cancelTitle": "Cancel Appointment",
+      "cancelSubtitle": "This will mark the appointment as cancelled.",
+      "cancelAlertTitle": "Cancel this appointment?",
+      "cancelAlertBody": "You are about to cancel this appointment. This action cannot be undone.",
+      "cancelAlertBodyNamed": "You are about to cancel \"{name}\". This action cannot be undone.",
+      "cancelAppointment": "Cancel Appointment",
+      "stepDetails": "Appointment Details",
+      "stepDetailsDesc": "Type, name & time",
+      "stepLocation": "Location",
+      "stepLocationDesc": "Address & coordinates",
+      "stepAssignment": "Assignment",
+      "stepAssignmentDesc": "Patient, doctor & lab",
+      "stepDetailsSection": "Appointment Details",
+      "stepDetailsSectionDesc": "Specify the appointment type, name, and any additional notes or description.",
+      "stepLocationSection": "Location",
+      "stepLocationSectionDesc": "Set the appointment location type, address, and optional GPS coordinates.",
+      "stepAssignmentSection": "Assignment",
+      "stepAssignmentSectionDesc": "Optionally link this appointment to a patient, doctor, or lab partner.",
+      "appointmentTypeIdPlaceholder": "1",
+      "namePlaceholder": "e.g. Morning Checkup",
+      "descriptionPlaceholder": "Brief description of the appointment...",
+      "notesPlaceholder": "Any additional notes...",
+      "locationTypePlaceholder": "e.g. Clinic, Home, Online",
+      "addressPlaceholder": "Full address",
+      "patientIdPlaceholder": "Patient identifier",
+      "doctorIdPlaceholder": "Doctor identifier",
+      "labPartnerIdPlaceholder": "Lab partner identifier",
+      "statusConfirmed": "Confirmed",
+      "statusInProgress": "In Progress",
+      "statusCompleted": "Completed",
+      "statusCancelled": "Cancelled",
+      "statusPending": "Pending"
+    },
+    "complaints": {
+      "title": "Complaints",
+      "description": "Review submitted complaints and update their status.",
+      "searchPlaceholder": "Search by title or description",
+      "userIdPlaceholder": "Filter by user ID",
+      "allStatuses": "All statuses",
+      "received": "Received",
+      "inProgress": "In Progress",
+      "resolved": "Resolved",
+      "recordsShowing": "Showing {count} records",
+      "filtersApplied": "Filters applied",
+      "attachment": "Attachment",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "markAsReceived": "Mark as Received",
+      "markAsInProgress": "Mark as In Progress",
+      "markAsResolved": "Mark as Resolved",
+      "colTitle": "Title",
+      "colDescription": "Description",
+      "colUser": "User ID",
+      "colStatus": "Status",
+      "colAttachment": "Attachment",
+      "colCreated": "Created At",
+      "colUpdated": "Updated At",
+      "openAttachment": "Open",
+      "updateStatus": "Update status"
+    },
+    "appointmentTypes": {
+      "title": "Appointment types",
+      "description": "Manage visit/service types shown to patients and staff.",
+      "name": "Name",
+      "active": "Active",
+      "created": "Created"
+    }
+  },
+  "patient": {
+    "dashboard": {
+      "eyebrow": "Your care at a glance",
+      "stats": {
+        "upcomingAppointments": "Upcoming appointments",
+        "completedVisits": "Completed visits",
+        "pendingResults": "Pending lab results"
+      },
+      "upcomingTitle": "Upcoming visits",
+      "upcomingViewAll": "View calendar",
+      "upcomingStatus": {
+        "confirmed": "Confirmed",
+        "pending": "Pending"
+      },
+      "upcoming": {
+        "row1": {
+          "note": "General consultation — follow-up"
+        },
+        "row2": {
+          "note": "Cardiology — review results"
+        },
+        "row3": {
+          "note": "Routine lab review"
+        }
+      },
+      "healthTitle": "Health snapshot",
+      "healthLastCheckup": "Last check-up",
+      "healthBloodType": "Blood type",
+      "healthNextReminder": "Next reminder",
+      "recentResultsTitle": "Recent lab results",
+      "recentViewAll": "Open my results",
+      "recentCols": {
+        "test": "Test / ref.",
+        "status": "Status",
+        "detail": "Notes"
+      },
+      "resultStatus": {
+        "ready": "Ready",
+        "processing": "Processing",
+        "scheduled": "Scheduled"
+      },
+      "recent": {
+        "r1": {
+          "detail": "Released to portal — PDF available"
+        },
+        "r2": {
+          "detail": "Expected within 24–48h"
+        },
+        "r3": {
+          "detail": "Sample collection booked"
+        }
+      },
+      "activityTitle": "Recent activity",
+      "activity": {
+        "a1": {
+          "body": "Appointment confirmed with Dr. Layla Karim",
+          "time": "Today · 09:12"
+        },
+        "a2": {
+          "body": "New result available: CBC panel",
+          "time": "Yesterday · 16:40"
+        },
+        "a3": {
+          "body": "Reminder: fasting required before lipid profile",
+          "time": "2 days ago"
+        }
+      }
+    }
+  },
+  "doctor": {
+    "dashboard": {
+      "eyebrow": "Your practice today",
+      "stats": {
+        "todayPatients": "Patients scheduled today",
+        "pendingReferrals": "Pending lab referrals",
+        "completedToday": "Visits completed today"
+      },
+      "scheduleTitle": "Today's schedule",
+      "scheduleViewAll": "Open full calendar",
+      "scheduleCols": {
+        "patient": "Patient",
+        "time": "Time",
+        "type": "Visit type",
+        "status": "Status"
+      },
+      "scheduleStatus": {
+        "confirmed": "Confirmed",
+        "inProgress": "In progress",
+        "waiting": "Waiting"
+      },
+      "visitTypes": {
+        "followUp": "Follow-up",
+        "newPatient": "New patient",
+        "labReview": "Lab review"
+      },
+      "referralsTitle": "Pending referrals",
+      "referralsSubtitle": "Requests awaiting your review or signature.",
+      "referralStatus": {
+        "pending": "Pending",
+        "urgent": "Urgent"
+      },
+      "referrals": {
+        "r1": {
+          "note": "Patient reports fatigue — prioritize panel"
+        },
+        "r2": {
+          "note": "Routine diabetes monitoring"
+        },
+        "r3": {
+          "note": "Annual screening"
+        }
+      },
+      "chartTitle": "Weekly patient volume",
+      "chartSubtitle": "Completed visits per weekday (mock)",
+      "chartDays": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri"
+      },
+      "recentTitle": "Recently seen",
+      "recentViewAll": "Patient list",
+      "recentCols": {
+        "patient": "Patient",
+        "lastVisit": "Last visit",
+        "notes": "Clinical notes"
+      },
+      "recentPatients": {
+        "p1": {
+          "notes": "Hypertension — medication review"
+        },
+        "p2": {
+          "notes": "Post-lab follow-up scheduled"
+        },
+        "p3": {
+          "notes": "Stable — annual check next quarter"
+        }
+      }
     }
   },
   "dashboard": {
@@ -415,6 +1075,7 @@
       "titlePatient": "Patient portal",
       "titleLab": "Lab portal",
       "titleSpecial": "Special account",
+      "titleAdmin": "Administration",
       "titleSubscriptions": "Subscriptions & offers",
       "userName": "Dr. Al Mutawali",
       "userRole": "Physician",
@@ -463,6 +1124,39 @@
       "goToSubscriptions": "Subscriptions",
       "goToResults": "My results",
       "goToBook": "Book appointment"
+    },
+    "ads": {
+      "regionAria": "Advertisement",
+      "dismissAria": "Dismiss advertisement",
+      "siteName": "Al Mutawali Lab",
+      "ownBadge": "Our offer",
+      "externalBadge": "Partner advertiser",
+      "sponsoredBy": "By {partner}",
+      "disclaimerExternal": "This promotion is from another business. {siteName} only displays it and does not operate, endorse, or guarantee this offer.",
+      "disclaimerShort": "Partner content · {siteName} does not run or endorse this offer.",
+      "banner": {
+        "badge": "Sample ad",
+        "headline": "Annual checkup package — 20% off this month",
+        "sub": "Example layout; admin will replace with real campaigns",
+        "cta": "View offer",
+        "imageAlt": "Healthcare professional with patient — promotional banner"
+      },
+      "card": {
+        "title": "Advertisement",
+        "sponsored": "Sponsored",
+        "kicker": "Featured",
+        "heading": "Home sample collection",
+        "desc": "Book a nurse visit — lab results within 24 hours. Example promo card.",
+        "cta": "Learn more",
+        "imageAlt": "Medical staff — promotional image"
+      },
+      "floating": {
+        "badge": "Flash offer",
+        "title": "Priority lab results in 6h",
+        "desc": "Example floating promo — add your own placement logic later.",
+        "cta": "See details",
+        "imageAlt": "Laboratory microscope — promotional image"
+      }
     },
     "main": {
       "title": "Doctor portal",

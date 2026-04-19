@@ -1,0 +1,43 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: var(--mantine-spacing-xl);
+}
+
+.fieldsBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  gap: var(--mantine-spacing-xl);
+}
+
+.formBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 30px;
+}
+
+.forgotRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.forgotButton {
+  height: auto;
+  padding: 0;
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  color: var(--mantine-color-anchor);
+
+  &:hover {
+    color: var(--mantine-color-anchor);
+    text-decoration: underline;
+    background: transparent;
+  }
+}

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { AppProviders } from "@/components/providers/app-providers";
 import { routing } from "@/i18n/routing";
@@ -43,7 +43,16 @@ export default async function LocaleLayout({
   }
 
   setRequestLocale(locale);
-  const messages = await getMessages();
+  const loadedMessages = (await import(`../../../messages/${locale}.json`)).default;
+  // Defensive merge to avoid runtime "missing namespace" crashes
+  // in case a namespace is omitted by the bundler/serializer.
+  const fallbackMessages = locale === "en"
+    ? loadedMessages
+    : (await import("../../../messages/en.json")).default;
+  const messages = {
+    ...loadedMessages,
+    navbar: loadedMessages?.navbar ?? fallbackMessages?.navbar,
+  };
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>

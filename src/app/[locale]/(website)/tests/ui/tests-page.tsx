@@ -28,7 +28,6 @@ export function TestsPage() {
   const alphabet = locale === "ar" ? ALPHABET_AR : ALPHABET_EN;
 
   useEffect(() => {
-    setLoading(true);
     fetch("/api/tests")
       .then((res) => res.json())
       .then((data) => setTests(data))

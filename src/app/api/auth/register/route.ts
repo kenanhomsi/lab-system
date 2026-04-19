@@ -1,41 +1,19 @@
-import { NextResponse } from "next/server";
-import type { RegisterPayload } from "@/types/user";
+import { backendContainer } from "@/container";
+import { AuthBackendService, authModuleNames } from "@/modules/auth";
+import { RegisterProps } from "@/modules/auth/backend/client";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+const authService = backendContainer.get<AuthBackendService>(
+  authModuleNames.service,
+);
+
+export async function POST(req: NextRequest) {
   try {
-    const body: RegisterPayload = await request.json();
-    const backendUrl = process.env.BACKEND_URL || "http://localhost:4000";
-    const isUpstreamReady = process.env.UPSTREAM_BACKEND_READY === "true";
-
-    if (isUpstreamReady) {
-      const res = await fetch(`${backendUrl}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) {
-        const error = await res.json().catch(() => ({}));
-        return NextResponse.json(
-          { error: error.message || "Registration failed" },
-          { status: res.status },
-        );
-      }
-
-      const data = await res.json();
-      return NextResponse.json(data, { status: 201 });
-    }
-
-    return NextResponse.json(
-      {
-        id: `mock-${body.role}-${Date.now()}`,
-        ...body,
-        password: undefined,
-        createdAt: new Date().toISOString(),
-      },
-      { status: 201 },
-    );
-  } catch {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const body: RegisterProps = await req.json();
+    const res = await authService.Register({ ...body });
+    return NextResponse.json(res);
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return NextResponse.json(error?.response?.data, { status: 400 });
   }
 }

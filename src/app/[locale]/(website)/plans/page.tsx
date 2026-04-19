@@ -1,6 +1,15 @@
 import { useTranslations } from "next-intl";
-import { PricingPlans } from "../../(dashboard)/subscriptions/ui/pricing-plans";
-import { VouchersGrid } from "../../(dashboard)/subscriptions/ui/vouchers-grid";
+
+function PlansPlaceholderSection({ title }: { title: string }) {
+  return (
+    <section className="rounded-2xl border border-dashed border-outline-variant/30 bg-surface p-6 text-center">
+      <h2 className="font-headline text-xl font-bold text-on-surface">{title}</h2>
+      <p className="mt-2 text-sm text-secondary">
+        This section will be rebuilt in the new dashboard implementation.
+      </p>
+    </section>
+  );
+}
 
 export default function PlansPage() {
   const t = useTranslations("subscriptions");
@@ -15,8 +24,8 @@ export default function PlansPage() {
           {t("packagesTitle")}
         </h1>
       </section>
-      <PricingPlans />
-      <VouchersGrid />
+      <PlansPlaceholderSection title={t("packagesTitle")} />
+      <PlansPlaceholderSection title="Vouchers" />
     </main>
   );
 }

@@ -1,35 +1,38 @@
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { injectable, unmanaged } from "inversify";
+import { AxiosState } from "./state";
 
-export abstract class BaseHttpClient {
-  constructor(protected readonly http: AxiosInstance) {}
+type ConstructorParams<T> = {
+  state: T;
+};
 
-  protected get<T>(
-    url: string,
-    config?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<T>> {
-    return this.http.get<T>(url, config);
+@injectable()
+class Abstraction<T extends AxiosState> {
+  protected state: T;
+  constructor(@unmanaged() params: ConstructorParams<T>) {
+    const { state } = params;
+    this.state = state;
   }
 
-  protected post<T, B = unknown>(
-    url: string,
-    body?: B,
-    config?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<T>> {
-    return this.http.post<T>(url, body, config);
+  get(params: { endpoint: string }) {
+    const { endpoint } = params;
+    this.state.setMethod("get").setEndpoint(endpoint);
+    return this.state;
   }
-
-  protected patch<T, B = unknown>(
-    url: string,
-    body?: B,
-    config?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<T>> {
-    return this.http.patch<T>(url, body, config);
+  post(params: { endpoint: string }) {
+    const { endpoint } = params;
+    this.state.setMethod("post").setEndpoint(endpoint);
+    return this.state;
   }
-
-  protected delete<T>(
-    url: string,
-    config?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<T>> {
-    return this.http.delete<T>(url, config);
+  put(params: { endpoint: string }) {
+    const { endpoint } = params;
+    this.state.setMethod("put").setEndpoint(endpoint);
+    return this.state;
+  }
+  delete(params: { endpoint: string }) {
+    const { endpoint } = params;
+    this.state.setMethod("delete").setEndpoint(endpoint);
+    return this.state;
   }
 }
+
+export { Abstraction as AxiosClient };

@@ -1,0 +1,209 @@
+
+@mixin dark {
+  [data-mantine-color-scheme="dark"] & {
+    @content;
+  }
+}
+
+@mixin light {
+  [data-mantine-color-scheme="light"] & {
+    @content;
+  }
+}
+
+.tableBox {
+  border-radius: 33px;
+  overflow: hidden;
+  border: 1px solid transparent;
+
+  @include dark {
+    background: rgba(28, 42, 53, 0.55);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border-color: rgba(80, 88, 113, 0.3);
+    box-shadow:
+      0 18px 44px rgba(8, 15, 23, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  @include light {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow:
+      0 16px 40px rgba(15, 23, 42, 0.07),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+}
+
+.rowStyles {
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
+
+  @include dark {
+    background: rgba(28, 42, 53, 0.25);
+    border-bottom: 1px solid rgba(80, 88, 113, 0.25);
+  }
+
+  @include light {
+    background: rgba(255, 255, 255, 0.25);
+    border-bottom: 1px solid rgba(227, 231, 241, 0.6);
+  }
+
+  &:hover {
+    @include dark {
+      background: rgba(41, 173, 227, 0.12);
+    }
+
+    @include light {
+      background: rgba(41, 173, 227, 0.07);
+    }
+  }
+}
+
+.headerCell {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  @include dark {
+    border-bottom: 1px solid rgba(80, 88, 113, 0.4);
+    background: linear-gradient(
+      180deg,
+      rgba(37, 56, 69, 0.75) 0%,
+      rgba(33, 53, 65, 0.7) 100%
+    );
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #C8CEE3;
+  }
+
+  @include light {
+    border-bottom: 1px solid rgba(227, 231, 241, 0.7);
+    background: linear-gradient(
+      180deg,
+      rgba(251, 252, 254, 0.75) 0%,
+      rgba(244, 247, 251, 0.65) 100%
+    );
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #6d7895;
+  }
+}
+
+.cell {
+  color: rgba(135, 145, 176, 1);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  background-color: transparent;
+
+  @include dark {
+    color: rgba(200, 206, 227, 1);
+  }
+}
+
+.tableScrollWrapper {
+  overflow-x: auto;
+}
+
+.emptyStateIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  margin-bottom: 0.25rem;
+  opacity: 0.95;
+}
+
+.root {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: flex-start;
+  gap: 5px;
+  flex-shrink: 0;
+  position: relative;
+  margin: 14px 20px 18px;
+  background-color: transparent;
+  flex-wrap: wrap;
+}
+
+.control {
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  border-radius: 10px;
+
+  @include dark {
+    color: #EDEFF6;
+    background: var(--Background-Main-Screen, #171E24);
+  }
+
+  @include light {
+    color: #353C52;
+    background: var(--Background-Main-Screen, #F8FAFD);
+  }
+}
+
+.control[data-active] {
+  background-color: #29ade3;
+  color: white;
+}
+
+.expandedHeaderCell {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  @include light {
+    border-bottom: 1px solid rgba(227, 231, 241, 1);
+    background: linear-gradient(180deg, #fbfcfe 0%, #f4f7fb 100%);
+    color: #6d7895;
+  }
+
+  @include dark {
+    border-bottom: 1px solid rgba(80, 88, 113, 0.65);
+    background: linear-gradient(180deg, #253845 0%, #213541 100%);
+    color: #c8cee3;
+  }
+}
+
+.hoverRow:hover {
+  background-color: #e6f4fd !important;
+  @include dark {
+  background-color: rgba(41, 173, 227, 0.12) !important;
+
+  }
+}
+
+.hoverRow {
+  background-color: rgba(255, 255, 255, 0.25) !important;
+  border-bottom: 1px solid rgba(227, 231, 241, 0.6) !important;
+  @include dark {
+  background-color: rgba(28, 42, 53, 0.25) !important;
+  border-bottom: 1px solid rgba(80, 88, 113, 0.25) !important;
+  }
+}
+
+.expandedRow {
+  background-color: #f8f9fa !important;
+  transition: background-color 0.2s ease;
+
+  [data-mantine-color-scheme="dark"] & {
+    background-color: rgba(37, 56, 69, 0.4) !important;
+    border-bottom: 1px solid rgba(80, 88, 113, 0.25) !important;
+  }
+}
+

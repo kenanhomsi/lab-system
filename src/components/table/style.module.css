@@ -1,0 +1,64 @@
+.headerCell {
+  background: #f6f7fa;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--Border-Light, #f6f7fa) !important;
+}
+
+.cell {
+  color: #333;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.root {
+  display: inline-flex;
+  height: 32.027px;
+  align-items: flex-start;
+  gap: 5px;
+  flex-shrink: 0;
+  position: relative;
+  margin: 10px 20px;
+}
+
+.control {
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background: #eaedf7;
+  color: #274d9e;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.control[data-active] {
+  background-color: #29ade3;
+  color: white;
+}
+
+.expandedHeaderCell {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--Border-Light, #f6f7fa);
+  background: var(--Background-Table-Header, #f6f7fa);
+}
+
+.hoverRow:hover {
+  background-color: #e6f4fd !important;
+}
+
+.expandedRow {
+  background-color: #f8f9fa !important;
+  transition: background-color 0.2s ease;
+}
+
+/*# sourceMappingURL=style.module.css.map */
