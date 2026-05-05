@@ -1,8 +1,14 @@
-import type {
-  Project,
-  ProjectCreateInput,
-  ProjectUpdateInput,
-} from "@/modules/projects/abstraction/types";
+export type Project = {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export type ProjectCreateInput = Pick<Project, "name" | "description">;
+
+export type ProjectUpdateInput = Partial<Pick<Project, "name" | "description">>;
 
 const seed: Project[] = [
   {

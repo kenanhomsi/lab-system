@@ -9,9 +9,8 @@ const UI = () => {
     const schema = useMirror("schema");
     const isLoading = useMirror("isPending");
     const setPageNumber = useMirror("setPageNumber");
-    const bannersData = useMirror("bannersData");
+    const bannersData = useMirror("bannersData") ?? [];
     const setActiveModal = useMirror("setActiveModal");
-    const setSelectedBanner = useMirror("setSelectedBanner");
 
     return (
         <Stack>
@@ -32,7 +31,6 @@ const UI = () => {
                         totalBanners={bannersData.length}
                         visibleBanners={bannersData.length}
                         onOpenCreate={() => {
-                            setSelectedBanner(null);
                             setActiveModal("create");
                         }}
                     />

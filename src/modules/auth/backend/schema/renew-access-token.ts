@@ -1,6 +1,6 @@
-import { object, string, array, infer as infer_ } from "zod";
+import { object, string, array, union, infer as infer_ } from "zod";
 
-const schema = object({
+const tokenPayloadSchema = object({
   accessToken: string(),
   refreshToken: string(),
   expiresAt: string(),
@@ -13,7 +13,15 @@ const schema = object({
   }),
 });
 
+const schema = union([
+  tokenPayloadSchema,
+  object({
+    data: tokenPayloadSchema,
+  }),
+]);
+
 type RenewAccessTokenSchemaType = infer_<typeof schema>;
+type RenewAccessTokenPayloadType = infer_<typeof tokenPayloadSchema>;
 
 export { schema as renewAccessTokenSchema };
-export type { RenewAccessTokenSchemaType };
+export type { RenewAccessTokenSchemaType, RenewAccessTokenPayloadType };

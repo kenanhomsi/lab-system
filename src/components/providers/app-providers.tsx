@@ -8,6 +8,7 @@ import { ThemeSync } from "./theme-sync";
 import {
   MantineProvider,
   createTheme,
+  rem,
   localStorageColorSchemeManager,
 } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
@@ -15,6 +16,94 @@ import { Notifications } from "@mantine/notifications";
 
 const colorSchemeManager = localStorageColorSchemeManager({
   key: "color-scheme",
+});
+
+const appTheme = createTheme({
+  primaryColor: "electric",
+  primaryShade: { light: 6, dark: 5 },
+  fontFamily: "var(--font-inter), system-ui, sans-serif",
+  headings: {
+    fontFamily: "var(--font-plus-jakarta), var(--font-inter), system-ui, sans-serif",
+    fontWeight: "700",
+  },
+  radius: {
+    xs: rem(8),
+    sm: rem(12),
+    md: rem(16),
+    lg: rem(24),
+    xl: rem(32),
+  },
+  spacing: {
+    xs: rem(8),
+    sm: rem(12),
+    md: rem(16),
+    lg: rem(24),
+    xl: rem(32),
+  },
+  defaultRadius: "md",
+  colors: {
+    electric: [
+      "#eff6ff",
+      "#dbeafe",
+      "#bfdbfe",
+      "#93c5fd",
+      "#60a5fa",
+      "#3b82f6",
+      "#2563eb",
+      "#1d4ed8",
+      "#1e40af",
+      "#1e3a8a",
+    ],
+  },
+  other: {
+    shadow:
+      "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 20px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.02)",
+  },
+  components: {
+    Button: {
+      defaultProps: {
+        fw: 600,
+        radius: "xl",
+      },
+    },
+    TextInput: {
+      defaultProps: {
+        radius: "md",
+      },
+      styles: {
+        input: { transition: "border-color 0.2s ease, box-shadow 0.2s ease" }
+      }
+    },
+    Select: {
+      defaultProps: {
+        radius: "md",
+      },
+      styles: {
+        input: { transition: "border-color 0.2s ease, box-shadow 0.2s ease" }
+      }
+    },
+    Modal: {
+      defaultProps: {
+        radius: "xl",
+        centered: true,
+        overlayProps: {
+          blur: 8,
+        }
+      },
+    },
+    Paper: {
+      defaultProps: {
+        radius: "xl",
+        withBorder: true,
+      },
+    },
+    Card: {
+      defaultProps: {
+        radius: "xl",
+        withBorder: true,
+      },
+    },
+  },
 });
 
 export function AppProviders({ children }: { children: ReactNode }) {
@@ -34,23 +123,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
       <LocaleHtmlSync />
       <QueryClientProvider client={queryClient}>
         <MantineProvider
-          theme={createTheme({
-            primaryColor: "cyan",
-            colors: {
-              dark: [
-                "#e5e2e1", // [0] primary text
-                "#bdc8ce", // [1] dimmed text
-                "#879298", // [2] subtle / placeholder
-                "#3e484d", // [3] disabled state
-                "#2a2a2a", // [4] borders
-                "#201f1f", // [5] hover surface
-                "#1c1b1b", // [6] paper / card / input bg
-                "#131313", // [7] body bg
-                "#0e0e0e", // [8] deepest surface
-                "#0a0a0a", // [9] absolute darkest
-              ],
-            },
-          })}
+          theme={appTheme}
           colorSchemeManager={colorSchemeManager}
           defaultColorScheme="light"
         >

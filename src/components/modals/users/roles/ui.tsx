@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
+import { Badge, Box, Button, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
 import { useMirror } from "./store";
 
 const UI = () => {
@@ -9,6 +9,7 @@ const UI = () => {
   const user = useMirror("user");
   const rolesText = useMirror("rolesText");
   const setRolesText = useMirror("setRolesText");
+  const currentRoles = useMirror("currentRoles");
   const isSubmitting = useMirror("isSubmitting");
   const assign = useMirror("assign");
   const remove = useMirror("remove");
@@ -17,8 +18,24 @@ const UI = () => {
     <Modal opened={isOpen} onClose={onClose} title="Manage Roles" centered>
       <Stack>
         <Text size="sm">User: {user?.fullName || "-"}</Text>
+
+        {currentRoles && currentRoles.length > 0 && (
+          <Box>
+            <Text size="sm" fw={500} mb="xs">
+              Current Roles:
+            </Text>
+            <Group gap="xs">
+              {currentRoles.map((role) => (
+                <Badge key={role} size="lg" variant="light" color="blue">
+                  {role}
+                </Badge>
+              ))}
+            </Group>
+          </Box>
+        )}
+
         <TextInput
-          label="Roles (comma separated)"
+          label="Roles to add/remove (comma separated)"
           value={rolesText}
           onChange={(event) => setRolesText(event.target.value)}
           placeholder="admin,doctor"

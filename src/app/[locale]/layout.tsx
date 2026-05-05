@@ -49,9 +49,19 @@ export default async function LocaleLayout({
   const fallbackMessages = locale === "en"
     ? loadedMessages
     : (await import("../../../messages/en.json")).default;
+  const navbarFallback = {
+    searchPlaceholder: locale === "ar" ? "بحث..." : "Search...",
+    notifications: locale === "ar" ? "الإشعارات" : "Notifications",
+    help: locale === "ar" ? "المساعدة" : "Help",
+    profile: locale === "ar" ? "الملف الشخصي" : "Profile",
+    settings: locale === "ar" ? "الإعدادات" : "Settings",
+    logout: locale === "ar" ? "تسجيل الخروج" : "Logout",
+    lightMode: locale === "ar" ? "الوضع الفاتح" : "Light mode",
+    darkMode: locale === "ar" ? "الوضع الداكن" : "Dark mode",
+  };
   const messages = {
     ...loadedMessages,
-    navbar: loadedMessages?.navbar ?? fallbackMessages?.navbar,
+    navbar: loadedMessages?.navbar ?? fallbackMessages?.navbar ?? navbarFallback,
   };
 
   return (

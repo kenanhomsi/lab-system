@@ -18,7 +18,7 @@ async function getAllRoles(params: { pageNumber: number }): Promise<RolesRespons
   if (!payload) {
     throw new Error("Failed to fetch roles");
   }
-  return payload;
+  return payload.data;
 }
 
 const GetAllRoles = (props: PropsWithChildren) => {

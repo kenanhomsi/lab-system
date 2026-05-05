@@ -1,67 +1,22 @@
 "use client";
 
-import { ActionIcon, Menu } from "@mantine/core";
-import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
-import { useTranslations } from "next-intl";
-import { useMirror } from "../store";
+import { Text } from "@mantine/core";
 import { BannerItem } from "../types";
 
 type Props = {
     row: BannerItem;
 };
 
-const ActionsRender = ({ row }: Props) => {
-    const t = useTranslations("admin.settings.banners");
-    const setSelectedBanner = useMirror("setSelectedBanner");
-    const setActiveModal = useMirror("setActiveModal");
-
+/**
+ * ActionsRender component for banners table.
+ * Currently no actions available as the API only supports read-only operations.
+ */
+const ActionsRender = (_props: Props) => {
+    void _props;
     return (
-        <Menu
-            shadow="lg"
-            width={200}
-            radius="md"
-            position="bottom-end"
-            offset={8}
-            withArrow
-            trigger="click"
-        >
-            <Menu.Target>
-                <ActionIcon
-                    variant="subtle"
-                    color="gray"
-                    radius="md"
-                    size="lg"
-                    onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }}
-                >
-                    <IconDotsVertical size={16} />
-                </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown>
-                <Menu.Item
-                    leftSection={<IconEdit size={16} />}
-                    onClick={() => {
-                        setSelectedBanner(row);
-                        setActiveModal("edit");
-                    }}
-                >
-                    {t("edit")}
-                </Menu.Item>
-                <Menu.Divider />
-                <Menu.Item
-                    color="red"
-                    leftSection={<IconTrash size={16} />}
-                    onClick={() => {
-                        setSelectedBanner(row);
-                        setActiveModal("delete");
-                    }}
-                >
-                    {t("delete")}
-                </Menu.Item>
-            </Menu.Dropdown>
-        </Menu>
+        <Text size="xs" c="dimmed">
+            —
+        </Text>
     );
 };
 

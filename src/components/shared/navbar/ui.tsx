@@ -1,18 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useSyncExternalStore } from "react";
 import { ActionIcon, Avatar, Group, Menu, Text, TextInput, UnstyledButton } from "@mantine/core";
 import {
   FiBell,
   FiChevronDown,
   FiHelpCircle,
+  FiMenu,
   FiLogOut,
   FiSearch,
   FiSettings,
   FiUser,
 } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { navbarActionIcon, navbarProfileMenuItemId } from "./type";
 import { useMirror } from "./store";
 import { LocaleSwitcher } from "@/components/locale-switcher";
@@ -29,9 +31,52 @@ const profileMenuIconMap: Record<navbarProfileMenuItemId, IconType> = {
   logout: FiLogOut,
 };
 
+const mobileViewportQuery = "(max-width: 992px)";
+
+const subscribeToMobileViewport = (onStoreChange: () => void) => {
+  const mediaQuery = window.matchMedia(mobileViewportQuery);
+
+  mediaQuery.addEventListener("change", onStoreChange);
+  return () => mediaQuery.removeEventListener("change", onStoreChange);
+};
+
+const getMobileViewportSnapshot = () => window.matchMedia(mobileViewportQuery).matches;
+const getServerMobileViewportSnapshot = () => false;
+
 const UI = () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const t = useTranslations("navbar") as (key: string) => string;
+  const isMobileViewport = useSyncExternalStore(
+    subscribeToMobileViewport,
+    getMobileViewportSnapshot,
+    getServerMobileViewportSnapshot,
+  );
+  const t = useTranslations() as (key: string) => string;
+  const locale = useLocale();
+  const rtl = locale === "ar";
+  const translate = (key: string, fallback?: string) => {
+    try {
+      return t(`navbar.${key}`);
+    } catch {
+      return fallback ?? key;
+    }
+  };
+
+  // Ensure all required keys are present in the translation file
+  const requiredKeys = [
+    "searchPlaceholder",
+    "notifications",
+    "help",
+    "profile",
+    "settings",
+    "logout",
+    "lightMode",
+    "darkMode",
+  ];
+
+  requiredKeys.forEach((key) => {
+    if (!translate(key)) {
+      console.error(`Missing translation key: navbar.${key}`);
+    }
+  });
 
   const config = useMirror("config");
   const searchQuery = useMirror("searchQuery");
@@ -41,14 +86,31 @@ const UI = () => {
   return (
     <header className={styles.navbar}>
       <Group justify="space-between" className={styles.content} wrap="nowrap">
-        <TextInput
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.currentTarget.value)}
-          placeholder={t(config.searchPlaceholder)}
-          className={styles.searchInput}
-          leftSection={<FiSearch size={16} />}
-          aria-label={t("searchPlaceholder")}
-        />
+        <Group wrap="nowrap" gap="sm" className={styles.leftActions}>
+          {isMobileViewport && (
+            <ActionIcon
+              variant="subtle"
+              aria-label="Toggle sidebar navigation"
+              className={styles.mobileMenuButton}
+              onClick={() => window.dispatchEvent(new Event("dashboard:toggle-sidebar"))}
+            >
+              <FiMenu size={17} />
+            </ActionIcon>
+          )}
+
+          <TextInput
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.currentTarget.value)}
+            placeholder={translate(
+              config.searchPlaceholder || "searchPlaceholder",
+              translate("searchPlaceholder", "Search..."),
+            )}
+            className={styles.searchInput}
+            leftSection={!rtl ? <FiSearch size={16} /> : undefined}
+            rightSection={rtl ? <FiSearch size={16} /> : undefined}
+            aria-label={translate("searchPlaceholder", "Search")}
+          />
+        </Group>
 
         <Group gap="xs" wrap="nowrap">
           {config.actions.map((action) => {
@@ -60,7 +122,7 @@ const UI = () => {
                   component={Link}
                   href={action.href}
                   variant="subtle"
-                  aria-label={t(action.label)}
+                  aria-label={translate(action.label, action.label)}
                   className={styles.actionButton}
                 >
                   <Icon size={18} />
@@ -72,7 +134,7 @@ const UI = () => {
               <ActionIcon
                 key={action.label}
                 variant="subtle"
-                aria-label={t(action.label)}
+                aria-label={translate(action.label, action.label)}
                 className={styles.actionButton}
               >
                 <Icon size={18} />
@@ -95,11 +157,6 @@ const UI = () => {
                 aria-label="Open profile menu"
               >
                 <Group gap="xs" wrap="nowrap" className={styles.profile}>
-                  <div className={styles.profileText}>
-                    <Text className={styles.name}>{config.profile.name}</Text>
-                    <Text className={styles.role}>{config.profile.roleTitle}</Text>
-                  </div>
-
                   <Avatar
                     src={config.profile.avatarSrc}
                     radius="xl"
@@ -108,6 +165,11 @@ const UI = () => {
                   >
                     {config.profile.avatarFallback ?? config.profile.name.slice(0, 2)}
                   </Avatar>
+
+                  <div className={styles.profileText}>
+                    <Text className={styles.name}>{config.profile.name}</Text>
+                    <Text className={styles.role}>{config.profile.roleTitle}</Text>
+                  </div>
 
                   <FiChevronDown size={16} className={styles.chevron} />
                 </Group>
@@ -128,7 +190,7 @@ const UI = () => {
                       leftSection={<Icon size={15} />}
                       color={isLogout ? "red" : undefined}
                     >
-                      {t(item.label)}
+                      {translate(item.label, item.label)}
                     </Menu.Item>
                   );
                 }
@@ -140,7 +202,7 @@ const UI = () => {
                     color={isLogout ? "red" : undefined}
                     onClick={isLogout ? onLogout : undefined}
                   >
-                    {t(item.label)}
+                    {translate(item.label, item.label)}
                   </Menu.Item>
                 );
               })}

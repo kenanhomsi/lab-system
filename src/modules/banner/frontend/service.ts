@@ -3,10 +3,8 @@ import { bannerModuleNames } from "../names";
 import { BannerFrontendClient } from "./client";
 import {
   CreateBannerParams,
-  DeleteBannerParams,
   FindAllBannerParams,
-  FindOneBannerParams,
-  UpdateBannerParams,
+  FindAllPublicBannerParams,
 } from "./types";
 
 @injectable()
@@ -18,20 +16,12 @@ class Service {
     return this.Client.findAll(params);
   }
 
+  async findAllPublic(params: FindAllPublicBannerParams) {
+    return this.Client.findAllPublic(params);
+  }
+
   async create(params: CreateBannerParams) {
     return this.Client.create(params);
-  }
-
-  async findOne(params: FindOneBannerParams) {
-    return this.Client.findOne(params);
-  }
-
-  async update(params: UpdateBannerParams) {
-    return this.Client.update(params);
-  }
-
-  async delete(params: DeleteBannerParams) {
-    return this.Client.delete(params);
   }
 }
 

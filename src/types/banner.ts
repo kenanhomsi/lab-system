@@ -34,8 +34,8 @@ export type CreateBannerRequest = {
   media: File;
 };
 
-export type UpdateBannerRequest = Omit<CreateBannerRequest, "media"> & {
-  media?: File;
-};
-
-export type BannerModalType = "create" | "edit" | "delete" | null;
+/**
+ * BannerModalType - Modal state for banners table.
+ * Only supports 'create' since the API doesn't support edit/delete operations.
+ */
+export type BannerModalType = "create" | null;

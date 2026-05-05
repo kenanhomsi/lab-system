@@ -1,14 +1,7 @@
-import type {
-  ActivityItem,
-  HealthSummary,
-  RecentResult,
-  StatCard,
-  UpcomingAppointment,
-} from "../type";
+import type { ActivityItem, HealthSummary, RecentResult, StatCard } from "../type";
 
 type Params = {
   stats: StatCard[];
-  upcomingAppointments: UpcomingAppointment[];
   recentResults: RecentResult[];
   healthSummary: HealthSummary;
   activity: ActivityItem[];
@@ -16,7 +9,6 @@ type Params = {
 
 const store = (): Params => ({
   stats: [],
-  upcomingAppointments: [],
   recentResults: [],
   healthSummary: {
     lastCheckup: "—",

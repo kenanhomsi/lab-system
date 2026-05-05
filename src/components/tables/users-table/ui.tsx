@@ -1,7 +1,7 @@
 "use client";
 
 import { Table } from "@/components/table";
-import { UsersHeader } from "./components";
+import { UsersHeader, UsersTableEmptyState } from "./components";
 import { useMirror } from "./store";
 
 const UI = () => {
@@ -23,24 +23,25 @@ const UI = () => {
   const rolesOptions = useMirror("rolesOptions");
   const hasActiveFilters =
     Boolean(searchValue.trim()) || Boolean(roleFilter.trim()) || isActiveFilter !== "all";
-
+  const tableEmptyState = <UsersTableEmptyState />;
   return (
     <Table
       type="normal"
       isLoading={isLoading}
       schema={schema}
       OnPageNumberChange={setPageNumber}
-      data={usersData.items || []}
+      data={usersData?.items || []}
       paginationStatic={{
-        count: usersData.totalCount || 0,
-        limit: usersData.pageSize || 20,
-        page: usersData.page || 1,
+        count: usersData?.totalCount || 0,
+        limit: usersData?.pageSize || 20,
+        page: usersData?.page || 1,
       }}
+      tableEmptyState={tableEmptyState}
     >
       <Table.Header>
         <UsersHeader
-          totalUsers={usersData.totalCount || 0}
-          visibleUsers={usersData.items?.length || 0}
+          totalUsers={usersData?.totalCount || 0}
+          visibleUsers={usersData?.items?.length || 0}
           hasActiveFilters={hasActiveFilters}
           searchValue={searchValue}
           setSearchValue={setSearchValue}

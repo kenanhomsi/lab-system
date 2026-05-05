@@ -1,11 +1,11 @@
 import { injectable, injectFromBase } from "inversify";
-import { AuthService } from "../abstraction";
 import {
-  AuthBackendClient,
-  CheckEmailProps,
-  RegisterProps,
-  ResetPasswordProps,
-} from "./client";
+  AuthService,
+  type CheckEmailProps,
+  type RegisterProps,
+  type ResetPasswordProps,
+} from "../abstraction";
+import { AuthBackendClient } from "./client";
 
 @injectable()
 @injectFromBase({ extendProperties: true })

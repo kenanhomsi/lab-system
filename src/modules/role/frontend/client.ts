@@ -3,10 +3,13 @@ import { AxiosState } from "@/modules/axios";
 import { RoleClient } from "../abstraction";
 import { endpoint } from "./endpoint";
 import {
+  AssignRolePermissionParams,
   CreateRoleParams,
   DeleteRoleParams,
   FindAllRoleParams,
   FindOneRoleParams,
+  GetRolePermissionsParams,
+  RemoveRolePermissionParams,
   UpdateRoleParams,
 } from "./types";
 
@@ -16,6 +19,15 @@ type ListItem = {
 };
 
 type ListResponse = ListItem[];
+
+type RolePermissionItem = {
+  id: string;
+  name: string;
+  description: string;
+  createdAt?: string;
+};
+
+type RolePermissionsResponse = RolePermissionItem[];
 
 const appendQueryParams = (
   path: string,
@@ -39,7 +51,7 @@ class Client extends RoleClient<AxiosState> {
     const res = await super
       .sharedFindAll({ endpoint: appendQueryParams(endpoint.findAll, params.query) })
       .perform<ListResponse>();
-    return res.data;
+    return res;
   }
 
   async create(params: CreateRoleParams) {
@@ -49,14 +61,14 @@ class Client extends RoleClient<AxiosState> {
         ...params,
       })
       .perform<ListItem>();
-    return res.data;
+    return res;
   }
 
   async findOne(params: FindOneRoleParams) {
     const res = await super
       .sharedFindOne({ endpoint: endpoint.findOne(params.id) })
       .perform<ListItem>();
-    return res.data;
+    return res;
   }
 
   async update(params: UpdateRoleParams) {
@@ -67,12 +79,40 @@ class Client extends RoleClient<AxiosState> {
         ...body,
       })
       .perform<ListItem>();
-    return res.data;
+    return res;
   }
 
   async delete(params: DeleteRoleParams) {
     const res = await super
       .sharedDelete({ endpoint: endpoint.remove(params.id) })
+      .perform<unknown>();
+    return res;
+  }
+
+  async getPermissions(params: GetRolePermissionsParams) {
+    const res = await super
+      .sharedGetPermissions({ endpoint: endpoint.permissions(params.id) })
+      .perform<RolePermissionsResponse>();
+    return res.data;
+  }
+
+  async assignPermission(params: AssignRolePermissionParams) {
+    const { id, permissionId } = params;
+    const res = await super
+      .sharedAssignPermission({
+        endpoint: endpoint.permissions(id),
+        permissionId,
+      })
+      .perform<unknown>();
+    return res.data;
+  }
+
+  async removePermission(params: RemoveRolePermissionParams) {
+    const { id, permissionId } = params;
+    const res = await super
+      .sharedRemovePermission({
+        endpoint: endpoint.removePermission(id, encodeURIComponent(permissionId)),
+      })
       .perform<unknown>();
     return res.data;
   }

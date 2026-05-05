@@ -3,11 +3,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "../store";
-import { CreateBannerRequest, UpdateBannerRequest } from "../types";
+import { CreateBannerRequest } from "../types";
 import { frontendContainer } from "@/container";
 import { bannerModuleNames, BannerFrontendService } from "@/modules/banner";
 
-const BannerMutations = (props: PropsWithChildren) => {
+const BannerMutations = ({ children }: PropsWithChildren) => {
     const queryClient = useQueryClient();
     const bannerService = frontendContainer.get<BannerFrontendService>(bannerModuleNames.service);
 
@@ -15,40 +15,18 @@ const BannerMutations = (props: PropsWithChildren) => {
         mutationFn: async (payload: CreateBannerRequest) => {
             return bannerService.create({
                 title: payload.title,
-                subtitle: payload.type,
-                targetUrl: payload.externalLink || payload.internalLink,
+                type: payload.type,
+                InternalLink: payload.internalLink,
+                ExternalLink: payload.externalLink,
+                TargetType: payload.targetType,
+                Location: payload.location,
+                DisplayOrder: payload.displayOrder,
                 startDate: payload.startDate,
                 endDate: payload.endDate,
                 isActive: payload.isActive,
-                imageFile: payload.media,
+                VisibilityRulesJson: payload.visibilityRulesJson,
+                Media: payload.media,
             });
-        },
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["admin-banners"] });
-        },
-    });
-
-    const updateBannerMutation = useMutation({
-        mutationFn: async (params: { id: string; payload: UpdateBannerRequest }) => {
-            return bannerService.update({
-                id: params.id,
-                title: params.payload.title,
-                subtitle: params.payload.type,
-                targetUrl: params.payload.externalLink || params.payload.internalLink,
-                startDate: params.payload.startDate,
-                endDate: params.payload.endDate,
-                isActive: params.payload.isActive,
-                imageFile: params.payload.media,
-            });
-        },
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["admin-banners"] });
-        },
-    });
-
-    const deleteBannerMutation = useMutation({
-        mutationFn: async (id: string) => {
-            return bannerService.delete({ id });
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["admin-banners"] });
@@ -58,16 +36,26 @@ const BannerMutations = (props: PropsWithChildren) => {
     useMirrorRegistry("createBanner", async (payload: CreateBannerRequest) =>
         createBannerMutation.mutateAsync(payload),
     );
-    useMirrorRegistry(
-        "updateBanner",
-        async (id: string, payload: UpdateBannerRequest) =>
-            updateBannerMutation.mutateAsync({ id, payload }),
-    );
+
+    const deleteBannerMutation = useMutation({
+        mutationFn: async (id: string) => {
+            const res = await fetch(`/api/admin/banners/${id}`, {
+                method: "DELETE",
+                credentials: "same-origin",
+            });
+            if (!res.ok) {
+                throw new Error("Failed to delete banner");
+            }
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["admin-banners"] });
+        },
+    });
+
     useMirrorRegistry("deleteBanner", async (id: string) =>
         deleteBannerMutation.mutateAsync(id),
     );
-
-    return props;
+    return <>{children}</>;
 };
 
 export { BannerMutations };

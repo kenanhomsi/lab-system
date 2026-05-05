@@ -8,13 +8,15 @@ import {
   FiArrowRight,
   FiArrowUp,
   FiCalendar,
+  FiMoreHorizontal,
   FiUsers,
 } from "react-icons/fi";
 import { BarChart } from "@mantine/charts";
 import { useLocale, useTranslations } from "next-intl";
 import { useMirror } from "./store";
 import type { StatCard } from "./type";
-import { DashboardAdCard } from "@/components/dashboard/ad-space";
+import { PromoBanner } from "@/components/dashboard/promo-banner";
+import { SlideCardsDashboard } from "../../../(website)/ui/landing/slide-cards-section";
 import styles from "./styles.module.scss";
 
 const STAT_ICONS = {
@@ -22,15 +24,6 @@ const STAT_ICONS = {
   calendar: FiCalendar,
   activity: FiActivity,
 } as const;
-
-const SCHEDULE_STATUS_CLASS: Record<
-  "confirmed" | "inProgress" | "waiting",
-  string
-> = {
-  confirmed: styles.statusConfirmed,
-  inProgress: styles.statusInProgress,
-  waiting: styles.statusWaiting,
-};
 
 const REFERRAL_STATUS_CLASS: Record<"pending" | "urgent", string> = {
   pending: styles.refPending,
@@ -80,7 +73,6 @@ const UI = () => {
   const t = useTranslations("doctor.dashboard");
   const locale = useLocale();
   const stats = useMirror("stats");
-  const todayAppointments = useMirror("todayAppointments");
   const pendingReferrals = useMirror("pendingReferrals");
   const recentPatients = useMirror("recentPatients");
   const weeklySummary = useMirror("weeklySummary");
@@ -94,12 +86,6 @@ const UI = () => {
     [weeklySummary, t],
   );
 
-  const formatTime = (iso: string) => {
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return iso;
-    return d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
-  };
-
   const formatDate = (iso: string) => {
     if (iso === "—") return iso;
     const d = new Date(iso);
@@ -109,106 +95,131 @@ const UI = () => {
 
   return (
     <div className={styles.page}>
-      <p className={styles.statLabel} style={{ marginBottom: 12 }}>
-        {t("eyebrow")}
-      </p>
+      <div className={styles.shellGrid}>
+        <section className={styles.mainColumn}>
+          <PromoBanner location="doctor_dashboard" />
 
-      <div className={styles.statsRow}>
-        {stats.map((stat) => (
-          <StatCardItem key={stat.id} stat={stat} />
-        ))}
-      </div>
-
-      <DashboardAdCard />
-
-      <section className={styles.glassCard} style={{ marginBottom: 24 }}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>{t("scheduleTitle")}</h2>
-          <button type="button" className={styles.viewAll}>
-            {t("scheduleViewAll")} <FiArrowRight size={14} />
-          </button>
-        </div>
-        <div className={styles.scheduleHead}>
-          <span>{t("scheduleCols.patient")}</span>
-          <span>{t("scheduleCols.time")}</span>
-          <span>{t("scheduleCols.type")}</span>
-          <span>{t("scheduleCols.status")}</span>
-        </div>
-        {todayAppointments.map((row) => (
-          <div key={row.id} className={styles.scheduleRow}>
-            <span className={styles.patientCell}>{row.patientName}</span>
-            <span className={styles.timeCell}>{formatTime(row.timeIso)}</span>
-            <span className={styles.typeCell}>
-              {t(`visitTypes.${row.visitType}`)}
-            </span>
-            <span
-              className={`${styles.statusBadge} ${SCHEDULE_STATUS_CLASS[row.statusVariant]}`}
-            >
-              {t(`scheduleStatus.${row.statusVariant}`)}
-            </span>
-          </div>
-        ))}
-      </section>
-
-      <div className={styles.midGrid}>
-        <div className={styles.glassCard}>
-          <h3 className={styles.midTitle}>{t("referralsTitle")}</h3>
-          <p className={styles.midSub}>{t("referralsSubtitle")}</p>
-          <div className={styles.referralList}>
-            {pendingReferrals.map((ref) => (
-              <div key={ref.id} className={styles.referralRow}>
-                <div className={styles.referralMain}>
-                  <div className={styles.referralPatient}>{ref.patientName}</div>
-                  <div className={styles.referralTests}>{ref.testSummary}</div>
-                  <div className={styles.referralTests}>
-                    {t(`referrals.${ref.rowKey}.note`)}
-                  </div>
+          <article className={styles.heroCard}>
+            <div className={styles.heroContent}>
+              <p className={styles.heroEyebrow}>{t("eyebrow")}</p>
+              <h1 className={styles.heroTitle}>{t("chartTitle")}</h1>
+              <p className={styles.heroSubtitle}>{t("chartSubtitle")}</p>
+            </div>
+            <div className={styles.heroStats}>
+              {stats.map((stat) => (
+                <div key={stat.id} className={styles.heroStatPill}>
+                  <span>{t(`stats.${stat.id}`)}</span>
+                  <strong>{stat.value.toLocaleString(locale)}</strong>
                 </div>
-                <span
-                  className={`${styles.statusBadge} ${REFERRAL_STATUS_CLASS[ref.statusVariant]}`}
-                >
-                  {t(`referralStatus.${ref.statusVariant}`)}
-                </span>
-              </div>
+              ))}
+            </div>
+          </article>
+
+          <div className={styles.statsRow}>
+            {stats.map((stat) => (
+              <StatCardItem key={stat.id} stat={stat} />
             ))}
           </div>
-        </div>
 
-        <div className={styles.glassCard}>
-          <h3 className={styles.midTitle}>{t("chartTitle")}</h3>
-          <p className={styles.midSub}>{t("chartSubtitle")}</p>
-          <BarChart
-            h={220}
-            data={chartData}
-            dataKey="day"
-            series={[{ name: "value", color: "var(--primary)" }]}
-            barProps={{ radius: [6, 6, 0, 0] }}
-            tickLine="none"
-            gridAxis="none"
-          />
-        </div>
-      </div>
+          <div className={styles.midGrid}>
+            <div className={styles.glassCard}>
+              <div className={styles.sectionHeader}>
+                <h3 className={styles.midTitle}>{t("referralsTitle")}</h3>
+                <span className={styles.liveChip}>{t("eyebrow")}</span>
+              </div>
+              <p className={styles.midSub}>{t("referralsSubtitle")}</p>
+              <div className={styles.referralList}>
+                {pendingReferrals.map((ref) => (
+                  <div key={ref.id} className={styles.referralRow}>
+                    <div className={styles.referralMain}>
+                      <div className={styles.referralPatient}>{ref.patientName}</div>
+                      <div className={styles.referralTests}>{ref.testSummary}</div>
+                      <div className={styles.referralTests}>{t(`referrals.${ref.rowKey}.note`)}</div>
+                    </div>
+                    <span className={`${styles.statusBadge} ${REFERRAL_STATUS_CLASS[ref.statusVariant]}`}>
+                      {t(`referralStatus.${ref.statusVariant}`)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-      <section className={styles.recentSection}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>{t("recentTitle")}</h2>
-          <button type="button" className={styles.viewAll}>
-            {t("recentViewAll")} <FiArrowRight size={14} />
-          </button>
-        </div>
-        <div className={styles.recentHead}>
-          <span>{t("recentCols.patient")}</span>
-          <span>{t("recentCols.lastVisit")}</span>
-          <span>{t("recentCols.notes")}</span>
-        </div>
-        {recentPatients.map((row) => (
-          <div key={row.id} className={styles.recentRow}>
-            <span className={styles.patientCell}>{row.patientName}</span>
-            <span className={styles.timeCell}>{formatDate(row.lastVisitIso)}</span>
-            <span className={styles.notesCell}>{t(`recentPatients.${row.rowKey}.notes`)}</span>
+            <div className={styles.glassCard}>
+              <h3 className={styles.midTitle}>{t("chartTitle")}</h3>
+              <p className={styles.midSub}>{t("chartSubtitle")}</p>
+              <BarChart
+                h={220}
+                data={chartData}
+                dataKey="day"
+                series={[{ name: "value", color: "var(--primary)" }]}
+                barProps={{ radius: [6, 6, 0, 0] }}
+                tickLine="none"
+                gridAxis="none"
+              />
+            </div>
           </div>
-        ))}
-      </section>
+
+          <section className={styles.recentSection}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>{t("recentTitle")}</h2>
+              <button type="button" className={styles.viewAll}>
+                {t("recentViewAll")} <FiArrowRight size={14} />
+              </button>
+            </div>
+            <div className={styles.recentHead}>
+              <span>{t("recentCols.patient")}</span>
+              <span>{t("recentCols.lastVisit")}</span>
+              <span>{t("recentCols.notes")}</span>
+            </div>
+            {recentPatients.map((row) => (
+              <div key={row.id} className={styles.recentRow}>
+                <span className={styles.patientCell}>{row.patientName}</span>
+                <span className={styles.timeCell}>{formatDate(row.lastVisitIso)}</span>
+                <span className={styles.notesCell}>{t(`recentPatients.${row.rowKey}.notes`)}</span>
+              </div>
+            ))}
+          </section>
+        </section>
+
+        <aside className={styles.sideColumn}>
+          <SlideCardsDashboard />
+          <div className={styles.profileCard}>
+            <div className={styles.profileTop}>
+              <div className={styles.profileIdentity}>
+                <div className={styles.profileAvatar}>DR</div>
+                <div>
+                  <div className={styles.profileName}>{t("eyebrow")}</div>
+                  <div className={styles.profileSub}>{t("referralsTitle")}</div>
+                </div>
+              </div>
+              <button type="button" className={styles.inlineMenuBtn} aria-label={t("recentViewAll")}>
+                <FiMoreHorizontal size={16} />
+              </button>
+            </div>
+            <h3 className={styles.midTitle}>{t("chartTitle")}</h3>
+            <div className={styles.miniBars}>
+              {chartData.map((item) => (
+                <div key={item.day} className={styles.miniBarItem}>
+                  <div className={styles.miniBar} style={{ height: `${Math.max(18, item.value * 3)}px` }} />
+                  <span>{item.day}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.glassCard}>
+            <h3 className={styles.midTitle}>{t("stats.completedToday")}</h3>
+            <div className={styles.metricList}>
+              {stats.map((stat) => (
+                <div key={stat.id} className={styles.metricRow}>
+                  <span>{t(`stats.${stat.id}`)}</span>
+                  <strong>{stat.value.toLocaleString(locale)}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 };

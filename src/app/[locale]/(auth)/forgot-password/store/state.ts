@@ -3,8 +3,8 @@ type Step = "identifier" | "code" | "newPassword";
 type Params = {
   step: Step;
   setStep: (step: Step) => void;
-  identifier: string;
-  setIdentifier: (v: string) => void;
+  email: string;
+  setEmail: (v: string) => void;
   code: string;
   setCode: (v: string) => void;
   newPassword: string;
@@ -22,8 +22,8 @@ type Params = {
 const store = (): Params => ({
   step: "identifier",
   setStep: () => {},
-  identifier: "",
-  setIdentifier: () => {},
+  email: "",
+  setEmail: () => {},
   code: "",
   setCode: () => {},
   newPassword: "",

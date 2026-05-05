@@ -6,12 +6,13 @@ import {
   Modal,
   Paper,
   PasswordInput,
+  Select,
   SimpleGrid,
   Stack,
   Stepper,
   Text,
-  TextInput,
   Textarea,
+  TextInput,
   ThemeIcon,
   Title,
 } from "@mantine/core";
@@ -26,7 +27,7 @@ import {
   IconUsersGroup,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import { useMirror } from "./store";
 
 const SectionHeader = ({
@@ -60,21 +61,23 @@ const UI = () => {
   const isOpen = useMirror("isOpen");
   const form = useMirror("form");
   const isSubmitting = useMirror("isSubmitting");
+  const roleOptions = useMirror("roleOptions");
+  const isLoadingRoles = useMirror("isLoadingRoles");
   const canSubmit = useMirror("canSubmit");
   const updateField = useMirror("updateField");
   const handleClose = useMirror("handleClose");
   const submit = useMirror("submit");
 
   const [step, setStep] = useState(0);
-
-  useEffect(() => {
-    if (!isOpen) setStep(0);
-  }, [isOpen]);
+  const close = () => {
+    setStep(0);
+    handleClose();
+  };
 
   return (
     <Modal
       opened={isOpen}
-      onClose={handleClose}
+      onClose={close}
       title={
         <Group gap="sm" wrap="nowrap">
           <ThemeIcon size={42} radius="md" variant="light" color="blue">
@@ -145,21 +148,18 @@ const UI = () => {
                   value={form.password}
                   onChange={(e) => updateField("password", e.target.value)}
                 />
-                <TextInput
+                <Select
                   label={t("roles")}
                   placeholder={t("rolesPlaceholder")}
                   description={t("rolesDescription")}
+                  data={roleOptions}
+                  searchable
+                  clearable
+                  nothingFoundMessage={t("noRolesFound")}
                   leftSection={<IconUsersGroup size={16} />}
-                  value={form.roles.join(", ")}
-                  onChange={(e) =>
-                    updateField(
-                      "roles",
-                      e.target.value
-                        .split(",")
-                        .map((item) => item.trim())
-                        .filter(Boolean),
-                    )
-                  }
+                  value={form.roles[0] ?? null}
+                  onChange={(value) => updateField("roles", value ? [value] : [])}
+                  disabled={isLoadingRoles}
                 />
               </SimpleGrid>
             </Stack>
@@ -212,7 +212,7 @@ const UI = () => {
         )}
 
         <Group justify="space-between">
-          <Button variant="subtle" color="gray" onClick={handleClose} disabled={isSubmitting}>
+          <Button variant="subtle" color="gray" onClick={close} disabled={isSubmitting}>
             {tc("cancel")}
           </Button>
           <Group gap="sm">

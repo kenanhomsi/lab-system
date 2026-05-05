@@ -1,7 +1,7 @@
 "use client";
 import { Box } from "@mantine/core";
 import { DataTable } from "mantine-datatable";
-import Image from "next/image";
+import { IconInbox } from "@tabler/icons-react";
 import styles from "../style.module.scss";
 import { useMirror } from "../store";
 import { PaginationComp, SkeletonTable } from "../components";
@@ -14,11 +14,15 @@ const ExpansionTable = () => {
   const ContentComp = useMirror("ContentComp");
   const isLoading = useMirror("isLoading");
   const onRowClick = useMirror("onRowClick");
-  const hasRecords = Array.isArray(data) && data.length > 0;
+  const records = Array.isArray(data) ? data : [];
+  const hasRecords = records.length > 0;
   const minHeight = hasRecords ? undefined : "20rem";
-  const emptyStateIcon = hasRecords ? undefined : (
-    <Box className={styles.emptyStateIcon}>
-      <Image src="/icons/table-empty.svg" alt="" width={64} height={64} />
+  const emptyState = hasRecords ? (
+    <></>
+  ) : (
+    <Box className={styles.emptyStateIcon} style={{ flexDirection: "column" }}>
+      <IconInbox size={26} />
+      <span>No records found</span>
     </Box>
   );
   return (
@@ -35,12 +39,12 @@ const ExpansionTable = () => {
               return `${styles.hoverRow}`;
             }}
             columns={schema}
-            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-            records={data as any}
+            records={records}
             minHeight={minHeight}
-            noRecordsText="No records found"
-            noRecordsIcon={emptyStateIcon}
+            emptyState={emptyState}
+            noRecordsText=""
             highlightOnHover
+            striped
             verticalSpacing="xs"
             horizontalSpacing="xs"
             classNames={{

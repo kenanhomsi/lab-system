@@ -1,0 +1,149 @@
+.navbar {
+  position: relative;
+  top: 24px;
+  box-sizing: border-box;
+  /* Fill space between sidebar gutter and page edge (90% + offset overflowed when sidebar expanded). */
+  margin-inline-start: calc(24px + var(--dashboard-sidebar-width, 64px) + 16px);
+  margin-inline-end: 24px;
+  width: calc(100% - (24px + var(--dashboard-sidebar-width, 64px) + 16px + 24px));
+  min-width: 0;
+  height: 64px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 20px rgba(0, 100, 126, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  padding: 0 18px;
+  z-index: 15;
+}
+
+:global(html.dark) .navbar {
+  background: rgba(30, 30, 30, 0.55);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.content {
+  height: 100%;
+  min-width: 0;
+}
+
+.searchInput {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 470px;
+}
+.searchInput :global(.mantine-Input-input) {
+  height: 44px;
+  border: 0;
+  border-radius: 14px;
+  background: #f3f5fa;
+  color: #495064;
+  padding-inline-start: 38px;
+  font-size: 14px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.searchInput :global(.mantine-Input-input)::-moz-placeholder {
+  color: #97a0b4;
+}
+.searchInput :global(.mantine-Input-input)::placeholder {
+  color: #97a0b4;
+}
+.searchInput :global(.mantine-Input-section) {
+  color: #8a93a7;
+  inset-inline-start: 12px;
+}
+
+:global(html.dark) .searchInput :global(.mantine-Input-input) {
+  background: rgba(255, 255, 255, 0.07);
+  color: #d8dae0;
+}
+:global(html.dark) .searchInput :global(.mantine-Input-input)::-moz-placeholder {
+  color: #5a6070;
+}
+:global(html.dark) .searchInput :global(.mantine-Input-input)::placeholder {
+  color: #5a6070;
+}
+:global(html.dark) .searchInput :global(.mantine-Input-section) {
+  color: #5a6070;
+}
+
+.actionButton {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: #6d7488;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.actionButton:hover {
+  background: #eef1f8;
+  color: #1f2432;
+}
+
+:global(html.dark) .actionButton {
+  color: #8d97ad;
+}
+:global(html.dark) .actionButton:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e5ed;
+}
+
+.profile {
+  padding-inline-start: 8px;
+  border-inline-start: 1px solid #ebedf4;
+  transition: border-color 0.2s ease;
+}
+
+:global(html.dark) .profile {
+  border-inline-start-color: rgba(255, 255, 255, 0.1);
+}
+
+.profileButton {
+  border-radius: 14px;
+  transition: background-color 0.2s ease;
+}
+.profileButton:hover {
+  background: #f7f9fc;
+}
+
+:global(html.dark) .profileButton:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.profileText {
+  text-align: end;
+  line-height: 1.1;
+}
+
+.name {
+  color: #1a6f8f;
+  font-size: 22px;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+:global(html.dark) .name {
+  color: #5dd4ed;
+}
+
+.role {
+  color: #838ca2;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  transition: color 0.2s ease;
+}
+
+:global(html.dark) .role {
+  color: #5a6070;
+}
+
+.chevron {
+  color: #8c93a7;
+  transition: color 0.2s ease;
+}
+
+:global(html.dark) .chevron {
+  color: #5a6070;
+}/*# sourceMappingURL=styles.module.css.map */

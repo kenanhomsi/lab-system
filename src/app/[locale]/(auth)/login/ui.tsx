@@ -4,13 +4,10 @@ import { useLocale, useTranslations } from "next-intl";
 import { LoginFooterLinks } from "./ui/footer-links";
 import { LabPanel } from "./ui/lab-panel";
 import { LoginForm } from "./ui/login-form";
-import { RoleSelector } from "./ui/role-selector";
 import { useMirror } from "./store";
 const UI = () => {
 
-    const showAdmin = useMirror("showAdmin");
     const setShowAdmin = useMirror("setShowAdmin");
-    const selectedRole = useMirror("selectedRole");
     const setSelectedRole = useMirror("setSelectedRole");
     const locale = useLocale();
     const t = useTranslations("auth");
@@ -21,9 +18,9 @@ const UI = () => {
             <section className="relative flex w-full flex-col bg-surface lg:w-1/2">
                 <div className="flex items-center justify-between p-6 lg:p-8">
                     <Link href={`/${locale}`} className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#009cc2] to-[#006a85] shadow-lg">
                             <span
-                                className="material-symbols-outlined text-2xl text-on-primary"
+                                className="material-symbols-outlined text-2xl text-white"
                                 style={{
                                     fontVariationSettings:
                                         "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24",
@@ -39,7 +36,7 @@ const UI = () => {
                     <div className="flex items-center gap-3">
                         <Link
                             href={`/${locale}`}
-                            className="hidden text-sm font-semibold text-secondary transition-colors hover:text-primary md:block"
+                            className="hidden text-sm font-semibold text-on-surface-variant transition-colors hover:text-[#009cc2] md:block"
                         >
                             {t("backToHome")}
                         </Link>
@@ -53,7 +50,7 @@ const UI = () => {
                                     return next;
                                 });
                             }}
-                            className="h-2 w-2 rounded-full bg-outline/20 transition-colors hover:bg-primary/40"
+                            className="h-2 w-2 rounded-full bg-outline/20 transition-colors hover:bg-[#009cc2]/40"
                             aria-hidden="true"
                         />
                     </div>
@@ -64,22 +61,22 @@ const UI = () => {
                             <h2 className="mb-2 font-headline text-3xl font-bold text-on-surface">
                                 {t("welcomeBack")}
                             </h2>
-                            <p className="text-sm text-secondary">
+                            <p className="text-sm text-on-surface-variant">
                                 {t("selectPortal")}
                             </p>
                         </div>
-                        <RoleSelector value={selectedRole} onChange={setSelectedRole} showAdmin={showAdmin} />
+                        {/* <RoleSelector value={selectedRole} onChange={setSelectedRole} showAdmin={showAdmin} /> */}
                         <LoginForm />
                         <div className="mt-8 space-y-3 text-center">
-                            <p className="text-sm text-secondary">
+                            <p className="text-sm text-on-surface-variant">
                                 {t("noAccount")}{" "}
-                                <Link href={`/${locale}/register`} className="font-bold text-primary hover:underline">
+                                <Link href={`/${locale}/register`} className="font-bold text-[#009cc2] hover:underline">
                                     {t("createAccount")}
                                 </Link>
                             </p>
                             <Link
                                 href={`/${locale}`}
-                                className="inline-block text-sm font-medium text-secondary hover:text-primary"
+                                className="inline-block text-sm font-medium text-on-surface-variant hover:text-[#009cc2]"
                             >
                                 {t("continueAsGuest")}
                             </Link>
@@ -89,7 +86,7 @@ const UI = () => {
                 <LoginFooterLinks />
             </section>
             <div className="pointer-events-none fixed right-0 top-0 h-32 w-32 bg-tertiary-fixed opacity-5 blur-[100px]" />
-            <div className="pointer-events-none fixed bottom-0 left-1/2 h-64 w-64 bg-primary opacity-5 blur-[120px]" />
+            <div className="pointer-events-none fixed bottom-0 left-1/2 h-64 w-64 bg-[#009cc2] opacity-5 blur-[120px]" />
         </main>
     )
 }

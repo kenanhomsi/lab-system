@@ -1,0 +1,21 @@
+@keyframes tableSkeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    100deg,
+    var(--surface-container) 0%,
+    var(--surface-container-high) 40%,
+    var(--surface-container) 100%
+  );
+  background-size: 200% 100%;
+  animation: tableSkeletonShimmer 1.4s ease-in-out infinite;
+}

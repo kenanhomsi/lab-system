@@ -7,6 +7,7 @@ export type UserItem = {
   isActive: boolean;
   emailConfirmed: boolean;
   createdAt: string;
+  roles?: string[];
 };
 
 export type UsersResponse = {

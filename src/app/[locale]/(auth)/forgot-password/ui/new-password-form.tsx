@@ -5,7 +5,7 @@ import { useMirror } from "../store";
 
 export function NewPasswordForm() {
   const t = useTranslations("auth");
-  const identifier = useMirror("identifier");
+  const email = useMirror("email");
   const code = useMirror("code");
   const newPassword = useMirror("newPassword");
   const setNewPassword = useMirror("setNewPassword");
@@ -15,6 +15,13 @@ export function NewPasswordForm() {
   const setLoading = useMirror("setLoading");
   const setError = useMirror("setError");
   const setSuccess = useMirror("setSuccess");
+  const passwordMismatch =
+    confirmPassword.length > 0 && newPassword !== confirmPassword;
+  const canSubmit =
+    !loading &&
+    newPassword.trim().length >= 6 &&
+    confirmPassword.trim().length >= 6 &&
+    !passwordMismatch;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,7 +35,7 @@ export function NewPasswordForm() {
       const res = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, code, newPassword }),
+        body: JSON.stringify({ email, code, newPassword }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -58,8 +65,9 @@ export function NewPasswordForm() {
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           required
+          autoComplete="new-password"
           minLength={6}
-          className="w-full rounded-xl border-none bg-surface-container-low py-4 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+          className="w-full rounded-xl border-none bg-surface-container-low px-4 py-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
         />
       </div>
       <div>
@@ -75,14 +83,22 @@ export function NewPasswordForm() {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
+          autoComplete="new-password"
           minLength={6}
-          className="w-full rounded-xl border-none bg-surface-container-low py-4 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+          aria-invalid={passwordMismatch}
+          aria-describedby={passwordMismatch ? "confirm-password-error" : undefined}
+          className="w-full rounded-xl border-none bg-surface-container-low px-4 py-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
         />
+        {passwordMismatch ? (
+          <p id="confirm-password-error" className="mt-2 text-sm text-red-500">
+            {t("passwordMismatch")}
+          </p>
+        ) : null}
       </div>
       <button
         type="submit"
-        disabled={loading}
-        className="clinical-gradient w-full rounded-xl py-4 font-headline font-bold text-on-primary shadow-lg shadow-primary/20 disabled:opacity-50"
+        disabled={!canSubmit}
+        className="clinical-gradient w-full rounded-xl py-4 font-headline font-bold text-on-primary shadow-lg shadow-primary/20 transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading ? t("resetting") : t("resetPassword")}
       </button>

@@ -15,6 +15,8 @@ const UI = () => {
   const submitRegisterForm = useMirror("submitRegisterForm");
   const locale = useLocale();
   const t = useTranslations("auth");
+  const inputClassName =
+    "w-full rounded-xl border-none bg-surface-container-low px-4 py-3 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40";
 
   if (success) {
     return (
@@ -60,12 +62,16 @@ const UI = () => {
         />
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400"
+          >
             {error}
           </div>
         )}
 
-        <form onSubmit={submitRegisterForm} className="space-y-4">
+        <form onSubmit={submitRegisterForm} className="space-y-4" aria-busy={loading}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="fullName" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
@@ -76,7 +82,8 @@ const UI = () => {
                 name="fullName"
                 type="text"
                 required
-                className="w-full rounded-xl border-none bg-surface-container-low py-3 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+                autoComplete="name"
+                className={inputClassName}
               />
             </div>
             <div>
@@ -88,7 +95,8 @@ const UI = () => {
                 name="mobile"
                 type="tel"
                 required
-                className="w-full rounded-xl border-none bg-surface-container-low py-3 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+                autoComplete="tel"
+                className={inputClassName}
               />
             </div>
           </div>
@@ -102,7 +110,8 @@ const UI = () => {
               name="email"
               type="email"
               required
-              className="w-full rounded-xl border-none bg-surface-container-low py-3 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+              autoComplete="email"
+              className={inputClassName}
             />
           </div>
 
@@ -115,7 +124,8 @@ const UI = () => {
               name="city"
               type="text"
               required
-              className="w-full rounded-xl border-none bg-surface-container-low py-3 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+              autoComplete="address-level2"
+              className={inputClassName}
             />
           </div>
 
@@ -132,7 +142,7 @@ const UI = () => {
                   min={0}
                   max={150}
                   required
-                  className="w-full rounded-xl border-none bg-surface-container-low py-3 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+                  className={inputClassName}
                 />
               </div>
               <div>
@@ -143,7 +153,7 @@ const UI = () => {
                   id="gender"
                   name="gender"
                   required
-                  className="w-full rounded-xl border-none bg-surface-container-low py-3 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+                  className={inputClassName}
                 >
                   <option value="male">{t("male")}</option>
                   <option value="female">{t("female")}</option>
@@ -162,12 +172,12 @@ const UI = () => {
                 name="specialty"
                 type="text"
                 required
-                className="w-full rounded-xl border-none bg-surface-container-low py-3 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+                className={inputClassName}
               />
             </div>
           )}
 
-          {selectedRole === "lab" && (
+          {selectedRole === "LabPartner" && (
             <div>
               <label htmlFor="labName" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
                 {t("labName")}
@@ -177,7 +187,7 @@ const UI = () => {
                 name="labName"
                 type="text"
                 required
-                className="w-full rounded-xl border-none bg-surface-container-low py-3 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+                className={inputClassName}
               />
             </div>
           )}
@@ -192,8 +202,9 @@ const UI = () => {
                 name="password"
                 type="password"
                 required
+                autoComplete="new-password"
                 minLength={6}
-                className="w-full rounded-xl border-none bg-surface-container-low py-3 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+                className={inputClassName}
               />
             </div>
             <div>
@@ -205,8 +216,9 @@ const UI = () => {
                 name="confirmPassword"
                 type="password"
                 required
+                autoComplete="new-password"
                 minLength={6}
-                className="w-full rounded-xl border-none bg-surface-container-low py-3 px-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0"
+                className={inputClassName}
               />
             </div>
           </div>
@@ -215,7 +227,7 @@ const UI = () => {
             <button
               type="submit"
               disabled={loading}
-              className="clinical-gradient flex w-full items-center justify-center gap-2 rounded-xl py-4 font-headline font-bold text-on-primary shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-primary/40 disabled:opacity-50"
+              className="clinical-gradient flex w-full items-center justify-center gap-2 rounded-xl py-4 font-headline font-bold text-on-primary shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? t("creatingAccount") : t("createAccount")}
             </button>

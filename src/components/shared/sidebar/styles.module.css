@@ -1,0 +1,183 @@
+.sidebar {
+  position: fixed;
+  top: 24px;
+  inset-inline-start: 24px;
+  height: calc(100vh - 48px);
+  border: 1px solid #e6e8ef;
+  background: #f6f7fb;
+  z-index: 20;
+  overflow: hidden;
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, border-color 0.2s ease, padding 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rail {
+  width: 64px;
+  padding: 10px 8px;
+  border-radius: 22px;
+}
+
+.expanded {
+  width: 232px;
+  padding: 14px 12px;
+  border-radius: 22px;
+}
+
+:global(html.dark) .sidebar {
+  background: rgba(28, 27, 27, 0.85);
+  border-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.iconButton {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: #71778c;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.iconButton svg {
+  display: block;
+  color: inherit;
+}
+.iconButton:hover {
+  background: #eceff7;
+  color: #232836;
+}
+
+:global(html.dark) .iconButton {
+  color: #8d97ad;
+}
+:global(html.dark) .iconButton svg {
+  color: inherit;
+}
+:global(html.dark) .iconButton:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e5ed;
+}
+
+.dividerNarrow {
+  width: 36px;
+  margin: 3px auto;
+  border-color: #e2e5ee;
+  transition: border-color 0.2s ease;
+}
+
+:global(html.dark) .dividerNarrow {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.togglePillSmall {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: #a0aec0;
+  background: #1c1c1e;
+  border-radius: 10px;
+  border-start-end-radius: 14px;
+  border-end-end-radius: 14px;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+.togglePillSmall:hover {
+  color: #e2e8f0;
+  background: #252528;
+}
+
+:global(html.dark) .togglePillSmall {
+  background: #121212;
+  color: #9ca8b8;
+}
+:global(html.dark) .togglePillSmall:hover {
+  background: #1a1a1a;
+  color: #e2e5ed;
+}
+
+.content {
+  height: 100%;
+  min-height: 0;
+}
+
+.appsLabel {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4a5163;
+}
+
+:global(html.dark) .appsLabel {
+  color: #b4bcc8;
+}
+
+.navRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 12px;
+  color: #2f3543;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.navRow svg {
+  display: block;
+  flex-shrink: 0;
+  color: inherit;
+}
+.navRow:hover {
+  background: #eceff7;
+  color: #141820;
+}
+
+:global(html.dark) .navRow {
+  color: #8d97ad;
+}
+:global(html.dark) .navRow:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e5ed;
+}
+
+.navLabel {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+}
+
+.divider {
+  width: 100%;
+  margin: 4px 0;
+  border-color: #e2e5ee;
+  transition: border-color 0.2s ease;
+}
+
+:global(html.dark) .divider {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* active nav item AND active theme row */
+.active,
+.activeTheme {
+  background: var(--primary) !important;
+  color: var(--on-primary) !important;
+}
+.active svg,
+.activeTheme svg {
+  color: inherit;
+}
+.active:hover,
+.activeTheme:hover {
+  background: var(--primary) !important;
+  color: var(--on-primary) !important;
+}/*# sourceMappingURL=styles.module.css.map */

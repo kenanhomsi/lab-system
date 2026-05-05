@@ -8,7 +8,7 @@ const State = (props: PropsWithChildren) => {
   const { children } = props;
 
   const [step, setStep] = useState<Step>("identifier");
-  const [identifier, setIdentifier] = useState("");
+  const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -18,8 +18,8 @@ const State = (props: PropsWithChildren) => {
 
   useMirrorRegistry("step", step);
   useMirrorRegistry("setStep", setStep);
-  useMirrorRegistry("identifier", identifier);
-  useMirrorRegistry("setIdentifier", setIdentifier);
+  useMirrorRegistry("email", email);
+  useMirrorRegistry("setEmail", setEmail);
   useMirrorRegistry("code", code);
   useMirrorRegistry("setCode", setCode);
   useMirrorRegistry("newPassword", newPassword);

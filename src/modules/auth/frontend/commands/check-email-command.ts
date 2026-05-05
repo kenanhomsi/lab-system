@@ -1,8 +1,7 @@
 import { inject, injectable } from "inversify";
 import { authModuleNames } from "../../names";
-import { AuthService } from "../../abstraction";
+import { AuthService, type CheckEmailProps } from "../../abstraction";
 import { eventModuleNames, EventService } from "@/modules/events";
-import { CheckEmailProps } from "../../backend";
 
 @injectable()
 class Command {

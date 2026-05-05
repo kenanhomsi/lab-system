@@ -1,0 +1,79 @@
+.roleGrid {
+  display: grid;
+  width: 100%;
+  gap: var(--mantine-spacing-xs);
+  margin-bottom: var(--mantine-spacing-xl);
+}
+
+.roleGridLogin {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 640px) {
+  .roleGridLogin {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.roleGridLoginAdmin {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (min-width: 640px) {
+  .roleGridLoginAdmin {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+.roleGridRegister {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.roleButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mantine-spacing-xs);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-xs);
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.roleButton:hover {
+  border-color: var(--mantine-color-gray-4);
+  background: var(--mantine-color-gray-0);
+}
+
+.roleButtonActive {
+  border-color: var(--mantine-primary-color-filled);
+  background: color-mix(in srgb, var(--mantine-primary-color-filled) 12%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--mantine-primary-color-filled) 35%, transparent);
+}
+.roleButtonActive:hover {
+  border-color: var(--mantine-primary-color-filled);
+  background: color-mix(in srgb, var(--mantine-primary-color-filled) 14%, transparent);
+}
+
+.roleIcon {
+  color: var(--mantine-primary-color-filled);
+}
+
+.roleIconInactive {
+  color: var(--mantine-color-dimmed);
+}
+
+.roleLabel {
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.roleLabelActive {
+  color: var(--mantine-color-text);
+}
+
+.roleLabelInactive {
+  color: var(--mantine-color-dimmed);
+}/*# sourceMappingURL=role-selector.module.css.map */

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: "row-reverse",
-    backgroundColor: "#00647e",
+    backgroundColor: "#009cc2",
     paddingVertical: 6,
     paddingHorizontal: 4,
   },

@@ -17,6 +17,13 @@ const Init = (props: FactoryProps & PropsWithChildren) => {
     onReorder,
     withDrag,
     onRowClick,
+    tableEmptyState,
+    tableRowClassName,
+    dataTableClassNames,
+    tableStriped,
+    tableHighlightOnHover,
+    dataTableVerticalSpacing,
+    dataTableHorizontalSpacing,
   } = props;
 
   useMirrorRegistry("OnPageNumberChange", OnPageNumberChange);
@@ -29,6 +36,13 @@ const Init = (props: FactoryProps & PropsWithChildren) => {
   useMirrorRegistry("isLoading", isLoading);
   useMirrorRegistry("onReorder", onReorder);
   useMirrorRegistry("withDrag", withDrag);
+  useMirrorRegistry("tableEmptyState", tableEmptyState);
+  useMirrorRegistry("tableRowClassName", tableRowClassName);
+  useMirrorRegistry("dataTableClassNames", dataTableClassNames);
+  useMirrorRegistry("tableStriped", tableStriped);
+  useMirrorRegistry("tableHighlightOnHover", tableHighlightOnHover);
+  useMirrorRegistry("dataTableVerticalSpacing", dataTableVerticalSpacing);
+  useMirrorRegistry("dataTableHorizontalSpacing", dataTableHorizontalSpacing);
 
   return <>{children}</>;
 };

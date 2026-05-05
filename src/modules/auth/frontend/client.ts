@@ -4,6 +4,10 @@ import { AuthClient } from "../abstraction";
 import { signIn } from "next-auth/react";
 import { eventModuleNames, EventService } from "@/modules/events";
 import { RegisterSchemaType } from "../backend/schema/register";
+import {
+  RenewAccessTokenPayloadType,
+  RenewAccessTokenSchemaType,
+} from "../backend/schema/renew-access-token";
 import { endpoint } from "./endpoint";
 
 type loginParams = {
@@ -28,6 +32,12 @@ type ResetPasswordFrontendProps = {
   newPassword: string;
 };
 
+const unwrapRenewAccessTokenResponse = (
+  response: RenewAccessTokenSchemaType,
+): RenewAccessTokenPayloadType => {
+  return "data" in response ? response.data : response;
+};
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends AuthClient<AxiosState> {
@@ -45,6 +55,14 @@ class Client extends AuthClient<AxiosState> {
       throw new Error(res.error);
     }
     return res;
+  }
+
+  async RefreshToken(refreshToken: string) {
+    const res = await this.client
+      .post({ endpoint: endpoint.refreshToken })
+      .setBody({ refreshToken })
+      .perform<RenewAccessTokenSchemaType>();
+    return unwrapRenewAccessTokenResponse(res.data);
   }
 
   async Register(params: RegisterFrontendProps) {

@@ -1,48 +1,55 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { frontendContainer } from "@/container";
+import {
+  ActivateUserCommand,
+  DeactivateUserCommand,
+  DeleteUserCommand,
+  userModuleNames,
+} from "@/modules/user";
+import { useQueryClient } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "../store";
 
-async function parseOrThrow(response: Response) {
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) {
-    throw new Error("Users API request failed");
-  }
-  return payload;
-}
+const activateUserCommand = frontendContainer.get<ActivateUserCommand>(
+  userModuleNames.activateUserCommand,
+);
 
-async function requestJson<TPayload>(url: string, method: string, payload?: TPayload) {
-  const response = await fetch(url, {
-    method,
-    headers: payload ? { "Content-Type": "application/json" } : undefined,
-    body: payload ? JSON.stringify(payload) : undefined,
-  });
-  return parseOrThrow(response);
-}
+const deactivateUserCommand = frontendContainer.get<DeactivateUserCommand>(
+  userModuleNames.deactivateUserCommand,
+);
+
+const deleteUserCommand = frontendContainer.get<DeleteUserCommand>(
+  userModuleNames.deleteUserCommand,
+);
 
 const UsersMutations = (props: PropsWithChildren) => {
   const queryClient = useQueryClient();
 
-  const activateUserMutation = useMutation({
-    mutationFn: (id: string) =>
-      requestJson(`/api/admin/users/${encodeURIComponent(id)}/activate`, "POST"),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
-    },
-  });
+  const activateUser = async (id: string) => {
+    activateUserCommand.init({ id });
+    const result = await activateUserCommand.exec();
+    await queryClient.invalidateQueries({ queryKey: ["users"] });
+    return result;
+  };
 
-  const deactivateUserMutation = useMutation({
-    mutationFn: (id: string) =>
-      requestJson(`/api/admin/users/${encodeURIComponent(id)}/deactivate`, "POST"),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
-    },
-  });
-  useMirrorRegistry("activateUser", async (id: string) => activateUserMutation.mutateAsync(id));
-  useMirrorRegistry("deactivateUser", async (id: string) =>
-    deactivateUserMutation.mutateAsync(id),
-  );
+  const deactivateUser = async (id: string) => {
+    deactivateUserCommand.init({ id });
+    const result = await deactivateUserCommand.exec();
+    await queryClient.invalidateQueries({ queryKey: ["users"] });
+    return result;
+  };
+
+  const deleteUser = async (id: string) => {
+    deleteUserCommand.init({ id });
+    const result = await deleteUserCommand.exec();
+    await queryClient.invalidateQueries({ queryKey: ["users"] });
+    return result;
+  };
+
+  useMirrorRegistry("activateUser", activateUser);
+  useMirrorRegistry("deactivateUser", deactivateUser);
+  useMirrorRegistry("deleteUser", deleteUser);
 
   return props;
 };

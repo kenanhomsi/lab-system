@@ -4,8 +4,10 @@ import { useEventObserver } from "@/hooks/events-observer";
 import { roleStrategy } from "@/strategies/role";
 import { useLocale } from "next-intl";
 
+const normalizeRole = (role: string) => role.trim().toLowerCase();
+
 const resolveDashboardRoute = (role: string) => {
-  const normalizedRole = role.trim().toLowerCase();
+  const normalizedRole = normalizeRole(role);
   const strategy = roleStrategy[normalizedRole as keyof typeof roleStrategy];
   if (strategy) {
     return strategy.getDashboardRoute();
@@ -21,6 +23,8 @@ const Navigator = () => {
   useEventObserver("LoginSucceeded", (payload) => {
     const primaryRole = payload.roles[0] ?? "";
     const route = primaryRole ? resolveDashboardRoute(primaryRole) : "/dashboard";
+    console.log("route", route);
+    console.log("locale", locale);
     window.location.href = `/${locale}${route}`;
   });
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Select, TextInput } from "@mantine/core";
+import { CloseButton, Select, TextInput } from "@mantine/core";
 import { IconFilter, IconSearch, IconMessage } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { TablePageHeader } from "@/components/table-page-header";
@@ -50,7 +50,7 @@ const ComplaintsHeader = ({
         leftSection={<IconSearch size={14} />}
         rightSection={
           searchValue ? (
-            <TextInput.ClearButton onClick={() => setSearchValue("")} />
+            <CloseButton size="sm" onClick={() => setSearchValue("")} aria-label="Clear" />
           ) : null
         }
         rightSectionPointerEvents="auto"

@@ -9,15 +9,6 @@ export type StatCard = {
   accentBg: string;
 };
 
-export type TodayAppointment = {
-  id: string;
-  rowKey: "row1" | "row2" | "row3" | "row4";
-  patientName: string;
-  timeIso: string;
-  visitType: string;
-  statusVariant: "confirmed" | "inProgress" | "waiting";
-};
-
 export type PendingReferral = {
   id: string;
   rowKey: "r1" | "r2" | "r3";

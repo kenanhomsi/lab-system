@@ -1,9 +1,9 @@
 const endpoint = {
-  findAll: "/api/admin/permissions",
-  create: "/api/admin/permissions",
-  findOne: (id: string) => `/api/admin/permissions/${id}`,
-  update: (id: string) => `/api/admin/permissions/${id}`,
-  remove: (id: string) => `/api/admin/permissions/${id}`,
+  findAll: "/api/permissions",
+  create: "/api/permissions",
+  findOne: (id: string) => `/api/permissions/${id}`,
+  update: (id: string) => `/api/permissions/${id}`,
+  remove: (id: string) => `/api/permissions/${id}`,
 };
 
 export { endpoint };

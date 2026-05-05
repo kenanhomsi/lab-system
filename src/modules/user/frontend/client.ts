@@ -30,7 +30,10 @@ import {
 } from "./types";
 
 type RolesResponseSchema = { message?: string };
-type PermissionsResponseSchema = { permissions?: string[]; [key: string]: unknown };
+type PermissionsResponseSchema = {
+  permissions?: string[];
+  [key: string]: unknown;
+};
 
 const appendQueryParams = (
   path: string,
@@ -52,7 +55,9 @@ const appendQueryParams = (
 class Client extends UserClient<AxiosState> {
   async findAll(params: FindAllUserParams) {
     const res = await super
-      .sharedFindAll({ endpoint: appendQueryParams(endpoint.findAll, params.query) })
+      .sharedFindAll({
+        endpoint: appendQueryParams(endpoint.findAll, params.query),
+      })
       .perform<FindAllBackUserSchemaType>();
     return res.data;
   }
@@ -181,6 +186,7 @@ class Client extends UserClient<AxiosState> {
   }
 
   async getMe(_params: GetMeParams) {
+    void _params;
     const res = await super
       .sharedFindOne({ endpoint: endpoint.me })
       .perform<FindOneBackUserSchemaType>();
@@ -208,7 +214,10 @@ class Client extends UserClient<AxiosState> {
   }
 
   async requestDeletionMe(_params: RequestDeletionMeParams) {
-    const res = await this.axiosClient.post({ endpoint: endpoint.requestDeletionMe }).perform();
+    void _params;
+    const res = await this.axiosClient
+      .post({ endpoint: endpoint.requestDeletionMe })
+      .perform();
     return res.data;
   }
 }

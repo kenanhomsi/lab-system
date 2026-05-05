@@ -10,7 +10,7 @@ class State {
   protected headers: Record<string, string> = {};
   protected query: Record<string, string> = {};
   private method: "get" | "post" | "put" | "delete";
-  private body: object = {};
+  private body: object | FormData = {};
   private formData: FormData = new FormData();
   private endpoint: string;
   protected instance: AxiosInstance;
@@ -36,11 +36,17 @@ class State {
   //   this.query = { ...this.query, include: JSON.stringify(o) };
   //   return this;
   // }
+  withQuery(queryParams?: Record<string, any>) {
+    if (queryParams) {
+      this.query = { ...this.query, ...queryParams };
+    }
+    return this;
+  }
   setMethod(method: "get" | "post" | "put" | "delete") {
     this.method = method;
     return this;
   }
-  setBody(body: object) {
+  setBody(body: object | FormData) {
     this.body = body;
     return this;
   }
@@ -68,7 +74,12 @@ class State {
         params: this.query,
         responseType: this.responseType,
       });
-    const body = isEmpty(this.body) ? this.formData : this.body;
+    const body =
+      this.body instanceof FormData
+        ? this.body
+        : isEmpty(this.body)
+          ? this.formData
+          : this.body;
     return this.instance[this.method](this.endpoint, body, {
       headers: this.headers,
       params: this.query,

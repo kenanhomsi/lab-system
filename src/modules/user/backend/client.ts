@@ -28,7 +28,10 @@ import {
 } from "./types";
 
 type RolesResponseSchema = { message?: string };
-type PermissionsResponseSchema = { permissions?: string[]; [key: string]: unknown };
+type PermissionsResponseSchema = {
+  permissions?: string[];
+  [key: string]: unknown;
+};
 
 const appendQueryParams = (
   path: string,
@@ -138,13 +141,16 @@ class Client extends UserClient<BackendState> {
       .sharedGetPermissions({ endpoint: endpoint.permissions(id) })
       .withAuth(token)
       .perform<PermissionsResponseSchema>();
-    return res.data;
+    return res.data.data;
   }
 
   async assignPermissions(params: AssignPermissionsParams) {
     const { id, token, permissions } = params;
     const res = await super
-      .sharedAssignPermissions({ endpoint: endpoint.permissions(id), permissions })
+      .sharedAssignPermissions({
+        endpoint: endpoint.permissions(id),
+        permissions,
+      })
       .withAuth(token)
       .perform<PermissionsResponseSchema>();
     return res.data;
@@ -153,7 +159,10 @@ class Client extends UserClient<BackendState> {
   async replacePermissions(params: ReplacePermissionsParams) {
     const { id, token, permissions } = params;
     const res = await super
-      .sharedReplacePermissions({ endpoint: endpoint.permissions(id), permissions })
+      .sharedReplacePermissions({
+        endpoint: endpoint.permissions(id),
+        permissions,
+      })
       .withAuth(token)
       .perform<PermissionsResponseSchema>();
     return res.data;

@@ -1,0 +1,1 @@
+export { ExternalPatientsTable } from "./factory";

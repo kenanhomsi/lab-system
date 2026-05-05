@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#00647e",
+    borderBottomColor: "#009cc2",
     paddingBottom: 8,
   },
   title: {
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: "row-reverse",
-    backgroundColor: "#00647e",
+    backgroundColor: "#009cc2",
     paddingVertical: 6,
     paddingHorizontal: 4,
   },

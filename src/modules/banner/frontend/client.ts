@@ -1,31 +1,19 @@
 import { injectable, injectFromBase } from "inversify";
+import { toIso8601Utc } from "@/lib/dates/to-iso-8601";
 import { AxiosState } from "@/modules/axios";
 import { BannerClient } from "../abstraction";
 import { endpoint } from "./endpoint";
+import type { BannerItem } from "@/types/banner";
 import {
   CreateBannerParams,
-  DeleteBannerParams,
   FindAllBannerParams,
-  FindOneBannerParams,
-  UpdateBannerParams,
+  FindAllPublicBannerParams,
 } from "./types";
 
-type BannerItem = {
-  id: string;
-  title: string;
-  subtitle?: string;
-  targetUrl: string;
-  startDate: string;
-  endDate: string;
-  isActive: boolean;
-  imageUrl?: string;
-};
-
-type BannerListResponse = {
-  data: BannerItem[];
-  total: number;
-  page: number;
-  pageSize: number;
+type PublicBannerResponse = BannerItem[] | {
+  success?: boolean;
+  message?: string;
+  data?: BannerItem[];
 };
 
 const appendQueryParams = (
@@ -43,6 +31,12 @@ const appendQueryParams = (
   return queryString ? `${path}?${queryString}` : path;
 };
 
+const normalizePublicBanners = (response: PublicBannerResponse): BannerItem[] => {
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response.data)) return response.data;
+  return [];
+};
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends BannerClient<AxiosState> {
@@ -51,19 +45,42 @@ class Client extends BannerClient<AxiosState> {
       .sharedFindAll({
         endpoint: appendQueryParams(endpoint.findAll, params.query),
       })
-      .perform<BannerListResponse>();
-    return res.data;
+      .perform<{
+        data: BannerItem[];
+        total: number;
+        page: number;
+        pageSize: number;
+      }>();
+    return res;
+  }
+
+  async findAllPublic(params: FindAllPublicBannerParams) {
+    const res = await super
+      .sharedFindAllPublic({
+        endpoint: appendQueryParams(endpoint.findAllPublic, {
+          location: params.location,
+        }),
+      })
+      .perform<PublicBannerResponse>();
+    return normalizePublicBanners(res.data);
   }
 
   async create(params: CreateBannerParams) {
     const formData = new FormData();
     formData.append("title", params.title);
-    if (params.subtitle) formData.append("subtitle", params.subtitle);
-    formData.append("targetUrl", params.targetUrl);
-    formData.append("startDate", params.startDate);
-    formData.append("endDate", params.endDate);
+    formData.append("type", params.type);
+    formData.append("InternalLink", params.InternalLink);
+    formData.append("ExternalLink", params.ExternalLink);
+    formData.append("TargetType", params.TargetType);
+    formData.append("Location", params.Location);
+    if (params.DisplayOrder !== undefined)
+      formData.append("DisplayOrder", params.DisplayOrder.toString());
+    formData.append("Media", params.Media);
+    formData.append("startDate", toIso8601Utc(params.startDate));
+    formData.append("endDate", toIso8601Utc(params.endDate));
     formData.append("isActive", String(params.isActive));
-    if (params.imageFile) formData.append("image", params.imageFile);
+    if (params.VisibilityRulesJson)
+      formData.append("VisibilityRulesJson", params.VisibilityRulesJson);
 
     const res = await super
       .sharedCreate({
@@ -71,40 +88,6 @@ class Client extends BannerClient<AxiosState> {
         formData,
       })
       .perform<BannerItem>();
-    return res.data;
-  }
-
-  async findOne(params: FindOneBannerParams) {
-    const res = await super
-      .sharedFindOne({ endpoint: endpoint.findOne(params.id) })
-      .perform<BannerItem>();
-    return res.data;
-  }
-
-  async update(params: UpdateBannerParams) {
-    const { id, ...body } = params;
-    const formData = new FormData();
-    formData.append("title", body.title);
-    if (body.subtitle) formData.append("subtitle", body.subtitle);
-    formData.append("targetUrl", body.targetUrl);
-    formData.append("startDate", body.startDate);
-    formData.append("endDate", body.endDate);
-    formData.append("isActive", String(body.isActive));
-    if (body.imageFile) formData.append("image", body.imageFile);
-
-    const res = await super
-      .sharedUpdate({
-        endpoint: endpoint.update(id),
-        formData,
-      })
-      .perform<BannerItem>();
-    return res.data;
-  }
-
-  async delete(params: DeleteBannerParams) {
-    const res = await super
-      .sharedDelete({ endpoint: endpoint.remove(params.id) })
-      .perform<{ success: boolean }>();
     return res.data;
   }
 }

@@ -1,4 +1,4 @@
-export type UserRole = "patient" | "doctor" | "lab" | "special" | "admin";
+export type UserRole = "patient" | "doctor" | "LabPartner" | "special" | "admin";
 
 export interface User {
   id: string;
@@ -24,7 +24,7 @@ export interface DoctorUser extends User {
 }
 
 export interface LabUser extends User {
-  role: "lab";
+  role: "LabPartner";
   labName: string;
 }
 

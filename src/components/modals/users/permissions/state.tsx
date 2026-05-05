@@ -7,7 +7,12 @@ const State = ({ children }: PropsWithChildren) => {
   const [permissionsText, setPermissionsText] = useState("");
   const [loadedPermissions, setLoadedPermissions] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Local state for checked permissions
 
+  const [checkedPermissions, setCheckedPermissions] = useState<string[]>([]);
+
+  useMirrorRegistry("checkedPermissions", checkedPermissions);
+  useMirrorRegistry("setCheckedPermissions", setCheckedPermissions);
   useMirrorRegistry("permissionsText", permissionsText);
   useMirrorRegistry("setPermissionsText", setPermissionsText);
   useMirrorRegistry("loadedPermissions", loadedPermissions);

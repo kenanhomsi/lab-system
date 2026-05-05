@@ -39,7 +39,7 @@ async function getAllUsers(params: {
     throw new Error("Failed to fetch users");
   }
 
-  return payload;
+  return payload.data;
 }
 
 const GetAllUsers = (props: PropsWithChildren) => {
@@ -71,6 +71,7 @@ const GetAllUsers = (props: PropsWithChildren) => {
     refetchInterval: 1000 * 60,
   });
 
+  console.log('data', data)
   useMirrorRegistry("usersData", data ?? {
     items: [],
     page: 1,

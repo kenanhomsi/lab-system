@@ -86,38 +86,6 @@ export const registerSchema = z
     }
   });
 
-export const appointmentSchema = z.object({
-  patientName: z
-    .string({ error: () => MSG_REQUIRED })
-    .min(2, "اسم المريض مطلوب")
-    .max(120, "الاسم طويل جداً"),
-  age: z.coerce
-    .number({ error: () => "العمر مطلوب" })
-    .int("العمر يجب أن يكون رقماً صحيحاً")
-    .min(0, "العمر غير صالح")
-    .max(130, "العمر غير معقول"),
-  gender: z.enum(["male", "female"], { error: () => "اختر الجنس" }),
-  mobile: mobileSchema,
-  drawLocation: z.enum(["lab", "home", "work"], {
-    error: () => "موقع السحب غير صالح",
-  }),
-  dateTime: z.iso.datetime({ error: () => "التاريخ والوقت غير صالحين" }),
-  requiredTests: z
-    .string({ error: () => MSG_REQUIRED })
-    .min(3, "صف التحاليل المطلوبة")
-    .max(2000, "النص طويل جداً"),
-  prescriptionImage: z.string().max(500).optional(),
-  medicalCondition: z.string().max(1000).optional(),
-  address: z
-    .string({ error: () => MSG_REQUIRED })
-    .min(5, "العنوان مطلوب")
-    .max(500, "العنوان طويل جداً"),
-  lat: z.coerce.number().min(-90).max(90).optional(),
-  lng: z.coerce.number().min(-180).max(180).optional(),
-  savedAddressId: z.string().max(80).optional(),
-  referredByDoctorId: z.string().max(80).optional(),
-});
-
 const optionalUrl = z
   .string()
   .max(2000)
@@ -294,7 +262,8 @@ export const taskSchema = z.object({
     .string()
     .optional()
     .refine(
-      (v) => v === undefined || v === "" || /^([01]?\d|2[0-3]):[0-5]\d$/.test(v),
+      (v) =>
+        v === undefined || v === "" || /^([01]?\d|2[0-3]):[0-5]\d$/.test(v),
       { message: "صيغة الوقت غير صالحة (HH:MM)" },
     ),
   reminderEnabled: z.coerce.boolean(),

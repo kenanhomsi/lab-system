@@ -7,7 +7,7 @@ import { eventModuleNames, EventService } from "@/modules/events";
 class FrontendState extends AxiosState {
   @inject(eventModuleNames.service) private eventService: EventService;
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async perform<T = any>(): Promise<AxiosResponse<T>> {
+  override async perform<T = any>(): Promise<AxiosResponse<T>> {
     try {
       const res = await super.perform<T>();
       return res;

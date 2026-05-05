@@ -11,6 +11,8 @@ const Factory = () => {
       return <NormalTable />;
     case "expansion":
       return <ExpansionTable />;
+    default:
+      return <NormalTable />;
   }
 };
 export { Factory };

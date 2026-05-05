@@ -3,16 +3,15 @@ import type {
   HealthSummary,
   RecentResult,
   StatCard,
-  UpcomingAppointment,
 } from "./type";
 
 export const stats: StatCard[] = [
   {
-    id: "upcomingAppointments",
+    id: "openLabRequests",
     value: 3,
     trend: 12,
     iconKey: "calendar",
-    accentColor: "light-dark(#00647e, #62d4fc)",
+    accentColor: "light-dark(#009cc2, #5dd4ed)",
     accentBg: "light-dark(#e4f4f8, rgba(0, 100, 126, 0.2))",
   },
   {
@@ -28,32 +27,8 @@ export const stats: StatCard[] = [
     value: 2,
     trend: -8,
     iconKey: "activity",
-    accentColor: "light-dark(#705d00, #e9c400)",
+    accentColor: "light-dark(#6b5a00, #ffd700)",
     accentBg: "light-dark(#f9f3d6, rgba(112, 93, 0, 0.2))",
-  },
-];
-
-export const upcomingAppointments: UpcomingAppointment[] = [
-  {
-    id: "u1",
-    rowKey: "row1",
-    doctorName: "Dr. Layla Karim",
-    dateIso: "2026-04-18T09:30:00",
-    statusVariant: "confirmed",
-  },
-  {
-    id: "u2",
-    rowKey: "row2",
-    doctorName: "Dr. Omar Haddad",
-    dateIso: "2026-04-22T14:00:00",
-    statusVariant: "pending",
-  },
-  {
-    id: "u3",
-    rowKey: "row3",
-    doctorName: "Dr. Layla Karim",
-    dateIso: "2026-05-01T10:15:00",
-    statusVariant: "confirmed",
   },
 ];
 
@@ -85,7 +60,7 @@ export const healthSummary: HealthSummary = {
 };
 
 export const activity: ActivityItem[] = [
-  { id: "act1", rowKey: "a1", kind: "appointment" },
+  { id: "act1", rowKey: "a1", kind: "request" },
   { id: "act2", rowKey: "a2", kind: "result" },
   { id: "act3", rowKey: "a3", kind: "message" },
 ];

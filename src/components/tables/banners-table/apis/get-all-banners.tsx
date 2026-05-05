@@ -3,11 +3,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { useMirror, useMirrorRegistry } from "../store";
-import { BannersResponse } from "../types";
 import { frontendContainer } from "@/container";
 import { bannerModuleNames, BannerFrontendService } from "@/modules/banner";
+import type { BannerItem } from "@/types/banner";
 
-const GetAllBanners = (props: PropsWithChildren) => {
+const asBannerRows = (payload: unknown): BannerItem[] => {
+  if (Array.isArray(payload)) return payload;
+  if (payload && typeof payload === "object" && "data" in payload) {
+    const inner = (payload as { data: unknown }).data;
+    if (Array.isArray(inner)) return inner;
+    if (inner && typeof inner === "object" && "data" in inner) {
+      const nested = (inner as { data: unknown }).data;
+      if (Array.isArray(nested)) return nested as BannerItem[];
+    }
+  }
+  return [];
+};
+
+const GetAllBanners = ({ children }: PropsWithChildren) => {
     const pageNumber = useMirror("pageNumber");
     const bannerService = frontendContainer.get<BannerFrontendService>(bannerModuleNames.service);
 
@@ -20,21 +33,18 @@ const GetAllBanners = (props: PropsWithChildren) => {
                     PageSize: "20",
                 },
             });
-            return {
-                data: response.data || [],
-                total: response.total || 0,
-            };
+            return response
         },
         refetchInterval: 1000 * 60,
     });
 
-    useMirrorRegistry("bannersData", data?.data ?? []);
+    useMirrorRegistry("bannersData", asBannerRows(data));
     useMirrorRegistry("isPending", isPending);
     useMirrorRegistry("refetchBanners", () => {
         void refetch();
     });
 
-    return props;
+    return <>{children}</>;
 };
 
 export { GetAllBanners };

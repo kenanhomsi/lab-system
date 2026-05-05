@@ -26,7 +26,7 @@ import {
   IconToggleRight,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import { TargetAudience } from "@/components/tables/subscription-packages-table/types";
 import { useMirror } from "./store";
 
@@ -69,15 +69,15 @@ const UI = () => {
   const submit = useMirror("submit");
 
   const [step, setStep] = useState(0);
-
-  useEffect(() => {
-    if (!isOpen) setStep(0);
-  }, [isOpen]);
+  const close = () => {
+    setStep(0);
+    handleClose();
+  };
 
   return (
     <Modal
       opened={isOpen}
-      onClose={handleClose}
+      onClose={close}
       title={
         <Group gap="sm" wrap="nowrap">
           <ThemeIcon size={42} radius="md" variant="light" color="indigo">
@@ -210,7 +210,7 @@ const UI = () => {
         )}
 
         <Group justify="space-between">
-          <Button variant="subtle" color="gray" onClick={handleClose} disabled={isSubmitting}>
+          <Button variant="subtle" color="gray" onClick={close} disabled={isSubmitting}>
             {tc("cancel")}
           </Button>
           <Group gap="sm">

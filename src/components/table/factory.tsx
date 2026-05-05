@@ -1,8 +1,12 @@
 "use client";
 
-import { PropsWithChildren } from "react";
+import { type ReactNode, PropsWithChildren } from "react";
 import { Init } from "./init";
-import { DataTableColumn } from "./store/init";
+import {
+  type DataTableClassNames,
+  type DataTableSpacing,
+  DataTableColumn,
+} from "./store/init";
 import { Ui } from "./ui";
 import { Content, Header } from "./components";
 import { Utils } from "./utils/utils";
@@ -21,6 +25,14 @@ type FactoryProps = {
   //eslint-disable-next-line  @typescript-eslint/no-explicit-any
   onReorder?: (data: any[]) => void;
   onRowClick?: (id: string) => void;
+  tableEmptyState?: ReactNode;
+  //eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  tableRowClassName?: (record: any) => string;
+  dataTableClassNames?: DataTableClassNames;
+  tableStriped?: boolean;
+  tableHighlightOnHover?: boolean;
+  dataTableVerticalSpacing?: DataTableSpacing;
+  dataTableHorizontalSpacing?: DataTableSpacing;
 };
 const Factory = (props: PropsWithChildren<FactoryProps>) => {
   const { children } = props;

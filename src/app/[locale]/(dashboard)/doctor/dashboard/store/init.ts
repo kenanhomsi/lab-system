@@ -1,14 +1,7 @@
-import type {
-  PendingReferral,
-  RecentPatient,
-  StatCard,
-  TodayAppointment,
-  WeeklyBar,
-} from "../type";
+import type { PendingReferral, RecentPatient, StatCard, WeeklyBar } from "../type";
 
 type Params = {
   stats: StatCard[];
-  todayAppointments: TodayAppointment[];
   pendingReferrals: PendingReferral[];
   recentPatients: RecentPatient[];
   weeklySummary: WeeklyBar[];
@@ -16,7 +9,6 @@ type Params = {
 
 const store = (): Params => ({
   stats: [],
-  todayAppointments: [],
   pendingReferrals: [],
   recentPatients: [],
   weeklySummary: [],

@@ -12,7 +12,8 @@ import {
 import { useLocale, useTranslations } from "next-intl";
 import { useMirror } from "./store";
 import type { StatCard } from "./type";
-import { DashboardAdCard } from "@/components/dashboard/ad-space";
+import { PromoBanner } from "@/components/dashboard/promo-banner";
+import { SlideCardsDashboard } from "../../../(website)/ui/landing/slide-cards-section";
 import styles from "./styles.module.scss";
 
 const STAT_ICONS = {
@@ -20,11 +21,6 @@ const STAT_ICONS = {
   check: FiCheckCircle,
   activity: FiActivity,
 } as const;
-
-const UPCOMING_STATUS_CLASS: Record<"confirmed" | "pending", string> = {
-  confirmed: styles.statusConfirmed,
-  pending: styles.statusPending,
-};
 
 const RESULT_STATUS_CLASS: Record<"ready" | "processing" | "scheduled", string> = {
   ready: styles.resultReady,
@@ -75,16 +71,9 @@ const UI = () => {
   const t = useTranslations("patient.dashboard");
   const locale = useLocale();
   const stats = useMirror("stats");
-  const upcomingAppointments = useMirror("upcomingAppointments");
   const recentResults = useMirror("recentResults");
   const healthSummary = useMirror("healthSummary");
   const activity = useMirror("activity");
-
-  const formatDateTime = (iso: string) => {
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return iso;
-    return d.toLocaleString(locale, { dateStyle: "medium", timeStyle: "short" });
-  };
 
   const formatDateOnly = (iso: string) => {
     if (iso === "—") return iso;
@@ -105,36 +94,11 @@ const UI = () => {
         ))}
       </div>
 
-      <DashboardAdCard />
+      <PromoBanner location="patient_dashboard" />
+
+      <SlideCardsDashboard />
 
       <div className={styles.midGrid}>
-        <div className={styles.glassCard}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>{t("upcomingTitle")}</h2>
-            <button type="button" className={styles.viewAll}>
-              {t("upcomingViewAll")} <FiArrowRight size={14} />
-            </button>
-          </div>
-          <div className={styles.upcomingList}>
-            {upcomingAppointments.map((row) => (
-              <div key={row.id} className={styles.upcomingRow}>
-                <div className={styles.upcomingMain}>
-                  <div className={styles.upcomingDoctor}>{row.doctorName}</div>
-                  <div className={styles.upcomingWhen}>{formatDateTime(row.dateIso)}</div>
-                  <div className={styles.upcomingWhen}>
-                    {t(`upcoming.${row.rowKey}.note`)}
-                  </div>
-                </div>
-                <span
-                  className={`${styles.statusBadge} ${UPCOMING_STATUS_CLASS[row.statusVariant]}`}
-                >
-                  {t(`upcomingStatus.${row.statusVariant}`)}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div className={styles.healthCard}>
           <h3 className={styles.healthTitle}>{t("healthTitle")}</h3>
           <div className={styles.healthGrid}>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import {
   Avatar,
   Badge,
@@ -13,13 +14,11 @@ import {
   Stack,
   Tabs,
   Text,
-  TextInput,
   Textarea,
+  TextInput,
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { modals } from "@mantine/modals";
-import { notifications } from "@mantine/notifications";
 import {
   IconAlertTriangle,
   IconIdBadge2,
@@ -33,9 +32,11 @@ import {
   IconTrash,
   IconUser,
 } from "@tabler/icons-react";
-import { useEffect, useMemo, useState } from "react";
-import type { ChangePasswordRequest, UpdateMeRequest } from "./types";
+import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
 import { useMirror } from "./store";
+import { ChangePasswordRequest, UpdateMeRequest } from "./types";
+import { useTranslations, useLocale } from "next-intl";
 
 const initials = (name: string) => {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -45,6 +46,9 @@ const initials = (name: string) => {
 };
 
 const UI = () => {
+  const t = useTranslations("profile");
+  const locale = useLocale();
+  const rtl = locale === "ar";
   const me = useMirror("me");
   const isPending = useMirror("isPending");
   const updateMe = useMirror("updateMe");
@@ -252,9 +256,9 @@ const UI = () => {
                 <IconUser size={18} />
               </ThemeIcon>
               <Stack gap={2}>
-                <Text fw={700}>Account</Text>
+                <Text fw={700}>{t("account")}</Text>
                 <Text size="sm" c="dimmed">
-                  Your identity and system status.
+                  {t("accountDesc")}
                 </Text>
               </Stack>
             </Group>
@@ -269,7 +273,7 @@ const UI = () => {
               <Stack gap="sm">
                 <Group justify="space-between">
                   <Text size="sm" c="dimmed">
-                    User ID
+                    {t("userId")}
                   </Text>
                   <Text size="sm" fw={600}>
                     {me?.id}
@@ -277,18 +281,18 @@ const UI = () => {
                 </Group>
                 <Group justify="space-between">
                   <Text size="sm" c="dimmed">
-                    Created
+                    {t("created")}
                   </Text>
-                  <Text size="sm" fw={600}>
-                    {me?.createdAt ? new Date(me.createdAt).toLocaleString() : "-"}
+                  <Text size="sm" fw={600} dir="ltr">
+                    {me?.createdAt ? new Date(me.createdAt).toLocaleString(locale) : "-"}
                   </Text>
                 </Group>
                 <Group justify="space-between">
                   <Text size="sm" c="dimmed">
-                    Updated
+                    {t("updated")}
                   </Text>
-                  <Text size="sm" fw={600}>
-                    {me?.updatedAt ? new Date(me.updatedAt).toLocaleString() : "—"}
+                  <Text size="sm" fw={600} dir="ltr">
+                    {me?.updatedAt ? new Date(me.updatedAt).toLocaleString(locale) : "—"}
                   </Text>
                 </Group>
                 <Divider />
@@ -298,14 +302,14 @@ const UI = () => {
                   </ThemeIcon>
                   <Stack gap={0}>
                     <Text size="sm" fw={600}>
-                      Lockout
+                      {t("lockout")}
                     </Text>
                     <Text size="sm" c="dimmed">
                       {me?.lockoutEnabled
                         ? me.lockoutEnd
-                          ? `Until ${new Date(me.lockoutEnd).toLocaleString()}`
-                          : "Enabled"
-                        : "Disabled"}
+                          ? t("lockoutEnabled").replace("{date}", new Date(me.lockoutEnd).toLocaleString(locale))
+                          : t("lockoutActive")
+                        : t("lockoutDisabled")}
                     </Text>
                   </Stack>
                 </Group>
@@ -318,13 +322,13 @@ const UI = () => {
           <Tabs defaultValue="profile" keepMounted={false}>
             <Tabs.List>
               <Tabs.Tab value="profile" leftSection={<IconSparkles size={16} />}>
-                Profile
+                {t("tabProfile")}
               </Tabs.Tab>
               <Tabs.Tab value="security" leftSection={<IconKey size={16} />}>
-                Security
+                {t("tabSecurity")}
               </Tabs.Tab>
               <Tabs.Tab value="danger" leftSection={<IconAlertTriangle size={16} />}>
-                Danger zone
+                {t("tabDanger")}
               </Tabs.Tab>
             </Tabs.List>
 
@@ -335,44 +339,45 @@ const UI = () => {
                     <IconIdBadge2 size={18} />
                   </ThemeIcon>
                   <Stack gap={2}>
-                    <Text fw={700}>Profile details</Text>
+                    <Text fw={700}>{t("profileDetails")}</Text>
                     <Text size="sm" c="dimmed">
-                      Keep your name and contact details up to date.
+                      {t("profileDetailsDesc")}
                     </Text>
                   </Stack>
                 </Group>
 
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
                   <TextInput
-                    label="Full name"
+                    label={t("fullName")}
                     withAsterisk
                     leftSection={<IconIdBadge2 size={16} />}
                     value={profileForm.fullName}
                     onChange={(e) =>
                       setProfileForm((p) => ({ ...p, fullName: e.currentTarget.value }))
                     }
-                    placeholder="Your full name"
+                    placeholder={t("fullNamePlaceholder")}
                   />
                   <TextInput
-                    label="Phone number"
+                    label={t("phoneNumber")}
                     leftSection={<IconPhone size={16} />}
                     value={profileForm.phoneNumber}
                     onChange={(e) =>
                       setProfileForm((p) => ({ ...p, phoneNumber: e.currentTarget.value }))
                     }
-                    placeholder="+20 100 000 0000"
+                    placeholder={t("phoneNumberPlaceholder")}
+                    style={{ direction: "ltr", textAlign: rtl ? "right" : "left" }}
                   />
                   <TextInput
-                    label="City"
+                    label={t("city")}
                     leftSection={<IconMapPin size={16} />}
                     value={profileForm.city}
                     onChange={(e) =>
                       setProfileForm((p) => ({ ...p, city: e.currentTarget.value }))
                     }
-                    placeholder="Cairo"
+                    placeholder={t("cityPlaceholder")}
                   />
                   <TextInput
-                    label="Email"
+                    label={t("email")}
                     leftSection={<IconMail size={16} />}
                     value={me?.email ?? ""}
                     readOnly
@@ -381,15 +386,16 @@ const UI = () => {
                 </SimpleGrid>
 
                 <Textarea
-                  label="Profile metadata"
-                  description="Optional notes or JSON string."
+                  label={t("profileMetadata")}
+                  description={t("profileMetadataDesc")}
                   autosize
                   minRows={4}
                   value={profileForm.profileMetadata}
                   onChange={(e) =>
                     setProfileForm((p) => ({ ...p, profileMetadata: e.currentTarget.value }))
                   }
-                  placeholder='e.g. {"department":"Cardiology"}'
+                  placeholder={t("profileMetadataPlaceholder")}
+                  style={{ direction: "ltr", textAlign: rtl ? "right" : "left" }}
                 />
 
                 <Group justify="flex-end">
@@ -399,7 +405,7 @@ const UI = () => {
                     disabled={!canSaveProfile || isPending}
                     radius="md"
                   >
-                    Save changes
+                    {t("saveChanges")}
                   </Button>
                 </Group>
               </Stack>
@@ -412,16 +418,16 @@ const UI = () => {
                     <IconLock size={18} />
                   </ThemeIcon>
                   <Stack gap={2}>
-                    <Text fw={700}>Change password</Text>
+                    <Text fw={700}>{t("changePassword")}</Text>
                     <Text size="sm" c="dimmed">
-                      Use a unique password you don’t use elsewhere.
+                      {t("changePasswordDesc")}
                     </Text>
                   </Stack>
                 </Group>
 
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
                   <PasswordInput
-                    label="Current password"
+                    label={t("currentPassword")}
                     value={passwordForm.currentPassword}
                     onChange={(e) =>
                       setPasswordForm((p) => ({
@@ -431,7 +437,7 @@ const UI = () => {
                     }
                   />
                   <PasswordInput
-                    label="New password"
+                    label={t("newPassword")}
                     value={passwordForm.newPassword}
                     onChange={(e) =>
                       setPasswordForm((p) => ({ ...p, newPassword: e.currentTarget.value }))
@@ -447,7 +453,7 @@ const UI = () => {
                     radius="md"
                     variant="light"
                   >
-                    Update password
+                    {t("updatePassword")}
                   </Button>
                 </Group>
               </Stack>
@@ -460,9 +466,9 @@ const UI = () => {
                     <IconAlertTriangle size={18} />
                   </ThemeIcon>
                   <Stack gap={2}>
-                    <Text fw={700}>Danger zone</Text>
+                    <Text fw={700}>{t("dangerZone")}</Text>
                     <Text size="sm" c="dimmed">
-                      Irreversible actions.
+                      {t("dangerZoneDesc")}
                     </Text>
                   </Stack>
                 </Group>
@@ -470,10 +476,9 @@ const UI = () => {
                 <Paper withBorder radius="lg" p="md">
                   <Group justify="space-between" align="flex-start">
                     <Stack gap={2}>
-                      <Text fw={700}>Request account deletion</Text>
+                      <Text fw={700}>{t("requestDeletion")}</Text>
                       <Text size="sm" c="dimmed">
-                        This will submit a request to the system. You may be contacted for
-                        confirmation.
+                        {t("requestDeletionDesc")}
                       </Text>
                     </Stack>
                     <Button
@@ -484,7 +489,7 @@ const UI = () => {
                       radius="md"
                       variant="light"
                     >
-                      Request deletion
+                      {t("requestDeletionBtn")}
                     </Button>
                   </Group>
                 </Paper>

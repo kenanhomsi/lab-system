@@ -8,6 +8,7 @@ import {
   Flex,
   Group,
   MantineColor,
+  Paper,
   Text,
   ThemeIcon,
   Tooltip,
@@ -73,77 +74,77 @@ const TablePageHeader = ({
   const hasFilters = Boolean(children);
 
   return (
-    <Flex direction="column" gap={0} pb="xs">
-      {/* ── Title row ── */}
-      <Flex
-        justify="space-between"
-        align="flex-start"
-        wrap="wrap"
-        gap="md"
-        px="lg"
-        pt="lg"
-        pb={hasFilters ? "md" : "lg"}
-      >
-        <Group gap="sm" align="flex-start" wrap="nowrap">
-          <ThemeIcon size={44} radius="md" variant="light" color={iconColor}>
-            {icon}
-          </ThemeIcon>
-          <div>
-            <Group gap={6} align="center" wrap="nowrap">
-              <Text fw={800} fz={20} lh={1.1}>
-                {title}
-              </Text>
-              <Badge size="sm" variant="filled" color={iconColor} radius="xl" px={8}>
-                {totalCount}
-              </Badge>
-            </Group>
-            {description && (
-              <Text fz="xs" c="dimmed" mt={3} lh={1.4}>
-                {description}
-              </Text>
+    <Paper radius="xl" withBorder p={0}>
+      <Flex direction="column" gap={0}>
+        <Flex
+          justify="space-between"
+          align="flex-start"
+          wrap="wrap"
+          gap="md"
+          px="lg"
+          pt="lg"
+          pb={hasFilters ? "md" : "lg"}
+        >
+          <Group gap="sm" align="flex-start" wrap="nowrap">
+            <ThemeIcon size={42} radius="md" variant="light" color={iconColor}>
+              {icon}
+            </ThemeIcon>
+            <div>
+              <Group gap={8} align="center" wrap="nowrap">
+                <Text fw={700} fz={22} lh={1.15}>
+                  {title}
+                </Text>
+                <Badge size="md" variant="light" color={iconColor} radius="xl">
+                  {totalCount}
+                </Badge>
+              </Group>
+              {description && (
+                <Text fz="sm" c="dimmed" mt={4} lh={1.5}>
+                  {description}
+                </Text>
+              )}
+            </div>
+          </Group>
+
+          <Group gap="xs">
+            {hasActiveFilters && onResetFilters && (
+              <Tooltip label="Reset filters" withArrow>
+                <ActionIcon
+                  variant="light"
+                  color="gray"
+                  radius="md"
+                  size="lg"
+                  onClick={onResetFilters}
+                >
+                  <IconRefresh size={15} />
+                </ActionIcon>
+              </Tooltip>
             )}
-          </div>
-        </Group>
-
-        <Group gap="xs">
-          {hasActiveFilters && onResetFilters && (
-            <Tooltip label="Reset filters" withArrow>
-              <ActionIcon
-                variant="light"
-                color="gray"
-                radius="xl"
+            {createLabel && onOpenCreate && (
+              <Button
+                leftSection={createIcon ?? <IconPlus size={15} />}
+                radius="md"
                 size="md"
-                onClick={onResetFilters}
+                variant="filled"
+                color={iconColor}
+                onClick={onOpenCreate}
               >
-                <IconRefresh size={14} />
-              </ActionIcon>
-            </Tooltip>
-          )}
-          {createLabel && onOpenCreate && (
-            <Button
-              leftSection={createIcon ?? <IconPlus size={15} />}
-              radius="md"
-              size="sm"
-              variant="filled"
-              color={iconColor}
-              onClick={onOpenCreate}
-            >
-              {createLabel}
-            </Button>
-          )}
-        </Group>
-      </Flex>
+                {createLabel}
+              </Button>
+            )}
+          </Group>
+        </Flex>
 
-      {/* ── Divider + filter bar (optional) ── */}
-      {hasFilters && (
-        <>
-          <Divider />
-          <Flex gap="xs" wrap="wrap" align="center" px="lg" pt="sm" pb="sm">
-            {children}
-          </Flex>
-        </>
-      )}
-    </Flex>
+        {hasFilters && (
+          <>
+            <Divider />
+            <Flex gap="xs" wrap="wrap" align="center" px="lg" py="sm">
+              {children}
+            </Flex>
+          </>
+        )}
+      </Flex>
+    </Paper>
   );
 };
 

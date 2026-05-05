@@ -54,7 +54,7 @@ function JsonLd({ test, locale }: { test: Record<string, unknown>; locale: strin
 
 const SECTIONS = [
   { key: "whatIsIt", icon: "info", color: "text-primary" },
-  { key: "whenOrdered", icon: "event_note", color: "text-indigo-600" },
+  { key: "whenOrdered", icon: "event_note", color: "text-primary" },
   { key: "normalValues", icon: "vital_signs", color: "text-emerald-600" },
   { key: "highMeaning", icon: "trending_up", color: "text-red-500" },
   { key: "lowMeaning", icon: "trending_down", color: "text-amber-600" },

@@ -6,10 +6,18 @@ import { extractBearerToken } from "./bff-errors";
 export async function resolveAccessToken(
   request: NextRequest,
 ): Promise<string | undefined> {
-  const sessionToken = await getToken({
+  const headerToken = extractBearerToken(request.headers.get("authorization"));
+  if (headerToken?.trim()) {
+    return headerToken;
+  }
+
+  return getToken({
     req: request,
     secret: getAuthSecret(),
-  }).then((token) => token?.accessToken);
-
-  return sessionToken ?? extractBearerToken(request.headers.get("authorization"));
+  }).then((token) => {
+    const accessToken = token?.accessToken;
+    return typeof accessToken === "string" && accessToken.trim()
+      ? accessToken
+      : undefined;
+  });
 }

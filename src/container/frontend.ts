@@ -2,21 +2,31 @@ import { Container } from "inversify";
 import { container } from "./container";
 import { pipe } from "ramda";
 import {
-  bindFrontAppointmentDependencies,
-  bindFrontAppointmentTypeDependencies,
   bindFrontAuthDependencies,
   bindFrontAxiosDependencies,
+  bindFrontBannerDependencies,
   bindFrontComplaintDependencies,
+  bindFrontExternalPatientsDependencies,
   bindFrontEventDependencies,
   bindFrontPermissionDependencies,
   bindFrontRoleDependencies,
   bindFrontSubscriptionPackageDependencies,
   bindFrontUserDependencies,
   bindFrontValidatorDependencies,
+  bindFrontMedicalTestDependencies,
+  bindFrontTestRequestsDependencies,
+  bindFrontTestResultsDependencies,
+  bindFrontSlideCardDependencies,
 } from "./bindings";
 
 const c = new Container({ parent: container });
 const frontendContainer = pipe(
+  bindFrontExternalPatientsDependencies,
+  bindFrontTestRequestsDependencies,
+  bindFrontTestResultsDependencies,
+  bindFrontSlideCardDependencies,
+  bindFrontMedicalTestDependencies,
+  bindFrontBannerDependencies,
   bindFrontAxiosDependencies,
   bindFrontEventDependencies,
   bindFrontAuthDependencies,
@@ -25,9 +35,7 @@ const frontendContainer = pipe(
   bindFrontSubscriptionPackageDependencies,
   bindFrontRoleDependencies,
   bindFrontPermissionDependencies,
-  bindFrontAppointmentTypeDependencies,
   bindFrontComplaintDependencies,
-  bindFrontAppointmentDependencies,
 )(c);
 
 export { frontendContainer };

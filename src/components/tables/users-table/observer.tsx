@@ -17,6 +17,12 @@ const Observer = (props: PropsWithChildren) => {
   useEventObserver("userDeletedSuccessfully", () => {
     void refetchUsers();
   });
+  useEventObserver("userActivatedSuccessfully", () => {
+    void refetchUsers();
+  });
+  useEventObserver("userDeactivatedSuccessfully", () => {
+    void refetchUsers();
+  });
 
   return <>{children}</>;
 };

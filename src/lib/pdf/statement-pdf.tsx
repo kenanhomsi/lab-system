@@ -34,11 +34,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 10,
     marginBottom: 6,
-    color: "#00647e",
+    color: "#009cc2",
   },
   tableHeader: {
     flexDirection: "row-reverse",
-    backgroundColor: "#00647e",
+    backgroundColor: "#009cc2",
     paddingVertical: 5,
     paddingHorizontal: 4,
   },

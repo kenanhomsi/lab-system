@@ -6,7 +6,7 @@ import { useMirror } from "../store";
 import styles from "../style.module.scss";
 import { SkeletonTable } from "../components";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { IconGripVertical } from "@tabler/icons-react";
+import { IconGripVertical, IconInbox } from "@tabler/icons-react";
 import clsx from "clsx";
 const NormalTable = () => {
   const schema = useMirror("schema");
@@ -15,8 +15,45 @@ const NormalTable = () => {
   const isLoading = useMirror("isLoading");
   const withDrag = useMirror("withDrag");
   const onDragEnd = useMirror("onDragEnd");
-  const hasRecords = Array.isArray(data) && data.length > 0;
+  const customEmpty = useMirror("tableEmptyState");
+  const customRowClass = useMirror("tableRowClassName");
+  const dataTableClassNames = useMirror("dataTableClassNames");
+  const tableStriped = useMirror("tableStriped");
+  const tableHighlight = useMirror("tableHighlightOnHover");
+  const dataTableVerticalSpacing = useMirror("dataTableVerticalSpacing");
+  const dataTableHorizontalSpacing = useMirror("dataTableHorizontalSpacing");
+  const records = Array.isArray(data) ? data : [];
+  const hasRecords = records.length > 0;
   const minHeight = hasRecords ? undefined : "20rem";
+  const defaultEmpty = (
+    <Box className={styles.emptyState} role="status" aria-live="polite">
+      <Box className={styles.emptyStateIcon}>
+        <IconInbox size={36} stroke={1.7} />
+      </Box>
+      <span className={styles.emptyStateTitle}>No data found</span>
+      <span className={styles.emptyStateHint}>
+        There are no records to display right now.
+      </span>
+    </Box>
+  );
+  const emptyState = hasRecords ? (
+    <></>
+  ) : customEmpty !== undefined ? (
+    customEmpty
+  ) : (
+    defaultEmpty
+  );
+  const tableClassNamesMerged = {
+    header: clsx(styles.headerCell, dataTableClassNames?.header),
+    root: clsx(styles.cell, dataTableClassNames?.root),
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- record shape follows table data
+  const rowClassNameResolved = (record: any) =>
+    clsx(styles.rowStyles, customRowClass?.(record));
+  const striped = tableStriped ?? false;
+  const highlightOnHover = tableHighlight === true;
+  const verticalSpacing = dataTableVerticalSpacing ?? "xs";
+  const horizontalSpacing = dataTableHorizontalSpacing ?? "xs";
 
   return (
     <Box className={styles.tableBox}>
@@ -34,16 +71,16 @@ const NormalTable = () => {
                         { accessor: "", hiddenContent: true, width: 30 },
                         ...schema,
                       ]}
-                      records={data}
+                      records={records}
                       minHeight={minHeight}
-                      highlightOnHover
-                      verticalSpacing="xs"
-                      rowClassName={() => styles.rowStyles}
-                      horizontalSpacing="xs"
-                      classNames={{
-                        header: styles.headerCell,
-                        root: styles.cell,
-                      }}
+                      emptyState={emptyState}
+                      noRecordsText=""
+                      striped={striped}
+                      highlightOnHover={highlightOnHover}
+                      verticalSpacing={verticalSpacing}
+                      rowClassName={rowClassNameResolved}
+                      horizontalSpacing={horizontalSpacing}
+                      classNames={tableClassNamesMerged}
                       tableWrapper={({ children }) => (
                         <div className={styles.tableScrollWrapper}>{children}</div>
                       )}
@@ -86,20 +123,19 @@ const NormalTable = () => {
             <>
               <DataTable
                 columns={schema}
-                //eslint-disable-next-line  @typescript-eslint/no-explicit-any
-                records={data as any}
+                records={records}
                 minHeight={minHeight}
-                noRecordsText={''}
-                noRecordsIcon={<></>}
-                highlightOnHover
-                verticalSpacing="xs"
-                rowClassName={() => styles.rowStyles}
-                horizontalSpacing="xs"
-
-                classNames={{
-                  header: styles.headerCell,
-                  root: styles.cell,
-                }}
+                emptyState={emptyState}
+                noRecordsText=""
+                highlightOnHover={highlightOnHover}
+                verticalSpacing={verticalSpacing}
+                striped={striped}
+                rowClassName={rowClassNameResolved}
+                horizontalSpacing={horizontalSpacing}
+                classNames={tableClassNamesMerged}
+                tableWrapper={({ children }) => (
+                  <div className={styles.tableScrollWrapper}>{children}</div>
+                )}
               />
             </>
           )}

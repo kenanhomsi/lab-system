@@ -38,7 +38,7 @@ const Utils = (props: PropsWithChildren) => {
         ...(selectedRole === "doctor" && {
           specialty: formData.get("specialty") as string,
         }),
-        ...(selectedRole === "lab" && {
+        ...(selectedRole === "LabPartner" && {
           labName: formData.get("labName") as string,
         }),
       };

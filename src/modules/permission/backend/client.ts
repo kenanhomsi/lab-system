@@ -18,6 +18,11 @@ type ListItem = {
 
 type ListResponse = ListItem[];
 
+type getAllResponseType = {
+  success: boolean;
+  message: string;
+  data: ListResponse;
+};
 const appendQueryParams = (
   path: string,
   query?: Record<string, string | undefined>,
@@ -38,10 +43,12 @@ const appendQueryParams = (
 class Client extends PermissionClient<BackendState> {
   async findAll(params: FindAllPermissionParams) {
     const res = await super
-      .sharedFindAll({ endpoint: appendQueryParams(endpoint.findAll, params.query) })
+      .sharedFindAll({
+        endpoint: appendQueryParams(endpoint.findAll, params.query),
+      })
       .withAuth(params.token)
-      .perform<ListResponse>();
-    return res.data;
+      .perform<getAllResponseType>();
+    return res.data.data;
   }
 
   async create(params: CreatePermissionParams) {

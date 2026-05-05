@@ -4,7 +4,6 @@ import {
   Button,
   Checkbox,
   Divider,
-  Input,
   PasswordInput,
   TextInput,
 } from "@mantine/core";
@@ -25,12 +24,11 @@ export function LoginForm() {
   const t = useTranslations("auth");
   const login = useMirror("login");
   const loading = useMirror("loading");
-  const emailProps = getInputProps("email", { withError: false });
-  const passwordProps = getInputProps("password", { withError: false });
+  const emailProps = getInputProps("email");
+  const passwordProps = getInputProps("password");
 
   return (
     <form className={styles.form} onSubmit={login}>
-
       <div className={styles.formBody}>
         <div className={styles.fieldsBlock}>
           <TextInput
@@ -41,11 +39,9 @@ export function LoginForm() {
             autoComplete="email"
             leftSection={<IconAt size={24} />}
             w="100%"
+            error={emailProps.error}
             {...emailProps}
           />
-          <Input.Error ms={"sm"}>
-            {getInputProps("email")?.error}
-          </Input.Error>
           <PasswordInput
             variant="filled"
             placeholder={t("password")}
@@ -53,23 +49,32 @@ export function LoginForm() {
             autoComplete="current-password"
             leftSection={<IconLock size={24} />}
             w="100%"
+            error={passwordProps.error}
             {...passwordProps}
           />
-          <Input.Error ms={"sm"}>
-            {getInputProps("password")?.error}
-          </Input.Error>
         </div>
 
         <div className={styles.forgotRow}>
-          <Checkbox label={t("rememberMe")} variant="outline" />
-          <Link href={`/${locale}/forgot-password`}>
-            <Button type="button" variant="transparent" className={styles.forgotButton}>
-              {t("forgotPassword")}
-            </Button>
-          </Link>
+          <Checkbox label={t("rememberMe")} variant="outline" color="#009cc2" />
+          <Button
+            component={Link}
+            href={`/${locale}/forgot-password`}
+            type="button"
+            variant="transparent"
+            className={styles.forgotButton}
+          >
+            {t("forgotPassword")}
+          </Button>
         </div>
 
-        <Button type="submit" loading={loading} fullWidth radius="md">
+        <Button
+          type="submit"
+          loading={loading}
+          fullWidth
+          radius="md"
+          color="#009cc2"
+          className="bg-gradient-to-r from-[#009cc2] to-[#006a85] hover:opacity-90 transition-opacity"
+        >
           {loading ? t("signingIn") : t("signIn")}
         </Button>
 

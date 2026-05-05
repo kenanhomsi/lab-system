@@ -10,7 +10,7 @@ import { FactoryProps } from "./types";
 const Factory = (props: FactoryProps) => {
   return (
     <Init {...props}>
-      <State>
+      <State key={props.user?.id ?? "empty"}>
         <Api>
           <Utils>
             <UI />

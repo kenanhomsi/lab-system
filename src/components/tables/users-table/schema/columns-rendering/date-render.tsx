@@ -1,6 +1,7 @@
 "use client";
 
 import { Text } from "@mantine/core";
+import { dataTableSurface } from "@/components/table";
 
 type Props = {
   value: string;
@@ -19,7 +20,7 @@ const DateRender = ({ value }: Props) => {
       });
 
   return (
-    <Text size="sm" c="dimmed">
+    <Text size="sm" c="dimmed" className={dataTableSurface.textCell}>
       {label}
     </Text>
   );

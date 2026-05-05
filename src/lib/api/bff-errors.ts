@@ -11,7 +11,9 @@ export function jsonError(
     return NextResponse.json({ error: data }, { status });
   }
   if (error instanceof Error) {
-    return NextResponse.json({ error: error.message }, { status: fallbackStatus });
+    const status =
+      error.message === "Missing authorization token" ? 401 : fallbackStatus;
+    return NextResponse.json({ error: error.message }, { status });
   }
   return NextResponse.json({ error: "Unknown error" }, { status: fallbackStatus });
 }

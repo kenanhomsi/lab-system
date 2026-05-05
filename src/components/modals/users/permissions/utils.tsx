@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { useMirror, useMirrorRegistry } from "./store";
 
 const Utils = ({ children }: PropsWithChildren) => {
@@ -13,7 +13,17 @@ const Utils = ({ children }: PropsWithChildren) => {
   const assignPermissionsApi = useMirror("assignPermissionsApi");
   const replacePermissionsApi = useMirror("replacePermissionsApi");
   const removePermissionApi = useMirror("removePermissionApi");
-
+  const loadedPermissions = useMirror("loadedPermissions");
+  const setCheckedPermissions = useMirror("setCheckedPermissions");
+  useEffect(() => {
+    // Only update if different to avoid infinite loop
+    setCheckedPermissions((prev) => {
+      if (JSON.stringify(prev) !== JSON.stringify(loadedPermissions)) {
+        return loadedPermissions;
+      }
+      return prev;
+    });
+  }, [loadedPermissions, setCheckedPermissions]);
   const parsePermissions = (value: string) =>
     value
       .split(",")

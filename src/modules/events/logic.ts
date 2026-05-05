@@ -1,8 +1,21 @@
 import { EventEmitter } from "events";
 import { injectable } from "inversify";
-import type { authEvents,
- } from "./types";
-type IEvents = authEvents
+import type {
+  authEvents,
+  doctorAppointmentEvents,
+  labAppointmentEvents,
+  medicalTestEvents,
+  patientAppointmentEvents,
+  testRequestEvents,
+  testResultEvents,
+} from "./types";
+type IEvents = authEvents &
+  doctorAppointmentEvents &
+  labAppointmentEvents &
+  medicalTestEvents &
+  patientAppointmentEvents &
+  testRequestEvents &
+  testResultEvents;
 @injectable()
 class Event {
   events = new EventEmitter();

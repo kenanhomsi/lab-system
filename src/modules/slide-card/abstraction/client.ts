@@ -1,0 +1,39 @@
+import { AxiosClient, AxiosModuleNames, AxiosState } from "@/modules/axios";
+import { inject, injectable } from "inversify";
+
+type FindAllParams = {
+  endpoint: string;
+};
+
+type FindOneParams = {
+  endpoint: string;
+};
+
+type SharedCreateParams = {
+  endpoint: string;
+  formData: FormData;
+};
+
+@injectable()
+abstract class Client<T extends AxiosState> {
+  @inject(AxiosModuleNames.client) protected axiosClient: AxiosClient<T>;
+
+  protected sharedFindAll(params: FindAllParams) {
+    return this.axiosClient.get({ endpoint: params.endpoint });
+  }
+
+  protected sharedFindAllPublic(params: FindAllParams) {
+    return this.axiosClient.get({ endpoint: params.endpoint });
+  }
+
+  protected sharedFindOne(params: FindOneParams) {
+    return this.axiosClient.get({ endpoint: params.endpoint });
+  }
+
+  protected sharedCreate(params: SharedCreateParams) {
+    const { endpoint, formData } = params;
+    return this.axiosClient.post({ endpoint }).setBody(formData);
+  }
+}
+
+export { Client as SlideCardClient };

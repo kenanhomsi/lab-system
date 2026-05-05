@@ -1,27 +1,31 @@
 .navbar {
-  position: relative;
-  top: 24px;
+  position: fixed;
+  top: 20px;
+  z-index: 35;
   box-sizing: border-box;
-  /* Fill space between sidebar gutter and page edge (90% + offset overflowed when sidebar expanded). */
-  margin-inline-start: calc(24px + var(--dashboard-sidebar-width, 64px) + 16px);
-  margin-inline-end: 24px;
-  width: calc(100% - (24px + var(--dashboard-sidebar-width, 64px) + 16px + 24px));
+  inset-inline-start: calc(20px + var(--dashboard-sidebar-width, 72px) + 2rem);
+  inset-inline-end: 20px;
   min-width: 0;
   height: 64px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 4px 20px rgba(0, 100, 126, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.85);
-  padding: 0 18px;
-  z-index: 15;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow:
+    0 20px 40px -10px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  padding: 0 16px;
+  transition: inset-inline-start 0.2s ease-out;
+  will-change: inset-inline-start;
 }
 
 :global(html.dark) .navbar {
-  background: rgba(30, 30, 30, 0.55);
+  background: rgba(15, 23, 42, 0.4);
   border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 20px 40px -10px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .content {
@@ -29,127 +33,190 @@
   min-width: 0;
 }
 
+.leftActions {
+  flex: 1;
+  min-width: 0;
+}
+
+.mobileMenuButton {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  color: #64748b;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  &:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+  }
+}
+
 .searchInput {
   flex: 1 1 auto;
   min-width: 0;
-  max-width: 470px;
+  max-width: 540px;
 
   :global(.mantine-Input-input) {
     height: 44px;
-    border: 0;
-    border-radius: 14px;
-    background: #f3f5fa;
-    color: #495064;
-    padding-inline-start: 38px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #0f172a;
+    padding-inline-start: 40px;
     font-size: 14px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 
     &::placeholder {
-      color: #97a0b4;
+      color: #94a3b8;
+    }
+
+    &:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+      background: #ffffff;
     }
   }
 
   :global(.mantine-Input-section) {
-    color: #8a93a7;
-    inset-inline-start: 12px;
+    color: #94a3b8;
+    inset-inline-start: 14px;
   }
 }
 
 :global(html.dark) .searchInput {
   :global(.mantine-Input-input) {
-    background: rgba(255, 255, 255, 0.07);
-    color: #d8dae0;
+    background: rgba(15, 23, 42, 0.5);
+    color: #f8fafc;
+    border-color: rgba(255, 255, 255, 0.1);
 
     &::placeholder {
-      color: #5a6070;
+      color: #64748b;
+    }
+
+    &:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+      background: rgba(15, 23, 42, 0.8);
     }
   }
 
   :global(.mantine-Input-section) {
-    color: #5a6070;
+    color: #64748b;
   }
 }
 
 .actionButton {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  color: #6d7488;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  color: #64748b;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    background: #eef1f8;
-    color: #1f2432;
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    transform: translateY(-2px);
   }
 }
 
 :global(html.dark) .actionButton {
-  color: #8d97ad;
+  color: #94a3b8;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: #e2e5ed;
+    background: rgba(96, 165, 250, 0.15);
+    color: #60a5fa;
   }
 }
 
 .profile {
-  padding-inline-start: 8px;
-  border-inline-start: 1px solid #ebedf4;
-  transition: border-color 0.2s ease;
+  gap: 10px;
+  padding-inline-start: 10px;
+  border-inline-start: 1px solid rgba(148, 163, 184, 0.24);
 }
 
 :global(html.dark) .profile {
-  border-inline-start-color: rgba(255, 255, 255, 0.1);
+  border-inline-start-color: rgba(71, 85, 105, 0.58);
 }
 
 .profileButton {
-  border-radius: 14px;
-  transition: background-color 0.2s ease;
+  border-radius: 20px;
+  padding: 4px;
+  padding-inline-end: 12px;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.2);
 
   &:hover {
-    background: #f7f9fc;
+    background: rgba(59, 130, 246, 0.05);
+    border-color: rgba(59, 130, 246, 0.3);
   }
 }
 
 :global(html.dark) .profileButton {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: rgba(71, 85, 105, 0.4);
+
   &:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(96, 165, 250, 0.1);
+    border-color: rgba(96, 165, 250, 0.3);
   }
 }
 
 .profileText {
-  text-align: end;
+  text-align: start;
   line-height: 1.1;
 }
 
 .name {
-  color: #1a6f8f;
-  font-size: 22px;
-  font-weight: 700;
-  transition: color 0.2s ease;
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 14px;
 }
 
 :global(html.dark) .name {
-  color: #62d4fc;
+  color: #f8fafc;
 }
 
 .role {
-  color: #838ca2;
-  font-size: 12px;
+  font-size: 11px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   font-weight: 700;
-  letter-spacing: 0.12em;
-  transition: color 0.2s ease;
 }
 
 :global(html.dark) .role {
-  color: #5a6070;
+  color: #94a3b8;
 }
 
 .chevron {
-  color: #8c93a7;
-  transition: color 0.2s ease;
+  color: #64748b;
 }
 
 :global(html.dark) .chevron {
-  color: #5a6070;
+  color: #94a3b8;
+}
+
+@media (max-width: 62rem) {
+  .navbar {
+    inset-inline: 16px;
+  }
+
+  .mobileMenuButton {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 48rem) {
+  .navbar {
+    top: 12px;
+    inset-inline: 12px;
+    height: 56px;
+    padding-inline: 10px;
+  }
+
+  .profileText,
+  .chevron {
+    display: none;
+  }
 }

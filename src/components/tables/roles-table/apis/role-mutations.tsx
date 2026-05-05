@@ -3,7 +3,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "../store";
-import { CreateRoleRequest, UpdateRoleRequest } from "../types";
+import {
+  CreateRoleRequest,
+  RolePermissionsResponse,
+  UpdateRoleRequest,
+} from "../types";
 
 async function parseOrThrow(response: Response) {
   const payload = await response.json().catch(() => null);
@@ -48,6 +52,31 @@ const RoleMutations = (props: PropsWithChildren) => {
     },
   });
 
+  const assignPermissionMutation = useMutation({
+    mutationFn: (params: { id: string; permissionId: string }) =>
+      requestJson(`/api/admin/roles/${params.id}/permissions`, "POST", {
+        permissionId: params.permissionId,
+      }),
+    onSuccess: async (_data, variables) => {
+      await queryClient.invalidateQueries({
+        queryKey: ["admin-role-permissions", variables.id],
+      });
+    },
+  });
+
+  const removePermissionMutation = useMutation({
+    mutationFn: (params: { id: string; permissionId: string }) =>
+      requestJson(
+        `/api/admin/roles/${params.id}/permissions/${encodeURIComponent(params.permissionId)}`,
+        "DELETE",
+      ),
+    onSuccess: async (_data, variables) => {
+      await queryClient.invalidateQueries({
+        queryKey: ["admin-role-permissions", variables.id],
+      });
+    },
+  });
+
   useMirrorRegistry("createRole", async (payload: CreateRoleRequest) =>
     createRoleMutation.mutateAsync(payload),
   );
@@ -57,6 +86,28 @@ const RoleMutations = (props: PropsWithChildren) => {
       updateRoleMutation.mutateAsync({ id, payload }),
   );
   useMirrorRegistry("deleteRole", async (id: string) => deleteRoleMutation.mutateAsync(id));
+
+  useMirrorRegistry(
+    "getRolePermissions",
+    async (id: string): Promise<RolePermissionsResponse> => {
+      const payload = await requestJson(`/api/admin/roles/${id}/permissions`, "GET");
+      if (Array.isArray(payload)) {
+        return payload as RolePermissionsResponse;
+      }
+      const maybeData = (payload as { data?: RolePermissionsResponse } | null)?.data;
+      return Array.isArray(maybeData) ? maybeData : [];
+    },
+  );
+  useMirrorRegistry(
+    "assignRolePermission",
+    async (id: string, permissionId: string) =>
+      assignPermissionMutation.mutateAsync({ id, permissionId }),
+  );
+  useMirrorRegistry(
+    "removeRolePermission",
+    async (id: string, permissionId: string) =>
+      removePermissionMutation.mutateAsync({ id, permissionId }),
+  );
 
   return props;
 };

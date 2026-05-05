@@ -15,7 +15,7 @@ export const serviceMenus: Record<UserRole, ServiceMenuItem[]> = {
     { href: "/admin/settings", label: "adminSettings", icon: "settings" },
   ],
   patient: [
-    { href: "/book-appointment", label: "bookAppointment", icon: "calendar_month" },
+    { href: "/contact", label: "nav.contact", icon: "mail" },
     { href: "/my-results", label: "myResults", icon: "lab_research" },
     { href: "/dashboard/price-calculator", label: "priceCalculator", icon: "calculate" },
     { href: "/insurance-request", label: "insuranceRequest", icon: "health_and_safety" },
@@ -26,7 +26,7 @@ export const serviceMenus: Record<UserRole, ServiceMenuItem[]> = {
     { href: "/doctor/patient-list", label: "patientList", icon: "group" },
     { href: "/my-results", label: "myResults", icon: "lab_research" },
   ],
-  lab: [
+  LabPartner: [
     { href: "/lab/order-tests", label: "orderTests", icon: "science" },
     { href: "/lab/accounting", label: "accounting", icon: "payments" },
     { href: "/lab/store", label: "store", icon: "storefront" },

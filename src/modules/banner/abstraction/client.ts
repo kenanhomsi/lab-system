@@ -5,19 +5,9 @@ type FindAllParams = {
   endpoint: string;
 };
 
-type FindOneParams = {
-  endpoint: string;
-};
-
 type SharedCreateParams = {
   endpoint: string;
-  [key: string]: unknown;
-};
-
-type SharedUpdateParams = SharedCreateParams;
-
-type SharedDeleteParams = {
-  endpoint: string;
+  formData: FormData;
 };
 
 @injectable()
@@ -28,22 +18,13 @@ abstract class Client<T extends AxiosState> {
     return this.axiosClient.get({ endpoint: params.endpoint });
   }
 
-  protected sharedCreate(params: SharedCreateParams) {
-    const { endpoint, ...body } = params;
-    return this.axiosClient.post({ endpoint }).setBody(body);
-  }
-
-  protected sharedFindOne(params: FindOneParams) {
+  protected sharedFindAllPublic(params: FindAllParams) {
     return this.axiosClient.get({ endpoint: params.endpoint });
   }
 
-  protected sharedUpdate(params: SharedUpdateParams) {
-    const { endpoint, ...body } = params;
-    return this.axiosClient.put({ endpoint }).setBody(body);
-  }
-
-  protected sharedDelete(params: SharedDeleteParams) {
-    return this.axiosClient.delete({ endpoint: params.endpoint });
+  protected sharedCreate(params: SharedCreateParams) {
+    const { endpoint, formData } = params;
+    return this.axiosClient.post({ endpoint }).setBody(formData);
   }
 }
 

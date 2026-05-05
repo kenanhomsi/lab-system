@@ -13,24 +13,24 @@ export const stats: StatCard[] = [
     value: 12842,
     trend: 14,
     iconKey: "activity",
-    accentColor: "light-dark(#00647e, #62d4fc)",
-    accentBg: "light-dark(#e4f4f8, rgba(0, 100, 126, 0.2))",
+    accentColor: "light-dark(#009cc2, #5dd4ed)",
+    accentBg: "light-dark(#e4f4f8, rgba(0, 156, 194, 0.2))",
   },
   {
     id: "partners",
     value: 48,
     trend: 3,
     iconKey: "users",
-    accentColor: "light-dark(#004d62, #59c7ef)",
-    accentBg: "light-dark(#d6edf4, rgba(0, 77, 98, 0.2))",
+    accentColor: "light-dark(#003d4d, #6bd8f0)",
+    accentBg: "light-dark(#d6edf4, rgba(0, 61, 77, 0.2))",
   },
   {
     id: "pendingRelease",
     value: 127,
     trend: -5.2,
     iconKey: "calendar",
-    accentColor: "light-dark(#705d00, #e9c400)",
-    accentBg: "light-dark(#f9f3d6, rgba(112, 93, 0, 0.2))",
+    accentColor: "light-dark(#5c4d00, #ffd700)",
+    accentBg: "light-dark(#fff8d6, rgba(255, 215, 0, 0.2))",
   },
 ];
 
@@ -38,24 +38,24 @@ export const queue: QueueStage[] = [
   {
     id: "new",
     count: 248,
-    color: "light-dark(#00647e, #62d4fc)",
-    bgColor: "light-dark(#ddf0f5, rgba(0, 100, 126, 0.2))",
+    color: "light-dark(#009cc2, #5dd4ed)",
+    bgColor: "light-dark(#ddf0f5, rgba(0, 156, 194, 0.2))",
     iconKey: "monitor",
     statusVariant: "positive",
   },
   {
     id: "received",
     count: 1102,
-    color: "light-dark(#007f9e, #59c7ef)",
-    bgColor: "light-dark(#d0ecf4, rgba(0, 127, 158, 0.2))",
+    color: "light-dark(#00a3c4, #6bd8f0)",
+    bgColor: "light-dark(#c2ecf4, rgba(0, 156, 194, 0.2))",
     iconKey: "flask",
     statusVariant: "waiting",
   },
   {
     id: "processing",
     count: 843,
-    color: "light-dark(#705d00, #e9c400)",
-    bgColor: "light-dark(#f9f3d6, rgba(112, 93, 0, 0.2))",
+    color: "light-dark(#5c4d00, #ffd700)",
+    bgColor: "light-dark(#fff8d6, rgba(255, 215, 0, 0.2))",
     iconKey: "loader",
     statusVariant: "active",
     accent: true,
@@ -63,8 +63,8 @@ export const queue: QueueStage[] = [
   {
     id: "ready",
     count: 459,
-    color: "light-dark(#004d62, #62d4fc)",
-    bgColor: "light-dark(#ddf0f5, rgba(0, 77, 98, 0.2))",
+    color: "light-dark(#003d4d, #5dd4ed)",
+    bgColor: "light-dark(#ddf0f5, rgba(0, 61, 77, 0.2))",
     iconKey: "check",
     statusVariant: "verified",
   },
@@ -83,10 +83,10 @@ export const throughput: ThroughputBar[] = [
 ];
 
 export const testDist: TestDistItem[] = [
-  { id: "molecular", pct: 42, color: "#00647e" },
-  { id: "hematology", pct: 28, color: "#007f9e" },
-  { id: "immunology", pct: 15, color: "#705d00" },
-  { id: "chemistry", pct: 15, color: "#c8a900" },
+  { id: "molecular", pct: 42, color: "#009cc2" },
+  { id: "hematology", pct: 28, color: "#00a3c4" },
+  { id: "immunology", pct: 15, color: "#a4a4a4" },
+  { id: "chemistry", pct: 15, color: "#ffd700" },
 ];
 
 export const systemHealth: SystemHealth = {

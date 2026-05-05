@@ -4,7 +4,11 @@ type SidebarIconKey =
   | "calendar"
   | "creditCard"
   | "messageSquare"
-  | "settings";
+  | "settings"
+  | "flask"
+  | "clipboardList"
+  | "clipboardCheck"
+  | "userPlus";
 
 type sideBarItem = {
   label: string;

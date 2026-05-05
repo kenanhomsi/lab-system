@@ -1,40 +1,13 @@
 "use client";
 
-import { Avatar, Group, Stack, Text } from "@mantine/core";
+import { Group, Stack, Text } from "@mantine/core";
 import { DataTableColumn } from "./types";
 import { UserItem } from "../types";
 import { ActionsRender } from "./columns-rendering/actions-render";
 import { DateRender } from "./columns-rendering/date-render";
 import { StatusBadge } from "./columns-rendering/status-badge";
-
-const AVATAR_COLORS = [
-  "red",
-  "pink",
-  "grape",
-  "violet",
-  "indigo",
-  "blue",
-  "cyan",
-  "teal",
-  "green",
-  "lime",
-  "yellow",
-  "orange",
-];
-
-function getAvatarColor(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
-}
-
-function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
+import { UserAvatar } from "./columns-rendering/user-avatar";
+import { dataTableSurface } from "@/components/table";
 
 type TFunction = (key: string) => string;
 
@@ -46,19 +19,12 @@ const getUsersColumns = (t: TFunction, tc: TFunction): DataTableColumn<UserItem>
       width: "22%",
       render: (row) => (
         <Group gap="sm" wrap="nowrap">
-          <Avatar
-            size={36}
-            radius="xl"
-            color={getAvatarColor(row.fullName || "U")}
-            variant="filled"
-          >
-            {getInitials(row.fullName || "U")}
-          </Avatar>
-          <Stack gap={0}>
-            <Text size="sm" fw={500} lh={1.3}>
+          <UserAvatar fullName={row.fullName} />
+          <Stack gap={0} className={dataTableSurface.textCell}>
+            <Text size="sm" fw={500} lh={1.3} style={{ textAlign: "start" }}>
               {row.fullName}
             </Text>
-            <Text size="xs" c="dimmed" lh={1.3}>
+            <Text size="xs" c="dimmed" lh={1.3} style={{ textAlign: "start" }}>
               {row.email}
             </Text>
           </Stack>
@@ -70,7 +36,11 @@ const getUsersColumns = (t: TFunction, tc: TFunction): DataTableColumn<UserItem>
       title: t("colCity"),
       width: "10%",
       render: (row) => (
-        <Text size="sm" c={row.city ? undefined : "dimmed"}>
+        <Text
+          size="sm"
+          className={dataTableSurface.textCell}
+          c={row.city ? undefined : "dimmed"}
+        >
           {row.city || "—"}
         </Text>
       ),
@@ -80,7 +50,13 @@ const getUsersColumns = (t: TFunction, tc: TFunction): DataTableColumn<UserItem>
       title: t("colPhone"),
       width: "14%",
       render: (row) => (
-        <Text size="sm" c={row.phoneNumber ? undefined : "dimmed"}>
+        <Text
+          size="sm"
+          className={dataTableSurface.textCell}
+          c={row.phoneNumber ? undefined : "dimmed"}
+          dir="ltr"
+          style={{ textAlign: "end" }}
+        >
           {row.phoneNumber || "—"}
         </Text>
       ),

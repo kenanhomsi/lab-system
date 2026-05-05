@@ -15,7 +15,7 @@ const BORDER = 3;
 const SHELL = PIN + BORDER * 2;
 const branchMarkerIcon = L.divIcon({
   className: "osm-branch-marker",
-  html: `<div style="width:${PIN}px;height:${PIN}px;border-radius:9999px;background:#00647e;border:${BORDER}px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.35)"></div>`,
+  html: `<div style="width:${PIN}px;height:${PIN}px;border-radius:9999px;background:#009cc2;border:${BORDER}px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.35)"></div>`,
   iconSize: [SHELL, SHELL],
   iconAnchor: [SHELL / 2, SHELL / 2],
   popupAnchor: [0, -SHELL / 2 - 4],

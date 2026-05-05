@@ -1,5 +1,4 @@
 export * from "./user";
-export * from "./appointment";
 export * from "./test";
 export * from "./result";
 export * from "./offer";

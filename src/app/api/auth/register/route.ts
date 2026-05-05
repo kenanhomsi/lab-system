@@ -1,7 +1,8 @@
 import { backendContainer } from "@/container";
 import { AuthBackendService, authModuleNames } from "@/modules/auth";
-import { RegisterProps } from "@/modules/auth/backend/client";
+import { jsonError } from "@/lib/api/bff-errors";
 import { NextRequest, NextResponse } from "next/server";
+import { registerBodySchema } from "../schemas";
 
 const authService = backendContainer.get<AuthBackendService>(
   authModuleNames.service,
@@ -9,11 +10,10 @@ const authService = backendContainer.get<AuthBackendService>(
 
 export async function POST(req: NextRequest) {
   try {
-    const body: RegisterProps = await req.json();
+    const body = registerBodySchema.parse(await req.json());
     const res = await authService.Register({ ...body });
     return NextResponse.json(res);
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return NextResponse.json(error?.response?.data, { status: 400 });
+  } catch (error: unknown) {
+    return jsonError(error, 400);
   }
 }

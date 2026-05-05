@@ -12,7 +12,6 @@ const UI = () => {
   const rolesData = useMirror("rolesData");
   const setActiveModal = useMirror("setActiveModal");
   const setSelectedRole = useMirror("setSelectedRole");
-
   return (
     <Stack>
       <Table
@@ -20,17 +19,17 @@ const UI = () => {
         isLoading={isLoading}
         schema={schema}
         OnPageNumberChange={setPageNumber}
-        data={rolesData}
+        data={rolesData || []}
         paginationStatic={{
-          count: rolesData.length,
+          count: rolesData?.length || 0,
           limit: 20,
           page: 1,
         }}
       >
         <Table.Header>
           <RolesHeader
-            totalRoles={rolesData.length}
-            visibleRoles={rolesData.length}
+            totalRoles={rolesData?.length || 0}
+            visibleRoles={rolesData?.length || 0}
             onOpenCreate={() => {
               setSelectedRole(null);
               setActiveModal("create");

@@ -5,7 +5,7 @@ export const FORM_ERROR_KEY = "form" as const;
 export const roleRedirects: Record<UserRole, string> = {
   patient: "/dashboard",
   doctor: "/doctor/request-tests",
-  lab: "/lab/order-tests",
+  LabPartner: "/lab/dashboard",
   special: "/special/daily-tasks",
   admin: "/admin/dashboard",
 };

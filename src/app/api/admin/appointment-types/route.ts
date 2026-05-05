@@ -7,9 +7,10 @@ import {
 } from "@/modules/appointment-type";
 import { resolveAccessToken } from "@/lib/api/resolve-access-token";
 
-const appointmentTypeService = backendContainer.get<AppointmentTypeBackendService>(
-  appointmentTypeModuleNames.service,
-);
+const appointmentTypeService =
+  backendContainer.get<AppointmentTypeBackendService>(
+    appointmentTypeModuleNames.service,
+  );
 
 export async function GET(req: NextRequest) {
   try {

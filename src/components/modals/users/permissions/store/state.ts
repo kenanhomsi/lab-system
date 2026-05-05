@@ -1,6 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
 
 type Params = {
+  checkedPermissions: string[];
+  setCheckedPermissions: Dispatch<SetStateAction<string[]>>;
   permissionsText: string;
   setPermissionsText: Dispatch<SetStateAction<string>>;
   loadedPermissions: string[];
@@ -10,6 +12,8 @@ type Params = {
 };
 
 const store = (): Params => ({
+  checkedPermissions: [],
+  setCheckedPermissions: () => {},
   permissionsText: "",
   setPermissionsText: () => {},
   loadedPermissions: [],

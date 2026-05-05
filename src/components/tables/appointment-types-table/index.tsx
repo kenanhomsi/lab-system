@@ -1,1 +1,0 @@
-export { AppointmentTypesTable } from "./factory";

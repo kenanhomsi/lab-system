@@ -22,11 +22,12 @@ export async function AboutHeroSection() {
           src={HERO}
           alt=""
           fill
+          sizes="100vw"
           className="object-cover opacity-30"
           priority
-          unoptimized
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
+
+        <div className="absolute right-0 inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
       </div>
       <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 md:px-8">
         <div className="max-w-3xl">
@@ -37,7 +38,7 @@ export async function AboutHeroSection() {
             {t("badge")}
           </span>
           <h1
-            className="reveal-up mb-8 font-headline text-5xl font-black leading-[0.95] tracking-tight text-on-surface md:text-7xl"
+            className="reveal-up mb-8 font-headline text-5xl font-black leading-[1.2] tracking-tight text-on-surface md:text-7xl"
             style={{ animationDelay: "180ms" }}
           >
             {t("titleBefore")} <br />

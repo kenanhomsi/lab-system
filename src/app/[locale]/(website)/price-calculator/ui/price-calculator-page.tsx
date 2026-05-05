@@ -200,7 +200,7 @@ export function PriceCalculatorPage({ variant = "page" }: PriceCalculatorPagePro
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link
-                href="/book-appointment"
+                href="/contact"
                 className="clinical-gradient flex flex-1 items-center justify-center gap-2 rounded-xl px-8 py-4 text-sm font-bold tracking-widest text-on-primary shadow-lg shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.98]"
               >
                 <Icon name="calendar_month" size="sm" />

@@ -2,7 +2,11 @@ import { injectable, injectFromBase } from "inversify";
 import { BackendState } from "@/modules/axios";
 import { endpoint } from "./endpoint";
 import { AuthClient } from "../abstraction";
-import { LoginSchemaType, RenewAccessTokenSchemaType } from "./schema";
+import {
+  LoginSchemaType,
+  RenewAccessTokenPayloadType,
+  RenewAccessTokenSchemaType,
+} from "./schema";
 import { RegisterSchemaType } from "./schema/register";
 
 type RegisterProps = {
@@ -17,6 +21,12 @@ type RegisterProps = {
 type CheckEmailProps = { email: string };
 type ResetPasswordProps = { email: string; code: number; newPassword: string };
 
+const unwrapRenewAccessTokenResponse = (
+  response: RenewAccessTokenSchemaType,
+): RenewAccessTokenPayloadType => {
+  return "data" in response ? response.data : response;
+};
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class AuthBackendClient extends AuthClient<BackendState> {
@@ -25,16 +35,16 @@ class AuthBackendClient extends AuthClient<BackendState> {
     const res = await super
       .sharedLogin({ email, password, endpoint: endpoint.login })
       .perform<LoginSchemaType>();
-    return res.data;
+    return res.data.data;
   }
 
   async renewAccessToken(params: { refreshToken: string }) {
     const { refreshToken } = params;
     const res = await this.client
       .post({ endpoint: endpoint.renewAccessToken })
-      .setBody({ token: refreshToken })
+      .setBody({ refreshToken })
       .perform<RenewAccessTokenSchemaType>();
-    return res.data;
+    return unwrapRenewAccessTokenResponse(res.data);
   }
 
   async Register(params: RegisterProps) {
@@ -67,4 +77,3 @@ class AuthBackendClient extends AuthClient<BackendState> {
 }
 
 export { AuthBackendClient };
-export type { RegisterProps, CheckEmailProps, ResetPasswordProps };

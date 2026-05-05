@@ -8,14 +8,15 @@ import { getAuthSecret } from "./lib/auth-secret";
 const intlMiddleware = createIntlMiddleware(routing);
 
 const protectedRoutes: Record<string, string[]> = {
-  "/book-appointment": ["patient", "doctor", "lab"],
-  "/my-results": ["patient", "doctor", "lab"],
+  "/my-results": ["patient", "doctor", "LabPartner"],
   "/insurance-request": ["patient"],
   "/subscriptions": ["patient"],
-  "/profile": ["patient", "doctor", "lab", "admin", "special"],
+  "/profile": ["patient", "doctor", "LabPartner", "admin", "special"],
+  "/admin": ["admin"],
   "/doctor": ["doctor"],
   "/patient": ["patient"],
-  "/lab": ["lab"],
+  "/lab": ["LabPartner"],
+  "/secretary": ["secretary"],
   "/special": ["special"],
 };
 
@@ -58,7 +59,7 @@ export default async function middleware(request: NextRequest) {
 
     if (!hasAccess) {
       const locale = pathname.match(/^\/(en|ar)/)?.[1] || "ar";
-      return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+      return NextResponse.redirect(new URL(`/${locale}/forbidden`, request.url));
     }
   }
 

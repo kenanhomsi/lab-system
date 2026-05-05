@@ -1,0 +1,124 @@
+.labSection {
+  position: relative;
+  display: none;
+  min-height: 100vh;
+  width: 50%;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--mantine-color-dark-8);
+}
+@media (min-width: 1024px) {
+  .labSection {
+    display: flex;
+  }
+}
+
+.labBg {
+  position: absolute;
+  inset: 0;
+}
+
+.labImage {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.labGradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.2) 100%);
+}
+
+.labContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--mantine-spacing-xl);
+  padding-bottom: 4rem;
+  color: var(--mantine-color-white);
+}
+
+.labBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  margin-bottom: var(--mantine-spacing-md);
+  width: -moz-fit-content;
+  width: fit-content;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.labBadgeIcon {
+  color: var(--mantine-color-yellow-4);
+}
+
+.labBadgeText {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.labTitle {
+  margin: 0 0 var(--mantine-spacing-md);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.labTitleAccent {
+  color: var(--mantine-color-blue-3);
+}
+
+.labDescription {
+  margin: 0 0 var(--mantine-spacing-xl);
+  max-width: 28rem;
+  font-size: var(--mantine-font-size-sm);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.labStats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mantine-spacing-lg);
+}
+
+.labStat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.labStatValue {
+  font-size: var(--mantine-font-size-xl);
+  font-weight: 700;
+}
+
+.labStatLabel {
+  font-size: var(--mantine-font-size-xs);
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.labDivider {
+  display: none;
+  width: 1px;
+  height: 2.5rem;
+  background: rgba(255, 255, 255, 0.2);
+}
+@media (min-width: 480px) {
+  .labDivider {
+    display: block;
+  }
+}/*# sourceMappingURL=lab-panel.module.css.map */

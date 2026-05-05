@@ -63,11 +63,6 @@ export const roleStrategy = {
         icon: "users",
       },
       {
-        label: "adminAppointments",
-        href: "/admin/appointments",
-        icon: "calendar",
-      },
-      {
         label: "adminSubscriptions",
         href: "/admin/subscription-packages",
         icon: "creditCard",
@@ -76,6 +71,21 @@ export const roleStrategy = {
         label: "adminComplaints",
         href: "/admin/complaints",
         icon: "messageSquare",
+      },
+      {
+        label: "adminMedicalTests",
+        href: "/admin/medical-tests",
+        icon: "flask",
+      },
+      {
+        label: "adminTestRequests",
+        href: "/admin/test-requests",
+        icon: "clipboardList",
+      },
+      {
+        label: "adminTestResults",
+        href: "/admin/test-results",
+        icon: "clipboardCheck",
       },
       {
         label: "adminSettings",
@@ -97,6 +107,21 @@ export const roleStrategy = {
         href: "/doctor/dashboard",
         icon: "home",
       },
+      {
+        label: "doctorTestRequests",
+        href: "/doctor/test-requests",
+        icon: "clipboardList",
+      },
+      {
+        label: "doctorTestResults",
+        href: "/doctor/test-results",
+        icon: "clipboardCheck",
+      },
+      {
+        label: "externalPatients",
+        href: "/doctor/external-patients",
+        icon: "userPlus",
+      },
     ],
     getNavbarConfig: withNavbarProfileOverrides("Dr. Ahmad Salem", "DOCTOR"),
     canAccess: (route: string) => route.startsWith("/doctor"),
@@ -110,21 +135,41 @@ export const roleStrategy = {
         icon: "home",
       },
       {
-        label: "appointments",
-        href: "/patient/appointments",
-        icon: "calendar",
+        label: "patientTestRequests",
+        href: "/patient/test-requests",
+        icon: "clipboardList",
+      },
+      {
+        label: "patientTestResults",
+        href: "/patient/test-results",
+        icon: "clipboardCheck",
       },
     ],
     getNavbarConfig: withNavbarProfileOverrides("Noor Hassan", "PATIENT"),
     canAccess: (route: string) => route.startsWith("/patient"),
   },
-  lab: {
+  labpartner: {
     getDashboardRoute: () => "/lab/dashboard",
     getSiderBarItems: (): sideBarItem[] => [
       {
-        label: "Dashboard",
+        label: "dashboard",
         href: "/lab/dashboard",
         icon: "home",
+      },
+      {
+        label: "labTestRequests",
+        href: "/lab/test-requests",
+        icon: "clipboardList",
+      },
+      {
+        label: "labTestResults",
+        href: "/lab/test-results",
+        icon: "clipboardCheck",
+      },
+      {
+        label: "externalPatients",
+        href: "/lab/external-patients",
+        icon: "userPlus",
       },
     ],
     getNavbarConfig: withNavbarProfileOverrides(
@@ -132,5 +177,32 @@ export const roleStrategy = {
       "LAB DIRECTOR",
     ),
     canAccess: (route: string) => route.startsWith("/lab"),
+  },
+  secretary: {
+    getDashboardRoute: () => "/secretary/dashboard",
+    getSiderBarItems: (): sideBarItem[] => [
+      {
+        label: "dashboard",
+        href: "/secretary/dashboard",
+        icon: "home",
+      },
+      {
+        label: "adminMedicalTests",
+        href: "/secretary/medical-tests",
+        icon: "flask",
+      },
+      {
+        label: "adminTestRequests",
+        href: "/secretary/test-requests",
+        icon: "clipboardList",
+      },
+      {
+        label: "adminTestResults",
+        href: "/secretary/test-results",
+        icon: "clipboardCheck",
+      },
+    ],
+    getNavbarConfig: withNavbarProfileOverrides("Sara Nabil", "SECRETARY"),
+    canAccess: (route: string) => route.startsWith("/secretary"),
   },
 };

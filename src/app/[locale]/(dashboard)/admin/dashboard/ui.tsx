@@ -11,15 +11,18 @@ import {
   FiCheckCircle,
   FiDroplet,
   FiLoader,
+  FiMoreHorizontal,
   FiMonitor,
   FiServer,
   FiUsers,
 } from "react-icons/fi";
 import { BarChart } from "@mantine/charts";
+import { useElementSize } from "@mantine/hooks";
 import { useLocale, useTranslations } from "next-intl";
+import { PromoBanner } from "@/components/dashboard/promo-banner";
+import { SlideCardsDashboard } from "../../../(website)/ui/landing/slide-cards-section";
 import { useMirror } from "./store";
 import type { QueueStage, QueueStageStatus, StatCard } from "./type";
-import { DashboardAdCard } from "@/components/dashboard/ad-space";
 import styles from "./styles.module.scss";
 
 const STAT_ICONS = {
@@ -118,6 +121,7 @@ const FlowCard = ({ stage }: { stage: QueueStage }) => {
 };
 
 const UI = () => {
+  const locale = useLocale();
   const t = useTranslations("admin.dashboard");
   const stats = useMirror("stats");
   const queue = useMirror("queue");
@@ -127,6 +131,7 @@ const UI = () => {
   const systemHealth = useMirror("systemHealth");
 
   const [chartRange, setChartRange] = useState<"Day" | "Month">("Month");
+  const { ref: chartRef, width: chartWidth } = useElementSize();
 
   const chartData = useMemo(
     () =>
@@ -137,78 +142,180 @@ const UI = () => {
     [throughput, t],
   );
 
+  const shortChartData = chartData.slice(-4);
+  const profileInitials = "OA";
+
   return (
     <div className={styles.page}>
-      <p className={styles.statLabel} style={{ marginBottom: 12 }}>
-        {t("eyebrow")}
-      </p>
-
-      <div className={styles.statsRow}>
-        {stats.map((stat) => (
-          <StatCardItem key={stat.id} stat={stat} />
-        ))}
-      </div>
-
-      <DashboardAdCard />
-
-      <section className={styles.flowSection}>
-        <div className={styles.flowHeader}>
-          <h2 className={styles.flowTitle}>{t("flowTitle")}</h2>
-          <span className={styles.liveChip}>
-            <span className={styles.liveDot} />
-            {t("liveMonitoringChip")}
-          </span>
-        </div>
-
-        <div className={styles.flowRow}>
-          {queue.map((stage, idx) => (
-            <Fragment key={stage.id}>
-              <div className={styles.flowCardWrap}>
-                <FlowCard stage={stage} />
-              </div>
-              {idx < queue.length - 1 && (
-                <div className={styles.flowConnector} aria-hidden="true">
-                  <div className={styles.dashedLine} />
-                </div>
-              )}
-            </Fragment>
-          ))}
-        </div>
-      </section>
-
-      <div className={styles.midGrid}>
-        <div className={styles.glassCard}>
-          <div className={styles.midHeader}>
-            <div>
-              <h3 className={styles.midTitle}>{t("chartTitle")}</h3>
-              <p className={styles.midSub}>{t("chartSubtitle")}</p>
+      <div className={styles.shellGrid}>
+        <section className={styles.mainColumn}>
+          <PromoBanner location="admin_dashboard" />
+          <div className={styles.heroCard}>
+            <div className={styles.heroContent}>
+              <p className={styles.heroEyebrow}>{t("eyebrow")}</p>
+              <h1 className={styles.heroTitle}>{t("flowTitle")}</h1>
+              <p className={styles.heroSubtitle}>{t("chartSubtitle")}</p>
+              <button className={styles.primaryCta} type="button">
+                {t("recentViewAll")}
+              </button>
             </div>
-            <div className={styles.toggleGroup}>
-              {(["Day", "Month"] as const).map((opt) => (
-                <button
-                  key={opt}
-                  type="button"
-                  className={`${styles.toggleBtn} ${chartRange === opt ? styles.toggleActive : ""}`}
-                  onClick={() => setChartRange(opt)}
-                >
-                  {opt === "Day" ? t("chartToggleDay") : t("chartToggleMonth")}
-                </button>
+            <div className={styles.heroStats}>
+              {stats.map((stat) => (
+                <div key={stat.id} className={styles.heroStatPill}>
+                  <span className={styles.heroStatLabel}>{t(`stats.${stat.id}`)}</span>
+                  <span className={styles.heroStatValue}>{stat.value.toLocaleString(locale)}</span>
+                </div>
               ))}
             </div>
           </div>
 
-          <BarChart
-            h={220}
-            data={chartData}
-            dataKey="month"
-            series={[{ name: "value", color: "var(--primary)" }]}
-            barProps={{ radius: [6, 6, 0, 0] }}
-            tickLine="none"
-            gridAxis="none"
-          />
-        </div>
+          <div className={styles.statsRow}>
+            {stats.map((stat) => (
+              <StatCardItem key={stat.id} stat={stat} />
+            ))}
+          </div>
 
-        <div className={styles.rightStack}>
+          <div className={styles.glassCard}>
+            <div className={styles.flowHeader}>
+              <h2 className={styles.flowTitle}>{t("flowTitle")}</h2>
+              <span className={styles.liveChip}>
+                <span className={styles.liveDot} />
+                {t("liveMonitoringChip")}
+              </span>
+            </div>
+
+            <div className={styles.flowRow}>
+              {queue.map((stage, idx) => (
+                <Fragment key={stage.id}>
+                  <div className={styles.flowCardWrap}>
+                    <FlowCard stage={stage} />
+                  </div>
+                  {idx < queue.length - 1 && (
+                    <div className={styles.flowConnector} aria-hidden="true">
+                      <div className={styles.dashedLine} />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.glassCard}>
+            <div className={styles.midHeader}>
+              <div>
+                <h3 className={styles.midTitle}>{t("chartTitle")}</h3>
+                <p className={styles.midSub}>{t("chartSubtitle")}</p>
+              </div>
+              <div className={styles.toggleGroup}>
+                {(["Day", "Month"] as const).map((opt) => (
+                  <button
+                    key={opt}
+                    type="button"
+                    className={`${styles.toggleBtn} ${chartRange === opt ? styles.toggleActive : ""}`}
+                    onClick={() => setChartRange(opt)}
+                  >
+                    {opt === "Day" ? t("chartToggleDay") : t("chartToggleMonth")}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.chartWrap} ref={chartRef}>
+              {chartWidth > 0 ? (
+                <BarChart
+                  h={240}
+                  data={chartData}
+                  dataKey="month"
+                  series={[{ name: "value", color: "var(--primary)" }]}
+                  barProps={{ radius: [7, 7, 0, 0] }}
+                  tickLine="none"
+                  gridAxis="none"
+                />
+              ) : (
+                <div className={styles.chartPlaceholder} />
+              )}
+            </div>
+          </div>
+
+          <section className={styles.recentSection}>
+            <div className={styles.recentHeader}>
+              <h2 className={styles.recentTitle}>{t("recentTitle")}</h2>
+              <button type="button" className={styles.viewAll}>
+                {t("recentViewAll")} <FiArrowRight size={14} />
+              </button>
+            </div>
+
+            <div className={styles.recentTable}>
+              <div className={styles.recentHead}>
+                <span>{t("recentCols.patient")}</span>
+                <span>{t("recentCols.test")}</span>
+                <span>{t("recentCols.time")}</span>
+                <span>{t("recentCols.status")}</span>
+                <span>{t("recentCols.action")}</span>
+              </div>
+
+              {recentAnalysis.map((row) => (
+                <div key={row.id} className={styles.recentRow}>
+                  <div className={styles.recentPatient}>
+                    <div className={styles.recentAvatar}>
+                      {row.patientId.replace(/^LAB-/, "").slice(-2)}
+                    </div>
+                    <div>
+                      <div className={styles.recentPid}>{row.patientId}</div>
+                      <div className={styles.recentPsub}>
+                        {t(`recent.${row.rowKey}.patientSub`)}
+                      </div>
+                    </div>
+                  </div>
+                  <span className={styles.recentCell}>{t(`recent.${row.rowKey}.testType`)}</span>
+                  <div>
+                    <div className={styles.recentCell}>{t(`recent.${row.rowKey}.timestamp`)}</div>
+                    <div className={styles.recentPsub}>{t(`recent.${row.rowKey}.timeSub`)}</div>
+                  </div>
+                  <span className={`${styles.statusBadge} ${RECENT_STATUS[row.statusVariant]}`}>
+                    {t(`recent.${row.rowKey}.status`)}
+                  </span>
+                  <button type="button" className={styles.rowAction} aria-label={t("rowMenu")}>
+                    •••
+                  </button>
+                </div>
+              ))}
+            </div>
+          </section>
+        </section>
+
+        <aside className={styles.sideColumn}>
+          <SlideCardsDashboard />
+          <div className={styles.profileCard}>
+            <div className={styles.profileTop}>
+              <div className={styles.profileIdentity}>
+                <div className={styles.profileAvatar}>{profileInitials}</div>
+                <div>
+                  <div className={styles.profileName}>Online Admin</div>
+                  <div className={styles.profileSub}>{t("eyebrow")}</div>
+                </div>
+              </div>
+              <button type="button" className={styles.inlineMenuBtn} aria-label={t("rowMenu")}>
+                <FiMoreHorizontal size={16} />
+              </button>
+            </div>
+
+            <h3 className={styles.sideTitle}>{t("healthTitle")}</h3>
+            <p className={styles.sideSub}>{t("healthFooter")}</p>
+
+            <div className={styles.miniBars}>
+              {shortChartData.map((item) => (
+                <div key={item.month} className={styles.miniBarItem}>
+                  <div
+                    className={styles.miniBar}
+                    style={{ height: `${Math.max(18, item.value / 22)}px` }}
+                  />
+                  <span>{item.month}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className={styles.glassCard}>
             <h3 className={styles.midTitle}>{t("testDistTitle")}</h3>
             <div className={styles.distList}>
@@ -269,54 +376,8 @@ const UI = () => {
               </div>
             </div>
           </div>
-        </div>
+        </aside>
       </div>
-
-      <section className={styles.recentSection}>
-        <div className={styles.recentHeader}>
-          <h2 className={styles.recentTitle}>{t("recentTitle")}</h2>
-          <button type="button" className={styles.viewAll}>
-            {t("recentViewAll")} <FiArrowRight size={14} />
-          </button>
-        </div>
-
-        <div className={styles.recentTable}>
-          <div className={styles.recentHead}>
-            <span>{t("recentCols.patient")}</span>
-            <span>{t("recentCols.test")}</span>
-            <span>{t("recentCols.time")}</span>
-            <span>{t("recentCols.status")}</span>
-            <span>{t("recentCols.action")}</span>
-          </div>
-
-          {recentAnalysis.map((row) => (
-            <div key={row.id} className={styles.recentRow}>
-              <div className={styles.recentPatient}>
-                <div className={styles.recentAvatar}>
-                  {row.patientId.replace(/^LAB-/, "").slice(-2)}
-                </div>
-                <div>
-                  <div className={styles.recentPid}>{row.patientId}</div>
-                  <div className={styles.recentPsub}>
-                    {t(`recent.${row.rowKey}.patientSub`)}
-                  </div>
-                </div>
-              </div>
-              <span className={styles.recentCell}>{t(`recent.${row.rowKey}.testType`)}</span>
-              <div>
-                <div className={styles.recentCell}>{t(`recent.${row.rowKey}.timestamp`)}</div>
-                <div className={styles.recentPsub}>{t(`recent.${row.rowKey}.timeSub`)}</div>
-              </div>
-              <span className={`${styles.statusBadge} ${RECENT_STATUS[row.statusVariant]}`}>
-                {t(`recent.${row.rowKey}.status`)}
-              </span>
-              <button type="button" className={styles.rowAction} aria-label={t("rowMenu")}>
-                •••
-              </button>
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   );
 };

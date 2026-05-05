@@ -27,13 +27,15 @@ const SectionHeader = ({
   title: string;
   description: string;
 }) => (
-  <Group align="flex-start" gap="sm">
-    <ThemeIcon size={38} radius="md" variant="light" color="teal">
+  <Group align="flex-start" gap="sm" wrap="nowrap">
+    <ThemeIcon size={44} radius="lg" variant="light" color="teal">
       {icon}
     </ThemeIcon>
-    <Stack gap={2}>
-      <Text fw={600}>{title}</Text>
-      <Text size="sm" c="dimmed">
+    <Stack gap={4} style={{ flex: 1 }}>
+      <Text fw={700} size="lg">
+        {title}
+      </Text>
+      <Text size="sm" c="dimmed" lh={1.55}>
         {description}
       </Text>
     </Stack>
@@ -58,18 +60,16 @@ const UI = () => {
       opened={isOpen}
       onClose={handleClose}
       title={
-        <Group gap="sm" wrap="nowrap">
-          <ThemeIcon size={42} radius="md" variant="light" color="teal">
+        <Group gap="sm" wrap="nowrap" style={{ flex: 1 }}>
+          <ThemeIcon size={46} radius="lg" variant="light" color="teal">
             <IconCalendarEvent size={22} />
           </ThemeIcon>
-          <Stack gap={0}>
-            <Title order={4}>
+          <Stack gap={3} style={{ flex: 1, minWidth: 0 }}>
+            <Title order={4} lh={1.2}>
               {appointmentType ? t("modalEditTitle") : t("modalCreateTitle")}
             </Title>
-            <Text size="sm" c="dimmed">
-              {appointmentType
-                ? "Update the appointment type name or toggle its active status."
-                : "Define a new type of appointment available for booking."}
+            <Text size="sm" c="dimmed" lh={1.45}>
+              {appointmentType ? t("modalEditDescription") : t("modalCreateDescription")}
             </Text>
           </Stack>
         </Group>
@@ -77,74 +77,106 @@ const UI = () => {
       centered
       size="lg"
       radius="xl"
-      padding="lg"
+      padding={0}
       closeOnClickOutside={!isSubmitting}
       closeOnEscape={!isSubmitting}
-      overlayProps={{ blur: 10, backgroundOpacity: 0.2 }}
+      overlayProps={{ blur: 12, backgroundOpacity: 0.24 }}
       styles={{
         content: {
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          background: "light-dark(rgba(255,255,255,0.82), rgba(18,18,23,0.78))",
+          background: "light-dark(rgba(255,255,255,0.94), rgba(18,18,23,0.9))",
           border: "1px solid light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.09))",
+          boxShadow: "0 24px 80px rgba(15, 23, 42, 0.24)",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
         },
-        body: { scrollbarWidth: "none", msOverflowStyle: "none" },
+        header: {
+          background: "transparent",
+          borderBottom: "1px solid light-dark(rgba(15,23,42,0.06), rgba(255,255,255,0.07))",
+          padding: "var(--mantine-spacing-lg)",
+          paddingBottom: "var(--mantine-spacing-md)",
+        },
+        title: { flex: 1 },
+        body: {
+          padding: "var(--mantine-spacing-lg)",
+          paddingTop: "var(--mantine-spacing-md)",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        },
       }}
     >
       <Stack gap="lg">
-        <Group justify="space-between" align="center">
+        <Group
+          justify="space-between"
+          align="center"
+          gap="sm"
+          wrap="wrap"
+          p="sm"
+          style={{
+            borderRadius: "var(--mantine-radius-lg)",
+            background: "light-dark(rgba(20,184,166,0.08), rgba(45,212,191,0.08))",
+          }}
+        >
           <Badge variant="light" color="teal" radius="sm">
-            {appointmentType ? "Edit appointment type" : "New appointment type"}
+            {appointmentType ? t("editBadge") : t("newBadge")}
           </Badge>
           <Text size="sm" c="dimmed">
-            Required: name
+            {t("requiredName")}
           </Text>
         </Group>
 
-        <Paper withBorder radius="lg" p="md">
-          <Stack gap="md">
+        <Paper withBorder radius="xl" p="lg" bg="light-dark(rgba(255,255,255,0.78), rgba(255,255,255,0.03))">
+          <Stack gap="lg">
             <SectionHeader
               icon={<IconCalendarEvent size={18} />}
-              title="Appointment Type Details"
-              description="Provide a clear name that patients and staff will see when booking appointments."
+              title={t("detailsTitle")}
+              description={t("detailsDescription")}
             />
             <TextInput
               label={t("nameLabel")}
-              placeholder="e.g. General Consultation, Follow-up"
+              placeholder={t("namePlaceholder")}
               leftSection={<IconTag size={16} />}
               value={name}
               onChange={(e) => setName(e.currentTarget.value)}
+              size="md"
+              radius="md"
               required
             />
             {appointmentType && (
-              <Group gap="sm" align="center">
-                <IconToggleRight size={16} color="var(--mantine-color-teal-6)" />
+              <Group
+                gap="sm"
+                align="center"
+                p="sm"
+                style={{
+                  borderRadius: "var(--mantine-radius-md)",
+                  background: "light-dark(rgba(20,184,166,0.08), rgba(45,212,191,0.08))",
+                }}
+              >
+                <IconToggleRight size={18} color="var(--mantine-color-teal-6)" />
                 <Checkbox
                   label={t("activeLabel")}
                   checked={isActive}
                   onChange={(e) => setIsActive(e.currentTarget.checked)}
+                  color="teal"
                 />
               </Group>
             )}
           </Stack>
         </Paper>
 
-        <Paper withBorder radius="lg" p="md">
-          <Group justify="space-between" align="center">
+        <Paper withBorder radius="xl" p="md" bg="light-dark(rgba(255,255,255,0.66), rgba(255,255,255,0.025))">
+          <Group justify="space-between" align="center" gap="md" wrap="wrap">
             <Stack gap={2}>
               <Text fw={600}>
-                {appointmentType ? "Ready to save changes?" : "Ready to create this type?"}
+                {appointmentType ? t("editReadyTitle") : t("createReadyTitle")}
               </Text>
               <Text size="sm" c="dimmed">
-                {appointmentType
-                  ? "Review the details, then save."
-                  : "Review the name, then create."}
+                {appointmentType ? t("editReadyDescription") : t("createReadyDescription")}
               </Text>
             </Stack>
-            <Group justify="flex-end">
-              <Button variant="default" onClick={handleClose} disabled={isSubmitting}>
+            <Group justify="flex-end" gap="sm" wrap="nowrap" style={{ flex: 1 }}>
+              <Button variant="default" onClick={handleClose} disabled={isSubmitting} radius="md">
                 {t("cancel")}
               </Button>
               <Button
@@ -153,6 +185,7 @@ const UI = () => {
                 disabled={!canSubmit}
                 radius="md"
                 color="teal"
+                px="xl"
               >
                 {t("save")}
               </Button>

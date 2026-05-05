@@ -1,20 +1,23 @@
 "use client";
 
 import {
-    Badge,
     Button,
     Checkbox,
     FileInput,
     Group,
     Modal,
+    NumberInput,
     Paper,
+    SimpleGrid,
     Stack,
+    Stepper,
     Text,
     TextInput,
     ThemeIcon,
     Title,
     Textarea,
 } from "@mantine/core";
+import { DateTimePicker } from "@mantine/dates";
 import {
     IconBrandAndroid,
     IconFile,
@@ -26,13 +29,13 @@ import {
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { ReactNode, useCallback, useState } from "react";
+import { toIso8601Utc } from "@/lib/dates/to-iso-8601";
 import { useMirror } from "../store";
-import { BannerItem, CreateBannerRequest, UpdateBannerRequest } from "../types";
+import { CreateBannerRequest } from "../types";
 
 type Props = {
     isOpen: boolean;
     onClose: () => void;
-    banner: BannerItem | null;
 };
 
 const SectionHeader = ({
@@ -57,84 +60,68 @@ const SectionHeader = ({
     </Group>
 );
 
-const BannerFormModal = ({ isOpen, onClose, banner }: Props) => {
-    const t = useTranslations("admin.settings.banners");
-    const createBanner = useMirror("createBanner");
-    const updateBanner = useMirror("updateBanner");
+const TOTAL_STEPS = 4;
 
-    const [title, setTitle] = useState(banner?.title || "");
-    const [type, setType] = useState(banner?.type || "");
-    const [location, setLocation] = useState(banner?.location || "");
-    const [isActive, setIsActive] = useState(banner?.isActive ?? true);
-    const [displayOrder, setDisplayOrder] = useState(banner?.displayOrder?.toString() || "0");
-    const [internalLink, setInternalLink] = useState(banner?.internalLink || "");
-    const [externalLink, setExternalLink] = useState(banner?.externalLink || "");
-    const [targetType, setTargetType] = useState(banner?.targetType || "");
-    const [visibilityRulesJson, setVisibilityRulesJson] = useState(
-        banner?.visibilityRules || "",
-    );
-    const [startDate, setStartDate] = useState(banner?.startDate || "");
-    const [endDate, setEndDate] = useState(banner?.endDate || "");
+const BannerFormModal = ({ isOpen, onClose }: Props) => {
+    const t = useTranslations("admin.settings.banners");
+    const tc = useTranslations("admin.common");
+    const createBanner = useMirror("createBanner");
+
+    const [step, setStep] = useState(0);
+    const [title, setTitle] = useState("");
+    const [type, setType] = useState("");
+    const [location, setLocation] = useState("");
+    const [isActive, setIsActive] = useState(true);
+    const [displayOrder, setDisplayOrder] = useState("0");
+    const [internalLink, setInternalLink] = useState("");
+    const [externalLink, setExternalLink] = useState("");
+    const [targetType, setTargetType] = useState("");
+    const [visibilityRulesJson, setVisibilityRulesJson] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleClose = useCallback(() => {
-        setTitle(banner?.title || "");
-        setType(banner?.type || "");
-        setLocation(banner?.location || "");
-        setIsActive(banner?.isActive ?? true);
-        setDisplayOrder(banner?.displayOrder?.toString() || "0");
-        setInternalLink(banner?.internalLink || "");
-        setExternalLink(banner?.externalLink || "");
-        setTargetType(banner?.targetType || "");
-        setVisibilityRulesJson(banner?.visibilityRules || "");
-        setStartDate(banner?.startDate || "");
-        setEndDate(banner?.endDate || "");
+        setStep(0);
+        setTitle("");
+        setType("");
+        setLocation("");
+        setIsActive(true);
+        setDisplayOrder("0");
+        setInternalLink("");
+        setExternalLink("");
+        setTargetType("");
+        setVisibilityRulesJson("");
+        setStartDate("");
+        setEndDate("");
         setMediaFile(null);
         onClose();
-    }, [banner, onClose]);
+    }, [onClose]);
 
     const handleSubmit = async () => {
+        if (!mediaFile) {
+            alert(t("errorMediaRequired"));
+            return;
+        }
+
         setIsSubmitting(true);
         try {
-            if (banner?.id) {
-                const payload: UpdateBannerRequest = {
-                    title,
-                    type,
-                    location,
-                    isActive,
-                    displayOrder: parseInt(displayOrder, 10),
-                    internalLink,
-                    externalLink,
-                    targetType,
-                    visibilityRulesJson,
-                    startDate,
-                    endDate,
-                    ...(mediaFile && { media: mediaFile }),
-                };
-                await updateBanner(banner.id, payload);
-            } else {
-                if (!mediaFile) {
-                    alert(t("errorMediaRequired"));
-                    setIsSubmitting(false);
-                    return;
-                }
-                const payload: CreateBannerRequest = {
-                    title,
-                    type,
-                    location,
-                    isActive,
-                    displayOrder: parseInt(displayOrder, 10),
-                    internalLink,
-                    externalLink,
-                    targetType,
-                    visibilityRulesJson,
-                    startDate,
-                    endDate,
-                    media: mediaFile,
-                };
-                await createBanner(payload);
-            }
+            const payload: CreateBannerRequest = {
+                title,
+                type,
+                location,
+                isActive,
+                displayOrder: parseInt(displayOrder, 10),
+                internalLink,
+                externalLink,
+                targetType,
+                visibilityRulesJson,
+                startDate: toIso8601Utc(startDate),
+                endDate: toIso8601Utc(endDate),
+                media: mediaFile,
+            };
+            await createBanner(payload);
             handleClose();
         } finally {
             setIsSubmitting(false);
@@ -152,18 +139,16 @@ const BannerFormModal = ({ isOpen, onClose, banner }: Props) => {
                     </ThemeIcon>
                     <Stack gap={0}>
                         <Title order={4}>
-                            {banner?.id ? t("modalEditTitle") : t("modalCreateTitle")}
+                            {t("modalCreateTitle")}
                         </Title>
                         <Text size="sm" c="dimmed">
-                            {banner?.id
-                                ? "Update banner settings and content."
-                                : "Create a new promotional banner."}
+                            {t("modalCreateDescription")}
                         </Text>
                     </Stack>
                 </Group>
             }
             centered
-            size="lg"
+            size={820}
             radius="xl"
             padding="lg"
             closeOnClickOutside={!isSubmitting}
@@ -182,25 +167,25 @@ const BannerFormModal = ({ isOpen, onClose, banner }: Props) => {
             }}
         >
             <Stack gap="lg">
-                <Group justify="space-between" align="center">
-                    <Badge variant="light" color="blue" radius="sm">
-                        {banner?.id ? "Edit banner" : "New banner"}
-                    </Badge>
-                    <Text size="sm" c="dimmed">
-                        Required: title, location, media
-                    </Text>
-                </Group>
+                <Stepper active={step} size="sm" color="blue" mt="md">
+                    <Stepper.Step label={t("stepDetails")} description={t("stepDetailsDesc")} />
+                    <Stepper.Step label={t("stepLinks")} description={t("stepLinksDesc")} />
+                    <Stepper.Step label={t("stepSchedule")} description={t("stepScheduleDesc")} />
+                    <Stepper.Step label={t("stepMedia")} description={t("stepMediaDesc")} />
+                </Stepper>
 
+                {step === 0 && (
                 <Paper withBorder radius="lg" p="md">
                     <Stack gap="md">
                         <SectionHeader
                             icon={<IconPalette size={18} />}
-                            title="Banner Details"
-                            description="Configure the banner's basic information and appearance."
+                            title={t("detailsSection")}
+                            description={t("detailsSectionDesc")}
                         />
+                        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                         <TextInput
                             label={t("titleLabel")}
-                            placeholder="e.g. Summer Sale 2024"
+                            placeholder={t("titlePlaceholder")}
                             leftSection={<IconStackMiddle size={16} />}
                             value={title}
                             onChange={(e) => setTitle(e.currentTarget.value)}
@@ -208,35 +193,38 @@ const BannerFormModal = ({ isOpen, onClose, banner }: Props) => {
                         />
                         <TextInput
                             label={t("typeLabel")}
-                            placeholder="e.g. promotional, informational"
+                            placeholder={t("typePlaceholder")}
                             value={type}
                             onChange={(e) => setType(e.currentTarget.value)}
                         />
                         <TextInput
                             label={t("locationLabel")}
-                            placeholder="e.g. homepage, sidebar"
+                            placeholder={t("locationPlaceholder")}
                             value={location}
                             onChange={(e) => setLocation(e.currentTarget.value)}
                             required
                         />
-                        <TextInput
+                        <NumberInput
                             label={t("displayOrderLabel")}
-                            type="number"
                             placeholder="0"
-                            min="0"
-                            value={displayOrder}
-                            onChange={(e) => setDisplayOrder(e.currentTarget.value)}
+                            min={0}
+                            value={Number(displayOrder) || 0}
+                            onChange={(value) => setDisplayOrder(String(value ?? 0))}
                         />
+                        </SimpleGrid>
                     </Stack>
                 </Paper>
+                )}
 
+                {step === 1 && (
                 <Paper withBorder radius="lg" p="md">
                     <Stack gap="md">
                         <SectionHeader
                             icon={<IconLink size={18} />}
-                            title="Links & Targeting"
-                            description="Specify where the banner leads and its target behavior."
+                            title={t("linksSection")}
+                            description={t("linksSectionDesc")}
                         />
+                        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                         <TextInput
                             label={t("internalLinkLabel")}
                             placeholder="/dashboard/offers"
@@ -255,87 +243,112 @@ const BannerFormModal = ({ isOpen, onClose, banner }: Props) => {
                             value={targetType}
                             onChange={(e) => setTargetType(e.currentTarget.value)}
                         />
+                        </SimpleGrid>
                     </Stack>
                 </Paper>
+                )}
 
+                {step === 2 && (
                 <Paper withBorder radius="lg" p="md">
                     <Stack gap="md">
                         <SectionHeader
                             icon={<IconHourglassEmpty size={18} />}
-                            title="Schedule & Visibility"
-                            description="Set when the banner should appear and visibility rules."
+                            title={t("scheduleSection")}
+                            description={t("scheduleSectionDesc")}
                         />
-                        <Group grow>
-                            <TextInput
+                        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                            <DateTimePicker
                                 label={t("startDateLabel")}
-                                type="datetime-local"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.currentTarget.value)}
+                                placeholder={t("dateTimePlaceholder")}
+                                value={startDate || null}
+                                onChange={(value) => setStartDate(value ?? "")}
+                                valueFormat="MM/DD/YYYY hh:mm A"
+                                clearable
                             />
-                            <TextInput
+                            <DateTimePicker
                                 label={t("endDateLabel")}
-                                type="datetime-local"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.currentTarget.value)}
+                                placeholder={t("dateTimePlaceholder")}
+                                value={endDate || null}
+                                onChange={(value) => setEndDate(value ?? "")}
+                                valueFormat="MM/DD/YYYY hh:mm A"
+                                clearable
                             />
-                        </Group>
+                            <Group align="flex-end" pb={4}>
+                                <Checkbox
+                                    label={t("isActiveLabel")}
+                                    checked={isActive}
+                                    onChange={(e) => setIsActive(e.currentTarget.checked)}
+                                />
+                            </Group>
+                        </SimpleGrid>
                         <Textarea
                             label={t("visibilityRulesLabel")}
                             placeholder='{"rules": [], "type": "all"}'
                             value={visibilityRulesJson}
                             onChange={(e) => setVisibilityRulesJson(e.currentTarget.value)}
                             minRows={3}
-                            description="Enter JSON format visibility rules"
+                            description={t("visibilityRulesDescription")}
                         />
                     </Stack>
                 </Paper>
+                )}
 
+                {step === 3 && (
                 <Paper withBorder radius="lg" p="md">
                     <Stack gap="md">
                         <SectionHeader
                             icon={<IconFile size={18} />}
-                            title="Media Upload"
-                            description={banner?.id ? "Update the banner media (optional)" : "Upload an image or video for the banner"}
+                            title={t("mediaSection")}
+                            description={t("mediaSectionDesc")}
                         />
                         <FileInput
                             label={t("mediaLabel")}
-                            placeholder="Choose image or video"
-                            icon={<IconUpload size={14} />}
+                            placeholder={t("mediaPlaceholder")}
+                            leftSection={<IconUpload size={14} />}
                             accept="image/*,video/*"
                             value={mediaFile}
                             onChange={setMediaFile}
-                            required={!banner?.id}
+                            required
                             clearable
-                            description={mediaFile ? `Selected: ${mediaFile.name} (${(mediaFile.size / 1024 / 1024).toFixed(2)}MB)` : "Max size: 50MB"}
+                            description={mediaFile ? t("mediaSelected", { name: mediaFile.name, size: (mediaFile.size / 1024 / 1024).toFixed(2) }) : t("mediaDescription")}
                         />
                     </Stack>
                 </Paper>
+                )}
 
-                <Paper withBorder radius="lg" p="md">
-                    <Group justify="space-between" align="center">
-                        <Stack gap={2}>
-                            <Text fw={600}>
-                                {banner?.id ? "Ready to save changes?" : "Ready to create this banner?"}
-                            </Text>
-                            <Text size="sm" c="dimmed">
-                                {banner?.id ? "Review the settings, then save." : "Review all details, then create."}
-                            </Text>
-                        </Stack>
-                        <Group justify="flex-end">
-                            <Button variant="default" onClick={handleClose} disabled={isSubmitting} radius="md">
-                                {t("cancel")}
+                <Group justify="space-between">
+                    <Button variant="subtle" color="gray" onClick={handleClose} disabled={isSubmitting}>
+                        {t("cancel")}
+                    </Button>
+                    <Group gap="sm">
+                        {step > 0 && (
+                            <Button
+                                variant="default"
+                                onClick={() => setStep((current) => current - 1)}
+                                disabled={isSubmitting}
+                            >
+                                {tc("back")}
                             </Button>
+                        )}
+                        {step < TOTAL_STEPS - 1 ? (
+                            <Button
+                                radius="md"
+                                onClick={() => setStep((current) => current + 1)}
+                            >
+                                {tc("next")}
+                            </Button>
+                        ) : (
                             <Button
                                 onClick={handleSubmit}
                                 loading={isSubmitting}
-                                disabled={isSubmitting || !title || !location || (!banner?.id && !mediaFile)}
+                                disabled={isSubmitting || !title || !location || !mediaFile}
                                 radius="md"
                             >
-                                {t("save")}
+                                {tc("create")}
                             </Button>
-                        </Group>
+                        )}
                     </Group>
-                </Paper>
+                </Group>
             </Stack>
         </Modal>
     );

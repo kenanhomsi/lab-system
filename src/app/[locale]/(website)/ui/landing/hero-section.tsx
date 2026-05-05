@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 
 const HERO_IMG =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuBRBY1nOHL-cPqEie9l3kD7TZqPfTcORPcokcYqzj2_DgxDqQkvT81UwZfccaFufkVLmXspvZGWh2Tq_BU_x4ilqF5JlgXEIf-BlwZaV5W6E8BwC_r9OD8lMzOe2ytzmzvo5A_HTdmqHg3SPmYbs4WXeeMNXidTn6u2weSxBDY14OevRAC0ZO3_xTbknyDggPulfkIIDLVqfevbr4CbYAHRLVk7YqUyWLiFNqtAdMMCPtj6F2sYTev4GITTOCMcZtSXmriLZDfC2BN-";
+  "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=2000&q=80";
 
 export async function HeroSection() {
   const t = await getTranslations("landing.hero");
@@ -14,6 +14,10 @@ export async function HeroSection() {
     locale === "ar"
       ? "transition-transform group-hover:-translate-x-1"
       : "transition-transform group-hover:translate-x-1";
+  const overlayGradientClass =
+    locale === "ar"
+      ? "absolute inset-0 bg-linear-to-l from-background via-background/40 to-transparent"
+      : "absolute inset-0 bg-linear-to-r from-background via-background/40 to-transparent";
 
   return (
     <section className="relative flex h-[min(921px,100svh)] items-center overflow-hidden bg-surface">
@@ -26,7 +30,7 @@ export async function HeroSection() {
           priority
           unoptimized
         />
-        <div className="absolute inset-0 bg-linear-to-r from-background via-background/40 to-transparent" />
+        <div className={overlayGradientClass} />
       </div>
       <div className="pointer-events-none absolute inset-0 z-1">
         <div className="bg-orb h-64 w-64 bg-primary/25 -inset-s-16 top-20" />
@@ -42,7 +46,7 @@ export async function HeroSection() {
             {t("badge")}
           </div>
           <h1
-            className="font-headline reveal-up text-4xl font-extrabold leading-[1.1] tracking-tight text-on-surface sm:text-5xl md:text-6xl"
+            className="font-headline leading-[1-2]  reveal-up text-4xl font-extrabold  tracking-tight text-on-surface sm:text-5xl md:text-6xl"
             style={{ animationDelay: "200ms" }}
           >
             {t("titleBefore")} <br />
@@ -61,7 +65,7 @@ export async function HeroSection() {
           >
             <Link
               href="/services"
-              className="clinical-gradient group flex items-center gap-2 rounded-xl px-8 py-4 text-lg font-bold text-on-primary-container shadow-xl shadow-primary/20 transition-all"
+              className="clinical-gradient text-white group flex items-center gap-2 rounded-xl px-8 py-4 text-lg font-bold shadow-xl shadow-primary/20 transition-all"
             >
               {t("ctaPrimary")}
               <Icon name={arrow} className={arrowClass} size="sm" />

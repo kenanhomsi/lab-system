@@ -1,8 +1,11 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { DateTimePicker } from "@mantine/dates";
+import { useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
 
-export async function ContactForm() {
-  const t = await getTranslations("contactPage.form");
+export function ContactForm() {
+  const t = useTranslations("contactPage.form");
 
   return (
     <section className="bg-surface py-16 md:py-24">
@@ -82,21 +85,18 @@ export async function ContactForm() {
                   className="w-full rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="date"
-                  className="mb-2 block text-sm font-bold text-on-surface"
-                >
-                  {t("dateLabel")}
-                </label>
-                <input
-                  type="date"
-                  id="date"
-                  name="date"
-                  suppressHydrationWarning
-                  className="w-full rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
+              <DateTimePicker
+                id="date"
+                name="date"
+                label={t("dateLabel")}
+                placeholder={t("datePlaceholder")}
+                valueFormat="MM/DD/YYYY hh:mm A"
+                clearable
+                classNames={{
+                  label: "mb-2 block text-sm font-bold text-on-surface",
+                  input: "w-full rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20",
+                }}
+              />
               <div>
                 <label
                   htmlFor="details"

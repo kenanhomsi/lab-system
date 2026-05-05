@@ -22,13 +22,7 @@ export function WebsiteHeader({
   const t = useTranslations();
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [pathnameSeen, setPathnameSeen] = useState(pathname);
   const isDark = variant === "dark";
-
-  if (pathname !== pathnameSeen) {
-    setPathnameSeen(pathname);
-    setDrawerOpen(false);
-  }
 
   const displayBrand = brand ?? t("header.brand");
   const links = [
@@ -39,6 +33,12 @@ export function WebsiteHeader({
     { href: "/blog", label: t("nav.blog") },
     { href: "/contact", label: t("nav.contact") },
   ];
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const timer = window.setTimeout(() => setDrawerOpen(false), 0);
+    return () => window.clearTimeout(timer);
+  }, [pathname, drawerOpen]);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -116,16 +116,6 @@ export function WebsiteHeader({
               isDark && "border-white/20 bg-surface-container-low",
             )}
           />
-          {!isDark ? (
-            <div className="hidden gap-4 text-slate-500 sm:flex">
-              <span className="material-symbols-outlined cursor-pointer rounded-lg p-2 transition-all hover:bg-slate-100/50 active:scale-95">
-                notifications
-              </span>
-              <span className="material-symbols-outlined cursor-pointer rounded-lg p-2 transition-all hover:bg-slate-100/50 active:scale-95">
-                settings
-              </span>
-            </div>
-          ) : null}
           {isDark ? (
             <div className="hidden items-center gap-2 sm:gap-3 md:flex">
               <Link
@@ -144,7 +134,7 @@ export function WebsiteHeader({
           ) : showCta ? (
             <Link
               href={ctaHref}
-              className="clinical-gradient hidden whitespace-nowrap rounded-xl px-4 py-2.5 font-headline text-sm font-semibold text-on-primary-container shadow-lg shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.98] md:inline-flex sm:px-6"
+              className="clinical-gradient text-white hidden whitespace-nowrap rounded-xl px-4 py-2.5 font-headline text-sm font-semibold  shadow-lg shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.98] md:inline-flex sm:px-6"
             >
               {t("header.ctaNewLab")}
             </Link>

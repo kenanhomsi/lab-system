@@ -1,8 +1,29 @@
+.dashboardRoot {
+  min-height: 100vh;
+}
+
 .sectionPadding {
-  padding-block: 3.875rem 2.5rem;
-  padding-inline-end: 3.75rem;
+  padding-block: 6rem 2rem;
+  padding-inline-end: 2rem;
   padding-inline-start: max(
-    7.5rem,
-    calc(24px + var(--dashboard-sidebar-width, 64px) + 2.5rem)
+    7rem,
+    calc(20px + var(--dashboard-sidebar-width, 72px) + 2rem)
   );
+  transition: padding-inline-start 0.2s linear;
+  will-change: padding-inline-start;
+}
+
+@media (max-width: 62rem) {
+  .sectionPadding {
+    padding-inline: 1.25rem;
+    padding-top: 5.5rem;
+  }
+}
+
+@media (max-width: 48rem) {
+  .sectionPadding {
+    padding-inline: 1rem;
+    padding-top: 5rem;
+    padding-bottom: 1.25rem;
+  }
 }

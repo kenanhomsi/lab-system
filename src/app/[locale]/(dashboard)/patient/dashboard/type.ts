@@ -1,4 +1,4 @@
-export type StatCardId = "upcomingAppointments" | "completedVisits" | "pendingResults";
+export type StatCardId = "openLabRequests" | "completedVisits" | "pendingResults";
 
 export type StatCard = {
   id: StatCardId;
@@ -7,14 +7,6 @@ export type StatCard = {
   iconKey: "calendar" | "check" | "activity";
   accentColor: string;
   accentBg: string;
-};
-
-export type UpcomingAppointment = {
-  id: string;
-  rowKey: "row1" | "row2" | "row3";
-  doctorName: string;
-  dateIso: string;
-  statusVariant: "confirmed" | "pending";
 };
 
 export type RecentResult = {
@@ -33,5 +25,5 @@ export type HealthSummary = {
 export type ActivityItem = {
   id: string;
   rowKey: "a1" | "a2" | "a3";
-  kind: "appointment" | "result" | "message";
+  kind: "request" | "result" | "message";
 };
