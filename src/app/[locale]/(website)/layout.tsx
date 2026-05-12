@@ -14,8 +14,7 @@ export default async function WebsiteLayout({
       <ScrollRevealObserver />
       <WebsiteHeader />
       <PageBanner />
-      <div id="website-page-content" className="mx-auto w-full bg-red-500 ">
-        kenan
+      <div id="website-page-content" className="mx-auto w-ful ">
         {children}
       </div>
       <WebsiteFooter />
