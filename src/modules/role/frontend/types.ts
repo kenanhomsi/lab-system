@@ -24,28 +24,11 @@ type DeleteRoleParams = {
   id: string;
 };
 
-type GetRolePermissionsParams = {
-  id: string;
-};
-
-type AssignRolePermissionParams = {
-  id: string;
-  permissionId: string;
-};
-
-type RemoveRolePermissionParams = {
-  id: string;
-  permissionId: string;
-};
-
 export type {
-  AssignRolePermissionParams,
   CreateRoleParams,
   DeleteRoleParams,
   FindAllQueryParams,
   FindAllRoleParams,
   FindOneRoleParams,
-  GetRolePermissionsParams,
-  RemoveRolePermissionParams,
   UpdateRoleParams,
 };

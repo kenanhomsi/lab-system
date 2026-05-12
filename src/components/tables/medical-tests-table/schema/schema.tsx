@@ -1,23 +1,13 @@
 "use client";
 
 import { PropsWithChildren } from "react";
+import { useTranslations } from "next-intl";
 import { useMirrorRegistry } from "../store";
 import { getMedicalTestsColumns } from "./columns";
 
 const Schema = ({ children }: PropsWithChildren) => {
-  const t = (key: string): string => {
-    const labels: Record<string, string> = {
-      colNameAr: "Name (Arabic)",
-      colNameEn: "Name (English)",
-      colCategory: "Category",
-      colSampleType: "Sample Type",
-      colPrice: "Price",
-      tableStatus: "Status",
-      colCreatedAt: "Created At",
-    };
-    return labels[key] ?? key;
-  };
-  const schema = getMedicalTestsColumns(t);
+  const t = useTranslations("admin.medicalTests");
+  const schema = getMedicalTestsColumns((key: string) => t(key as never));
   useMirrorRegistry("schema", schema);
 
   return <>{children}</>;

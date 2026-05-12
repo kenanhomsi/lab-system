@@ -5,8 +5,12 @@ import { TablePageHeader } from "@/components/table-page-header";
 import { useMirror } from "./store";
 import { ActionIcon, CloseButton, Select, TextInput, Tooltip } from "@mantine/core";
 import { IconArrowsSort, IconFlask, IconPlus, IconRefresh, IconSearch } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
 const UI = () => {
+  const t = useTranslations("admin.medicalTests");
+  const tc = useTranslations("admin.common");
   const schema = useMirror("schema");
   const isPending = useMirror("isPending");
   const searchValue = useMirror("searchValue");
@@ -24,6 +28,24 @@ const UI = () => {
 
   const hasActiveFilters = Boolean(searchValue.trim()) || sortBy !== "createdAt" || !sortDesc;
 
+  const sortFieldOptions = useMemo(
+    () => [
+      { value: "createdAt", label: t("colCreatedAt") },
+      { value: "nameAr", label: t("colNameAr") },
+      { value: "nameEn", label: t("colNameEn") },
+      { value: "price", label: t("colPrice") },
+    ],
+    [t],
+  );
+
+  const sortDirOptions = useMemo(
+    () => [
+      { value: "desc", label: tc("newestFirst") },
+      { value: "asc", label: tc("oldestFirst") },
+    ],
+    [tc],
+  );
+
   return (
     <Table
       type="normal"
@@ -39,12 +61,12 @@ const UI = () => {
     >
       <Table.Header>
         <TablePageHeader
-          title="Medical Tests"
-          description="Manage medical tests catalog"
+          title={t("pageTitle")}
+          description={t("pageDescription")}
           icon={<IconFlask size={22} />}
           iconColor="teal"
           totalCount={medicalTestsData?.totalCount || 0}
-          createLabel="Create Medical Test"
+          createLabel={t("createLabel")}
           createIcon={<IconPlus size={15} />}
           onOpenCreate={() => {
             setSelectedMedicalTest(null);
@@ -59,13 +81,13 @@ const UI = () => {
           }}
         >
           <TextInput
-            placeholder="Search by name, category, or sample type"
+            placeholder={t("searchPlaceholder")}
             value={searchValue}
             onChange={(e) => setSearchValue(e.currentTarget.value)}
             leftSection={<IconSearch size={14} />}
             rightSection={
               searchValue ? (
-                <CloseButton aria-label="Clear" onClick={() => setSearchValue("")} size="sm" />
+                <CloseButton aria-label={t("clearSearchAria")} onClick={() => setSearchValue("")} size="sm" />
               ) : null
             }
             rightSectionPointerEvents="auto"
@@ -75,18 +97,13 @@ const UI = () => {
           />
 
           <Select
-            placeholder="Sort by"
+            placeholder={tc("sortBy")}
             value={sortBy}
             onChange={(v) => setSortBy(v || "createdAt")}
             leftSection={<IconArrowsSort size={13} />}
             radius="xl"
             size="xs"
-            data={[
-              { value: "createdAt", label: "Created At" },
-              { value: "nameAr", label: "Name (Arabic)" },
-              { value: "nameEn", label: "Name (English)" },
-              { value: "price", label: "Price" },
-            ]}
+            data={sortFieldOptions}
             style={{ minWidth: 140, flex: "0 0 auto" }}
           />
 
@@ -95,21 +112,24 @@ const UI = () => {
             onChange={(v) => setSortDesc((v || "desc") === "desc")}
             radius="xl"
             size="xs"
-            data={[
-              { value: "desc", label: "Newest First" },
-              { value: "asc", label: "Oldest First" },
-            ]}
+            data={sortDirOptions}
             style={{ minWidth: 130, flex: "0 0 auto" }}
           />
 
           {hasActiveFilters && (
-            <Tooltip label="Reset filters" withArrow>
-              <ActionIcon variant="light" color="gray" radius="xl" size="md" onClick={() => {
-                setSearchValue("");
-                setSortBy("createdAt");
-                setSortDesc(true);
-                setPageNumber(1);
-              }}>
+            <Tooltip label={t("resetFiltersTooltip")} withArrow>
+              <ActionIcon
+                variant="light"
+                color="gray"
+                radius="xl"
+                size="md"
+                onClick={() => {
+                  setSearchValue("");
+                  setSortBy("createdAt");
+                  setSortDesc(true);
+                  setPageNumber(1);
+                }}
+              >
                 <IconRefresh size={14} />
               </ActionIcon>
             </Tooltip>

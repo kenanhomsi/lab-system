@@ -20,19 +20,6 @@ type SharedDeleteParams = {
   endpoint: string;
 };
 
-type SharedGetPermissionsParams = {
-  endpoint: string;
-};
-
-type SharedAssignPermissionParams = {
-  endpoint: string;
-  permissionId: string;
-};
-
-type SharedRemovePermissionParams = {
-  endpoint: string;
-};
-
 @injectable()
 abstract class Client<T extends AxiosState> {
   @inject(AxiosModuleNames.client) protected axiosClient: AxiosClient<T>;
@@ -56,19 +43,6 @@ abstract class Client<T extends AxiosState> {
   }
 
   protected sharedDelete(params: SharedDeleteParams) {
-    return this.axiosClient.delete({ endpoint: params.endpoint });
-  }
-
-  protected sharedGetPermissions(params: SharedGetPermissionsParams) {
-    return this.axiosClient.get({ endpoint: params.endpoint });
-  }
-
-  protected sharedAssignPermission(params: SharedAssignPermissionParams) {
-    const { endpoint, ...body } = params;
-    return this.axiosClient.post({ endpoint }).setBody(body);
-  }
-
-  protected sharedRemovePermission(params: SharedRemovePermissionParams) {
     return this.axiosClient.delete({ endpoint: params.endpoint });
   }
 }

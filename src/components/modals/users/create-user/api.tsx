@@ -22,11 +22,11 @@ const Api = ({ children }: PropsWithChildren) => {
       const payload = await roleService.findAll({
         query: { Page: "1", PageSize: "100" },
       });
-
-      const roleItems = Array.isArray(payload?.data)
-        ? payload.data
-        : Array.isArray((payload?.data as { data?: unknown[] } | undefined)?.data)
-          ? ((payload?.data as { data?: unknown[] }).data ?? [])
+      console.log(payload)
+      const roleItems = Array.isArray(payload?.items)
+        ? payload?.items
+        : Array.isArray((payload?.items as { data?: unknown[] } | undefined)?.data)
+          ? ((payload?.items as { data?: unknown[] }).data ?? [])
           : [];
       const rows = roleItems as { name?: string }[];
       return rows.map((role) => ({

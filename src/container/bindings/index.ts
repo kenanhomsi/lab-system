@@ -5,7 +5,7 @@ export * from "./user-dependencies";
 export * from "./axios-dependencies";
 export * from "./subscription-package-dependencies";
 export * from "./role-dependencies";
-export * from "./permission-dependencies";
+export * from "./access-policy-dependencies";
 export * from "./complaint-dependencies";
 export * from "./banner-dependencies";
 export * from "./medical-tests-dependencies";

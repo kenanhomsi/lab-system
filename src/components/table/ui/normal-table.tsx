@@ -1,6 +1,7 @@
 "use client";
 import { Box, Center, TableTd } from "@mantine/core";
 import { DataTable, DataTableDraggableRow } from "mantine-datatable";
+import { useTranslations } from "next-intl";
 import { PaginationComp } from "../components/pagination";
 import { useMirror } from "../store";
 import styles from "../style.module.scss";
@@ -9,6 +10,7 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { IconGripVertical, IconInbox } from "@tabler/icons-react";
 import clsx from "clsx";
 const NormalTable = () => {
+  const tEmpty = useTranslations("admin.table");
   const schema = useMirror("schema");
   const data = useMirror("data");
   const headerComp = useMirror("headerComp");
@@ -30,10 +32,8 @@ const NormalTable = () => {
       <Box className={styles.emptyStateIcon}>
         <IconInbox size={36} stroke={1.7} />
       </Box>
-      <span className={styles.emptyStateTitle}>No data found</span>
-      <span className={styles.emptyStateHint}>
-        There are no records to display right now.
-      </span>
+      <span className={styles.emptyStateTitle}>{tEmpty("emptyTitle")}</span>
+      <span className={styles.emptyStateHint}>{tEmpty("emptyHint")}</span>
     </Box>
   );
   const emptyState = hasRecords ? (

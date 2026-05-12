@@ -15,10 +15,11 @@ async function getAllRoles(params: { pageNumber: number }): Promise<RolesRespons
     PageSize: "20",
   };
   const payload = await roleService.findAll({ query });
+  console.log('in apis ', payload)
   if (!payload) {
     throw new Error("Failed to fetch roles");
   }
-  return payload.data;
+  return payload;
 }
 
 const GetAllRoles = (props: PropsWithChildren) => {
@@ -30,7 +31,7 @@ const GetAllRoles = (props: PropsWithChildren) => {
     refetchInterval: 1000 * 60,
   });
 
-  useMirrorRegistry("rolesData", data ?? []);
+  useMirrorRegistry("rolesData", data!);
   useMirrorRegistry("isPending", isPending);
   useMirrorRegistry("refetchRoles", () => {
     void refetch();

@@ -1,15 +1,18 @@
 "use client";
 
 import { Pagination } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import classes from "../style.module.scss";
 import { useMirror } from "../store";
 
+const emptySubscribe = () => () => {};
+
 const PaginationComp = () => {
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
+  const hydrated = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
   const pagination = useMirror("paginationStatic");
   const OnPageNumberChange = useMirror("OnPageNumberChange");

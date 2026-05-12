@@ -28,6 +28,11 @@ class Abstraction<T extends AxiosState> {
     this.state.setMethod("put").setEndpoint(endpoint);
     return this.state;
   }
+  patch(params: { endpoint: string }) {
+    const { endpoint } = params;
+    this.state.setMethod("patch").setEndpoint(endpoint);
+    return this.state;
+  }
   delete(params: { endpoint: string }) {
     const { endpoint } = params;
     this.state.setMethod("delete").setEndpoint(endpoint);

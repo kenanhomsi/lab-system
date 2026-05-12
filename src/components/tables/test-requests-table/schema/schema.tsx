@@ -2,27 +2,19 @@
 
 import { useSessionUserStore } from "@/stores/session-user-store";
 import { PropsWithChildren } from "react";
+import { useTranslations } from "next-intl";
 import { useMirrorRegistry } from "../store";
 import { getTestRequestsColumns } from "./columns";
 
 const Schema = ({ children }: PropsWithChildren) => {
+  const t = useTranslations("admin.testRequests");
   const roles = useSessionUserStore((s) => s.user?.roles);
 
-  const t = (key: string): string =>
-    ({
-      colMedicalTest: "Medical Test",
-      colRequestDate: "Request Date",
-      colDoctorId: "Doctor ID",
-      colLabClientId: "Lab Client ID",
-      colDirectPatientId: "Direct Patient ID",
-      colTotalAmount: "Total Amount",
-      tableStatus: "Status",
-      colNotes: "Notes",
-      colMetadata: "Metadata",
-      colCreatedAt: "Created At",
-    })[key] ?? key;
-
-  useMirrorRegistry("schema", getTestRequestsColumns(t, { roles }));
+  const schema = getTestRequestsColumns(
+    (key: string) => t(key as never),
+    { roles },
+  );
+  useMirrorRegistry("schema", schema);
   return <>{children}</>;
 };
 

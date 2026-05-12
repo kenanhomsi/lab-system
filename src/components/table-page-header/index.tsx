@@ -74,7 +74,7 @@ const TablePageHeader = ({
   const hasFilters = Boolean(children);
 
   return (
-    <Paper radius="xl" withBorder p={0}>
+    <Paper radius="lg" withBorder p={0} >
       <Flex direction="column" gap={0}>
         <Flex
           justify="space-between"

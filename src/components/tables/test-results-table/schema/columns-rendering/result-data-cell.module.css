@@ -1,0 +1,11 @@
+.box {
+  transition: background-color 120ms ease;
+}
+
+.box:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+:global([data-mantine-color-scheme="dark"]) .box:hover {
+  background-color: var(--mantine-color-dark-6);
+}

@@ -1,18 +1,14 @@
 export type RoleItem = {
-  id: string;
-  name: string;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  items: { id: string; name: string }[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
 };
 
-export type RolesResponse = RoleItem[];
-
-export type RolePermissionItem = {
-  id: string;
-  name: string;
-  description: string;
-  createdAt?: string;
-};
-
-export type RolePermissionsResponse = RolePermissionItem[];
+export type RolesResponse = RoleItem;
 
 export type CreateRoleRequest = {
   name: string;
@@ -20,9 +16,4 @@ export type CreateRoleRequest = {
 
 export type UpdateRoleRequest = CreateRoleRequest;
 
-export type RoleModalType =
-  | "create"
-  | "edit"
-  | "delete"
-  | "permissions"
-  | null;
+export type RoleModalType = "create" | "edit" | "delete" | null;

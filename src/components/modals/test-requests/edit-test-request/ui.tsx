@@ -27,7 +27,7 @@ import {
   IconInfoCircle,
   IconUsers,
 } from "@tabler/icons-react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import type { MedicalTestItem } from "@/components/tables/medical-tests-table/types";
 import { buildTestRequestPartyPayload, isStaffPartyUser } from "../party-ids";
@@ -85,6 +85,7 @@ const buildInitialForm = (initial?: TestRequestInitial | null) => ({
 });
 
 const UI = () => {
+  const t = useTranslations("admin.testRequests");
   const props = useMirror("props") as {
     opened?: boolean;
     onClose?: () => void;
@@ -121,9 +122,9 @@ const UI = () => {
             <IconEdit size={22} />
           </ThemeIcon>
           <Stack gap={0}>
-            <Title order={4}>Edit Test Request</Title>
+            <Title order={4}>{t("editModalTitle")}</Title>
             <Text size="sm" c="dimmed">
-              Update request information and billing details.
+              {t("editModalSubtitle")}
             </Text>
           </Stack>
         </Group>
@@ -179,6 +180,8 @@ const EditTestRequestBody = ({
   }) => Promise<unknown>;
   locale: string;
 }) => {
+  const t = useTranslations("admin.testRequests");
+  const tc = useTranslations("admin.common");
   const [form, setForm] = useState(() => buildInitialForm(initial));
   const [activeStep, setActiveStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -265,52 +268,51 @@ const EditTestRequestBody = ({
         onStepClick={setActiveStep}
         allowNextStepsSelect={false}
       >
-        <Stepper.Step label="Step 1" description="Request details">
+        <Stepper.Step label={t("step1Label")} description={t("step1RequestDetails")}>
           <Paper withBorder radius="lg" p="md">
             <Stack gap="md">
               <Group justify="space-between" wrap="nowrap">
-                <Title order={5}>Request Details</Title>
+                <Title order={5}>{t("requestDetailsTitle")}</Title>
                 <Text size="xs" c="dimmed">
-                  Required fields are marked with *
+                  {t("requiredFieldsHint")}
                 </Text>
               </Group>
               <Divider />
               {isUnauthenticated ? (
-                <Alert color="red" title="Not signed in">
-                  Sign in to update a request. Your account is loaded from the session
-                  store after login.
+                <Alert color="red" title={t("alertNotSignedInTitle")}>
+                  {t("alertNotSignedInEdit")}
                 </Alert>
               ) : null}
               {status === "authenticated" && !isSessionLoading && !hasUserId ? (
-                <Alert color="orange" title="Session user not synced">
-                  Reload the page so your account info from login can attach to this form.
+                <Alert color="orange" title={t("alertSessionTitle")}>
+                  {t("alertSessionBody")}
                 </Alert>
               ) : null}
               {medicalTestsQuery.isError ? (
-                <Alert color="red" title="Could not load medical tests">
-                  Check your session and try again. If the problem persists, the list API
-                  may have returned an unexpected shape.
+                <Alert color="red" title={t("alertMedicalTestsTitle")}>
+                  {t("alertMedicalTestsBody")}
                 </Alert>
               ) : null}
               {!medicalTestsQuery.isPending &&
               !medicalTestsQuery.isError &&
               medicalTestOptions.length === 0 ? (
                 <Text size="sm" c="dimmed">
-                  No medical tests are available yet. Add tests under Medical tests before
-                  editing requests.
+                  {t("noMedicalTestsEdit")}
                 </Text>
               ) : null}
               <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
                 <Select
-                  label="Medical test"
+                  label={t("fieldMedicalTest")}
                   withAsterisk
                   searchable
                   allowDeselect={false}
                   clearable={false}
                   placeholder={
-                    medicalTestsQuery.isPending ? "Loading tests…" : "Choose medical test"
+                    medicalTestsQuery.isPending
+                      ? t("placeholderLoadingTests")
+                      : t("placeholderChooseTest")
                   }
-                  description="Select the medical test reference."
+                  description={t("fieldMedicalTestDesc")}
                   data={medicalTestOptions}
                   leftSection={<IconFlask2 size={16} />}
                   disabled={medicalTestsQuery.isPending || medicalTestsQuery.isError}
@@ -320,11 +322,11 @@ const EditTestRequestBody = ({
                   }
                 />
                 <TextInput
-                  label="Request Date"
+                  label={t("fieldRequestDate")}
                   withAsterisk
                   type="date"
-                  placeholder="YYYY-MM-DD"
-                  description="Date associated with this request."
+                  placeholder={t("datePlaceholder")}
+                  description={t("fieldRequestDateDescEdit")}
                   value={form.requestDate}
                   leftSection={<IconCalendarEvent size={16} />}
                   onChange={(e) =>
@@ -332,14 +334,14 @@ const EditTestRequestBody = ({
                   }
                 />
                 <Select
-                  label="Status"
+                  label={t("fieldStatus")}
                   data={[
-                    { label: "Pending", value: "pending" },
-                    { label: "In Progress", value: "in_progress" },
-                    { label: "Completed", value: "completed" },
-                    { label: "Cancelled", value: "cancelled" },
+                    { label: t("statusPending"), value: "pending" },
+                    { label: t("statusInProgress"), value: "in_progress" },
+                    { label: t("statusCompleted"), value: "completed" },
+                    { label: t("statusCancelled"), value: "cancelled" },
                   ]}
-                  description="Current workflow state of the request."
+                  description={t("fieldStatusDesc")}
                   leftSection={<IconInfoCircle size={16} />}
                   value={form.status}
                   searchable
@@ -347,13 +349,13 @@ const EditTestRequestBody = ({
                   onChange={(v) => setForm({ ...form, status: v ?? form.status })}
                 />
                 <NumberInput
-                  label="Total Amount"
+                  label={t("fieldTotalAmount")}
                   min={0}
                   decimalScale={2}
                   fixedDecimalScale
                   thousandSeparator=","
                   hideControls
-                  description="Billing amount for this request."
+                  description={t("fieldTotalAmountDescEdit")}
                   value={form.totalAmount}
                   leftSection={<IconCurrencyDollar size={16} />}
                   onChange={(v) =>
@@ -361,15 +363,15 @@ const EditTestRequestBody = ({
                   }
                 />
                 <Select
-                  label="External patient"
+                  label={t("fieldExternalPatient")}
                   searchable
                   clearable
                   placeholder={
                     externalPatientsQuery.isPending
-                      ? "Loading patients…"
-                      : "Choose external patient (optional)"
+                      ? t("placeholderLoadingPatients")
+                      : t("placeholderExternalPatient")
                   }
-                  description="Linked external patient profile."
+                  description={t("fieldExternalPatientDesc")}
                   data={externalPatientOptions}
                   leftSection={<IconUsers size={16} />}
                   disabled={
@@ -390,24 +392,24 @@ const EditTestRequestBody = ({
                 {showStaffPartyFields && (
                   <>
                     <TextInput
-                      label="Doctor ID"
-                      placeholder="e.g. DR-001"
+                      label={t("fieldDoctorId")}
+                      placeholder={t("placeholderDoctorId")}
                       value={form.doctorId}
                       onChange={(e) =>
                         setForm({ ...form, doctorId: e.currentTarget.value })
                       }
                     />
                     <TextInput
-                      label="Lab Client ID"
-                      placeholder="e.g. LAB-458"
+                      label={t("fieldLabClientId")}
+                      placeholder={t("placeholderLabClientId")}
                       value={form.labClientId}
                       onChange={(e) =>
                         setForm({ ...form, labClientId: e.currentTarget.value })
                       }
                     />
                     <TextInput
-                      label="Direct Patient ID"
-                      placeholder="e.g. PAT-983"
+                      label={t("fieldDirectPatientId")}
+                      placeholder={t("placeholderDirectPatientId")}
                       value={form.directPatientId}
                       onChange={(e) =>
                         setForm({
@@ -423,25 +425,25 @@ const EditTestRequestBody = ({
           </Paper>
         </Stepper.Step>
 
-        <Stepper.Step label="Step 2" description="Notes and metadata">
+        <Stepper.Step label={t("step2Label")} description={t("step2NotesMeta")}>
           <Paper withBorder radius="lg" p="md">
             <Stack gap="md">
-              <Title order={5}>Additional Information</Title>
+              <Title order={5}>{t("additionalInfoTitle")}</Title>
               <Divider />
               <Textarea
-                label="Notes"
+                label={t("fieldNotes")}
                 autosize
                 minRows={3}
                 maxRows={8}
-                placeholder="Add any clinical or billing notes..."
+                placeholder={t("notesPlaceholder")}
                 value={form.notes}
                 onChange={(e) => setForm({ ...form, notes: e.currentTarget.value })}
               />
               <TextInput
-                label="Metadata"
+                label={t("fieldMetadata")}
                 leftSection={<IconFileDescription size={16} />}
-                placeholder='e.g. {"priority":"urgent","source":"walk-in"}'
-                description="Optional JSON-like metadata for integrations."
+                placeholder={t("metadataPlaceholder")}
+                description={t("metadataDesc")}
                 value={form.metadata}
                 onChange={(e) =>
                   setForm({ ...form, metadata: e.currentTarget.value })
@@ -459,7 +461,7 @@ const EditTestRequestBody = ({
           onClick={handleClose}
           disabled={isSubmitting}
         >
-          Cancel
+          {tc("cancel")}
         </Button>
         <Group gap="sm" wrap="nowrap">
           {activeStep > 0 && (
@@ -468,7 +470,7 @@ const EditTestRequestBody = ({
               onClick={() => setActiveStep((prev) => prev - 1)}
               disabled={isSubmitting}
             >
-              Back
+              {tc("back")}
             </Button>
           )}
           {!isLastStep ? (
@@ -477,7 +479,7 @@ const EditTestRequestBody = ({
               onClick={() => setActiveStep(1)}
               disabled={!isStepOneValid || isSubmitting}
             >
-              Next
+              {tc("next")}
             </Button>
           ) : (
             <Button
@@ -495,7 +497,7 @@ const EditTestRequestBody = ({
                 }
               }}
             >
-              Save
+              {tc("save")}
             </Button>
           )}
         </Group>

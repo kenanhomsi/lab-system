@@ -1,0 +1,1 @@
+export { AccessPoliciesTable } from "./factory";

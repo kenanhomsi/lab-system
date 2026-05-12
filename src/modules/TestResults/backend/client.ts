@@ -2,7 +2,6 @@ import { injectable, injectFromBase } from "inversify";
 import { BackendState } from "@/modules/axios";
 import { endpoint } from "./endpoint";
 import { SharedCreateTypeSchema } from "../abstraction/schemas/create";
-import { SharedFindAllTypeSchema } from "../abstraction/schemas/find-all";
 import { SharedUpdateTypeSchema } from "../abstraction/schemas/update";
 import { ShardFindOneTypeSchema } from "../abstraction/schemas/find-one";
 import { TestResultClient } from "../abstraction";

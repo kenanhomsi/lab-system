@@ -2,6 +2,8 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { isDashboardRoute } from "@/lib/is-dashboard-route";
 import { SessionProvider } from "./session-provider";
 import { LocaleHtmlSync } from "./locale-html-sync";
 import { ThemeSync } from "./theme-sync";
@@ -106,6 +108,24 @@ const appTheme = createTheme({
   },
 });
 
+function MantineRouteProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const dashboardTheme = isDashboardRoute(pathname);
+
+  return (
+    <MantineProvider
+      theme={appTheme}
+      colorSchemeManager={colorSchemeManager}
+      defaultColorScheme="light"
+      forceColorScheme={dashboardTheme ? undefined : "light"}
+    >
+      <ThemeSync active={dashboardTheme} />
+      <Notifications position="top-right" />
+      <ModalsProvider>{children}</ModalsProvider>
+    </MantineProvider>
+  );
+}
+
 export function AppProviders({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
     () =>
@@ -122,15 +142,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <SessionProvider>
       <LocaleHtmlSync />
       <QueryClientProvider client={queryClient}>
-        <MantineProvider
-          theme={appTheme}
-          colorSchemeManager={colorSchemeManager}
-          defaultColorScheme="light"
-        >
-          <ThemeSync />
-          <Notifications position="top-right" />
-          <ModalsProvider>{children}</ModalsProvider>
-        </MantineProvider>
+        <MantineRouteProvider>{children}</MantineRouteProvider>
       </QueryClientProvider>
     </SessionProvider>
   );

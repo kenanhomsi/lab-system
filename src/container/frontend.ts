@@ -8,7 +8,7 @@ import {
   bindFrontComplaintDependencies,
   bindFrontExternalPatientsDependencies,
   bindFrontEventDependencies,
-  bindFrontPermissionDependencies,
+  bindFrontAccessPolicyDependencies,
   bindFrontRoleDependencies,
   bindFrontSubscriptionPackageDependencies,
   bindFrontUserDependencies,
@@ -34,7 +34,7 @@ const frontendContainer = pipe(
   bindFrontUserDependencies,
   bindFrontSubscriptionPackageDependencies,
   bindFrontRoleDependencies,
-  bindFrontPermissionDependencies,
+  bindFrontAccessPolicyDependencies,
   bindFrontComplaintDependencies,
 )(c);
 

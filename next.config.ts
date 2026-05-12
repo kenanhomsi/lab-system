@@ -3,6 +3,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 import path from "path";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   sassOptions: {
     includePaths: [path.join(process.cwd())],
   },

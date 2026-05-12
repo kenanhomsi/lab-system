@@ -46,7 +46,7 @@ const initials = (name: string) => {
 };
 
 const UI = () => {
-  const t = useTranslations("profile");
+  const t = useTranslations("dashboard.profile");
   const locale = useLocale();
   const rtl = locale === "ar";
   const me = useMirror("me");
@@ -54,6 +54,8 @@ const UI = () => {
   const updateMe = useMirror("updateMe");
   const changePassword = useMirror("changePassword");
   const requestDeletion = useMirror("requestDeletion");
+  const activeTab = useMirror("activeTab");
+  const setActiveTab = useMirror("setActiveTab");
 
   const [profileForm, setProfileForm] = useState<UpdateMeRequest>({
     fullName: "",
@@ -319,7 +321,15 @@ const UI = () => {
         </Paper>
 
         <Paper withBorder radius="xl" p="lg" style={{ gridColumn: "span 2" }}>
-          <Tabs defaultValue="profile" keepMounted={false}>
+          <Tabs
+            value={activeTab}
+            onChange={(value) => {
+              if (value === "profile" || value === "security" || value === "danger") {
+                setActiveTab(value);
+              }
+            }}
+            keepMounted={false}
+          >
             <Tabs.List>
               <Tabs.Tab value="profile" leftSection={<IconSparkles size={16} />}>
                 {t("tabProfile")}
@@ -352,18 +362,20 @@ const UI = () => {
                     withAsterisk
                     leftSection={<IconIdBadge2 size={16} />}
                     value={profileForm.fullName}
-                    onChange={(e) =>
-                      setProfileForm((p) => ({ ...p, fullName: e.currentTarget.value }))
-                    }
+                    onChange={(e) => {
+                      const value = e.currentTarget.value;
+                      setProfileForm((p) => ({ ...p, fullName: value }));
+                    }}
                     placeholder={t("fullNamePlaceholder")}
                   />
                   <TextInput
                     label={t("phoneNumber")}
                     leftSection={<IconPhone size={16} />}
                     value={profileForm.phoneNumber}
-                    onChange={(e) =>
-                      setProfileForm((p) => ({ ...p, phoneNumber: e.currentTarget.value }))
-                    }
+                    onChange={(e) => {
+                      const value = e.currentTarget.value;
+                      setProfileForm((p) => ({ ...p, phoneNumber: value }));
+                    }}
                     placeholder={t("phoneNumberPlaceholder")}
                     style={{ direction: "ltr", textAlign: rtl ? "right" : "left" }}
                   />
@@ -371,9 +383,10 @@ const UI = () => {
                     label={t("city")}
                     leftSection={<IconMapPin size={16} />}
                     value={profileForm.city}
-                    onChange={(e) =>
-                      setProfileForm((p) => ({ ...p, city: e.currentTarget.value }))
-                    }
+                    onChange={(e) => {
+                      const value = e.currentTarget.value;
+                      setProfileForm((p) => ({ ...p, city: value }));
+                    }}
                     placeholder={t("cityPlaceholder")}
                   />
                   <TextInput
@@ -391,9 +404,10 @@ const UI = () => {
                   autosize
                   minRows={4}
                   value={profileForm.profileMetadata}
-                  onChange={(e) =>
-                    setProfileForm((p) => ({ ...p, profileMetadata: e.currentTarget.value }))
-                  }
+                  onChange={(e) => {
+                    const value = e.currentTarget.value;
+                    setProfileForm((p) => ({ ...p, profileMetadata: value }));
+                  }}
                   placeholder={t("profileMetadataPlaceholder")}
                   style={{ direction: "ltr", textAlign: rtl ? "right" : "left" }}
                 />
@@ -429,19 +443,21 @@ const UI = () => {
                   <PasswordInput
                     label={t("currentPassword")}
                     value={passwordForm.currentPassword}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const value = e.currentTarget.value;
                       setPasswordForm((p) => ({
                         ...p,
-                        currentPassword: e.currentTarget.value,
-                      }))
-                    }
+                        currentPassword: value,
+                      }));
+                    }}
                   />
                   <PasswordInput
                     label={t("newPassword")}
                     value={passwordForm.newPassword}
-                    onChange={(e) =>
-                      setPasswordForm((p) => ({ ...p, newPassword: e.currentTarget.value }))
-                    }
+                    onChange={(e) => {
+                      const value = e.currentTarget.value;
+                      setPasswordForm((p) => ({ ...p, newPassword: value }));
+                    }}
                   />
                 </SimpleGrid>
 

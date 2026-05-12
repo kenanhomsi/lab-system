@@ -1,22 +1,14 @@
 "use client";
 
 import { PropsWithChildren } from "react";
+import { useTranslations } from "next-intl";
 import { useMirrorRegistry } from "../store";
 import { getTestResultsColumns } from "./columns";
 
 const Schema = ({ children }: PropsWithChildren) => {
-  const t = (key: string): string =>
-    ({
-      colId: "ID",
-      colTestRequestId: "Test Request ID",
-      colResultDate: "Result Date",
-      colResultData: "Result Data",
-      colPdfUrl: "PDF URL",
-      tableStatus: "Status",
-      colCreatedAt: "Created At",
-    })[key] ?? key;
-
-  useMirrorRegistry("schema", getTestResultsColumns(t));
+  const t = useTranslations("admin.testResults");
+  const schema = getTestResultsColumns((key: string) => t(key as never));
+  useMirrorRegistry("schema", schema);
   return <>{children}</>;
 };
 

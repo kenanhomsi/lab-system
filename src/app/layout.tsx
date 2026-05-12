@@ -77,7 +77,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={dir}
-      className={`${inter.variable} ${plusJakarta.variable} ${qomraArabic.variable} h-full antialiased`}
+      className={`${inter.variable} ${plusJakarta.variable} ${qomraArabic.variable} min-h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

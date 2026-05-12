@@ -156,7 +156,7 @@ const UI = () => {
                 className={styles.profileButton}
                 aria-label="Open profile menu"
               >
-                <Group gap="xs" wrap="nowrap" className={styles.profile}>
+                <Group gap="xs" wrap="nowrap" >
                   <Avatar
                     src={config.profile.avatarSrc}
                     radius="xl"

@@ -3,7 +3,7 @@
 import { Stack, Tabs, Text } from "@mantine/core";
 import { useTranslations } from "next-intl";
 
-import { PermissionsTable } from "@/components/tables/permissions-table";
+import { AccessPoliciesTable } from "@/components/tables/access-policies-table";
 import { RolesTable } from "@/components/tables/roles-table";
 import { BannersTable } from "@/components/tables/banners-table";
 import { SlideCardsTable } from "@/components/tables/slide-cards-table";
@@ -25,7 +25,7 @@ const AdminSettingsUI = () => {
       <Tabs defaultValue="roles" keepMounted={false}>
         <Tabs.List>
           <Tabs.Tab defaultChecked value="roles">{t("tabRoles")}</Tabs.Tab>
-          <Tabs.Tab value="permissions">{t("tabPermissions")}</Tabs.Tab>
+          <Tabs.Tab value="accessPolicies">{t("tabAccessPolicies")}</Tabs.Tab>
           <Tabs.Tab value="banners">{t("tabBanners")}</Tabs.Tab>
           <Tabs.Tab value="slideCards">{t("tabSlideCards")}</Tabs.Tab>
         </Tabs.List>
@@ -33,8 +33,8 @@ const AdminSettingsUI = () => {
         <Tabs.Panel defaultChecked value="roles" pt="md">
           <RolesTable />
         </Tabs.Panel>
-        <Tabs.Panel value="permissions" pt="md">
-          <PermissionsTable />
+        <Tabs.Panel value="accessPolicies" pt="md">
+          <AccessPoliciesTable />
         </Tabs.Panel>
 
         <Tabs.Panel value="banners" pt="md">

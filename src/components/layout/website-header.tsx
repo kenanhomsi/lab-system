@@ -33,6 +33,8 @@ export function WebsiteHeader({
     { href: "/blog", label: t("nav.blog") },
     { href: "/contact", label: t("nav.contact") },
   ];
+  const isLinkActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -94,20 +96,25 @@ export function WebsiteHeader({
           </Link>
         </div>
         <nav className="hidden items-center gap-8 md:flex">
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={cn(
-                "text-sm font-semibold tracking-tight transition-colors",
-                isDark
-                  ? "text-secondary hover:text-primary"
-                  : "text-slate-500 hover:text-cyan-600",
-              )}
-            >
-              {l.label}
-            </Link>
-          ))}
+          {links.map((l) => {
+            const active = isLinkActive(l.href);
+            return (
+              <Link
+                key={l.href}
+                href={l.href}
+                className={cn(
+                  "text-sm font-semibold tracking-tight transition-colors",
+                  active
+                    ? "text-primary"
+                    : isDark
+                      ? "text-secondary hover:text-primary"
+                      : "text-slate-500 hover:text-primary",
+                )}
+              >
+                {l.label}
+              </Link>
+            );
+          })}
         </nav>
         <div className="flex shrink-0 items-center gap-3 md:gap-4">
           <LocaleSwitcher
@@ -198,10 +205,7 @@ export function WebsiteHeader({
             >
               <ul className="space-y-1">
                 {links.map((l) => {
-                  const active =
-                    l.href === "/"
-                      ? pathname === "/"
-                      : pathname === l.href || pathname.startsWith(`${l.href}/`);
+                  const active = isLinkActive(l.href);
                   return (
                     <li key={l.href}>
                       <Link
@@ -211,7 +215,7 @@ export function WebsiteHeader({
                           active
                             ? isDark
                               ? "bg-primary/15 text-primary"
-                              : "bg-cyan-50 text-cyan-800"
+                              : "bg-primary/10 text-primary"
                             : isDark
                               ? "text-on-surface hover:bg-white/10"
                               : "text-slate-700 hover:bg-slate-100",

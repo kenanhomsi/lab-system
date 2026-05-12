@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { jsonError } from "@/lib/api/bff-errors";
 import { backendContainer } from "@/container";
 import { UserBackendService, userModuleNames } from "@/modules/user";
-import { getToken } from "next-auth/jwt";
+import { resolveAccessToken } from "@/lib/api/resolve-access-token";
 
 const userService = backendContainer.get<UserBackendService>(userModuleNames.service);
 
 export async function GET(req: NextRequest) {
   try {
-    const token = await getToken({ req }).then((res) => res?.accessToken);
+    const token = await resolveAccessToken(req);
     if (!token) {
       throw new Error("Missing authorization token");
     }
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const token = await getToken({ req }).then((res) => res?.accessToken);
+    const token = await resolveAccessToken(req);
     if (!token) {
       throw new Error("Missing authorization token");
     }
@@ -32,4 +32,3 @@ export async function PUT(req: NextRequest) {
     return jsonError(error, 400);
   }
 }
-

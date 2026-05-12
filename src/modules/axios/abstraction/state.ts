@@ -9,7 +9,7 @@ import { isEmpty } from "ramda";
 class State {
   protected headers: Record<string, string> = {};
   protected query: Record<string, string> = {};
-  private method: "get" | "post" | "put" | "delete";
+  private method: "get" | "post" | "put" | "patch" | "delete";
   private body: object | FormData = {};
   private formData: FormData = new FormData();
   private endpoint: string;
@@ -42,7 +42,7 @@ class State {
     }
     return this;
   }
-  setMethod(method: "get" | "post" | "put" | "delete") {
+  setMethod(method: "get" | "post" | "put" | "patch" | "delete") {
     this.method = method;
     return this;
   }
@@ -77,9 +77,11 @@ class State {
     const body =
       this.body instanceof FormData
         ? this.body
-        : isEmpty(this.body)
-          ? this.formData
-          : this.body;
+        : this.method === "patch" && isEmpty(this.body)
+          ? {}
+          : isEmpty(this.body)
+            ? this.formData
+            : this.body;
     return this.instance[this.method](this.endpoint, body, {
       headers: this.headers,
       params: this.query,

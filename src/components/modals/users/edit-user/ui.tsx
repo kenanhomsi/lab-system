@@ -23,6 +23,7 @@ import {
   IconSparkles,
 } from "@tabler/icons-react";
 import { ReactNode, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useMirror } from "./store";
 
 const SectionHeader = ({
@@ -50,6 +51,8 @@ const SectionHeader = ({
 const TOTAL_STEPS = 2;
 
 const UI = () => {
+  const t = useTranslations("admin.users");
+  const tc = useTranslations("admin.common");
   const isOpen = useMirror("isOpen");
   const user = useMirror("user");
   const form = useMirror("form");
@@ -75,9 +78,9 @@ const UI = () => {
             <IconEdit size={22} />
           </ThemeIcon>
           <Stack gap={0}>
-            <Title order={4}>Edit User</Title>
+            <Title order={4}>{t("editModalTitle")}</Title>
             <Text size="sm" c="dimmed">
-              Update profile details while keeping the existing account access intact.
+              {t("editModalSubtitle")}
             </Text>
           </Stack>
         </Group>
@@ -103,14 +106,8 @@ const UI = () => {
     >
       <Stack gap="lg">
         <Stepper active={step} size="sm" color="blue" mt="md">
-          <Stepper.Step
-            label="Account Overview"
-            description="Review existing access"
-          />
-          <Stepper.Step
-            label="Profile Details"
-            description="Edit personal info"
-          />
+          <Stepper.Step label={t("editStepAccountOverview")} description={t("editStepAccountOverviewDesc")} />
+          <Stepper.Step label={t("editStepProfileDetails")} description={t("editStepProfileDetailsDesc")} />
         </Stepper>
 
         {step === 0 && (
@@ -118,19 +115,19 @@ const UI = () => {
             <Stack gap="md">
               <SectionHeader
                 icon={<IconSparkles size={18} />}
-                title="Account Overview"
-                description="Review the existing account information before saving profile updates."
+                title={t("editSectionAccountOverview")}
+                description={t("editSectionAccountOverviewDesc")}
               />
               <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
                 <TextInput
-                  label="Email"
+                  label={t("email")}
                   value={user?.email ?? ""}
                   readOnly
                   leftSection={<IconMail size={16} />}
                 />
                 <TextInput
-                  label="Phone number"
-                  placeholder="+20 100 000 0000"
+                  label={t("phoneNumberLabel")}
+                  placeholder={t("phoneNumberPlaceholder")}
                   leftSection={<IconPhone size={16} />}
                   value={form.phoneNumber}
                   onChange={(e) => updateField("phoneNumber", e.target.value)}
@@ -145,34 +142,34 @@ const UI = () => {
             <Stack gap="md">
               <SectionHeader
                 icon={<IconIdBadge2 size={18} />}
-                title="Profile Details"
-                description="Edit the personal and operational information shown in the system."
+                title={t("editSectionProfileDetails")}
+                description={t("editSectionProfileDetailsDesc")}
               />
               <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
                 <TextInput
-                  label="Full name"
-                  placeholder="Dr. Sarah Ahmed"
+                  label={t("fullName")}
+                  placeholder={t("fullNamePlaceholder")}
                   withAsterisk
                   leftSection={<IconIdBadge2 size={16} />}
                   value={form.fullName}
-                  onChange={(e) => updateField("fullName", e.target.value)}
+                  onChange={(e) => updateField("fullName", e.currentTarget.value)}
                 />
                 <TextInput
-                  label="City"
-                  placeholder="Cairo"
+                  label={t("city")}
+                  placeholder={t("cityPlaceholder")}
                   leftSection={<IconMapPin size={16} />}
                   value={form.city}
-                  onChange={(e) => updateField("city", e.target.value)}
+                  onChange={(e) => updateField("city", e.currentTarget.value)}
                 />
               </SimpleGrid>
               <Textarea
-                label="Profile metadata"
-                placeholder='Optional notes or JSON, for example: {"department":"Cardiology"}'
-                description="Use this for extra profile details when needed."
+                label={t("profileMetadataLabel")}
+                placeholder={t("profileMetadataPlaceholder")}
+                description={t("profileMetadataDescription")}
                 autosize
                 minRows={3}
                 value={form.profileMetadata}
-                onChange={(e) => updateField("profileMetadata", e.target.value)}
+                onChange={(e) => updateField("profileMetadata", e.currentTarget.value)}
               />
             </Stack>
           </Paper>
@@ -180,30 +177,21 @@ const UI = () => {
 
         <Group justify="space-between">
           <Button variant="subtle" color="gray" onClick={close} disabled={isSubmitting}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Group gap="sm">
             {step > 0 && (
-              <Button
-                variant="default"
-                onClick={() => setStep((s) => s - 1)}
-                disabled={isSubmitting}
-              >
-                Back
+              <Button variant="default" onClick={() => setStep((s) => s - 1)} disabled={isSubmitting}>
+                {tc("back")}
               </Button>
             )}
             {step < TOTAL_STEPS - 1 ? (
               <Button radius="md" onClick={() => setStep((s) => s + 1)}>
-                Next
+                {tc("next")}
               </Button>
             ) : (
-              <Button
-                radius="md"
-                onClick={submit}
-                loading={isSubmitting}
-                disabled={!canSubmit}
-              >
-                Save changes
+              <Button radius="md" onClick={submit} loading={isSubmitting} disabled={!canSubmit}>
+                {t("editSaveChanges")}
               </Button>
             )}
           </Group>

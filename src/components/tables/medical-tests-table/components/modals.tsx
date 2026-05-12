@@ -25,6 +25,7 @@ import {
   IconOval,
 } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useMirror } from "../store";
 import { CreateMedicalTestParams } from "@/modules/medical-tests/frontend/types";
 import { MedicalTestItem } from "../types";
@@ -88,6 +89,8 @@ const buildParameterSchemaModel = (pairs: ParameterPair[]): Record<string, strin
 };
 
 const Modals = () => {
+  const t = useTranslations("admin.medicalTests");
+  const tc = useTranslations("admin.common");
   const activeModal = useMirror("activeModal");
   const setActiveModal = useMirror("setActiveModal");
   const closeModal = () => setActiveModal(null);
@@ -105,6 +108,8 @@ const Modals = () => {
   const selected = selectedMedicalTest as MedicalTestItem | null;
 
   const Form = (props: { mode: "create" | "edit"; selected: MedicalTestItem | null }) => {
+    const tm = useTranslations("admin.medicalTests");
+    const tcForm = useTranslations("admin.common");
     const TOTAL_STEPS = 2;
     const [nameAr, setNameAr] = useState(props.selected?.nameAr ?? "");
     const [nameEn, setNameEn] = useState(props.selected?.nameEn ?? "");
@@ -198,16 +203,16 @@ const Modals = () => {
           }}
         >
           <Badge variant="light" color="blue" radius="sm">
-            {props.mode === "create" ? "New test" : "Editing test"}
+            {props.mode === "create" ? tm("badgeNew") : tm("badgeEditing")}
           </Badge>
           <Text size="sm" c="dimmed">
-            Complete all required fields before saving
+            {tm("completeRequiredHint")}
           </Text>
         </Group>
 
         <Stepper active={step} size="sm" color="blue" mt="xs">
-          <Stepper.Step label="Details" description="General test info" />
-          <Stepper.Step label="Schema" description="Parameters and preview" />
+          <Stepper.Step label={tm("stepDetails")} description={tm("stepDetailsDesc")} />
+          <Stepper.Step label={tm("stepSchema")} description={tm("stepSchemaDesc")} />
         </Stepper>
 
         {step === 0 && (
@@ -219,17 +224,17 @@ const Modals = () => {
                 </ThemeIcon>
                 <Stack gap={4} style={{ flex: 1 }}>
                   <Text fw={700} size="lg">
-                    Test details
+                    {tm("sectionTestDetails")}
                   </Text>
                   <Text size="sm" c="dimmed">
-                    Main information used across requests and reports
+                    {tm("sectionTestDetailsDesc")}
                   </Text>
                 </Stack>
               </Group>
 
               <TextInput
-                label="Name (Arabic)"
-                placeholder="Enter Arabic name"
+                label={tm("nameArLabel")}
+                placeholder={tm("nameArPlaceholder")}
                 leftSection={<IconTestPipe2 size={16} />}
                 value={nameAr}
                 onChange={(e) => setNameAr(e.currentTarget.value)}
@@ -238,8 +243,8 @@ const Modals = () => {
                 required
               />
               <TextInput
-                label="Name (English)"
-                placeholder="Enter English name"
+                label={tm("nameEnLabel")}
+                placeholder={tm("nameEnPlaceholder")}
                 leftSection={<IconTestPipe2 size={16} />}
                 value={nameEn}
                 onChange={(e) => setNameEn(e.currentTarget.value)}
@@ -248,8 +253,8 @@ const Modals = () => {
                 required
               />
               <NumberInput
-                label="Price"
-                placeholder="0"
+                label={tm("priceLabel")}
+                placeholder={tm("pricePlaceholder")}
                 leftSection={<IconCurrencyDollar size={16} />}
                 value={price}
                 onChange={(v) => setPrice(Number(v ?? 0))}
@@ -259,8 +264,8 @@ const Modals = () => {
                 required
               />
               <TextInput
-                label="Category"
-                placeholder="e.g. Hematology"
+                label={tm("categoryLabel")}
+                placeholder={tm("categoryPlaceholder")}
                 leftSection={<IconCategory size={16} />}
                 value={category}
                 onChange={(e) => setCategory(e.currentTarget.value)}
@@ -269,8 +274,8 @@ const Modals = () => {
                 required
               />
               <TextInput
-                label="Sample type"
-                placeholder="e.g. Blood"
+                label={tm("sampleTypeLabel")}
+                placeholder={tm("sampleTypePlaceholder")}
                 leftSection={<IconOval size={16} />}
                 value={sampleType}
                 onChange={(e) => setSampleType(e.currentTarget.value)}
@@ -279,12 +284,12 @@ const Modals = () => {
                 required
               />
               <Select
-                label="Status"
+                label={tm("statusLabel")}
                 value={status}
                 onChange={(v) => setStatus(v ?? "active")}
                 data={[
-                  { value: "active", label: "Active" },
-                  { value: "inactive", label: "Inactive" },
+                  { value: "active", label: tm("statusActive") },
+                  { value: "inactive", label: tm("statusInactive") },
                 ]}
                 size="md"
                 radius="md"
@@ -297,15 +302,15 @@ const Modals = () => {
         {step === 1 && (
           <Paper withBorder radius="xl" p="lg" bg="light-dark(rgba(255,255,255,0.72), rgba(255,255,255,0.02))">
             <JsonbKeyValueEditor
-              title="Parameter schema"
-              description="Add key/value fields to generate JSON schema"
+              title={tm("parameterSchemaTitle")}
+              description={tm("parameterSchemaDesc")}
               pairs={parameterPairs}
               onPairsChange={setParameterPairs}
-              keyLabel="Key"
-              valueLabel="Value"
-              keyPlaceholder="ex: normal_range"
-              valuePlaceholder="ex: 3.5 - 5.5"
-              previewLabel="Generated JSON preview"
+              keyLabel={tm("keyLabel")}
+              valueLabel={tm("valueLabel")}
+              keyPlaceholder={tm("keyPlaceholder")}
+              valuePlaceholder={tm("valuePlaceholder")}
+              previewLabel={tm("previewLabel")}
               previewValue={parameterSchemaPreview}
             />
           </Paper>
@@ -315,15 +320,15 @@ const Modals = () => {
           <Group justify="space-between" align="center" gap="md" wrap="wrap">
             <Stack gap={2}>
               <Text fw={600}>
-                {props.mode === "create" ? "Ready to create this test?" : "Ready to save changes?"}
+                {props.mode === "create" ? tm("readyCreateTitle") : tm("readySaveTitle")}
               </Text>
               <Text size="sm" c="dimmed">
-                Review details and submit when everything looks correct.
+                {tm("readySubtitle")}
               </Text>
             </Stack>
             <Group justify="flex-end" gap="sm" wrap="nowrap" style={{ flex: 1 }}>
               <Button variant="default" radius="md" onClick={closeModal}>
-                Cancel
+                {tcForm("cancel")}
               </Button>
               {step > 0 && (
                 <Button
@@ -332,7 +337,7 @@ const Modals = () => {
                   leftSection={<IconChevronLeft size={14} />}
                   onClick={() => setStep((prev) => prev - 1)}
                 >
-                  Back
+                  {tcForm("back")}
                 </Button>
               )}
               {step < TOTAL_STEPS - 1 ? (
@@ -342,7 +347,7 @@ const Modals = () => {
                   onClick={() => setStep((prev) => prev + 1)}
                   disabled={!hasValidDetails}
                 >
-                  Next
+                  {tcForm("next")}
                 </Button>
               ) : (
                 <Button
@@ -350,7 +355,7 @@ const Modals = () => {
                   onClick={onSubmit}
                   disabled={!canSubmit || (props.mode === "edit" && !props.selected?.id)}
                 >
-                  {props.mode === "create" ? "Create" : "Save"}
+                  {props.mode === "create" ? tcForm("create") : tcForm("save")}
                 </Button>
               )}
             </Group>
@@ -379,10 +384,10 @@ const Modals = () => {
             </ThemeIcon>
             <Stack gap={3} style={{ flex: 1, minWidth: 0 }}>
               <Title order={4} lh={1.2}>
-                Create Medical Test
+                {t("modalCreateTitle")}
               </Title>
               <Text size="sm" c="dimmed" lh={1.45}>
-                Add a new test with pricing and parameter schema details
+                {t("modalCreateSubtitle")}
               </Text>
             </Stack>
           </Group>
@@ -429,10 +434,10 @@ const Modals = () => {
             </ThemeIcon>
             <Stack gap={3} style={{ flex: 1, minWidth: 0 }}>
               <Title order={4} lh={1.2}>
-                Edit Medical Test
+                {t("modalEditTitle")}
               </Title>
               <Text size="sm" c="dimmed" lh={1.45}>
-                Update metadata, schema fields, and availability status
+                {t("modalEditSubtitle")}
               </Text>
             </Stack>
           </Group>
@@ -469,21 +474,22 @@ const Modals = () => {
         <Form key={selected?.id ?? "edit"} mode="edit" selected={selected} />
       </Modal>
 
-      <Modal opened={activeModal === "delete"} onClose={closeModal} title="Delete Medical Test" centered>
+      <Modal opened={activeModal === "delete"} onClose={closeModal} title={t("deleteModalTitle")} centered>
         <Stack>
-          <Text>
-            Are you sure you want to delete{" "}
-            <Text span fw={600}>
-              {selected?.nameEn || selected?.nameAr || "this medical test"}
-            </Text>
-            ?
+          <Text size="sm" dir="auto">
+            {t("deleteConfirmMessage", {
+              name:
+                selected?.nameEn?.trim() ||
+                selected?.nameAr?.trim() ||
+                t("deleteFallbackTest"),
+            })}
           </Text>
           <Group justify="flex-end">
             <Button variant="default" onClick={closeModal}>
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button color="red" onClick={onDelete} disabled={!selected?.id}>
-              Delete
+              {tc("delete")}
             </Button>
           </Group>
         </Stack>

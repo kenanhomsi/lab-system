@@ -1,0 +1,54 @@
+# اسم الـ workflow الذي سيظهر في واجهة GitHub Actions
+name: Deploy to Hostinger VPS
+
+# متى يتم تشغيل هذا الـ pipeline؟
+on:
+  push:
+    branches: ["main"] # يتشغل عندما تدفع تغييرات إلى فرع main
+  # يمكنك إضافة (workflow_dispatch) لتشغيله يدوياً من واجهة GitHub
+  workflow_dispatch:
+
+# المهام (jobs) التي ستنفذ – نحدد مهمة واحدة اسمها "deploy"
+jobs:
+  deploy:
+    # بيئة التشغيل: خادم نظيف من Ubuntu يقدمه GitHub مجاناً
+    runs-on: ubuntu-latest
+
+    # الخطوات المتسلسلة التي ستتم داخل هذه المهمة
+    steps:
+      # 1. استلام الكود من المستودع (checkout)
+      - name: Get the latest code
+        uses: actions/checkout@v4
+
+      # 2. تسجيل الدخول إلى Docker Hub (لرفع الصورة لاحقاً)
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }} # معرفك في Docker Hub
+          password: ${{ secrets.DOCKER_PASSWORD }} # كلمة السر أو token
+
+      # 3. بناء صورة Docker ورفعها (push) إلى Docker Hub
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: . # مسار Dockerfile (الجذر)
+          push: true # رفع الصورة إلى الـ registry
+          tags: your-docker-username/your-app-name:latest # اسم الصورة
+
+      # 4. الاتصال بالسيرفر (Hostinger) عبر SSH وتنفيذ أوامر التحديث
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }} # IP السيرفر
+          username: ${{ secrets.SERVER_USER }} # عادة "root"
+          password: ${{ secrets.SERVER_PASSWORD }} # كلمة مرور السيرفر
+          # أو استخدم SSH key بدلاً من password (الأفضل)
+          # key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+          # الأوامر التي ستُنفذ على السيرفر:
+          script: |
+            cd /home/lab-system-front                    # انتقل إلى مجلد المشروع
+            docker-compose down                # إيقاف الحاوية القديمة (إن وجدت)
+            docker pull kenahomsi/lab-system-front:latest   # سحب الصورة الجديدة
+            docker-compose up -d               # تشغيل الحاوية في الخلفية
+            docker image prune -f              # حذف الصور القديمة غير المستخدمة

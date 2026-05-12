@@ -1,11 +1,19 @@
 import { z } from "zod";
 
+/** API may send numbers/booleans; UI expects a.display string or null. */
+const nullableStringLike = z.preprocess((val: unknown) => {
+  if (val == null || val === "") return null;
+  if (typeof val === "string") return val;
+  if (typeof val === "number" || typeof val === "boolean") return String(val);
+  return null;
+}, z.string().nullable());
+
 export const userItemSchema = z.object({
   id: z.string(),
   email: z.string(),
   fullName: z.string(),
   city: z.string().nullable(),
-  phoneNumber: z.string().nullable(),
+  phoneNumber: nullableStringLike,
   isActive: z.boolean(),
   emailConfirmed: z.boolean(),
   lockoutEnabled: z.boolean().optional(),

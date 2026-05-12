@@ -10,9 +10,9 @@ import {
   Stack,
   Text,
   UnstyledButton,
-  useMantineColorScheme,
 } from "@mantine/core";
 import { IconBraces } from "@tabler/icons-react";
+import classes from "./result-data-cell.module.css";
 
 type Parsed =
   | { kind: "empty" }
@@ -71,7 +71,6 @@ function prettyPrint(raw: string): string {
 
 /** Summarizes lab result JSON as key/value chips; opens a popover with indented JSON for full detail. */
 function ResultDataCell({ value }: { value: string }) {
-  const { colorScheme } = useMantineColorScheme();
   const parsed = parseResultData(value);
 
   if (parsed.kind === "empty") {
@@ -87,36 +86,36 @@ function ResultDataCell({ value }: { value: string }) {
   const chips =
     parsed.kind === "object"
       ? parsed.entries.slice(0, MAX_CHIPS).map(([k, v]) => {
-          const vs = truncate(stringifyPreview(v), MAX_VALUE_LEN);
-          const label = `${k}: ${vs}`;
-          return (
-            <Badge
-              key={k}
-              variant="light"
-              color="teal"
-              radius="md"
-              size="sm"
-              tt="none"
-              title={label}
-              style={{
-                maxWidth: "100%",
-                height: "auto",
-              }}
-              styles={{
-                label: {
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  display: "block",
-                  textAlign: "start",
-                  fontWeight: 500,
-                },
-              }}
-            >
-              {label}
-            </Badge>
-          );
-        })
+        const vs = truncate(stringifyPreview(v), MAX_VALUE_LEN);
+        const label = `${k}: ${vs}`;
+        return (
+          <Badge
+            key={k}
+            variant="light"
+            color="teal"
+            radius="md"
+            size="sm"
+            tt="none"
+            title={label}
+            style={{
+              maxWidth: "100%",
+              height: "auto",
+            }}
+            styles={{
+              label: {
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                display: "block",
+                textAlign: "start",
+                fontWeight: 500,
+              },
+            }}
+          >
+            {label}
+          </Badge>
+        );
+      })
       : null;
 
   const overflow =
@@ -139,11 +138,11 @@ function ResultDataCell({ value }: { value: string }) {
     parsed.kind === "object"
       ? null
       : truncate(
-          parsed.kind === "json"
-            ? stringifyPreview(parsed.value)
-            : parsed.text,
-          160,
-        );
+        parsed.kind === "json"
+          ? stringifyPreview(parsed.value)
+          : parsed.text,
+        160,
+      );
 
   return (
     <Popover position="bottom-start" withArrow shadow="md" width={400} trapFocus={false}>
@@ -158,18 +157,10 @@ function ResultDataCell({ value }: { value: string }) {
             px={6}
             maw={340}
             mx={-6}
+            className={classes.box}
             style={{
               borderRadius: 8,
-              transition: "background-color 120ms ease",
             }}
-            sx={(theme) => ({
-              "&:hover": {
-                backgroundColor:
-                  colorScheme === "dark"
-                    ? theme.colors.dark[6]
-                    : theme.colors.gray[0],
-              },
-            })}
           >
             {parsed.kind === "object" ? (
               <Stack gap={6}>

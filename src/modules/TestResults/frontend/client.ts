@@ -3,7 +3,6 @@ import {
   TestResultClient,
   ShardFindOneTypeSchema,
   SharedCreateTypeSchema,
-  SharedFindAllTypeSchema,
   SharedUpdateTypeSchema,
 } from "../abstraction";
 import { AxiosState } from "@/modules/axios";

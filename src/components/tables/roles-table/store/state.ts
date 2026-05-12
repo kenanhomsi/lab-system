@@ -1,12 +1,20 @@
-import { RoleItem, RoleModalType } from "../types";
+import { RoleModalType } from "../types";
 
 type Params = {
   pageNumber: number;
   setPageNumber: (value: number) => void;
   activeModal: RoleModalType;
   setActiveModal: (value: RoleModalType) => void;
-  selectedRole: RoleItem | null;
-  setSelectedRole: (value: RoleItem | null) => void;
+  selectedRole: {
+    id: string;
+    name: string;
+  } | null;
+  setSelectedRole: (
+    value: {
+      id: string;
+      name: string;
+    } | null,
+  ) => void;
 };
 
 const store = (): Params => ({

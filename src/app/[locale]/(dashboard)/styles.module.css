@@ -1,5 +1,8 @@
 .sectionPadding {
   padding-block: 3.875rem 2.5rem;
   padding-inline-end: 3.75rem;
-  padding-inline-start: max(7.5rem, 24px + var(--dashboard-sidebar-width, 64px) + 2.5rem);
-}/*# sourceMappingURL=styles.module.css.map */
+  padding-inline-start: max(
+    7.5rem,
+    24px + var(--dashboard-sidebar-width, 64px) + 2.5rem
+  );
+} /*# sourceMappingURL=styles.module.css.map */

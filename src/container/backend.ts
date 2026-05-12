@@ -9,7 +9,7 @@ import {
   bindBackUserDependencies,
   bindBackSubscriptionPackageDependencies,
   bindBackRoleDependencies,
-  bindBackPermissionDependencies,
+  bindBackAccessPolicyDependencies,
   bindBackComplaintDependencies,
   bindBackExternalPatientsDependencies,
   bindBackTestRequestsDependencies,
@@ -30,7 +30,7 @@ const backendContainer = pipe(
   bindBackUserDependencies,
   bindBackSubscriptionPackageDependencies,
   bindBackRoleDependencies,
-  bindBackPermissionDependencies,
+  bindBackAccessPolicyDependencies,
   bindBackComplaintDependencies,
 )(c);
 

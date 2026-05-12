@@ -1,9 +1,4 @@
-import {
-  CreateRoleRequest,
-  RolePermissionsResponse,
-  RolesResponse,
-  UpdateRoleRequest,
-} from "../types";
+import { CreateRoleRequest, RolesResponse, UpdateRoleRequest } from "../types";
 
 type Params = {
   rolesData: RolesResponse;
@@ -12,21 +7,23 @@ type Params = {
   createRole: (payload: CreateRoleRequest) => Promise<unknown>;
   updateRole: (id: string, payload: UpdateRoleRequest) => Promise<unknown>;
   deleteRole: (id: string) => Promise<unknown>;
-  getRolePermissions: (id: string) => Promise<RolePermissionsResponse>;
-  assignRolePermission: (id: string, permissionId: string) => Promise<unknown>;
-  removeRolePermission: (id: string, permissionId: string) => Promise<unknown>;
 };
 
 const store = (): Params => ({
-  rolesData: [],
+  rolesData: {
+    hasNextPage: false,
+    hasPreviousPage: false,
+    items: [],
+    page: 1,
+    pageSize: 0,
+    totalCount: 0,
+    totalPages: 0,
+  },
   isPending: false,
   refetchRoles: () => {},
   createRole: async () => null,
   updateRole: async () => null,
   deleteRole: async () => null,
-  getRolePermissions: async () => [],
-  assignRolePermission: async () => null,
-  removeRolePermission: async () => null,
 });
 
 export { store as apiStore };

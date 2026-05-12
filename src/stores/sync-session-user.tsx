@@ -13,22 +13,39 @@ function SyncSessionUser() {
   const setSessionUser = useSessionUserStore((s) => s.setSessionUser);
 
   useEffect(() => {
+    const currentUser = useSessionUserStore.getState().user;
+
     if (status !== "authenticated" || !session?.user) {
-      setSessionUser(null);
+      if (currentUser !== null) {
+        setSessionUser(null);
+      }
       return;
     }
     const u = session.user;
     const id = typeof u.id === "string" ? u.id.trim() : "";
     if (!id) {
-      setSessionUser(null);
+      if (currentUser !== null) {
+        setSessionUser(null);
+      }
       return;
     }
-    setSessionUser({
+    const nextUser = {
       id,
       roles: Array.isArray(u.roles) ? [...u.roles] : [],
       email: u.email,
       fullName: u.fullName,
-    });
+    };
+
+    const hasSameUser =
+      currentUser?.id === nextUser.id &&
+      currentUser?.email === nextUser.email &&
+      currentUser?.fullName === nextUser.fullName &&
+      currentUser?.roles.length === nextUser.roles.length &&
+      currentUser?.roles.every((role, index) => role === nextUser.roles[index]);
+
+    if (!hasSameUser) {
+      setSessionUser(nextUser);
+    }
   }, [session, setSessionUser, status]);
 
   return null;

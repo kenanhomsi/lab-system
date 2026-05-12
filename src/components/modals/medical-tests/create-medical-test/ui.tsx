@@ -1,9 +1,12 @@
 "use client";
 
 import { Button, Group, Modal, Stack, TextInput, Textarea } from "@mantine/core";
+import { useTranslations } from "next-intl";
 import { useMirror } from "./store";
 
 const UI = () => {
+  const t = useTranslations("admin.medicalTests");
+  const tc = useTranslations("admin.common");
   const isOpen = useMirror("isOpen");
   const onClose = useMirror("onClose");
   const nameAr = useMirror("nameAr");
@@ -17,7 +20,7 @@ const UI = () => {
 
   const handleSubmit = async () => {
     if (!nameAr.trim() || !nameEn.trim()) return;
-    
+
     try {
       await createMutation.mutateAsync({
         nameAr,
@@ -34,35 +37,35 @@ const UI = () => {
   };
 
   return (
-    <Modal opened={isOpen} onClose={onClose} title="Create Medical Test" centered>
+    <Modal size="xl" opened={isOpen} onClose={onClose} title={t("modalCreateTitle")} centered>
       <Stack>
         <TextInput
-          label="Name (Arabic)"
+          label={t("nameArLabel")}
           value={nameAr}
           onChange={(e) => setNameAr(e.currentTarget.value)}
-          placeholder="Enter Arabic name"
+          placeholder={t("nameArPlaceholder")}
           required
         />
         <TextInput
-          label="Name (English)"
+          label={t("nameEnLabel")}
           value={nameEn}
           onChange={(e) => setNameEn(e.currentTarget.value)}
-          placeholder="Enter English name"
+          placeholder={t("nameEnPlaceholder")}
           required
         />
         <Textarea
-          label="Description"
+          label={t("fieldDescription")}
           value={description}
           onChange={(e) => setDescription(e.currentTarget.value)}
-          placeholder="Enter description"
+          placeholder={t("fieldDescriptionPlaceholder")}
           minRows={3}
         />
         <Group justify="flex-end" mt="md">
           <Button variant="default" onClick={onClose}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Button onClick={handleSubmit} loading={isSubmitting || createMutation.isPending}>
-            Create
+            {tc("create")}
           </Button>
         </Group>
       </Stack>

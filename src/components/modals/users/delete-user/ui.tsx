@@ -1,27 +1,33 @@
 "use client";
 
 import { Button, Group, Modal, Stack, Text } from "@mantine/core";
+import { useTranslations } from "next-intl";
 import { useMirror } from "./store";
 
 const UI = () => {
+  const t = useTranslations("admin.users");
+  const tc = useTranslations("admin.common");
   const isOpen = useMirror("isOpen");
   const onClose = useMirror("onClose");
   const user = useMirror("user");
   const submit = useMirror("submit");
   const isSubmitting = useMirror("isSubmitting");
 
+  const rawName = user?.fullName?.trim();
+  const displayName = rawName && rawName.length > 0 ? rawName : t("deleteFallbackUser");
+
   return (
-    <Modal opened={isOpen} onClose={onClose} title="Delete User" centered>
+    <Modal opened={isOpen} onClose={onClose} title={t("deleteModalTitle")} centered>
       <Stack>
-        <Text size="sm">
-          Are you sure you want to delete <b>{user?.fullName || "this user"}</b>?
+        <Text size="sm" dir="auto">
+          {t("deleteConfirmMessage", { name: displayName })}
         </Text>
         <Group justify="flex-end">
           <Button variant="default" onClick={onClose}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Button color="red" onClick={submit} loading={isSubmitting} disabled={!user}>
-            Delete
+            {tc("delete")}
           </Button>
         </Group>
       </Stack>

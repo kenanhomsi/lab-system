@@ -28,11 +28,7 @@ const buildNavbarConfig = (name: string, roleTitle: string): navbarConfig => ({
       label: "profile",
       href: "/profile",
     },
-    {
-      id: "settings",
-      label: "settings",
-      href: "/settings",
-    },
+
     {
       id: "logout",
       label: "logout",
@@ -92,6 +88,11 @@ export const roleStrategy = {
         href: "/admin/settings",
         icon: "settings",
       },
+      {
+        label: "chat",
+        href: "/admin/chat",
+        icon: "messageSquare",
+      },
     ],
     getNavbarConfig: withNavbarProfileOverrides(
       "Dr. Elena Vance",
@@ -122,6 +123,11 @@ export const roleStrategy = {
         href: "/doctor/external-patients",
         icon: "userPlus",
       },
+      {
+        label: "chat",
+        href: "/doctor/chat",
+        icon: "messageSquare",
+      },
     ],
     getNavbarConfig: withNavbarProfileOverrides("Dr. Ahmad Salem", "DOCTOR"),
     canAccess: (route: string) => route.startsWith("/doctor"),
@@ -143,6 +149,11 @@ export const roleStrategy = {
         label: "patientTestResults",
         href: "/patient/test-results",
         icon: "clipboardCheck",
+      },
+      {
+        label: "chat",
+        href: "/patient/chat",
+        icon: "messageSquare",
       },
     ],
     getNavbarConfig: withNavbarProfileOverrides("Noor Hassan", "PATIENT"),
@@ -170,6 +181,11 @@ export const roleStrategy = {
         label: "externalPatients",
         href: "/lab/external-patients",
         icon: "userPlus",
+      },
+      {
+        label: "chat",
+        href: "/lab/chat",
+        icon: "messageSquare",
       },
     ],
     getNavbarConfig: withNavbarProfileOverrides(

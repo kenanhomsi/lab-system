@@ -19,17 +19,17 @@ const UI = () => {
         isLoading={isLoading}
         schema={schema}
         OnPageNumberChange={setPageNumber}
-        data={rolesData || []}
+        data={rolesData?.items || []}
         paginationStatic={{
-          count: rolesData?.length || 0,
-          limit: 20,
-          page: 1,
+          count: rolesData?.totalPages || 0,
+          limit: rolesData?.pageSize,
+          page: rolesData?.page,
         }}
       >
         <Table.Header>
           <RolesHeader
-            totalRoles={rolesData?.length || 0}
-            visibleRoles={rolesData?.length || 0}
+            totalRoles={rolesData?.totalCount || 0}
+            visibleRoles={rolesData?.totalPages || 0}
             onOpenCreate={() => {
               setSelectedRole(null);
               setActiveModal("create");

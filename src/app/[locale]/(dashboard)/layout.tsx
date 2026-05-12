@@ -7,7 +7,7 @@ import { NavbarFactory } from "@/components/shared/navbar";
 import styles from "./styles.module.scss";
 
 const formatRoleTitle = (role: string) =>
-    role.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+  role.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
 type RoleKey = keyof typeof roleStrategy;
 

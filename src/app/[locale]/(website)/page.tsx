@@ -1,5 +1,4 @@
 import { BranchesMapSection } from "./ui/landing/branches-map-section";
-import { BannerSliderSection } from "./ui/landing/banner-slider-section";
 import { DepartmentsSection } from "./ui/landing/departments-section";
 import { EditorialSection } from "./ui/landing/editorial-section";
 import { HeroSection } from "./ui/landing/hero-section";
@@ -11,7 +10,6 @@ export default function LandingPage() {
   return (
     <main>
       <HeroSection />
-      <BannerSliderSection />
       <EditorialSection />
       <ServicesGrid />
       <QualitySection />

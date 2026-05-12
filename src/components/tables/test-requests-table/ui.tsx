@@ -4,9 +4,13 @@ import { Table } from "@/components/table";
 import { TablePageHeader } from "@/components/table-page-header";
 import { ActionIcon, CloseButton, Select, TextInput, Tooltip } from "@mantine/core";
 import { IconArrowsSort, IconClipboardList, IconPlus, IconRefresh, IconSearch } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 import { useMirror } from "./store";
 
 const UI = () => {
+  const t = useTranslations("admin.testRequests");
+  const tc = useTranslations("admin.common");
   const schema = useMirror("schema");
   const isPending = useMirror("isPending");
   const searchValue = useMirror("searchValue");
@@ -23,6 +27,23 @@ const UI = () => {
   const setSelectedTestRequest = useMirror("setSelectedTestRequest");
 
   const hasActiveFilters = Boolean(searchValue.trim()) || sortBy !== "createdAt" || !sortDesc;
+
+  const sortFieldOptions = useMemo(
+    () => [
+      { value: "createdAt", label: t("sortCreatedAt") },
+      { value: "requestDate", label: t("sortRequestDate") },
+      { value: "totalAmount", label: t("sortTotalAmount") },
+    ],
+    [t],
+  );
+
+  const sortDirOptions = useMemo(
+    () => [
+      { value: "desc", label: tc("newestFirst") },
+      { value: "asc", label: tc("oldestFirst") },
+    ],
+    [tc],
+  );
 
   return (
     <Table
@@ -42,19 +63,71 @@ const UI = () => {
       dataTableHorizontalSpacing="sm"
     >
       <Table.Header>
-        <TablePageHeader title="Test Requests" description="Manage lab test requests" icon={<IconClipboardList size={22} />} iconColor="teal"
-          totalCount={testRequestsData?.totalCount || 0} createLabel="Create Test Request" createIcon={<IconPlus size={15} />}
-          onOpenCreate={() => { setSelectedTestRequest(null); setActiveModal("create"); }} hasActiveFilters={hasActiveFilters}
-          onResetFilters={() => { setSearchValue(""); setSortBy("createdAt"); setSortDesc(true); setPageNumber(1); }}>
-          <TextInput placeholder="Search by medical test id" value={searchValue} onChange={(e) => setSearchValue(e.currentTarget.value)} leftSection={<IconSearch size={14} />}
-            rightSection={searchValue ? <CloseButton onClick={() => setSearchValue("")} size="sm" /> : null} rightSectionPointerEvents="auto" radius="xl" size="xs" style={{ flex: "1 1 240px", minWidth: 200 }} />
-          <Select placeholder="Sort by" value={sortBy} onChange={(v) => setSortBy(v || "createdAt")} leftSection={<IconArrowsSort size={13} />} radius="xl" size="xs"
-            data={[{ value: "createdAt", label: "Created At" }, { value: "requestDate", label: "Request Date" }, { value: "totalAmount", label: "Total Amount" }]} style={{ minWidth: 140, flex: "0 0 auto" }} />
-          <Select value={sortDesc ? "desc" : "asc"} onChange={(v) => setSortDesc((v || "desc") === "desc")} radius="xl" size="xs"
-            data={[{ value: "desc", label: "Newest First" }, { value: "asc", label: "Oldest First" }]} style={{ minWidth: 130, flex: "0 0 auto" }} />
+        <TablePageHeader
+          title={t("title")}
+          description={t("description")}
+          icon={<IconClipboardList size={22} />}
+          iconColor="teal"
+          totalCount={testRequestsData?.totalCount || 0}
+          createLabel={t("createLabel")}
+          createIcon={<IconPlus size={15} />}
+          onOpenCreate={() => {
+            setSelectedTestRequest(null);
+            setActiveModal("create");
+          }}
+          hasActiveFilters={hasActiveFilters}
+          onResetFilters={() => {
+            setSearchValue("");
+            setSortBy("createdAt");
+            setSortDesc(true);
+            setPageNumber(1);
+          }}
+        >
+          <TextInput
+            placeholder={t("searchPlaceholder")}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.currentTarget.value)}
+            leftSection={<IconSearch size={14} />}
+            rightSection={
+              searchValue ? <CloseButton onClick={() => setSearchValue("")} size="sm" /> : null
+            }
+            rightSectionPointerEvents="auto"
+            radius="xl"
+            size="xs"
+            style={{ flex: "1 1 240px", minWidth: 200 }}
+          />
+          <Select
+            placeholder={tc("sortBy")}
+            value={sortBy}
+            onChange={(v) => setSortBy(v || "createdAt")}
+            leftSection={<IconArrowsSort size={13} />}
+            radius="xl"
+            size="xs"
+            data={sortFieldOptions}
+            style={{ minWidth: 140, flex: "0 0 auto" }}
+          />
+          <Select
+            value={sortDesc ? "desc" : "asc"}
+            onChange={(v) => setSortDesc((v || "desc") === "desc")}
+            radius="xl"
+            size="xs"
+            data={sortDirOptions}
+            style={{ minWidth: 130, flex: "0 0 auto" }}
+          />
           {hasActiveFilters && (
-            <Tooltip label="Reset filters" withArrow>
-              <ActionIcon variant="light" color="gray" radius="xl" size="md" onClick={() => { setSearchValue(""); setSortBy("createdAt"); setSortDesc(true); setPageNumber(1); }}>
+            <Tooltip label={t("resetFiltersTooltip")} withArrow>
+              <ActionIcon
+                variant="light"
+                color="gray"
+                radius="xl"
+                size="md"
+                onClick={() => {
+                  setSearchValue("");
+                  setSortBy("createdAt");
+                  setSortDesc(true);
+                  setPageNumber(1);
+                }}
+              >
                 <IconRefresh size={14} />
               </ActionIcon>
             </Tooltip>

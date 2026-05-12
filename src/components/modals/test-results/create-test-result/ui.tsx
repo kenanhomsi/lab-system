@@ -24,6 +24,7 @@ import {
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { normalizeMedicalTestItem } from "@/components/tables/medical-tests-table/apis/normalize-medical-tests-response";
 import { frontendContainer } from "@/container";
 import type { CreateTestResultFrontendParams } from "@/modules/TestResults/frontend/types";
@@ -44,13 +45,6 @@ import {
 const medicalTestService = frontendContainer.get<MedicalTestFrontendService>(
   medicalTestModuleNames.service,
 );
-
-const RESULT_STATUS_OPTIONS = [
-  { value: "pending", label: "Pending" },
-  { value: "completed", label: "Completed" },
-  { value: "cancelled", label: "Cancelled" },
-  { value: "rejected", label: "Rejected" },
-];
 
 function unwrapMedicalTestPayload(payload: unknown): unknown {
   if (payload === null || payload === undefined) return payload;
@@ -92,6 +86,18 @@ function CreateTestResultFormBody(props: {
   isSubmitting: boolean;
 }) {
   const { onCloseParent, submitAction, isSubmitting } = props;
+  const t = useTranslations("admin.testResults");
+  const tc = useTranslations("admin.common");
+
+  const resultStatusOptions = useMemo(
+    () => [
+      { value: "pending", label: t("statusPending") },
+      { value: "completed", label: t("statusCompleted") },
+      { value: "cancelled", label: t("statusCancelled") },
+      { value: "rejected", label: t("statusRejected") },
+    ],
+    [t],
+  );
 
   const snapshotResultValuesRef = useRef<Record<string, unknown>>({});
   const handleResultSnapshot = useCallback((row: Record<string, unknown>) => {
@@ -183,27 +189,29 @@ function CreateTestResultFormBody(props: {
       <Paper withBorder radius="lg" p="md">
         <Stack gap="md">
           <Group justify="space-between" wrap="nowrap">
-            <Title order={5}>Request & report</Title>
+            <Title order={5}>{t("sectionRequestReport")}</Title>
             <Text size="xs" c="dimmed">
-              Required fields are marked with *
+              {t("requiredFieldsHint")}
             </Text>
           </Group>
           <Divider />
           {testRequestsQuery.isError ? (
-            <Alert color="red" title="Could not load test requests">
-              Check your session and connection, then reopen this dialog.
+            <Alert color="red" title={t("alertLoadRequestsTitle")}>
+              {t("alertLoadRequestsBody")}
             </Alert>
           ) : null}
           <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
             <Select
-              label="Test request"
+              label={t("fieldTestRequest")}
               withAsterisk
               searchable
               clearable={false}
               placeholder={
-                testRequestsQuery.isPending ? "Loading requests…" : "Choose test request"
+                testRequestsQuery.isPending
+                  ? t("placeholderLoadingRequests")
+                  : t("placeholderChooseRequest")
               }
-              description="Patient and test appear in each option; the stored id is the request record."
+              description={t("fieldTestRequestDesc")}
               data={testRequestSelectData}
               leftSection={<IconClipboardList size={16} />}
               disabled={testRequestsQuery.isPending || testRequestsQuery.isError}
@@ -216,10 +224,10 @@ function CreateTestResultFormBody(props: {
               }
             />
             <TextInput
-              label="Result date & time"
+              label={t("fieldResultDateTime")}
               withAsterisk
               type="datetime-local"
-              description="Captured as ISO 8601 when you submit."
+              description={t("fieldResultDateTimeDesc")}
               value={resultDateLocal}
               leftSection={<IconCalendarEvent size={16} />}
               onChange={(e) => {
@@ -232,19 +240,19 @@ function CreateTestResultFormBody(props: {
               }}
             />
             <Select
-              label="Status"
+              label={t("fieldStatus")}
               withAsterisk
               allowDeselect={false}
-              data={RESULT_STATUS_OPTIONS}
+              data={resultStatusOptions}
               value={form.status}
               onChange={(v) =>
                 setForm({ ...form, status: typeof v === "string" ? v : "pending" })
               }
             />
             <TextInput
-              label="PDF URL"
-              placeholder="https://..."
-              description="Optional link to generated report PDF."
+              label={t("fieldPdfUrl")}
+              placeholder={t("pdfPlaceholder")}
+              description={t("fieldPdfUrlDesc")}
               value={form.pdfUrl}
               leftSection={<IconLink size={16} />}
               onChange={(e) => setForm({ ...form, pdfUrl: e.currentTarget.value })}
@@ -256,17 +264,22 @@ function CreateTestResultFormBody(props: {
       <Paper withBorder radius="lg" p="md">
         <Stack gap="md">
           <Group justify="space-between" wrap="nowrap">
-            <Title order={5}>Result values</Title>
+            <Title order={5}>{t("sectionResultValues")}</Title>
             {medicalTestQuery.data ? (
               <Text size="xs" c="dimmed" lineClamp={1}>
-                Schema from: {medicalTestQuery.data.nameEn}
+                {t("schemaFrom", {
+                  name:
+                    medicalTestQuery.data.nameEn?.trim() ||
+                    medicalTestQuery.data.nameAr?.trim() ||
+                    "—",
+                })}
               </Text>
             ) : null}
           </Group>
           <Divider />
           {!selectedRequest ? (
             <Text size="sm" c="dimmed">
-              Select a test request to load parameter fields.
+              {t("selectRequestFirst")}
             </Text>
           ) : (
             <ResultDataFromSchema
@@ -282,7 +295,7 @@ function CreateTestResultFormBody(props: {
 
       <Group justify="space-between" wrap="nowrap">
         <Button variant="subtle" color="gray" onClick={handleClose} disabled={isSubmitting}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button
           radius="md"
@@ -292,24 +305,24 @@ function CreateTestResultFormBody(props: {
           onClick={async () => {
             if (form.testRequestId <= 0) {
               notifications.show({
-                title: "Missing request",
-                message: "Choose a test request.",
+                title: t("toastMissingRequestTitle"),
+                message: t("toastMissingRequestBody"),
                 color: "red",
               });
               return;
             }
             if (!selectedRequest || medicalTestId <= 0) {
               notifications.show({
-                title: "Invalid selection",
-                message: "The selected row has no linked medical test.",
+                title: t("toastInvalidSelectionTitle"),
+                message: t("toastInvalidSelectionBody"),
                 color: "red",
               });
               return;
             }
             if (medicalTestQuery.isError) {
               notifications.show({
-                title: "Schema unavailable",
-                message: "Load the linked medical test before saving.",
+                title: t("toastSchemaUnavailableTitle"),
+                message: t("toastSchemaUnavailableBody"),
                 color: "red",
               });
               return;
@@ -319,7 +332,7 @@ function CreateTestResultFormBody(props: {
             const requiredErr = validateRequiredResultFields(schemaFields, resultValuesSnapshot);
             if (requiredErr) {
               notifications.show({
-                title: "Check result fields",
+                title: t("toastCheckFieldsTitle"),
                 message: requiredErr,
                 color: "red",
               });
@@ -343,16 +356,16 @@ function CreateTestResultFormBody(props: {
               handleClose();
             } catch (e) {
               const message =
-                e instanceof Error ? e.message : "Something went wrong while creating.";
+                e instanceof Error ? e.message : t("toastGenericError");
               notifications.show({
-                title: "Create failed",
+                title: t("toastCreateFailedTitle"),
                 message,
                 color: "red",
               });
             }
           }}
         >
-          Create
+          {tc("create")}
         </Button>
       </Group>
     </Stack>
@@ -361,6 +374,7 @@ function CreateTestResultFormBody(props: {
 
 /** Outer shell mounts the form body only while the modal is open so local state resets naturally. */
 const UI = () => {
+  const t = useTranslations("admin.testResults");
   const props = useMirror("props") as { opened?: boolean; onClose?: () => void };
   const submitAction = useMirror("submitAction") as (
     p: CreateTestResultFrontendParams,
@@ -385,9 +399,9 @@ const UI = () => {
             <IconClipboardList size={22} />
           </ThemeIcon>
           <Stack gap={0}>
-            <Title order={4}>Create test result</Title>
+            <Title order={4}>{t("createModalTitle")}</Title>
             <Text size="sm" c="dimmed">
-              Link a lab result to an existing request. Values follow the linked test schema.
+              {t("createModalSubtitle")}
             </Text>
           </Stack>
         </Group>
