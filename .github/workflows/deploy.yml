@@ -33,7 +33,7 @@ jobs:
         with:
           context: . # مسار Dockerfile (الجذر)
           push: true # رفع الصورة إلى الـ registry
-          tags: your-docker-username/your-app-name:latest # اسم الصورة
+          tags: kenahomsi/lab-system-front:latest # اسم الصورة
 
       # 4. الاتصال بالسيرفر (Hostinger) عبر SSH وتنفيذ أوامر التحديث
       - name: Deploy to VPS via SSH
