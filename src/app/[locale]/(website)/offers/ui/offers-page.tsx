@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useOffersFeatureStore } from "../store-context";
+import { PageBanner } from "@/components/layout/page-banner";
 
 export function OffersPage() {
   const t = useTranslations("offers");
@@ -27,6 +28,8 @@ export function OffersPage() {
             {t("description")}
           </p>
         </div>
+
+        <PageBanner />
 
         {offers.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">

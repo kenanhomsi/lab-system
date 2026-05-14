@@ -3,6 +3,7 @@ import type { AppLocale } from "@/i18n/routing";
 import { fetchMetwaliBlogPosts } from "@/lib/metwali-blog";
 import { BlogHeroSection } from "../ui/blog/hero-section";
 import { BlogPostGrid } from "../ui/blog/post-grid";
+import { PageBanner } from "@/components/layout/page-banner";
 
 export const revalidate = 3600;
 
@@ -13,6 +14,7 @@ export default async function BlogPage() {
   return (
     <main>
       <BlogHeroSection />
+      <PageBanner />
       <BlogPostGrid result={result} />
     </main>
   );

@@ -20,33 +20,33 @@ export async function HeroSection() {
       : "absolute inset-0 bg-linear-to-r from-background via-background/40 to-transparent";
 
   return (
-    <section className="relative flex h-[min(921px,100svh)] items-center overflow-hidden bg-surface">
+    <section className="relative flex h-[min(760px,92svh)] items-center overflow-hidden bg-surface">
       <div className="absolute inset-0 z-0">
         <Image
           src={HERO_IMG}
-          alt=""
+          alt={t("titleAccent")}
           fill
-          className="hero-image-enter object-cover opacity-90"
+          className="hero-image-enter object-cover opacity-80"
           priority
           unoptimized
         />
         <div className={overlayGradientClass} />
       </div>
       <div className="pointer-events-none absolute inset-0 z-1">
-        <div className="bg-orb h-64 w-64 bg-primary/25 -inset-s-16 top-20" />
-        <div className="bg-orb bg-orb-reverse h-72 w-72 bg-tertiary-fixed/20 inset-e-10 bottom-16" />
+        <div className="bg-orb h-44 w-44 bg-primary/14 -inset-s-10 top-24" />
+        <div className="bg-orb bg-orb-reverse h-52 w-52 bg-tertiary-fixed/14 inset-e-10 bottom-16" />
       </div>
       <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 md:px-8">
-        <div className="max-w-2xl space-y-6">
+        <div className="max-w-2xl space-y-5">
           <div
-            className="gold-glow reveal-up inline-flex items-center rounded-full bg-tertiary-fixed px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-on-tertiary-fixed"
+            className="reveal-up inline-flex items-center rounded-full bg-tertiary-fixed/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-on-tertiary-fixed"
             style={{ animationDelay: "120ms" }}
           >
             <Icon name="verified" filled className="me-2 text-sm!" size="sm" />
             {t("badge")}
           </div>
           <h1
-            className="font-headline leading-[1-2]  reveal-up text-4xl font-extrabold  tracking-tight text-on-surface sm:text-5xl md:text-6xl"
+            className="font-headline reveal-up text-4xl font-extrabold tracking-tight text-on-surface sm:text-5xl md:text-6xl"
             style={{ animationDelay: "200ms" }}
           >
             {t("titleBefore")} <br />
@@ -65,14 +65,14 @@ export async function HeroSection() {
           >
             <Link
               href="/services"
-              className="clinical-gradient text-white group flex items-center gap-2 rounded-xl px-8 py-4 text-lg font-bold shadow-xl shadow-primary/20 transition-all"
+              className="clinical-gradient group flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg shadow-primary/15 transition-all hover:opacity-95"
             >
               {t("ctaPrimary")}
               <Icon name={arrow} className={arrowClass} size="sm" />
             </Link>
             <Link
               href="/contact"
-              className="rounded-xl border border-outline-variant/20 bg-surface-container-lowest px-8 py-4 text-lg font-bold text-primary shadow-sm"
+              className="rounded-xl border border-outline-variant/20 bg-surface-container-lowest/92 px-7 py-3.5 text-base font-bold text-primary shadow-sm"
             >
               {t("ctaSecondary")}
             </Link>

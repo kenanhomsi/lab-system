@@ -53,10 +53,11 @@ export function BannerSliderSection() {
 
   const safeActiveIdx = Math.min(activeIdx, banners.length - 1);
   const banner = banners[safeActiveIdx] as BannerItem;
-  const href = banner.internalLink || banner.externalLink || "#";
+  const href = banner.internalLink || banner.externalLink || "";
   const isExternal = !!banner.externalLink && !banner.internalLink;
   const mediaIsVideo = isVideoUrl(banner.mediaUrl);
   const isRtl = locale === "ar";
+  const slideLabelPrefix = locale === "ar" ? "الانتقال إلى الشريحة" : "Go to slide";
 
   const media = mediaIsVideo ? (
     <video
@@ -129,23 +130,36 @@ export function BannerSliderSection() {
                 pointerEvents: "none",
               }}
             />
-            {isExternal ? (
-              <a
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  display: "flex",
-                  gap: 16,
-                  alignItems: "center",
-                  textDecoration: "none",
-                }}
-              >
-                {content}
-              </a>
+            {href ? (
+              isExternal ? (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    display: "flex",
+                    gap: 16,
+                    alignItems: "center",
+                    textDecoration: "none",
+                  }}
+                >
+                  {content}
+                </a>
+              ) : (
+                <Link
+                  href={href}
+                  style={{
+                    display: "flex",
+                    gap: 16,
+                    alignItems: "center",
+                    textDecoration: "none",
+                  }}
+                >
+                  {content}
+                </Link>
+              )
             ) : (
-              <Link
-                href={href}
+              <div
                 style={{
                   display: "flex",
                   gap: 16,
@@ -154,7 +168,7 @@ export function BannerSliderSection() {
                 }}
               >
                 {content}
-              </Link>
+              </div>
             )}
             <div
               style={{
@@ -170,7 +184,8 @@ export function BannerSliderSection() {
                   key={item.id}
                   type="button"
                   onClick={() => setActiveIdx(idx)}
-                  aria-label={`slide-${idx + 1}`}
+                  aria-label={`${slideLabelPrefix} ${idx + 1}: ${item.title}`}
+                  aria-current={idx === safeActiveIdx}
                   style={{
                     width: idx === safeActiveIdx ? 22 : 8,
                     height: 8,

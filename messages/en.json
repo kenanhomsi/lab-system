@@ -868,6 +868,7 @@
         "resourcePlaceholder": "e.g. test_requests",
         "actionLabel": "Action",
         "actionPlaceholder": "Select action",
+        "actionAll": "*",
         "actionRead": "read",
         "actionWrite": "write",
         "actionDelete": "delete",
@@ -935,7 +936,7 @@
         "errorResourceRequired": "Resource is required.",
         "errorResourceFormat": "Use lowercase snake_case table name, e.g. test_requests.",
         "errorActionRequired": "Action is required.",
-        "errorActionInvalid": "Action must be one of: read, write, delete, approve, assign.",
+        "errorActionInvalid": "Action must be one of: *, read, write, delete, approve, assign.",
         "errorConditionInvalidJson": "Condition must be valid JSON.",
         "errorConditionInvalidShape": "Condition must include non-empty all[] or any[] rules.",
         "errorConditionRuleKeys": "Each rule needs field, operator, and value."

@@ -37,11 +37,11 @@ import {
 } from "../types";
 
 type SelectOption = { value: string; label: string };
-type ActionValue = "read" | "write" | "delete" | "approve" | "assign";
+type ActionValue = "*" | "read" | "write" | "delete" | "approve" | "assign";
 type ConditionType = "all" | "any";
 type ConditionRuleDraft = { field: string; operator: string; valueText: string };
 
-const ACTION_VALUES: ActionValue[] = ["read", "write", "delete", "approve", "assign"];
+const ACTION_VALUES: ActionValue[] = ["*", "read", "write", "delete", "approve", "assign"];
 const RESOURCE_PATTERN = /^[a-z]+(?:_[a-z]+)*$/;
 const OPERATOR_OPTIONS = [
   { value: "eq", labelKey: "operatorEq" },
@@ -386,6 +386,11 @@ const Modals = () => {
     !conditionError &&
     subjectKeyValue.length > 0;
 
+  const actionOptions: SelectOption[] = ACTION_VALUES.map((value) => ({
+    value,
+    label: value === "*" ? t("actionAll") : t(`action${value.charAt(0).toUpperCase()}${value.slice(1)}`),
+  }));
+
   const operatorOptions = OPERATOR_OPTIONS.map((o) => ({
     value: o.value,
     label: t(o.labelKey),
@@ -587,13 +592,7 @@ const Modals = () => {
             <Select
               label={t("actionLabel")}
               placeholder={t("actionPlaceholder")}
-              data={[
-                { value: "read", label: t("actionRead") },
-                { value: "write", label: t("actionWrite") },
-                { value: "delete", label: t("actionDelete") },
-                { value: "approve", label: t("actionApprove") },
-                { value: "assign", label: t("actionAssign") },
-              ]}
+              data={actionOptions}
               value={isActionValue(actionValue) ? actionValue : null}
               onChange={(value) => setForm((f) => ({ ...f, action: value ?? "" }))}
               error={showErrors ? actionError : null}

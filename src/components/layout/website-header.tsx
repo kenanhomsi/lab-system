@@ -6,15 +6,15 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { cn } from "@/lib/cn";
 
+import { BrandLogo } from "@/components/shared/brand-logo";
+
 type WebsiteHeaderProps = {
-  brand?: string;
   variant?: "light" | "dark";
   showCta?: boolean;
   ctaHref?: string;
 };
 
 export function WebsiteHeader({
-  brand,
   variant = "light",
   showCta = true,
   ctaHref = "/login",
@@ -24,7 +24,6 @@ export function WebsiteHeader({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isDark = variant === "dark";
 
-  const displayBrand = brand ?? t("header.brand");
   const links = [
     { href: "/", label: t("nav.home") },
     { href: "/about", label: t("nav.about") },
@@ -88,11 +87,10 @@ export function WebsiteHeader({
           <Link
             href="/"
             className={cn(
-              "min-w-0 truncate text-xl font-bold tracking-tighter",
-              isDark ? "text-primary" : "text-slate-900",
+              "min-w-0 transition-opacity hover:opacity-90",
             )}
           >
-            {displayBrand}
+            <BrandLogo variant="full" />
           </Link>
         </div>
         <nav className="hidden items-center gap-8 md:flex">

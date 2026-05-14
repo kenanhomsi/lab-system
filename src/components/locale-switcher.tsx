@@ -15,6 +15,7 @@ export function LocaleSwitcher({ className, stretch }: Props) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const groupLabel = locale === "ar" ? "اختيار اللغة" : "Language switcher";
 
   const switchLocale = (next: string) => {
     router.replace(pathname, { locale: next });
@@ -28,7 +29,7 @@ export function LocaleSwitcher({ className, stretch }: Props) {
         className,
       )}
       role="group"
-      aria-label="Language"
+      aria-label={groupLabel}
     >
       {routing.locales.map((loc) => (
         <button
@@ -36,6 +37,7 @@ export function LocaleSwitcher({ className, stretch }: Props) {
           type="button"
           suppressHydrationWarning
           onClick={() => switchLocale(loc)}
+          aria-pressed={locale === loc}
           className={cn(
             "rounded-md px-2 py-1 uppercase transition-colors",
             stretch && "min-h-9 flex-1 rounded-full px-3 py-2 text-[11px] font-bold tracking-wide",

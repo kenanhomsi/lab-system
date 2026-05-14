@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { SectionHeader } from "@/components/ui/section-header";
 
@@ -9,17 +10,17 @@ const IMAGING =
 export async function ServicesGrid() {
   const t = await getTranslations("landing.services");
   const locale = await getLocale();
-  const ctaArrow = locale === "ar" ? "arrow_back" : "arrow_forward";
   const ctaArrowClass =
     locale === "ar"
       ? "transition-all group-hover:gap-4 group-hover:-translate-x-1"
       : "transition-all group-hover:gap-4 group-hover:translate-x-1";
+  const cardArrow = locale === "ar" ? "arrow_back" : "arrow_forward";
 
   return (
     <section className="relative overflow-hidden bg-surface-container-low py-16 md:py-24">
       <div className="pointer-events-none absolute inset-0">
-        <div className="bg-orb h-56 w-56 bg-primary/12 inset-s-[8%] top-[18%]" />
-        <div className="bg-orb bg-orb-reverse h-72 w-72 bg-tertiary-fixed/10 inset-e-[6%] bottom-[8%]" />
+        <div className="bg-orb h-44 w-44 bg-primary/8 inset-s-[8%] top-[18%]" />
+        <div className="bg-orb bg-orb-reverse h-56 w-56 bg-tertiary-fixed/8 inset-e-[6%] bottom-[8%]" />
       </div>
       <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
         <div className="reveal-up" style={{ animationDelay: "80ms" }}>
@@ -41,13 +42,13 @@ export async function ServicesGrid() {
               />
               <h3 className="mb-4 text-2xl font-bold">{t("patientTitle")}</h3>
               <p className="mb-8 text-on-surface-variant">{t("patientBody")}</p>
-              <button
-                type="button"
-                className="group flex items-center gap-2 font-bold text-primary"
+              <Link
+                href="/services"
+                className="group inline-flex items-center gap-2 font-bold text-primary"
               >
                 {t("patientCta")}
-                <Icon name={ctaArrow} size="sm" className={ctaArrowClass} />
-              </button>
+                <Icon name={cardArrow} size="sm" className={ctaArrowClass} />
+              </Link>
             </div>
             <div className="absolute -bottom-12 -inset-s-12 h-48 w-48 rounded-full bg-primary/5 transition-transform duration-700 group-hover:scale-150" />
           </div>
@@ -93,7 +94,7 @@ export async function ServicesGrid() {
             <div className="h-48 w-full flex-1 overflow-hidden rounded-lg md:w-1/2">
               <Image
                 src={IMAGING}
-                alt=""
+                alt={t("electronicTitle")}
                 width={600}
                 height={300}
                 className="h-full w-full object-cover"

@@ -868,6 +868,7 @@
         "resourcePlaceholder": "مثال: test_requests",
         "actionLabel": "الإجراء",
         "actionPlaceholder": "اختر الإجراء",
+        "actionAll": "*",
         "actionRead": "read",
         "actionWrite": "write",
         "actionDelete": "delete",
@@ -935,7 +936,7 @@
         "errorResourceRequired": "حقل المورد مطلوب.",
         "errorResourceFormat": "استخدم اسم جدول بصيغة snake_case وبأحرف صغيرة مثل: test_requests.",
         "errorActionRequired": "حقل الإجراء مطلوب.",
-        "errorActionInvalid": "الإجراء يجب أن يكون واحداً من: read, write, delete, approve, assign.",
+        "errorActionInvalid": "الإجراء يجب أن يكون واحداً من: *, read, write, delete, approve, assign.",
         "errorConditionInvalidJson": "الشرط يجب أن يكون JSON صالحاً.",
         "errorConditionInvalidShape": "الشرط يجب أن يحتوي على all[] أو any[] غير فارغة.",
         "errorConditionRuleKeys": "كل قاعدة يجب أن تحتوي على field و operator و value."

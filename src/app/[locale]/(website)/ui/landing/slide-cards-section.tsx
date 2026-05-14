@@ -66,6 +66,7 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
   const safeActiveIdx = cards.length === 0 ? 0 : Math.min(activeIdx, cards.length - 1);
   const canPrev = safeActiveIdx > 0;
   const canNext = safeActiveIdx < cards.length - 1;
+  const slideLabelPrefix = locale === "ar" ? "الانتقال إلى العرض" : "Go to item";
 
   useEffect(() => {
     if (cards.length === 0) {
@@ -429,7 +430,8 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
                     key={c.id}
                     type="button"
                     onClick={() => scrollToIndex(idx)}
-                    aria-label={`slide-${idx + 1}`}
+                    aria-label={`${slideLabelPrefix} ${idx + 1}: ${c.title}`}
+                    aria-current={idx === safeActiveIdx}
                     className={[
                       "h-2 rounded-full transition-all",
                       idx === safeActiveIdx ? "w-7 bg-primary" : "w-2 bg-outline-variant/55",

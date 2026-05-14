@@ -189,17 +189,17 @@ body {
   background:
     radial-gradient(
       ellipse 70% 50% at 15% 20%,
-      rgba(0, 156, 194, 0.18) 0%,
+      rgba(0, 156, 194, 0.1) 0%,
       transparent 65%
     ),
     radial-gradient(
       ellipse 55% 45% at 85% 75%,
-      rgba(255, 215, 0, 0.1) 0%,
+      rgba(255, 215, 0, 0.05) 0%,
       transparent 60%
     ),
     radial-gradient(
       ellipse 40% 35% at 60% 10%,
-      rgba(0, 156, 194, 0.09) 0%,
+      rgba(0, 156, 194, 0.05) 0%,
       transparent 55%
     ),
     var(--background);
@@ -219,17 +219,17 @@ html.dark body {
   background:
     radial-gradient(
       ellipse 70% 50% at 15% 20%,
-      rgba(0, 156, 194, 0.22) 0%,
+      rgba(0, 156, 194, 0.14) 0%,
       transparent 65%
     ),
     radial-gradient(
       ellipse 55% 45% at 85% 75%,
-      rgba(255, 215, 0, 0.12) 0%,
+      rgba(255, 215, 0, 0.06) 0%,
       transparent 60%
     ),
     radial-gradient(
       ellipse 40% 35% at 60% 10%,
-      rgba(0, 200, 230, 0.1) 0%,
+      rgba(0, 200, 230, 0.06) 0%,
       transparent 55%
     ),
     var(--background);

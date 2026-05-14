@@ -84,7 +84,6 @@ export function LoginForm() {
           variant="default"
           fullWidth
           radius="md"
-          disabled
           leftSection={<IconBrandGoogle size={16} />}
           onClick={handleGoogleSignIn}
         >

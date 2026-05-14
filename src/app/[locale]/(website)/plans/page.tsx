@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { PageBanner } from "@/components/layout/page-banner";
 
 export default function PlansPage() {
   const t = useTranslations("subscriptions");
@@ -83,6 +84,8 @@ export default function PlansPage() {
           {t("packagesTitle")}
         </h1>
       </section>
+
+      <PageBanner />
 
       {/* Packages Grid */}
       <section>

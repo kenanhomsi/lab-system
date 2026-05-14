@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { RoleSelector } from "../login/ui/role-selector";
 import { useMirror } from "./store";
 
@@ -37,17 +38,11 @@ const UI = () => {
       <div className="w-full max-w-lg">
         <div className="mb-8 text-center">
           <Link href={`/${locale}`} className="mb-6 inline-flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg">
-              <span
-                className="material-symbols-outlined text-2xl text-on-primary"
-                style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
-              >
-                biotech
-              </span>
-            </div>
-            <span className="font-headline text-2xl font-extrabold tracking-tighter text-on-surface">
-              {t("brand")}
-            </span>
+            <BrandLogo
+              label={t("brand")}
+              priority
+              labelClassName="text-on-surface"
+            />
           </Link>
           <h2 className="mt-4 font-headline text-3xl font-bold text-on-surface">{t("createNewAccount")}</h2>
           <p className="mt-2 text-sm text-secondary">{t("selectAccountType")}</p>

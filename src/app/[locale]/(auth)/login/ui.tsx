@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { LoginFooterLinks } from "./ui/footer-links";
 import { LabPanel } from "./ui/lab-panel";
 import { LoginForm } from "./ui/login-form";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { useMirror } from "./store";
 const UI = () => {
 
@@ -18,20 +19,11 @@ const UI = () => {
             <section className="relative flex w-full flex-col bg-surface lg:w-1/2">
                 <div className="flex items-center justify-between p-6 lg:p-8">
                     <Link href={`/${locale}`} className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#009cc2] to-[#006a85] shadow-lg">
-                            <span
-                                className="material-symbols-outlined text-2xl text-white"
-                                style={{
-                                    fontVariationSettings:
-                                        "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24",
-                                }}
-                            >
-                                biotech
-                            </span>
-                        </div>
-                        <span className="font-headline text-2xl font-extrabold tracking-tighter text-on-surface">
-                            {t("brand")}
-                        </span>
+                        <BrandLogo
+                            label={t("brand")}
+                            priority
+                            labelClassName="text-on-surface"
+                        />
                     </Link>
                     <div className="flex items-center gap-3">
                         <Link

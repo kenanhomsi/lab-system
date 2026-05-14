@@ -3,21 +3,20 @@ import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/cn";
 
+import { BrandLogo } from "@/components/shared/brand-logo";
+
 type WebsiteFooterProps = {
-  brand?: string;
   tagline?: string;
   variant?: "light" | "dark";
 };
 
 export async function WebsiteFooter({
-  brand,
   tagline,
   variant = "light",
 }: WebsiteFooterProps) {
   const t = await getTranslations();
   const isDark = variant === "dark";
 
-  const displayBrand = brand ?? t("footer.brand");
   const displayTagline = tagline ?? t("footer.tagline");
   const year = new Date().getFullYear();
 
@@ -48,6 +47,9 @@ export async function WebsiteFooter({
       ],
     },
   ];
+  const visibleColumns = columns.filter((column) =>
+    column.links.some((link) => link.href !== "#"),
+  );
 
   return (
     <footer
@@ -60,14 +62,7 @@ export async function WebsiteFooter({
     >
       <div className="mx-auto flex max-w-screen-2xl flex-col items-start justify-between gap-12 md:flex-row">
         <div className="max-w-sm space-y-4">
-          <span
-            className={cn(
-              "text-xl font-bold tracking-tighter font-headline",
-              isDark ? "text-on-surface" : "text-slate-900",
-            )}
-          >
-            {displayBrand}
-          </span>
+          <BrandLogo variant="full" />
           <p
             className={cn(
               "text-xs leading-relaxed tracking-wide",
@@ -83,7 +78,7 @@ export async function WebsiteFooter({
           </div>
         </div>
         <div className="grid grid-cols-2 gap-10 md:grid-cols-3 md:gap-12">
-          {columns.map((col) => (
+          {visibleColumns.map((col) => (
             <div key={col.title} className="space-y-4">
               <h5 className="font-headline text-xs font-bold uppercase tracking-[0.2em] text-on-surface">
                 {col.title}
@@ -91,9 +86,7 @@ export async function WebsiteFooter({
               <ul className="space-y-2 text-xs tracking-wide">
                 {col.links.map((l) => (
                   <li key={l.label}>
-                    {l.href.startsWith("tel:") ||
-                    l.href.startsWith("mailto:") ||
-                    l.href === "#" ? (
+                    {l.href.startsWith("tel:") || l.href.startsWith("mailto:") ? (
                       <a
                         href={l.href}
                         className={cn(
@@ -109,10 +102,10 @@ export async function WebsiteFooter({
                       <Link
                         href={
                           l.href as
-                            | "/about"
-                            | "/services"
-                            | "/blog"
-                            | "/contact"
+                          | "/about"
+                          | "/services"
+                          | "/blog"
+                          | "/contact"
                         }
                         className={cn(
                           "transition-colors",
@@ -145,17 +138,9 @@ export async function WebsiteFooter({
         >
           {t("footer.copyright", { year })}
         </p>
-        <div className="flex gap-6 text-slate-400">
-          <Icon
-            name="language"
-            className="cursor-pointer hover:text-primary"
-            size="sm"
-          />
-          <Icon
-            name="public"
-            className="cursor-pointer hover:text-primary"
-            size="sm"
-          />
+        <div className="flex gap-6 text-slate-400" aria-hidden>
+          <Icon name="language" size="sm" />
+          <Icon name="public" size="sm" />
         </div>
       </div>
     </footer>

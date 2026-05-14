@@ -29,7 +29,7 @@ export async function DepartmentsSection() {
             <div className="h-64 overflow-hidden rounded-xl">
               <Image
                 src={IMG_MOL}
-                alt=""
+                alt={t("hormonalTitle")}
                 width={400}
                 height={256}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -66,7 +66,7 @@ export async function DepartmentsSection() {
             <div className="h-64 w-full overflow-hidden md:h-auto md:w-1/2">
               <Image
                 src={IMG_TOX}
-                alt=""
+                alt={t("immuneTitle")}
                 width={600}
                 height={400}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"

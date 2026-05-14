@@ -13,8 +13,8 @@ export async function QualitySection() {
   return (
     <section className="relative overflow-hidden bg-surface py-16 md:py-24">
       <div className="pointer-events-none absolute inset-0">
-        <div className="bg-orb h-60 w-60 bg-primary/15 inset-s-[10%] top-[14%]" />
-        <div className="bg-orb bg-orb-reverse h-80 w-80 bg-primary-fixed/15 inset-e-[4%] bottom-[12%]" />
+        <div className="bg-orb h-44 w-44 bg-primary/10 inset-s-[10%] top-[14%]" />
+        <div className="bg-orb bg-orb-reverse h-56 w-56 bg-primary-fixed/10 inset-e-[4%] bottom-[12%]" />
       </div>
       <div className="relative mx-auto max-w-screen-2xl px-6 md:px-8">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
@@ -100,7 +100,7 @@ export async function QualitySection() {
                 <div className="flex flex-row items-center [&>*:not(:first-child)]:-ms-2">
                   <Image
                     src={AV1}
-                    alt=""
+                    alt={t("reviewers")}
                     width={40}
                     height={40}
                     className="h-10 w-10 rounded-full border-2 border-white object-cover dark:border-slate-900"
@@ -108,7 +108,7 @@ export async function QualitySection() {
                   />
                   <Image
                     src={AV2}
-                    alt=""
+                    alt={t("reviewers")}
                     width={40}
                     height={40}
                     className="h-10 w-10 rounded-full border-2 border-white object-cover dark:border-slate-900"

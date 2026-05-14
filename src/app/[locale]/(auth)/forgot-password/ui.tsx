@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { useMirror } from "./store";
 import { ProgressSteps } from "./ui/progress-steps";
 import { SuccessView } from "./ui/success-view";
@@ -22,18 +23,8 @@ const UI = () => {
     <main className="flex min-h-screen items-center justify-center bg-surface p-6">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <Link href={`/${locale}`} className="mb-6 inline-flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg">
-              <span
-                className="material-symbols-outlined text-2xl text-on-primary"
-                style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
-              >
-                biotech
-              </span>
-            </div>
-            <span className="font-headline text-2xl font-extrabold tracking-tighter text-on-surface">
-              {t("brand")}
-            </span>
+          <Link href={`/${locale}`} className="mb-6 inline-flex items-center justify-center">
+            <BrandLogo variant="full" />
           </Link>
           <h2 className="mt-4 font-headline text-3xl font-bold">{t("forgotPasswordTitle")}</h2>
           <p className="mt-2 text-sm text-secondary">{t("forgotPasswordDesc")}</p>
