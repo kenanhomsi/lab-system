@@ -8,7 +8,7 @@ type AccessPolicyDto = {
   effect: string;
   subjectType: string;
   subjectKey: string;
-  condition: string;
+  condition?: unknown;
   priority: number;
   isEnabled: boolean;
   description: string;
@@ -25,7 +25,7 @@ type AccessPolicyWritePayload = {
   effect: string;
   subjectType: string;
   subjectKey: string;
-  condition: string;
+  condition?: unknown;
   priority: number;
   isEnabled: boolean;
   description: string;

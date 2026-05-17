@@ -96,8 +96,6 @@ const UI = () => {
 
       <PromoBanner location="patient_dashboard" />
 
-      <SlideCardsDashboard />
-
       <div className={styles.midGrid}>
         <div className={styles.healthCard}>
           <h3 className={styles.healthTitle}>{t("healthTitle")}</h3>
@@ -116,6 +114,8 @@ const UI = () => {
             </div>
           </div>
         </div>
+
+        <SlideCardsDashboard />
       </div>
 
       <section className={styles.recentSection}>

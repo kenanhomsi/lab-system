@@ -30,7 +30,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { useMirror } from "./store";
 import type { MedicalTestItem } from "@/components/tables/medical-tests-table/types";
-import { buildTestRequestPartyPayload, isStaffPartyUser } from "../party-ids";
+import { buildTestRequestPartyPayload, isStaffPartyUser, resolveClinicalPartyKind } from "../party-ids";
 import {
   useExternalPatientsForSelectQuery,
   useMedicalTestsForSelectQuery,
@@ -129,9 +129,14 @@ const UI = () => {
   }, [externalPatientsQuery.data]);
 
   const hasUserId = Boolean(sessionUser?.id?.trim());
+  const partyKind = resolveClinicalPartyKind(sessionUser?.roles);
 
   const showStaffPartyFields = Boolean(
     hasUserId && isStaffPartyUser(sessionUser?.roles),
+  );
+
+  const showExternalPatientField = Boolean(
+    hasUserId && (partyKind === "lab" || isStaffPartyUser(sessionUser?.roles))
   );
 
   /** Step 1: only form fields — profile is required on submit, not to move to step 2. */
@@ -245,62 +250,63 @@ const UI = () => {
                   </Alert>
                 ) : null}
                 {!medicalTestsQuery.isPending &&
-                !medicalTestsQuery.isError &&
-                medicalTestOptions.length === 0 ? (
+                  !medicalTestsQuery.isError &&
+                  medicalTestOptions.length === 0 ? (
                   <Text size="sm" c="dimmed">
                     {t("noMedicalTestsCreate")}
                   </Text>
                 ) : null}
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
-                    <Select
-                      label={t("fieldMedicalTest")}
-                      withAsterisk
-                      searchable
-                      allowDeselect={false}
-                      clearable={false}
-                      placeholder={
-                        medicalTestsQuery.isPending
-                          ? t("placeholderLoadingTests")
-                          : t("placeholderChooseTest")
-                      }
-                      description={t("fieldMedicalTestDesc")}
-                      data={medicalTestOptions}
-                      leftSection={<IconFlask2 size={16} />}
-                      disabled={medicalTestsQuery.isPending || medicalTestsQuery.isError}
-                      value={form.medicalTestId > 0 ? String(form.medicalTestId) : null}
-                      onChange={(v) => {
-                        const nextId = v ? Number(v) : 0;
-                        const items = medicalTestsQuery.data ?? [];
-                        setForm({
-                          ...form,
-                          medicalTestId: nextId,
-                          totalAmount: priceForMedicalTestId(nextId, items),
-                        });
-                      }}
-                    />
-                    <TextInput
-                      label={t("fieldRequestDate")}
-                      withAsterisk
-                      type="date"
-                      placeholder={t("datePlaceholder")}
-                      description={t("fieldRequestDateDescCreate")}
-                      value={form.requestDate}
-                      leftSection={<IconCalendarEvent size={16} />}
-                      onChange={(e) =>
-                        setForm({ ...form, requestDate: e.currentTarget.value })
-                      }
-                    />
-                    <NumberInput
-                      label={t("fieldTotalAmount")}
-                      min={0}
-                      decimalScale={2}
-                      fixedDecimalScale
-                      thousandSeparator=","
-                      description={t("fieldTotalAmountDescCreate")}
-                      value={form.totalAmount}
-                      readOnly
-                      leftSection={<IconCurrencyDollar size={16} />}
-                    />
+                  <Select
+                    label={t("fieldMedicalTest")}
+                    withAsterisk
+                    searchable
+                    allowDeselect={false}
+                    clearable={false}
+                    placeholder={
+                      medicalTestsQuery.isPending
+                        ? t("placeholderLoadingTests")
+                        : t("placeholderChooseTest")
+                    }
+                    description={t("fieldMedicalTestDesc")}
+                    data={medicalTestOptions}
+                    leftSection={<IconFlask2 size={16} />}
+                    disabled={medicalTestsQuery.isPending || medicalTestsQuery.isError}
+                    value={form.medicalTestId > 0 ? String(form.medicalTestId) : null}
+                    onChange={(v) => {
+                      const nextId = v ? Number(v) : 0;
+                      const items = medicalTestsQuery.data ?? [];
+                      setForm({
+                        ...form,
+                        medicalTestId: nextId,
+                        totalAmount: priceForMedicalTestId(nextId, items),
+                      });
+                    }}
+                  />
+                  <TextInput
+                    label={t("fieldRequestDate")}
+                    withAsterisk
+                    type="date"
+                    placeholder={t("datePlaceholder")}
+                    description={t("fieldRequestDateDescCreate")}
+                    value={form.requestDate}
+                    leftSection={<IconCalendarEvent size={16} />}
+                    onChange={(e) =>
+                      setForm({ ...form, requestDate: e.currentTarget.value })
+                    }
+                  />
+                  <NumberInput
+                    label={t("fieldTotalAmount")}
+                    min={0}
+                    decimalScale={2}
+                    fixedDecimalScale
+                    thousandSeparator=","
+                    description={t("fieldTotalAmountDescCreate")}
+                    value={form.totalAmount}
+                    readOnly
+                    leftSection={<IconCurrencyDollar size={16} />}
+                  />
+                  {showExternalPatientField && (
                     <Select
                       label={t("fieldExternalPatient")}
                       searchable
@@ -326,38 +332,39 @@ const UI = () => {
                         })
                       }
                     />
-                    {showStaffPartyFields && (
-                      <>
-                        <TextInput
-                          label={t("fieldDoctorId")}
-                          placeholder={t("placeholderDoctorId")}
-                          value={form.doctorId}
-                          onChange={(e) =>
-                            setForm({ ...form, doctorId: e.currentTarget.value })
-                          }
-                        />
-                        <TextInput
-                          label={t("fieldLabClientId")}
-                          placeholder={t("placeholderLabClientId")}
-                          value={form.labClientId}
-                          onChange={(e) =>
-                            setForm({ ...form, labClientId: e.currentTarget.value })
-                          }
-                        />
-                        <TextInput
-                          label={t("fieldDirectPatientId")}
-                          placeholder={t("placeholderDirectPatientId")}
-                          value={form.directPatientId}
-                          onChange={(e) =>
-                            setForm({
-                              ...form,
-                              directPatientId: e.currentTarget.value,
-                            })
-                          }
-                        />
-                      </>
-                    )}
-                  </SimpleGrid>
+                  )}
+                  {showStaffPartyFields && (
+                    <>
+                      <TextInput
+                        label={t("fieldDoctorId")}
+                        placeholder={t("placeholderDoctorId")}
+                        value={form.doctorId}
+                        onChange={(e) =>
+                          setForm({ ...form, doctorId: e.currentTarget.value })
+                        }
+                      />
+                      <TextInput
+                        label={t("fieldLabClientId")}
+                        placeholder={t("placeholderLabClientId")}
+                        value={form.labClientId}
+                        onChange={(e) =>
+                          setForm({ ...form, labClientId: e.currentTarget.value })
+                        }
+                      />
+                      <TextInput
+                        label={t("fieldDirectPatientId")}
+                        placeholder={t("placeholderDirectPatientId")}
+                        value={form.directPatientId}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            directPatientId: e.currentTarget.value,
+                          })
+                        }
+                      />
+                    </>
+                  )}
+                </SimpleGrid>
               </Stack>
             </Paper>
           </Stepper.Step>
@@ -376,15 +383,20 @@ const UI = () => {
                   value={form.notes}
                   onChange={(e) => setForm({ ...form, notes: e.currentTarget.value })}
                 />
-                <TextInput
+                <Select
                   label={t("fieldMetadata")}
                   leftSection={<IconFileDescription size={16} />}
                   placeholder={t("metadataPlaceholder")}
                   description={t("metadataDesc")}
+                  data={[
+                    { value: "home", label: t("dropOffHome") },
+                    { value: "lab", label: t("dropOffLab") }
+                  ]}
                   value={form.metadata}
-                  onChange={(e) =>
-                    setForm({ ...form, metadata: e.currentTarget.value })
+                  onChange={(v) =>
+                    setForm({ ...form, metadata: v || "" })
                   }
+                  clearable
                 />
               </Stack>
             </Paper>

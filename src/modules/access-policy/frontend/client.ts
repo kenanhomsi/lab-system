@@ -47,17 +47,20 @@ function normalizeListPayload(body: unknown): AccessPolicyDto[] {
 function writeBody(p: CreateAccessPolicyFrontendParams): Record<string, unknown> {
   const { resource, action, effect, subjectType, subjectKey, condition, priority, isEnabled, description } =
     p;
-  return {
+  const payload: Record<string, unknown> = {
     resource,
     action,
     effect,
     subjectType,
     subjectKey,
-    condition,
     priority,
     isEnabled,
     description,
   };
+  if (condition !== undefined) {
+    payload.condition = condition;
+  }
+  return payload;
 }
 
 @injectable()

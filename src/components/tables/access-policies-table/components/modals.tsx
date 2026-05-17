@@ -136,7 +136,7 @@ const stringifyConditionDraft = (type: ConditionType, rules: ConditionRuleDraft[
       value: parseValueText(r.valueText),
     }));
   if (validRules.length === 0) return "";
-  return JSON.stringify({ [type]: validRules }, null, 2);
+  return JSON.stringify({ [type]: validRules });
 };
 
 const prettifyJson = (input: string): string => {
@@ -233,13 +233,20 @@ function fromRow(row: AccessPolicyTableItem): CreateAccessPolicyRequest {
     row.subjectType === "Role" || row.subjectType === "User" ? row.subjectType : "User";
   const action = row.action?.trim().toLowerCase() ?? "";
 
+  let conditionStr = "";
+  if (typeof row.condition === "string") {
+    conditionStr = row.condition;
+  } else if (row.condition && typeof row.condition === "object") {
+    conditionStr = JSON.stringify(row.condition, null, 2);
+  }
+
   return {
     resource: row.resource ?? "",
     action: isActionValue(action) ? action : "",
     effect,
     subjectType,
     subjectKey: row.subjectKey ?? "",
-    condition: row.condition ?? "",
+    condition: conditionStr,
     priority: typeof row.priority === "number" ? row.priority : 0,
     isEnabled: Boolean(row.isEnabled),
     description: row.description ?? "",
@@ -314,7 +321,8 @@ const Modals = () => {
     } else if (activeModal === "edit" && selectedPolicy) {
       const payload = fromRow(selectedPolicy);
       setForm(payload);
-      const parsed = parseConditionDraft(payload.condition);
+      const conditionStr = typeof payload.condition === "string" ? payload.condition : "";
+      const parsed = parseConditionDraft(conditionStr);
       setConditionType(parsed.type);
       setConditionRules(parsed.rules);
       setConditionHelpOpen(false);
@@ -333,7 +341,8 @@ const Modals = () => {
   const resourceValue = form.resource.trim();
   const actionValue = form.action.trim().toLowerCase();
   const subjectKeyValue = form.subjectKey.trim();
-  const conditionValue = form.condition.trim();
+  const formConditionStr = typeof form.condition === "string" ? form.condition : "";
+  const conditionValue = formConditionStr.trim();
 
   const resourceError =
     resourceValue.length === 0
@@ -414,8 +423,8 @@ const Modals = () => {
     setConditionTab(next);
     setConditionHelpOpen(false);
     if (next === "builder") {
-      const parsed = parseConditionDraft(form.condition);
-      if (!form.condition.trim() || parsed.isJsonValid) {
+      const parsed = parseConditionDraft(formConditionStr);
+      if (!formConditionStr.trim() || parsed.isJsonValid) {
         setConditionType(parsed.type);
         setConditionRules(parsed.rules);
       }
@@ -448,7 +457,10 @@ const Modals = () => {
   };
 
   const prettifyCondition = () => {
-    setForm((f) => ({ ...f, condition: prettifyJson(f.condition) }));
+    setForm((f) => ({
+      ...f,
+      condition: prettifyJson(typeof f.condition === "string" ? f.condition : ""),
+    }));
   };
 
   const submit = async () => {
@@ -456,13 +468,27 @@ const Modals = () => {
       setShowErrors(true);
       return;
     }
+
+    let parsedCondition: unknown = conditionValue;
+    if (parsedCondition && typeof parsedCondition === "string") {
+      try {
+        parsedCondition = JSON.parse(parsedCondition) as unknown;
+      } catch {
+        // ignore
+      }
+    }
+
     const normalizedForm: CreateAccessPolicyRequest = {
       ...form,
       resource: resourceValue,
       action: actionValue,
       subjectKey: subjectKeyValue,
-      condition: conditionValue,
     };
+    if (parsedCondition) {
+      normalizedForm.condition = parsedCondition;
+    } else {
+      normalizedForm.condition = undefined;
+    }
     setIsSubmitting(true);
     try {
       if (isEdit && selectedPolicy?.id) {
@@ -490,13 +516,27 @@ const Modals = () => {
       });
       return;
     }
+
+    let parsedCondition: unknown = conditionValue;
+    if (parsedCondition && typeof parsedCondition === "string") {
+      try {
+        parsedCondition = JSON.parse(parsedCondition) as unknown;
+      } catch {
+        // ignore
+      }
+    }
+
     const normalizedForm: CreateAccessPolicyRequest = {
       ...form,
       resource: resourceValue,
       action: actionValue,
       subjectKey: subjectKeyValue,
-      condition: conditionValue,
     };
+    if (parsedCondition) {
+      normalizedForm.condition = parsedCondition;
+    } else {
+      normalizedForm.condition = undefined;
+    }
     setIsSubmitting(true);
     try {
       await validatePolicy(normalizedForm);
@@ -682,7 +722,7 @@ const Modals = () => {
                       variant="subtle"
                       color="gray"
                       onClick={prettifyCondition}
-                      disabled={!form.condition.trim().length}
+                      disabled={!formConditionStr.trim().length}
                       aria-label={t("conditionPrettify")}
                     >
                       <IconCode size={18} />
@@ -694,7 +734,7 @@ const Modals = () => {
                     variant="subtle"
                     color="gray"
                     onClick={clearCondition}
-                    disabled={!form.condition.trim().length && conditionRules.length === 0}
+                    disabled={!formConditionStr.trim().length && conditionRules.length === 0}
                     aria-label={t("conditionClear")}
                   >
                     <IconX size={18} />
@@ -833,7 +873,7 @@ const Modals = () => {
               <Tabs.Panel value="json" pt="xs">
                 <Textarea
                   placeholder={t("conditionPlaceholder")}
-                  value={form.condition}
+                  value={formConditionStr}
                   onChange={(e) => {
                     const value = e.currentTarget.value;
                     setForm((f) => ({ ...f, condition: value }));

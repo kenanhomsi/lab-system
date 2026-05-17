@@ -733,9 +733,11 @@
       "statusCancelled": "ملغى",
       "fieldNotes": "ملاحظات",
       "notesPlaceholder": "أضف أي ملاحظات سريرية أو فوترة…",
-      "fieldMetadata": "البيانات الوصفية",
-      "metadataPlaceholder": "مثال: {\"priority\":\"urgent\",\"source\":\"walk-in\"}",
-      "metadataDesc": "بيانات وصفية اختيارية بتنسيق JSON للتكامل."
+      "fieldMetadata": "موقع تسليم العينة",
+      "metadataPlaceholder": "اختر موقع تسليم العينة",
+      "metadataDesc": "حدد مكان سحب أو تسليم العينة.",
+      "dropOffHome": "سحب من المنزل",
+      "dropOffLab": "زيارة المختبر"
     },
     "testResults": {
       "title": "نتائج الفحوصات",
@@ -1474,9 +1476,11 @@
       "statusCancelled": "ملغى",
       "fieldNotes": "ملاحظات",
       "notesPlaceholder": "أضف أي ملاحظات سريرية أو فوترة…",
-      "fieldMetadata": "البيانات الوصفية",
-      "metadataPlaceholder": "مثال: {\"priority\":\"urgent\",\"source\":\"walk-in\"}",
-      "metadataDesc": "بيانات وصفية اختيارية بتنسيق JSON للتكامل."
+      "fieldMetadata": "موقع تسليم العينة",
+      "metadataPlaceholder": "اختر موقع تسليم العينة",
+      "metadataDesc": "حدد مكان سحب أو تسليم العينة.",
+      "dropOffHome": "سحب من المنزل",
+      "dropOffLab": "زيارة المختبر"
     },
     "testResults": {
       "title": "نتائج الفحوصات",

@@ -30,7 +30,7 @@ import {
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import type { MedicalTestItem } from "@/components/tables/medical-tests-table/types";
-import { buildTestRequestPartyPayload, isStaffPartyUser } from "../party-ids";
+import { buildTestRequestPartyPayload, isStaffPartyUser, resolveClinicalPartyKind } from "../party-ids";
 import {
   useExternalPatientsForSelectQuery,
   useMedicalTestsForSelectQuery,
@@ -79,7 +79,7 @@ const buildInitialForm = (initial?: TestRequestInitial | null) => ({
   directPatientId: initial?.directPatientId ?? "",
   externalPatientId:
     initial?.externalPatientId != null &&
-    Number.isFinite(Number(initial.externalPatientId))
+      Number.isFinite(Number(initial.externalPatientId))
       ? Number(initial.externalPatientId)
       : 0,
 });
@@ -219,32 +219,38 @@ const EditTestRequestBody = ({
     }));
   }, [externalPatientsQuery.data]);
 
+  const partyKind = resolveClinicalPartyKind(sessionUser?.roles);
+
   const showStaffPartyFields = Boolean(
     hasUserId && isStaffPartyUser(sessionUser?.roles),
   );
 
+  const showExternalPatientField = Boolean(
+    hasUserId && (partyKind === "lab" || isStaffPartyUser(sessionUser?.roles))
+  );
+
   const payloadOrNull = hasUserId && sessionUser
     ? (() => {
-        const party = buildTestRequestPartyPayload({
-          userId: sessionUser.id,
-          roles: sessionUser.roles,
-          formDoctorId: form.doctorId,
-          formLabClientId: form.labClientId,
-          formDirectPatientId: form.directPatientId,
-        });
-        return {
-          id: form.id,
-          medicalTestId: form.medicalTestId,
-          requestDate: toRequestDateIso(form.requestDate),
-          status: form.status,
-          totalAmount: form.totalAmount,
-          notes: form.notes,
-          metadata: form.metadata,
-          externalPatientId:
-            form.externalPatientId > 0 ? form.externalPatientId : 0,
-          ...party,
-        };
-      })()
+      const party = buildTestRequestPartyPayload({
+        userId: sessionUser.id,
+        roles: sessionUser.roles,
+        formDoctorId: form.doctorId,
+        formLabClientId: form.labClientId,
+        formDirectPatientId: form.directPatientId,
+      });
+      return {
+        id: form.id,
+        medicalTestId: form.medicalTestId,
+        requestDate: toRequestDateIso(form.requestDate),
+        status: form.status,
+        totalAmount: form.totalAmount,
+        notes: form.notes,
+        metadata: form.metadata,
+        externalPatientId:
+          form.externalPatientId > 0 ? form.externalPatientId : 0,
+        ...party,
+      };
+    })()
     : null;
 
   const isStepOneValid = Boolean(
@@ -294,8 +300,8 @@ const EditTestRequestBody = ({
                 </Alert>
               ) : null}
               {!medicalTestsQuery.isPending &&
-              !medicalTestsQuery.isError &&
-              medicalTestOptions.length === 0 ? (
+                !medicalTestsQuery.isError &&
+                medicalTestOptions.length === 0 ? (
                 <Text size="sm" c="dimmed">
                   {t("noMedicalTestsEdit")}
                 </Text>
@@ -362,33 +368,35 @@ const EditTestRequestBody = ({
                     setForm({ ...form, totalAmount: Number(v ?? 0) })
                   }
                 />
-                <Select
-                  label={t("fieldExternalPatient")}
-                  searchable
-                  clearable
-                  placeholder={
-                    externalPatientsQuery.isPending
-                      ? t("placeholderLoadingPatients")
-                      : t("placeholderExternalPatient")
-                  }
-                  description={t("fieldExternalPatientDesc")}
-                  data={externalPatientOptions}
-                  leftSection={<IconUsers size={16} />}
-                  disabled={
-                    externalPatientsQuery.isPending || externalPatientsQuery.isError
-                  }
-                  value={
-                    form.externalPatientId > 0
-                      ? String(form.externalPatientId)
-                      : null
-                  }
-                  onChange={(v) =>
-                    setForm({
-                      ...form,
-                      externalPatientId: v ? Number(v) : 0,
-                    })
-                  }
-                />
+                {showExternalPatientField && (
+                  <Select
+                    label={t("fieldExternalPatient")}
+                    searchable
+                    clearable
+                    placeholder={
+                      externalPatientsQuery.isPending
+                        ? t("placeholderLoadingPatients")
+                        : t("placeholderExternalPatient")
+                    }
+                    description={t("fieldExternalPatientDesc")}
+                    data={externalPatientOptions}
+                    leftSection={<IconUsers size={16} />}
+                    disabled={
+                      externalPatientsQuery.isPending || externalPatientsQuery.isError
+                    }
+                    value={
+                      form.externalPatientId > 0
+                        ? String(form.externalPatientId)
+                        : null
+                    }
+                    onChange={(v) =>
+                      setForm({
+                        ...form,
+                        externalPatientId: v ? Number(v) : 0,
+                      })
+                    }
+                  />
+                )}
                 {showStaffPartyFields && (
                   <>
                     <TextInput
@@ -439,15 +447,20 @@ const EditTestRequestBody = ({
                 value={form.notes}
                 onChange={(e) => setForm({ ...form, notes: e.currentTarget.value })}
               />
-              <TextInput
+              <Select
                 label={t("fieldMetadata")}
                 leftSection={<IconFileDescription size={16} />}
                 placeholder={t("metadataPlaceholder")}
                 description={t("metadataDesc")}
+                data={[
+                  { value: "home", label: t("dropOffHome") },
+                  { value: "lab", label: t("dropOffLab") }
+                ]}
                 value={form.metadata}
-                onChange={(e) =>
-                  setForm({ ...form, metadata: e.currentTarget.value })
+                onChange={(v) =>
+                  setForm({ ...form, metadata: v || "" })
                 }
+                clearable
               />
             </Stack>
           </Paper>

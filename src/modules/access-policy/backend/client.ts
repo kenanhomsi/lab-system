@@ -56,17 +56,20 @@ function writeBodyFromPayload(payload: AccessPolicyWritePayload): Record<string,
     isEnabled,
     description,
   } = payload;
-  return {
+  const body: Record<string, unknown> = {
     resource,
     action,
     effect,
     subjectType,
     subjectKey,
-    condition,
     priority,
     isEnabled,
     description,
   };
+  if (condition !== undefined) {
+    body.condition = condition;
+  }
+  return body;
 }
 
 @injectable()

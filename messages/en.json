@@ -733,9 +733,11 @@
       "statusCancelled": "Cancelled",
       "fieldNotes": "Notes",
       "notesPlaceholder": "Add any clinical or billing notes...",
-      "fieldMetadata": "Metadata",
-      "metadataPlaceholder": "e.g. {\"priority\":\"urgent\",\"source\":\"walk-in\"}",
-      "metadataDesc": "Optional JSON-like metadata for integrations."
+      "fieldMetadata": "Sample Drop-off Location",
+      "metadataPlaceholder": "Choose drop-off location",
+      "metadataDesc": "Specify where the sample will be collected.",
+      "dropOffHome": "Home Collection",
+      "dropOffLab": "Lab Visit"
     },
     "testResults": {
       "title": "Test Results",
@@ -1473,9 +1475,11 @@
       "statusCancelled": "Cancelled",
       "fieldNotes": "Notes",
       "notesPlaceholder": "Add any clinical or billing notes...",
-      "fieldMetadata": "Metadata",
-      "metadataPlaceholder": "e.g. {\"priority\":\"urgent\",\"source\":\"walk-in\"}",
-      "metadataDesc": "Optional JSON-like metadata for integrations."
+      "fieldMetadata": "Sample Drop-off Location",
+      "metadataPlaceholder": "Choose drop-off location",
+      "metadataDesc": "Specify where the sample will be collected.",
+      "dropOffHome": "Home Collection",
+      "dropOffLab": "Lab Visit"
     },
     "testResults": {
       "title": "Test Results",

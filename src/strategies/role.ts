@@ -84,14 +84,14 @@ export const roleStrategy = {
         icon: "clipboardCheck",
       },
       {
-        label: "adminSettings",
-        href: "/admin/settings",
-        icon: "settings",
-      },
-      {
         label: "chat",
         href: "/admin/chat",
         icon: "messageSquare",
+      },
+      {
+        label: "adminSettings",
+        href: "/admin/settings",
+        icon: "settings",
       },
     ],
     getNavbarConfig: withNavbarProfileOverrides(

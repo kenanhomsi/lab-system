@@ -83,8 +83,14 @@ function buildTestRequestPartyPayload(args: {
   return resolvePartyIds(args.userId, args.roles);
 }
 
+/** Patients may view test results but must not create, edit, or delete them. */
+function isClinicalPatientUser(roles: string[] | undefined): boolean {
+  return resolveClinicalPartyKind(roles) === "patient";
+}
+
 export {
   buildTestRequestPartyPayload,
+  isClinicalPatientUser,
   isStaffPartyUser,
   resolveClinicalPartyKind,
 };

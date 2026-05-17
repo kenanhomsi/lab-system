@@ -1,5 +1,6 @@
 "use client";
 
+import { isClinicalPatientUser } from "@/components/modals/test-requests/party-ids";
 import { Anchor, Badge, Group, Text } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
 import { TestResultItem } from "../types";
@@ -9,6 +10,10 @@ import { ResultDataCell } from "./columns-rendering/result-data-cell";
 import { DataTableColumn } from "./types";
 
 type TFunction = (key: string) => string;
+
+type GetTestResultsColumnsOptions = {
+  roles?: string[] | undefined;
+};
 
 const numStyle = { fontVariantNumeric: "tabular-nums" as const };
 
@@ -39,8 +44,13 @@ function statusBadgeColor(status: string): string {
   return "gray";
 }
 
-const getTestResultsColumns = (t: TFunction): DataTableColumn<TestResultItem>[] => {
-  return [
+const getTestResultsColumns = (
+  t: TFunction,
+  options?: GetTestResultsColumnsOptions,
+): DataTableColumn<TestResultItem>[] => {
+  const readOnly = isClinicalPatientUser(options?.roles);
+
+  const columns: DataTableColumn<TestResultItem>[] = [
     {
       accessor: "id",
       title: t("colId"),
@@ -117,8 +127,19 @@ const getTestResultsColumns = (t: TFunction): DataTableColumn<TestResultItem>[] 
       width: "12%",
       render: (row) => <DateRender value={row.createdAt} />,
     },
-    { accessor: "actions", title: "", width: "6%", render: (row) => <ActionsRender row={row} /> },
   ];
+
+  if (!readOnly) {
+    columns.push({
+      accessor: "actions",
+      title: "",
+      width: "6%",
+      render: (row) => <ActionsRender row={row} />,
+    });
+  }
+
+  return columns;
 };
 
 export { getTestResultsColumns };
+export type { GetTestResultsColumnsOptions };

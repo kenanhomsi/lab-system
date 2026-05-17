@@ -1,7 +1,9 @@
 "use client";
 
+import { isClinicalPatientUser } from "@/components/modals/test-requests/party-ids";
 import { Table } from "@/components/table";
 import { TablePageHeader } from "@/components/table-page-header";
+import { useSessionUserStore } from "@/stores/session-user-store";
 import { ActionIcon, CloseButton, Select, TextInput, Tooltip } from "@mantine/core";
 import { IconArrowsSort, IconClipboardList, IconPlus, IconRefresh, IconSearch } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
@@ -25,6 +27,8 @@ const UI = () => {
   const setSortDesc = useMirror("setSortDesc");
   const setActiveModal = useMirror("setActiveModal");
   const setSelectedTestResult = useMirror("setSelectedTestResult");
+  const roles = useSessionUserStore((s) => s.user?.roles);
+  const canManageTestResults = !isClinicalPatientUser(roles);
 
   const hasActiveFilters = Boolean(searchValue.trim()) || sortBy !== "createdAt" || !sortDesc;
 
@@ -65,12 +69,16 @@ const UI = () => {
           icon={<IconClipboardList size={22} />}
           iconColor="teal"
           totalCount={testResultsData?.totalCount || 0}
-          createLabel={t("createLabel")}
-          createIcon={<IconPlus size={15} />}
-          onOpenCreate={() => {
-            setSelectedTestResult(null);
-            setActiveModal("create");
-          }}
+          {...(canManageTestResults
+            ? {
+                createLabel: t("createLabel"),
+                createIcon: <IconPlus size={15} />,
+                onOpenCreate: () => {
+                  setSelectedTestResult(null);
+                  setActiveModal("create");
+                },
+              }
+            : {})}
           hasActiveFilters={hasActiveFilters}
           onResetFilters={() => {
             setSearchValue("");
