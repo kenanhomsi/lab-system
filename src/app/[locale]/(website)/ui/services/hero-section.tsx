@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Icon } from "@/components/ui/icon";
 
 const HERO_IMG =
@@ -7,19 +7,29 @@ const HERO_IMG =
 
 export async function ServicesHeroSection() {
   const t = await getTranslations("servicesPage.hero");
+  const locale = await getLocale();
+  const overlayGradientClass =
+    locale === "ar"
+      ? "absolute inset-0 bg-linear-to-l from-background via-background/80 to-background/20"
+      : "absolute inset-0 bg-linear-to-r from-background via-background/80 to-background/20";
 
   return (
-    <section className="relative flex min-h-[600px] items-center overflow-hidden md:min-h-[700px]">
+    <section className="relative flex min-h-[600px] items-center overflow-hidden md:min-h-[700px] bg-surface">
       <div className="absolute inset-0 z-0">
         <Image
           src={HERO_IMG}
           alt=""
           fill
-          className="object-cover opacity-30"
+          className="object-cover opacity-50"
           priority
           unoptimized
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
+        <div className={overlayGradientClass} />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+      </div>
+      <div className="pointer-events-none absolute inset-0 z-1">
+        <div className="bg-orb h-64 w-64 bg-primary/5 inset-s-[5%] top-[10%]" />
+        <div className="bg-orb bg-orb-reverse h-72 w-72 bg-secondary/5 inset-e-[10%] bottom-[10%]" />
       </div>
       <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 md:px-8">
         <div className="max-w-3xl">

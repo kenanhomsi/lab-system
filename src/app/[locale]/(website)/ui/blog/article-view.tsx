@@ -27,32 +27,41 @@ export async function BlogArticleView({ post }: BlogArticleViewProps) {
       : "transition-transform group-hover:-translate-x-1";
 
   return (
-    <article className="pb-20">
-      <div className="border-b border-outline-variant/15 bg-surface-container-lowest/40">
-        <div className="mx-auto max-w-screen-lg px-6 py-10 md:px-8 md:py-14">
+    <article className="pb-24">
+      {/* Hero Section */}
+      <header className="relative overflow-hidden bg-surface-container-lowest pt-16 pb-32 md:pt-24 md:pb-40 border-b border-outline-variant/15">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="bg-orb absolute inset-s-[-10%] top-[-20%] h-[600px] w-[600px] bg-primary/5 blur-[120px]" />
+          <div className="bg-orb absolute inset-e-[-5%] bottom-[-10%] h-[400px] w-[400px] bg-secondary/5 blur-[100px]" />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-screen-md px-6 md:px-8">
           <Link
             href="/blog"
-            className="group mb-8 inline-flex items-center gap-2 text-sm font-semibold text-primary"
+            className="group mb-10 inline-flex items-center gap-2 rounded-full border border-outline-variant/30 bg-surface px-4 py-2 text-sm font-bold text-on-surface shadow-sm transition-all hover:-translate-y-0.5 hover:shadow hover:text-primary"
           >
             <Icon name={arrow} className={arrowClass} size="sm" />
             {t("backToList")}
           </Link>
-          <time
-            dateTime={post.date}
-            className="mb-4 block text-xs font-bold uppercase tracking-widest text-primary"
-          >
-            {dateFmt.format(new Date(post.date))}
-          </time>
+
+          <div className="mb-6 flex items-center gap-3">
+            <span className="flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-primary">
+              <Icon name="calendar_today" size="sm" className="!text-[14px]" />
+              <time dateTime={post.date}>{dateFmt.format(new Date(post.date))}</time>
+            </span>
+          </div>
+
           <h1
-            className="font-headline text-3xl font-black leading-tight tracking-tight text-on-surface md:text-5xl"
+            className="mb-6 font-headline text-4xl font-black leading-tight tracking-tight text-on-surface md:text-5xl lg:text-6xl"
             lang={post.useArabicContentOnEn && locale === "en" ? "ar" : undefined}
             dir={post.useArabicContentOnEn && locale === "en" ? "rtl" : undefined}
           >
             {post.title}
           </h1>
+
           {post.excerpt ? (
             <p
-              className="mt-6 max-w-2xl text-lg text-on-surface-variant"
+              className="text-lg leading-relaxed text-on-surface-variant md:text-xl md:leading-relaxed"
               lang={post.useArabicContentOnEn && locale === "en" ? "ar" : undefined}
               dir={post.useArabicContentOnEn && locale === "en" ? "rtl" : undefined}
             >
@@ -60,16 +69,17 @@ export async function BlogArticleView({ post }: BlogArticleViewProps) {
             </p>
           ) : null}
         </div>
-      </div>
+      </header>
 
+      {/* Featured Image */}
       {post.featuredImageUrl ? (
-        <div className="relative mx-auto mt-10 max-w-screen-lg px-6 md:px-8">
-          <div className="relative aspect-[21/9] w-full overflow-hidden rounded-2xl bg-surface-container">
+        <div className="relative z-20 mx-auto -mt-20 max-w-screen-lg px-6 md:-mt-32 md:px-8">
+          <div className="relative aspect-[21/10] w-full overflow-hidden rounded-3xl bg-surface-container shadow-2xl ring-1 ring-outline-variant/20">
             <Image
               src={post.featuredImageUrl}
               alt={post.featuredImageAlt ?? ""}
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-700 hover:scale-105"
               sizes="(max-width: 1024px) 100vw, 1024px"
               priority
               unoptimized
@@ -78,22 +88,34 @@ export async function BlogArticleView({ post }: BlogArticleViewProps) {
         </div>
       ) : null}
 
-      <div className="mx-auto max-w-screen-lg px-6 pt-12 md:px-8">
+      {/* Article Body */}
+      <div className="mx-auto max-w-screen-md px-6 pt-16 md:px-8 md:pt-20">
         {showArabicNote ? (
-          <p className="mb-8 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-on-surface-variant">
+          <p className="mb-10 flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-5 text-sm font-medium text-on-surface-variant">
+            <Icon name="translate" className="text-primary" />
             {t("articleArabicBodyNote")}
           </p>
         ) : null}
         <div
           className={cn(
             "blog-article-body max-w-none text-on-surface",
-            "[&_a]:text-primary [&_a]:underline-offset-2 hover:[&_a]:underline",
-            "[&_img]:my-6 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-xl",
-            "[&_p]:mb-4 [&_p]:leading-relaxed",
-            "[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:font-headline [&_h2]:text-2xl [&_h2]:font-bold",
-            "[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:font-headline [&_h3]:text-xl [&_h3]:font-bold",
-            "[&_ul]:my-4 [&_ul]:list-disc [&_ul]:ps-6",
-            "[&_ol]:my-4 [&_ol]:list-decimal [&_ol]:ps-6",
+            // Links
+            "[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-primary/30 hover:[&_a]:decoration-primary transition-all",
+            // Images
+            "[&_img]:my-10 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:shadow-md [&_img]:ring-1 [&_img]:ring-outline-variant/10",
+            // Paragraphs
+            "[&_p]:mb-8 [&_p]:text-[1.125rem] [&_p]:leading-[1.8] [&_p]:text-on-surface-variant",
+            // Headings
+            "[&_h2]:mt-16 [&_h2]:mb-6 [&_h2]:font-headline [&_h2]:text-3xl [&_h2]:font-black [&_h2]:tracking-tight [&_h2]:text-on-surface",
+            "[&_h3]:mt-12 [&_h3]:mb-4 [&_h3]:font-headline [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-on-surface",
+            "[&_h4]:mt-8 [&_h4]:mb-4 [&_h4]:font-headline [&_h4]:text-xl [&_h4]:font-bold [&_h4]:text-on-surface",
+            // Lists
+            "[&_ul]:my-8 [&_ul]:list-disc [&_ul]:ps-6 [&_ul]:space-y-3 [&_li]:text-[1.125rem] [&_li]:text-on-surface-variant [&_li]:leading-relaxed",
+            "[&_ol]:my-8 [&_ol]:list-decimal [&_ol]:ps-6 [&_ol]:space-y-3 [&_li]:text-[1.125rem] [&_li]:text-on-surface-variant [&_li]:leading-relaxed",
+            // Blockquotes
+            "[&_blockquote]:my-10 [&_blockquote]:border-s-4 [&_blockquote]:border-primary [&_blockquote]:bg-primary/5 [&_blockquote]:p-6 [&_blockquote]:rounded-e-2xl [&_blockquote]:italic [&_blockquote]:text-on-surface-variant",
+            // Bold/Strong
+            "[&_strong]:font-bold [&_strong]:text-on-surface"
           )}
           lang="ar"
           dir="rtl"

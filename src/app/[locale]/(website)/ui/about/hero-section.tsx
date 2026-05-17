@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 
 const HERO =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuB602t09HLOIszI3qsTP_hTw2L3nkxNOY4hgBg9p0Kv-MTlgsDAbG3jRXG2ul8YV1wNIi5qb95U_mUXHkZfPaky-I5jYGPwLLT1S2fLANXacbydaR8HA0ew6e1Z94x9-KxcqPK17qfocy-TAi2NZZeNruE90mtrbOPYg7MPGQce40oO_4JyZ3bOf8bXpva-LWtgvfAWleqm0HCOC7CQjpAO2izFCn9qAqjAb8UW4Gk3X-gOfkU8oB85pFXeBSAMp44SPlY8NIxbDs1z";
+  "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=2000&q=80";
 
 export async function AboutHeroSection() {
   const t = await getTranslations("aboutPage.hero");

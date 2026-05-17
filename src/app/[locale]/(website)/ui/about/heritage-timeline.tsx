@@ -4,7 +4,7 @@ import { Icon } from "@/components/ui/icon";
 import { GlassCard } from "@/components/ui/glass-card";
 
 const FEATURE =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAb9gRWa5tKlYIDh8o2IdjaZZ55Uq9G27ASsUF717YRegiI8WinH00qfxpcj41DAubJWbcX5JKk-EqxgFK-jY6RwRh8jpiLdwIjRrPTEwMYN1hu6HjRSeww8VGTy298L68ajjIsEMdHT7R_b8-hMRuEY6ieHWx8iHbJRxT1vzjWpHxJbrA3Aj1CZEEJ3NBlCYyVFAWmp29njRptqZWRHXCu2TlsPZJAXgJllWORXyMy02fFZJjIQ7dlRa80gSZDYLiFhHmOalCCh1Vw";
+  "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80";
 
 export async function AboutHeritageTimeline() {
   const t = await getTranslations("aboutPage.pillars");

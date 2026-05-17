@@ -8,28 +8,31 @@ export async function BlogHeroSection() {
   const t = await getTranslations("blog");
 
   return (
-    <section className="relative flex min-h-[420px] items-center overflow-hidden md:min-h-[520px]">
-      <div className="absolute inset-0 z-0">
+    <section className="relative flex min-h-[450px] items-center overflow-hidden md:min-h-[560px]">
+      <div className="pointer-events-none absolute inset-0 z-0">
         <Image
           src={HERO_IMG}
           alt=""
           fill
-          className="object-cover opacity-30"
+          className="object-cover opacity-20"
           priority
           unoptimized
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/80 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background/50" />
+        <div className="bg-orb absolute inset-s-[-10%] top-[-10%] h-[500px] w-[500px] bg-primary/10 blur-[100px]" />
       </div>
-      <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 md:px-8">
+      <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 py-20 md:px-8">
         <div className="max-w-3xl">
           <span
-            className="reveal-up mb-6 inline-block rounded-full border border-primary/30 bg-primary/5 px-4 py-1 text-xs font-bold tracking-[0.2em] text-primary"
+            className="reveal-up mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-bold tracking-[0.2em] text-primary backdrop-blur-md"
             style={{ animationDelay: "100ms" }}
           >
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
             {t("badge")}
           </span>
           <h1
-            className="reveal-up mb-6 font-headline text-4xl font-black leading-[0.95] tracking-tight text-on-surface md:text-6xl"
+            className="reveal-up mb-6 font-headline text-5xl font-black leading-[1.1] tracking-tight text-on-surface md:text-7xl"
             style={{ animationDelay: "180ms" }}
           >
             {t("titleLine1")}{" "}

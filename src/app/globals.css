@@ -20,29 +20,29 @@
   --on-surface: #0f172a;
   --on-surface-variant: #475569;
   --on-background: #0f172a;
-  --primary: #3b82f6; /* Electric Blue */
+  --primary: #009cc2; /* Clinical Teal */
   --on-primary: #ffffff;
-  --primary-container: #dbeafe;
-  --on-primary-container: #1e3a8a;
-  --primary-fixed: #bfdbfe;
-  --primary-fixed-dim: #93c5fd;
-  --on-primary-fixed: #1e3a8a;
-  --on-primary-fixed-variant: #1d4ed8;
-  --secondary: #8b5cf6; /* Vibrant Violet */
+  --primary-container: #cff3fd;
+  --on-primary-container: #002e3b;
+  --primary-fixed: #9ee6fa;
+  --primary-fixed-dim: #5bd3f5;
+  --on-primary-fixed: #001f29;
+  --on-primary-fixed-variant: #004d61;
+  --secondary: #334155; /* Slate Blue */
   --on-secondary: #ffffff;
-  --secondary-container: #ede9fe;
-  --on-secondary-container: #4c1d95;
-  --secondary-fixed: #ddd6fe;
-  --secondary-fixed-dim: #c4b5fd;
-  --on-secondary-fixed: #4c1d95;
-  --on-secondary-fixed-variant: #6d28d9;
-  --tertiary: #10b981; /* Neon Emerald */
+  --secondary-container: #e2e8f0;
+  --on-secondary-container: #0f172a;
+  --secondary-fixed: #cbd5e1;
+  --secondary-fixed-dim: #94a3b8;
+  --on-secondary-fixed: #0f172a;
+  --on-secondary-fixed-variant: #334155;
+  --tertiary: #059669; /* Soft Emerald */
   --on-tertiary: #ffffff;
   --tertiary-container: #d1fae5;
   --on-tertiary-container: #064e3b;
   --tertiary-fixed: #a7f3d0;
   --tertiary-fixed-dim: #6ee7b7;
-  --on-tertiary-fixed: #064e3b;
+  --on-tertiary-fixed: #022c22;
   --on-tertiary-fixed-variant: #047857;
   --outline: #94a3b8;
   --outline-variant: #cbd5e1;
@@ -52,8 +52,8 @@
   --on-error-container: #7f1d1d;
   --inverse-surface: #1e293b;
   --inverse-on-surface: #f8fafc;
-  --inverse-primary: #60a5fa;
-  --surface-tint: #3b82f6;
+  --inverse-primary: #5bd3f5;
+  --surface-tint: #009cc2;
   /* Semantic aliases (tables, badges) */
   --color-text-tertiary: var(--on-surface-variant);
   --color-text-secondary: #64748b;
@@ -84,29 +84,29 @@ html.dark {
   --on-surface: #f8fafc;
   --on-surface-variant: #cbd5e1;
   --on-background: #f8fafc;
-  --primary: #60a5fa; /* Bright Electric Blue */
-  --on-primary: #000000;
-  --primary-container: #1d4ed8;
-  --on-primary-container: #dbeafe;
-  --primary-fixed: #bfdbfe;
-  --primary-fixed-dim: #93c5fd;
-  --on-primary-fixed: #1e3a8a;
-  --on-primary-fixed-variant: #1e40af;
-  --secondary: #a78bfa; /* Bright Violet */
-  --on-secondary: #000000;
-  --secondary-container: #6d28d9;
-  --on-secondary-container: #ede9fe;
-  --secondary-fixed: #ddd6fe;
-  --secondary-fixed-dim: #c4b5fd;
-  --on-secondary-fixed: #1a1a1a;
-  --on-secondary-fixed-variant: #3d3d3d;
-  --tertiary: #34d399; /* Bright Emerald */
-  --on-tertiary: #000000;
-  --tertiary-container: #047857;
+  --primary: #5bd3f5; /* Bright Teal */
+  --on-primary: #003544;
+  --primary-container: #004d61;
+  --on-primary-container: #cff3fd;
+  --primary-fixed: #9ee6fa;
+  --primary-fixed-dim: #5bd3f5;
+  --on-primary-fixed: #001f29;
+  --on-primary-fixed-variant: #004d61;
+  --secondary: #94a3b8; /* Slate Blue */
+  --on-secondary: #0f172a;
+  --secondary-container: #334155;
+  --on-secondary-container: #f1f5f9;
+  --secondary-fixed: #cbd5e1;
+  --secondary-fixed-dim: #94a3b8;
+  --on-secondary-fixed: #0f172a;
+  --on-secondary-fixed-variant: #334155;
+  --tertiary: #34d399; /* Soft Emerald */
+  --on-tertiary: #022c22;
+  --tertiary-container: #064e3b;
   --on-tertiary-container: #d1fae5;
   --tertiary-fixed: #a7f3d0;
   --tertiary-fixed-dim: #6ee7b7;
-  --on-tertiary-fixed: #064e3b;
+  --on-tertiary-fixed: #022c22;
   --on-tertiary-fixed-variant: #047857;
   --outline: #64748b;
   --outline-variant: #334155;
@@ -116,8 +116,8 @@ html.dark {
   --on-error-container: #fee2e2;
   --inverse-surface: #f1f5f9;
   --inverse-on-surface: #0f172a;
-  --inverse-primary: #1d4ed8;
-  --surface-tint: #60a5fa;
+  --inverse-primary: #009cc2;
+  --surface-tint: #5bd3f5;
   /* Semantic aliases */
   --color-text-tertiary: var(--on-surface-variant);
   --color-text-secondary: #94a3b8;
@@ -329,14 +329,6 @@ html[dir="rtl"] .font-headline {
   overflow: hidden;
   border-top-left-radius: clamp(5rem, 32vw, 18rem);
   border-top-right-radius: clamp(5rem, 32vw, 18rem);
-}
-
-/* Labs showcase CTA — chocolate brown (reference UI) */
-.labs-map-cta {
-  background-color: #5c4033;
-}
-.labs-map-cta:hover {
-  background-color: #4a3429;
 }
 
 /* Lightweight motion system for website sections */

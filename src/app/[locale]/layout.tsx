@@ -17,12 +17,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const titles: Record<string, string> = {
-    en: "Al Mutawali Lab | Doctor System",
-    ar: "مخبر المتوالي | نظام الطبيب",
+    en: "Al Mutawali Lab",
+    ar: "مخبر المتوالي للتحاليل الطبية",
   };
   const descriptions: Record<string, string> = {
     en: "Clinical diagnostics and physician portal",
-    ar: "التشخيص السريري وبوابة الطبيب",
+    ar: " للتحاليل الطبية",
   };
   return {
     title: titles[locale] ?? titles.en,
@@ -43,12 +43,14 @@ export default async function LocaleLayout({
   }
 
   setRequestLocale(locale);
-  const loadedMessages = (await import(`../../../messages/${locale}.json`)).default;
+  const loadedMessages = (await import(`../../../messages/${locale}.json`))
+    .default;
   // Defensive merge to avoid runtime "missing namespace" crashes
   // in case a namespace is omitted by the bundler/serializer.
-  const fallbackMessages = locale === "en"
-    ? loadedMessages
-    : (await import("../../../messages/en.json")).default;
+  const fallbackMessages =
+    locale === "en"
+      ? loadedMessages
+      : (await import("../../../messages/en.json")).default;
   const navbarFallback = {
     searchPlaceholder: locale === "ar" ? "بحث..." : "Search...",
     notifications: locale === "ar" ? "الإشعارات" : "Notifications",
@@ -61,7 +63,8 @@ export default async function LocaleLayout({
   };
   const messages = {
     ...loadedMessages,
-    navbar: loadedMessages?.navbar ?? fallbackMessages?.navbar ?? navbarFallback,
+    navbar:
+      loadedMessages?.navbar ?? fallbackMessages?.navbar ?? navbarFallback,
   };
 
   return (

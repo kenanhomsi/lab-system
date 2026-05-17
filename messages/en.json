@@ -12,15 +12,15 @@
     "blog": "Blog"
   },
   "header": {
-    "brand": "Al Mutawali Lab",
+    "brand": "Al Mutawali Medical Laboratory",
     "ctaNewLab": "New lab request",
     "menuTitle": "Menu",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
   },
   "footer": {
-    "brand": "Al Mutawali Lab",
-    "tagline": "The first and only lab in Syria certified ISO 9001:2015 (UK). For physicians, lab professionals, and patients.",
+    "brand": "Al Mutawali Medical Laboratory",
+    "tagline": "The first and only lab in Syria certified to ISO 9001:2015 quality management standards (UK accredited). For physicians, lab professionals, and patients.",
     "address": "Syria — Damascus — Al-Jisr Al-Abyad — Naseeb Al-Bakri Street",
     "copyright": "© {year} Al Mutawali Medical Laboratory. All rights reserved.",
     "explore": "Explore",
@@ -35,16 +35,18 @@
     "phone1": "0991828342",
     "phone2": "011-3340604",
     "email": "metwalilab@gmail.com",
-    "blog": "Blog"
+    "blog": "Blog",
+    "backToTop": "Back to top"
   },
   "blog": {
     "badge": "Blog",
     "titleLine1": "Useful articles for",
     "titleAccent": "your wellbeing",
-    "description": "Practical health and news content from Al Mutawali Lab, including blog posts and health news.",
+    "description": "Practical health and news content from Al Mutawali Medical Laboratory, including blog posts and health news.",
     "readFull": "Read full article",
     "sourceNote": "Content is synchronized from our official site; you can read everything here without leaving the app.",
     "empty": "No blog posts are available yet.",
+    "gridTitle": "Latest Articles & News",
     "error": "We couldn’t load the blog. Please try again later.",
     "backToList": "Back to blog",
     "articleArabicBodyNote": "The article below is in Arabic."
@@ -52,21 +54,21 @@
   "landing": {
     "hero": {
       "badge": "ISO 9001 - 2015",
-      "titleBefore": "Al Mutawali Lab:",
+      "titleBefore": "Al Mutawali Medical Laboratory:",
       "titleAccent": "Clinical excellence",
       "titleAfter": "for your health.",
-      "description": "The first and only lab in Syria certified ISO 9001:2015 (UK). For physicians, lab professionals, and patients — our services are for everyone.",
+      "description": "The first and only lab in Syria certified to ISO 9001:2015 quality management standards (UK accredited). For physicians, lab professionals, and patients — our services are for everyone.",
       "ctaPrimary": "Explore our services",
       "ctaSecondary": "Book an appointment"
     },
     "editorial": {
       "eyebrow": "Why physicians trust us",
       "portraitAlt": "Clinical laboratory professional reviewing diagnostic quality standards",
-      "precisionTitle": "99.9% precision",
+      "precisionTitle": "99.9% accuracy",
       "precisionBody": "Our automated validation ensures laboratory-grade accuracy across 4,000+ diagnostic protocols.",
-      "sectionTitle": "The visionary standard in modern pathology",
-      "p1": "Al Mutawali Lab stands for clinical integrity. We combine classical pathology rigor with modern data science.",
-      "p2": "Our facility is built for speed without compromise. End-to-end automation gives clinicians curated data ready for decisions.",
+      "sectionTitle": "Advancing the standards of modern pathology",
+      "p1": "Al Mutawali Medical Laboratory stands for clinical integrity. We combine classical pathology rigor with modern data science.",
+      "p2": "Our facility is built for speed without compromise. End-to-end automation provides clinicians with actionable insights for confident decisions.",
       "stat1Value": "24h",
       "stat1Label": "Global turnaround",
       "stat2Value": "15+",
@@ -74,7 +76,7 @@
       "ctaLabel": "How we work"
     },
     "services": {
-      "title": "Diagnostic ecosystem",
+      "title": "Comprehensive diagnostic services",
       "subtitle": "From routine screening to advanced molecular sequencing — the foundation of clinical precision.",
       "gridTitle": "Our diverse services",
       "gridSubtitle": "Options for patients, physicians, laboratory partners, and companies — all under one roof.",
@@ -181,10 +183,10 @@
       "badge": "Pioneering diagnostics",
       "title1": "The standard of",
       "titleAccent": "clinical excellence.",
-      "description": "We merge deep biological insight with advanced robotics to redefine diagnostic precision.",
+      "description": "We merge deep biological insight with advanced robotics to redefine diagnostic accuracy.",
       "ourStory": "Our story",
       "labStatus": "Lab status: Optimal",
-      "precisionIndex": "Precision index: 99.98%"
+      "accuracyIndex": "Accuracy index: 99.98%"
     },
     "heritage": {
       "title1": "A journey of",
@@ -260,7 +262,7 @@
       "contactUs": "Contact us",
       "linkedin": "LinkedIn",
       "twitter": "Twitter (X)",
-      "bottom": "© {year} Al Mutawali Lab. The digital sanctuary of clinical excellence.",
+      "bottom": "© {year} Al Mutawali Medical Laboratory. The digital hub of clinical excellence.",
       "iso": "ISO 15189 certified",
       "cap": "CAP accredited"
     }
@@ -269,7 +271,7 @@
     "backHome": "Back to home",
     "welcome": "Welcome back",
     "subtitle": "Select your portal to continue accessing clinical data.",
-    "brand": "Al Mutawali Lab",
+    "brand": "Al Mutawali Medical Laboratory",
     "backToHome": "Back to home",
     "welcomeBack": "Welcome back",
     "selectPortal": "Select your portal to continue accessing your data.",
@@ -342,15 +344,15 @@
     "remember": "Keep me signed in for 30 days",
     "submit": "Sign in to dashboard",
     "newUser": "New provider or patient?",
-    "footerCopy": "© {year} Al Mutawali Lab. Precision in diagnostics.",
+    "footerCopy": "© {year} Al Mutawali Medical Laboratory. Accuracy in diagnostics.",
     "privacy": "Privacy policy",
     "rights": "Patient rights",
     "labPanel": {
       "badge": "Center of excellence",
-      "titleBefore": "Precision in every",
+      "titleBefore": "Accuracy in every",
       "titleAccent": "molecular",
       "titleAfter": "detail.",
-      "description": "Editorial elegance and clinical rigor for world-class diagnostic insights.",
+      "description": "Uncompromising precision and clinical excellence for world-class diagnostic insights.",
       "accuracy": "Accuracy rate",
       "turnaround": "Result turnaround",
       "accuracyValue": "99.9%",
@@ -358,7 +360,7 @@
     }
   },
   "sidebar": {
-    "brand": "Al Mutawali Lab",
+    "brand": "Al Mutawali Medical Laboratory",
     "subtitle": "Clinical Curator",
     "dashboard": "Dashboard",
     "home": "Home",
@@ -533,7 +535,7 @@
       "shortcutProcessing": "Request processing"
     },
     "dashboard": {
-      "eyebrow": "Al Mutawali Lab",
+      "eyebrow": "Al Mutawali Medical Laboratory",
       "flowTitle": "Lab order pipeline",
       "liveMonitoringChip": "LIVE MONITORING",
       "stats": {
@@ -590,7 +592,7 @@
       "healthUptime": "Uptime",
       "healthFooter": "Resulting and LIS paths operational",
       "qaTitle": "QC & pathologist sign-off",
-      "qaDesc": "Control materials, calibration, and specialist review stay aligned with ISO 15189 expectations for Al Mutawali Lab.",
+      "qaDesc": "Control materials, calibration, and specialist review stay aligned with ISO 15189 expectations for Al Mutawali Medical Laboratory.",
       "qaChipQc": "QC",
       "qaChipPath": "PATH",
       "qaChipMore": "+2",
@@ -1675,7 +1677,7 @@
   },
   "dashboard": {
     "sidebar": {
-      "brandTitle": "Al Mutawali Lab",
+      "brandTitle": "Al Mutawali Medical Laboratory",
       "brandSubtitle": "Clinical curator",
       "dashboard": "Dashboard",
       "subscriptions": "Subscriptions",
@@ -1790,7 +1792,7 @@
     "ads": {
       "regionAria": "Advertisement",
       "dismissAria": "Dismiss advertisement",
-      "siteName": "Al Mutawali Lab",
+      "siteName": "Al Mutawali Medical Laboratory",
       "ownBadge": "Our offer",
       "externalBadge": "Partner advertiser",
       "sponsoredBy": "By {partner}",
@@ -1898,7 +1900,7 @@
     "dependent": "Dependent",
     "addNewMember": "+ Add new member",
     "upgradeEyebrow": "Upgrade your health",
-    "packagesTitle": "Precision health packages",
+    "packagesTitle": "Accuracy health packages",
     "monthly": "Monthly",
     "yearly": "Yearly (save 15%)",
     "basicTitle": "Basic",
@@ -1937,7 +1939,7 @@
   "aboutPage": {
     "hero": {
       "badge": "About us",
-      "titleBefore": "Al Mutawali Laboratory",
+      "titleBefore": "Al Mutawali Medical Laboratory",
       "titleAccent": "for medical testing",
       "description": "Our patient services respect each person’s need for care, attention, and speed — delivering lab work with accuracy and skill so results are correct and timely.",
       "ctaContact": "Contact us"
@@ -1957,11 +1959,11 @@
     },
     "approach": {
       "eyebrow": "Our methodology",
-      "title": "The Al Mutawali approach",
-      "c1Title": "Precision in laboratory testing",
+      "title": "The Al Mutawali Medical Laboratory approach",
+      "c1Title": "Accuracy in laboratory testing",
       "c1Body": "We combine the latest scientific techniques with leading specialists in medical testing to deliver the most accurate results across the board.",
       "c2Title": "Quality assurance",
-      "c2Body": "We strive to meet global quality standards under ISO 15189 for medical laboratories.",
+      "c2Body": "We adhere to ISO 15189 medical laboratory standards for technical competence and quality management.",
       "c3Title": "Speed of delivery",
       "c3Body": "We focus on accurate, fast testing and reporting while maintaining the highest quality standards.",
       "c4Title": "Outstanding customer service",
@@ -2062,7 +2064,9 @@
       "badge": "Contact us",
       "titleLine1": "Your health",
       "titleAccent": "matters to us",
-      "description": "We welcome feedback and questions and want to learn more about your experience with us. Everything related to your health is important to us."
+      "description": "We welcome feedback and questions and want to learn more about your experience with us. Everything related to your health is important to us.",
+      "primaryCta": "Send your request",
+      "secondaryCta": "View branches"
     },
     "info": {
       "eyebrow": "Contact details",
@@ -2156,7 +2160,7 @@
   },
   "careers": {
     "title": "Career Opportunities",
-    "subtitle": "Join the Al Mutawali Lab team",
+    "subtitle": "Join the Al Mutawali Medical Laboratory team",
     "availablePositions": "Available Positions",
     "applyNow": "Apply Now",
     "fullName": "Full Name",
@@ -2195,7 +2199,7 @@
   },
   "joinClient": {
     "title": "Join Our Clients",
-    "subtitle": "For laboratories looking to partner with Al Mutawali Lab",
+    "subtitle": "For laboratories looking to partner with Al Mutawali Medical Laboratory",
     "managerName": "Manager Name",
     "labName": "Lab Name",
     "mobile": "Mobile",
@@ -2204,7 +2208,7 @@
     "additionalInfo": "Additional Information",
     "submit": "Submit Application",
     "submitting": "Submitting...",
-    "successMessage": "Your application has been received. Thank you for your trust in Al Mutawali Lab."
+    "successMessage": "Your application has been received. Thank you for your trust in Al Mutawali Medical Laboratory."
   },
   "contactUs": {
     "title": "Contact Us",
@@ -2231,7 +2235,7 @@
     "attachment": "Attachment",
     "submit": "Submit Complaint",
     "submitting": "Submitting...",
-    "successMessage": "Your complaint has been received and will be followed up on. Thank you for your trust in Al Mutawali Lab."
+    "successMessage": "Your complaint has been received and will be followed up on. Thank you for your trust in Al Mutawali Medical Laboratory."
   },
   "booking": {
     "title": "Book an Appointment",

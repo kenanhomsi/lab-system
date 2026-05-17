@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Icon } from "@/components/ui/icon";
 
 const THUMB =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAe158G1y0CjJNLoC64S1x3gmIWSOTxm9uBrO74fm7Z0lbmqaWZ5Q4xOFXR9iLYf6lYKCcrQpBVDsKN02ptlbAcS_gnXonobNbu1BBq5m1LUbahzO-wd5THvTfPqot3bpaF-TdAQRu1O4w7NyW8I6mJWbcoi7dJEEn4vjJI6FKbRK_N9trH4Y94eNZM6cxXq8R67kJWtdyYa1ItOJ-QBEoBTcSz-8QSgIG-OzHS1gYCWOV0YlMKJqvKbAgaeIb22FHdKGtrEUIF53KN";
+  "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80";
 
 export async function AboutMethodologyGrid() {
   const t = await getTranslations("aboutPage.approach");

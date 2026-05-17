@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Icon } from "@/components/ui/icon";
+import { AnimatedNumber } from "./animated-number";
 
 export async function TestsOverview() {
   const t = await getTranslations("servicesPage.tests");
@@ -18,13 +19,20 @@ export async function TestsOverview() {
       className="bg-surface py-16 md:py-24 scroll-mt-24"
     >
       <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
-        <div className="reveal-up mb-16 text-center" style={{ animationDelay: "80ms" }}>
+        <div
+          className="reveal-up mb-16 text-center"
+          style={{ animationDelay: "80ms" }}
+        >
           <span className="text-xs font-black tracking-[0.4em] text-tertiary">
             {t("eyebrow")}
           </span>
           <h2 className="mt-4 font-headline text-4xl font-black md:text-5xl">
             {t("titleBefore")}{" "}
-            <span className="text-primary">{t("titleHighlight")}</span>{" "}
+            <span className="text-primary">
+              <AnimatedNumber
+                value={parseInt(t("titleHighlight"), 10) || 1000}
+              />
+            </span>{" "}
             {t("titleAfter")}
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-on-surface-variant">
@@ -35,19 +43,22 @@ export async function TestsOverview() {
           {testCategories.map((cat, i) => (
             <div
               key={cat.name}
-              className="reveal-up group flex flex-col items-center gap-4 rounded-2xl bg-surface-container-lowest p-8 shadow-sm transition-all duration-500 hover:shadow-xl"
+              className="reveal-up group flex flex-col items-center gap-4 rounded-3xl border border-outline-variant/30 bg-surface-container-lowest p-8 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:border-primary/20"
               style={{ animationDelay: `${160 + i * 60}ms` }}
             >
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
                 <Icon name={cat.icon} className="text-3xl text-primary" />
               </div>
               <h4 className="text-center text-sm font-bold">{cat.name}</h4>
             </div>
           ))}
         </div>
-        <div className="reveal-up mt-16 text-center" style={{ animationDelay: "520ms" }}>
-          <div className="inline-flex items-center gap-4 rounded-2xl bg-surface-container-low px-8 py-6 shadow-sm">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10">
+        <div
+          className="reveal-up mt-16 text-center"
+          style={{ animationDelay: "520ms" }}
+        >
+          <div className="inline-flex items-center gap-4 rounded-3xl border border-outline-variant/30 bg-surface-container-lowest px-8 py-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10">
               <Icon name="experiment" className="text-2xl text-primary" />
             </div>
             <div className="text-start">
