@@ -3,5 +3,6 @@ export const endpoint = {
   refreshToken: "/auth/refresh-token",
   register: "/auth/register",
   checkEmail: "/auth/check-email",
+  forgotPassword: "/auth/forgot-password",
   resetPassword: "/auth/reset-password",
 };

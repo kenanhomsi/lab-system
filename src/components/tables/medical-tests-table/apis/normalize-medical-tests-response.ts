@@ -32,8 +32,10 @@ const coerceParameterSchema = (value: unknown): ParameterSchemaInput => {
 
 const normalizeMedicalTestItem = (raw: unknown): MedicalTestItem => {
   const r = asRecord(raw) ?? {};
+  /* Some backends serialize primary keys as `Id` instead of camelCase `id`. */
+  const rawId = r.id ?? r["Id"];
   return {
-    id: coerceNumericId(r.id),
+    id: coerceNumericId(rawId),
     nameAr: typeof r.nameAr === "string" ? r.nameAr : String(r.nameAr ?? ""),
     nameEn: typeof r.nameEn === "string" ? r.nameEn : String(r.nameEn ?? ""),
     price: coercePrice(r.price),

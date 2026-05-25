@@ -45,6 +45,7 @@ const authConfig: AuthOptions = {
             console.error("[AUTH] login response missing user id:", res);
             throw new Error("Invalid login response: missing user id");
           }
+
           return {
             id: res.user.id,
             email: res.user.email,
@@ -130,10 +131,17 @@ const authConfig: AuthOptions = {
       }
 
       try {
+        console.log("here i am");
+        console.log(token.refreshToken);
+        console.log(token.expiresAt);
+        console.log(token.accessToken);
+
         const refreshed = await renewAccessTokenSingleFlight(
           token.refreshToken,
           (p) => authService.renewAccessToken(p),
         );
+        console.log("but not here i am");
+        console.log(refreshed);
         applyRenewalPayloadToJwt(token, refreshed);
       } catch {
         return token;
@@ -150,7 +158,8 @@ const authConfig: AuthOptions = {
           fullName: token.fullName,
           roles: token.roles,
           permissions: token.permissions,
-          accessToken: token.accessToken,
+          // accessToken is intentionally kept only in the encrypted JWT cookie
+          // and never exposed to client-side JS (BFF pattern)
         },
         expires: session.expires,
       };

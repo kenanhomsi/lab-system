@@ -42,7 +42,7 @@ class AuthBackendClient extends AuthClient<BackendState> {
     const { refreshToken } = params;
     const res = await this.client
       .post({ endpoint: endpoint.renewAccessToken })
-      .setBody({ refreshToken })
+      .setBody({ token: refreshToken })
       .perform<RenewAccessTokenSchemaType>();
     return unwrapRenewAccessTokenResponse(res.data);
   }

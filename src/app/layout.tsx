@@ -6,10 +6,12 @@ import "@mantine/notifications/styles.css";
 import "./globals.css";
 import type { ReactNode } from "react";
 import { cookies, headers } from "next/headers";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, Geist } from "next/font/google";
 import localFont from "next/font/local";
 import { routing } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   variable: "--font-inter",
@@ -77,10 +79,16 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={dir}
-      className={`${inter.variable} ${plusJakarta.variable} ${qomraArabic.variable} min-h-full antialiased`}
+      className={cn("min-h-full", "antialiased", inter.variable, plusJakarta.variable, qomraArabic.variable, "font-sans", geist.variable)}
       suppressHydrationWarning
     >
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&display=swap"

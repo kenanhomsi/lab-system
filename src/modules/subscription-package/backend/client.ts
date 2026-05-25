@@ -6,6 +6,7 @@ import {
   ActivateSubscriptionPackageParams,
   CreateSubscriptionPackageParams,
   DeactivateSubscriptionPackageParams,
+  FindAllPublicSubscriptionPackageParams,
   FindAllSubscriptionPackageParams,
   FindOneSubscriptionPackageParams,
   UpdateSubscriptionPackageParams,
@@ -48,15 +49,33 @@ const appendQueryParams = (
   return queryString ? `${path}?${queryString}` : path;
 };
 
+const unwrapResponse = <T>(response: unknown): T => {
+  if (response && typeof response === "object" && "data" in response) {
+    return (response as Record<string, unknown>).data as T;
+  }
+  return response as T;
+};
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends SubscriptionPackageClient<BackendState> {
   async findAll(params: FindAllSubscriptionPackageParams) {
     const res = await super
-      .sharedFindAll({ endpoint: appendQueryParams(endpoint.findAll, params.query) })
+      .sharedFindAll({
+        endpoint: appendQueryParams(endpoint.findAll, params.query),
+      })
       .withAuth(params.token)
-      .perform<ListResponse>();
-    return res.data;
+      .perform<unknown>();
+    return unwrapResponse<ListResponse>(res.data);
+  }
+
+  async findAllPublic(params: FindAllPublicSubscriptionPackageParams) {
+    const res = await super
+      .sharedFindAll({
+        endpoint: appendQueryParams(endpoint.findAll, params.query),
+      })
+      .perform<unknown>();
+    return unwrapResponse<ListResponse>(res.data);
   }
 
   async create(params: CreateSubscriptionPackageParams) {
@@ -67,16 +86,16 @@ class Client extends SubscriptionPackageClient<BackendState> {
         ...body,
       })
       .withAuth(token)
-      .perform<ListItem>();
-    return res.data;
+      .perform<unknown>();
+    return unwrapResponse<ListItem>(res.data);
   }
 
   async findOne(params: FindOneSubscriptionPackageParams) {
     const res = await super
       .sharedFindOne({ endpoint: endpoint.findOne(params.id) })
       .withAuth(params.token)
-      .perform<ListItem>();
-    return res.data;
+      .perform<unknown>();
+    return unwrapResponse<ListItem>(res.data);
   }
 
   async update(params: UpdateSubscriptionPackageParams) {
@@ -87,24 +106,24 @@ class Client extends SubscriptionPackageClient<BackendState> {
         ...body,
       })
       .withAuth(token)
-      .perform<ListItem>();
-    return res.data;
+      .perform<unknown>();
+    return unwrapResponse<ListItem>(res.data);
   }
 
   async activate(params: ActivateSubscriptionPackageParams) {
     const res = await super
       .sharedActivate({ endpoint: endpoint.activate(params.id) })
       .withAuth(params.token)
-      .perform<ListItem>();
-    return res.data;
+      .perform<unknown>();
+    return unwrapResponse<ListItem>(res.data);
   }
 
   async deactivate(params: DeactivateSubscriptionPackageParams) {
     const res = await super
       .sharedDeactivate({ endpoint: endpoint.deactivate(params.id) })
       .withAuth(params.token)
-      .perform<ListItem>();
-    return res.data;
+      .perform<unknown>();
+    return unwrapResponse<ListItem>(res.data);
   }
 }
 

@@ -1,10 +1,16 @@
 "use client";
 
-import { PropsWithChildren, useCallback } from "react";
 import type { FormEvent } from "react";
+import { PropsWithChildren, useCallback } from "react";
+import { extractErrorMessage } from "@/lib/error";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { frontendContainer } from "@/container";
+import { authModuleNames, } from "@/modules/auth";
+import { AuthFrontendService } from "@/modules/auth/frontend/service";
 import { useMirror, useMirrorRegistry } from "./store";
+
+const authService = frontendContainer.get<AuthFrontendService>(authModuleNames.service);
 
 const Utils = (props: PropsWithChildren) => {
   const { children } = props;
@@ -51,22 +57,19 @@ const Utils = (props: PropsWithChildren) => {
       }
 
       try {
-        const res = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+        await authService.Register({
+          email: payload.email,
+          password: payload.password,
+          fullName: payload.fullName,
+          city: payload.city,
+          phoneNumber: payload.mobile,
+          role: payload.role,
         });
-
-        if (!res.ok) {
-          const data = await res.json();
-          setError(data.error || t("registerError"));
-          return;
-        }
 
         setSuccess(true);
         setTimeout(() => router.push(`/${locale}/login`), 2000);
-      } catch {
-        setError(t("registerError"));
+      } catch (err: unknown) {
+        setError(extractErrorMessage(err, t("registerError")));
       } finally {
         setLoading(false);
       }

@@ -1,63 +1,40 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { frontendContainer } from "@/container";
-import { bannerModuleNames, BannerFrontendService } from "@/modules/banner";
+import {
+  BANNER_PLACEMENT,
+  useBannerCarousel,
+  usePublicBanners,
+} from "@/lib/banners";
 import type { BannerItem } from "@/types/banner";
 import { SlideCardsSidebar } from "./slide-cards-section";
-
-const ROTATE_EVERY_MS = 5000;
 
 const isVideoUrl = (url: string) => /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
 
 export function BannerSliderSection() {
   const t = useTranslations("landing.banners");
   const locale = useLocale();
-  const [activeIdx, setActiveIdx] = useState(0);
-  const bannerService = frontendContainer.get<BannerFrontendService>(
-    bannerModuleNames.service,
-  );
+  const isRtl = locale === "ar";
+  const slideLabelPrefix = locale === "ar" ? "الانتقال إلى الشريحة" : "Go to slide";
 
-  const { data } = useQuery({
-    queryKey: ["website-banners-homepage"],
-    queryFn: async () => {
-      const homepageBanners = await bannerService.findAllPublic({
-        location: "homepage",
-      });
-      if (homepageBanners.length > 0) return homepageBanners;
-      return bannerService.findAllPublic({ location: "home" });
-    },
-    staleTime: 1000 * 60,
+  const { banners, isLoading } = usePublicBanners({
+    placement: BANNER_PLACEMENT.HOME_PAGE,
+    fallbackToHomepage: false,
   });
 
-  const banners = useMemo(
-    () =>
-      (data ?? [])
-        .filter((item) => item.isActive)
-        .sort((a, b) => a.displayOrder - b.displayOrder),
-    [data],
-  );
+  const { activeIdx, setActiveIdx } = useBannerCarousel({
+    count: banners.length,
+    enabled: banners.length > 1,
+  });
 
-  useEffect(() => {
-    if (banners.length <= 1) return;
-    const timer = window.setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % banners.length);
-    }, ROTATE_EVERY_MS);
-    return () => window.clearInterval(timer);
-  }, [banners.length]);
+  if (isLoading || banners.length === 0) return null;
 
-  if (banners.length === 0) return null;
-
-  const safeActiveIdx = Math.min(activeIdx, banners.length - 1);
-  const banner = banners[safeActiveIdx] as BannerItem;
+  const banner = banners[activeIdx] as BannerItem;
   const href = banner.internalLink || banner.externalLink || "";
   const isExternal = !!banner.externalLink && !banner.internalLink;
   const mediaIsVideo = isVideoUrl(banner.mediaUrl);
-  const isRtl = locale === "ar";
-  const slideLabelPrefix = locale === "ar" ? "الانتقال إلى الشريحة" : "Go to slide";
+  const ctaLabel = isExternal ? t("ctaExternal") : t("cta");
 
   const media = mediaIsVideo ? (
     <video
@@ -90,6 +67,22 @@ export function BannerSliderSection() {
         <p style={{ margin: 0, fontSize: 13, opacity: 0.9 }}>{banner.type || t("fallback")}</p>
         <h2 style={{ margin: "8px 0", fontSize: 30, lineHeight: 1.15 }}>{banner.title}</h2>
         <p style={{ margin: 0, fontSize: 15, opacity: 0.9 }}>{t("learnMore")}</p>
+        {href ? (
+          <span
+            style={{
+              display: "inline-block",
+              marginTop: 12,
+              padding: "10px 20px",
+              borderRadius: 999,
+              background: "var(--primary)",
+              color: "var(--on-primary)",
+              fontSize: 14,
+              fontWeight: 700,
+            }}
+          >
+            {ctaLabel}
+          </span>
+        ) : null}
       </div>
       <div
         style={{
@@ -170,34 +163,36 @@ export function BannerSliderSection() {
                 {content}
               </div>
             )}
-            <div
-              style={{
-                position: "absolute",
-                bottom: 12,
-                [isRtl ? "left" : "right"]: 12,
-                display: "flex",
-                gap: 6,
-              }}
-            >
-              {banners.map((item, idx) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setActiveIdx(idx)}
-                  aria-label={`${slideLabelPrefix} ${idx + 1}: ${item.title}`}
-                  aria-current={idx === safeActiveIdx}
-                  style={{
-                    width: idx === safeActiveIdx ? 22 : 8,
-                    height: 8,
-                    borderRadius: 99,
-                    border: "none",
-                    cursor: "pointer",
-                    background:
-                      idx === safeActiveIdx ? "var(--primary)" : "rgba(0,0,0,0.25)",
-                  }}
-                />
-              ))}
-            </div>
+            {banners.length > 1 ? (
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: 12,
+                  [isRtl ? "left" : "right"]: 12,
+                  display: "flex",
+                  gap: 6,
+                }}
+              >
+                {banners.map((item, idx) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setActiveIdx(idx)}
+                    aria-label={`${slideLabelPrefix} ${idx + 1}: ${item.title}`}
+                    aria-current={idx === activeIdx}
+                    style={{
+                      width: idx === activeIdx ? 22 : 8,
+                      height: 8,
+                      borderRadius: 99,
+                      border: "none",
+                      cursor: "pointer",
+                      background:
+                        idx === activeIdx ? "var(--primary)" : "rgba(0,0,0,0.25)",
+                    }}
+                  />
+                ))}
+              </div>
+            ) : null}
           </div>
         </div>
 

@@ -68,7 +68,7 @@ export async function QualitySection() {
             <div className="relative z-10 rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-8 shadow-2xl">
               <div className="mb-8">
                 <div className="mb-6 flex items-center justify-between">
-                  <h5 className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <h5 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">
                     {t("benchmark")}
                   </h5>
                   <span className="font-bold text-primary">{t("liveData")}</span>
@@ -89,36 +89,36 @@ export async function QualitySection() {
                   {["08:00", "12:00", "16:00", "20:00"].map((time) => (
                     <span
                       key={time}
-                      className="text-[10px] font-bold text-slate-400"
+                      className="text-[10px] font-bold text-on-surface-variant"
                     >
                       {time}
                     </span>
                   ))}
                 </div>
               </div>
-              <div className="flex items-center justify-between border-t border-slate-100 pt-6 dark:border-slate-800">
+              <div className="flex items-center justify-between border-t border-outline-variant/20 pt-6">
                 <div className="flex flex-row items-center [&>*:not(:first-child)]:-ms-2">
                   <Image
                     src={AV1}
                     alt={t("reviewers")}
                     width={40}
                     height={40}
-                    className="h-10 w-10 rounded-full border-2 border-white object-cover dark:border-slate-900"
-                    unoptimized
+                    className="h-10 w-10 rounded-full border-2 border-surface object-cover"
+                    sizes="40px"
                   />
                   <Image
                     src={AV2}
                     alt={t("reviewers")}
                     width={40}
                     height={40}
-                    className="h-10 w-10 rounded-full border-2 border-white object-cover dark:border-slate-900"
-                    unoptimized
+                    className="h-10 w-10 rounded-full border-2 border-surface object-cover"
+                    sizes="40px"
                   />
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-slate-100 text-xs font-bold dark:border-slate-900 dark:bg-slate-800">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-surface bg-primary-container text-xs font-bold text-on-primary-container">
                     {t("extraCount")}
                   </div>
                 </div>
-                <span className="text-xs font-semibold italic text-slate-500">
+                <span className="text-xs font-semibold italic text-on-surface-variant">
                   {t("reviewers")}
                 </span>
               </div>

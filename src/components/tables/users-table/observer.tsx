@@ -1,12 +1,16 @@
 "use client";
 
 import { useEventObserver } from "@/hooks/events-observer";
+import { QuickActionUrlListener } from "@/hooks/quick-action-url-listener";
 import { PropsWithChildren } from "react";
 import { useMirror } from "./store";
 
 const Observer = (props: PropsWithChildren) => {
   const { children } = props;
   const refetchUsers = useMirror("refetchUsers");
+  const setActiveModal = useMirror("setActiveModal");
+
+  const openCreateModal = () => setActiveModal("create");
 
   useEventObserver("userCreatedSuccessfully", () => {
     void refetchUsers();
@@ -24,7 +28,12 @@ const Observer = (props: PropsWithChildren) => {
     void refetchUsers();
   });
 
-  return <>{children}</>;
+  return (
+    <>
+      <QuickActionUrlListener modal="create" onOpen={openCreateModal} />
+      {children}
+    </>
+  );
 };
 
 export default Observer

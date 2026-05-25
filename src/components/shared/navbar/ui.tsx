@@ -1,21 +1,43 @@
 "use client";
 
-import Link from "next/link";
-import { useSyncExternalStore } from "react";
-import { ActionIcon, Avatar, Group, Menu, Text, TextInput, UnstyledButton } from "@mantine/core";
+import { Link, useRouter } from "@/i18n/navigation";
+import { buildQuickActionHref } from "@/lib/quick-actions/build-href";
+import { writePendingQuickAction } from "@/lib/quick-actions/storage";
+import type { navbarQuickAction } from "./type";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
+  ActionIcon,
+  Avatar,
+  Group,
+  Menu,
+  Text,
+  TextInput,
+  UnstyledButton,
+} from "@mantine/core";
+import {
+  FiActivity,
+  FiAlertCircle,
   FiBell,
-  FiChevronDown,
+  FiCheckCircle,
+  FiClipboard,
+  FiCreditCard,
   FiHelpCircle,
   FiMenu,
   FiLogOut,
   FiSearch,
   FiSettings,
+  FiShield,
   FiUser,
+  FiUserPlus,
+  FiChevronDown,
 } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
 import { useTranslations, useLocale } from "next-intl";
-import { navbarActionIcon, navbarProfileMenuItemId } from "./type";
+import {
+  navbarActionIcon,
+  navbarProfileMenuItemId,
+  navbarQuickActionIcon,
+} from "./type";
 import { useMirror } from "./store";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import styles from "./styles.module.scss";
@@ -29,6 +51,16 @@ const profileMenuIconMap: Record<navbarProfileMenuItemId, IconType> = {
   profile: FiUser,
   settings: FiSettings,
   logout: FiLogOut,
+};
+
+const quickActionIconMap: Record<navbarQuickActionIcon, IconType> = {
+  userPlus: FiUserPlus,
+  flask: FiActivity,
+  clipboardList: FiClipboard,
+  clipboardCheck: FiCheckCircle,
+  creditCard: FiCreditCard,
+  alertCircle: FiAlertCircle,
+  shield: FiShield,
 };
 
 const mobileViewportQuery = "(max-width: 992px)";
@@ -78,10 +110,74 @@ const UI = () => {
     }
   });
 
+  const router = useRouter();
   const config = useMirror("config");
   const searchQuery = useMirror("searchQuery");
   const setSearchQuery = useMirror("setSearchQuery");
   const onLogout = useMirror("onLogout");
+  const [quickActionsOpen, setQuickActionsOpen] = useState(false);
+  const [quickActionQuery, setQuickActionQuery] = useState("");
+  const quickActions = config.quickActions ?? [];
+
+  const handleQuickActionsOpenChange = (opened: boolean) => {
+    setQuickActionsOpen(opened);
+
+    if (!opened) {
+      setQuickActionQuery("");
+    }
+  };
+
+  const navigateQuickAction = (action: navbarQuickAction) => {
+    setQuickActionsOpen(false);
+    setQuickActionQuery("");
+
+    if (action.modal) {
+      writePendingQuickAction({
+        modal: action.modal,
+        tab: action.tab,
+        targetPath: action.href,
+      });
+    }
+
+    const target = buildQuickActionHref(action.href, {
+      modal: action.modal,
+      tab: action.tab,
+    });
+
+    router.push(target);
+  };
+
+  useEffect(() => {
+    if (!quickActionsOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [quickActionsOpen]);
+
+  const normalizedQuickActionQuery = quickActionQuery
+    .trim()
+    .toLocaleLowerCase(locale);
+  const filteredQuickActions = quickActions.filter((action) => {
+    if (!normalizedQuickActionQuery) {
+      return true;
+    }
+
+    const label = translate(`quickActions.${action.label}`, action.label);
+    const description = translate(
+      `quickActions.${action.description}`,
+      action.description,
+    );
+
+    return `${label} ${description}`
+      .toLocaleLowerCase(locale)
+      .includes(normalizedQuickActionQuery);
+  });
 
   return (
     <header className={styles.navbar}>
@@ -113,6 +209,89 @@ const UI = () => {
         </Group>
 
         <Group gap="xs" wrap="nowrap">
+          {quickActions.length > 0 && (
+            <Menu
+              shadow="xl"
+              width={560}
+              position="bottom-end"
+              offset={10}
+              opened={quickActionsOpen}
+              onChange={handleQuickActionsOpenChange}
+              classNames={{ dropdown: styles.quickActionsDropdown }}
+              keepMounted={false}
+            >
+              <Menu.Target>
+                <UnstyledButton
+                  className={styles.quickActionsButton}
+                  data-expanded={quickActionsOpen ? "true" : "false"}
+                  aria-label={translate("quickActions.title", "Quick Actions")}
+                >
+                  <FiSearch size={15} className={styles.quickActionsButtonSearchIcon} />
+                  <span className={styles.quickActionsButtonLabel}>
+                    {translate("quickActions.title", "Quick Actions")}
+                  </span>
+                  <kbd className={styles.quickActionsButtonKbd} dir="ltr">⌘K</kbd>
+                </UnstyledButton>
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                <div className={styles.quickActionsCommandBar}>
+                  <TextInput
+                    value={quickActionQuery}
+                    onChange={(event) => setQuickActionQuery(event.currentTarget.value)}
+                    placeholder={translate(
+                      "quickActions.searchPlaceholder",
+                      "Type a command or search",
+                    )}
+                    className={styles.quickActionsCommandSearch}
+                    leftSection={<FiSearch size={17} />}
+                    rightSection={<kbd className={styles.quickActionsSearchKbd} dir="ltr">⌘/</kbd>}
+                    aria-label={translate("quickActions.searchPlaceholder", "Search actions")}
+                    autoFocus
+                  />
+                </div>
+
+                <Text className={styles.quickActionsSectionLabel}>
+                  {translate("quickActions.recent", "Recent")}
+                </Text>
+
+                <div className={styles.quickActionsList}>
+                  {filteredQuickActions.map((action, index) => {
+                    const Icon = quickActionIconMap[action.icon];
+
+                    return (
+                      <Menu.Item
+                        key={action.id}
+                        className={styles.quickActionsMenuItem}
+                        onClick={() => navigateQuickAction(action)}
+                      >
+                        <div className="W-full flex items-center justify-between">
+                          <span className={styles.quickActionsIconBadge}>
+                            <Icon size={16} />
+                          </span>
+
+                          <span className={styles.quickActionsItemLabel}>
+                            {translate(`quickActions.${action.label}`, action.label)}
+                          </span>
+
+                          <kbd className={styles.quickActionsShortcut} dir="ltr">
+                            ⌘{index + 1}
+                          </kbd>
+                        </div>
+                      </Menu.Item>
+                    );
+                  })}
+
+                  {quickActions.length > 0 && filteredQuickActions.length === 0 && (
+                    <Text className={styles.quickActionsEmpty}>
+                      {translate("quickActions.empty", "No actions found")}
+                    </Text>
+                  )}
+                </div>
+              </Menu.Dropdown>
+            </Menu>
+          )}
+
           {config.actions.map((action) => {
             const Icon = actionIconMap[action.icon];
             if (action.href) {

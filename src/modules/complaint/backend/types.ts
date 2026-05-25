@@ -19,8 +19,18 @@ type UpdateComplaintStatusParams = AuthParams & {
   status: string;
 };
 
+type FindMineComplaintParams = AuthParams & {
+  query?: Record<string, string | undefined>;
+};
+
+type CreateMineComplaintParams = AuthParams & {
+  formData: FormData;
+};
+
 export type {
   FindAllComplaintParams,
   FindAllQueryParams,
+  FindMineComplaintParams,
+  CreateMineComplaintParams,
   UpdateComplaintStatusParams,
 };

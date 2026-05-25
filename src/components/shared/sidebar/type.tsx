@@ -8,7 +8,8 @@ type SidebarIconKey =
   | "flask"
   | "clipboardList"
   | "clipboardCheck"
-  | "userPlus";
+  | "userPlus"
+  | "alertCircle";
 
 type sideBarItem = {
   label: string;

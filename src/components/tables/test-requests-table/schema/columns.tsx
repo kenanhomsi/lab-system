@@ -57,6 +57,45 @@ const partyValueLabel = (v: string | number | null | undefined): string => {
   return s;
 };
 
+const isUuidLike = (value: string): boolean =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+
+const PartyNameCell = ({
+  name,
+  idFallback,
+}: {
+  name?: string | null;
+  idFallback?: string | number | null;
+}) => {
+  const displayName = partyValueLabel(name);
+  if (displayName) {
+    return (
+      <Text size="sm" py={4} lh={1.45}>
+        {displayName}
+      </Text>
+    );
+  }
+
+  const idLabel = partyValueLabel(idFallback);
+  if (!idLabel) {
+    return (
+      <Text size="sm" c="dimmed" py={4}>
+        —
+      </Text>
+    );
+  }
+
+  if (isUuidLike(idLabel) || idLabel.length > 24) {
+    return <ExternalIdCell value={idLabel} />;
+  }
+
+  return (
+    <Text size="sm" py={4} lh={1.45} style={numStyle}>
+      {idLabel}
+    </Text>
+  );
+};
+
 function buildPartyColumns(
   t: TFunction,
   kind: ReturnType<typeof resolveClinicalPartyKind>,
@@ -64,23 +103,12 @@ function buildPartyColumns(
   if (kind === "doctor") {
     return [
       {
-        accessor: "doctorId",
+        accessor: "doctorName",
         title: t("colDoctorId"),
         width: "13%",
-        render: (row) => {
-          const label = partyValueLabel(row.doctorId);
-          return (
-            <Text
-              size="sm"
-              py={4}
-              lh={1.45}
-              c={label ? undefined : "dimmed"}
-              style={numStyle}
-            >
-              {label || "—"}
-            </Text>
-          );
-        },
+        render: (row) => (
+          <PartyNameCell name={row.doctorName} idFallback={row.doctorId} />
+        ),
       },
     ];
   }
@@ -88,10 +116,12 @@ function buildPartyColumns(
   if (kind === "lab") {
     return [
       {
-        accessor: "labClientId",
+        accessor: "labPartnerName",
         title: t("colLabClientId"),
         width: "13%",
-        render: (row) => <ExternalIdCell value={row.labClientId ?? undefined} />,
+        render: (row) => (
+          <PartyNameCell name={row.labPartnerName} idFallback={row.labClientId} />
+        ),
       },
     ];
   }
@@ -99,81 +129,46 @@ function buildPartyColumns(
   if (kind === "patient") {
     return [
       {
-        accessor: "directPatientId",
+        accessor: "patientName",
         title: t("colDirectPatientId"),
         width: "13%",
-        render: (row) => {
-          const label = partyValueLabel(row.directPatientId);
-          if (!label) {
-            return (
-              <Text size="sm" c="dimmed" py={4}>
-                —
-              </Text>
-            );
-          }
-          const looksUuid =
-            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-              label,
-            );
-          if (looksUuid || label.length > 24) {
-            return <ExternalIdCell value={label} />;
-          }
-          return (
-            <Text size="sm" py={4} lh={1.45} style={numStyle}>
-              {label}
-            </Text>
-          );
-        },
+        render: (row) => (
+          <PartyNameCell
+            name={row.patientName ?? row.externalPatientFullName}
+            idFallback={row.directPatientId}
+          />
+        ),
       },
     ];
   }
 
   return [
     {
-      accessor: "doctorId",
+      accessor: "doctorName",
       title: t("colDoctorId"),
       width: "7%",
-      render: (row) => {
-        const label = partyValueLabel(row.doctorId);
-        return (
-          <Text size="sm" py={4} lh={1.45} c={label ? undefined : "dimmed"} style={numStyle}>
-            {label || "—"}
-          </Text>
-        );
-      },
+      render: (row) => (
+        <PartyNameCell name={row.doctorName} idFallback={row.doctorId} />
+      ),
     },
     {
-      accessor: "labClientId",
+      accessor: "labPartnerName",
       title: t("colLabClientId"),
       width: "9%",
-      render: (row) => <ExternalIdCell value={row.labClientId ?? undefined} />,
+      render: (row) => (
+        <PartyNameCell name={row.labPartnerName} idFallback={row.labClientId} />
+      ),
     },
     {
-      accessor: "directPatientId",
+      accessor: "patientName",
       title: t("colDirectPatientId"),
       width: "8%",
-      render: (row) => {
-        const label = partyValueLabel(row.directPatientId);
-        if (!label) {
-          return (
-            <Text size="sm" c="dimmed" py={4}>
-              —
-            </Text>
-          );
-        }
-        const looksUuid =
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-            label,
-          );
-        if (looksUuid || label.length > 24) {
-          return <ExternalIdCell value={label} />;
-        }
-        return (
-          <Text size="sm" py={4} lh={1.45} style={numStyle}>
-            {label}
-          </Text>
-        );
-      },
+      render: (row) => (
+        <PartyNameCell
+          name={row.patientName ?? row.externalPatientFullName}
+          idFallback={row.directPatientId}
+        />
+      ),
     },
   ];
 }
@@ -186,6 +181,16 @@ const getTestRequestsColumns = (
   const partyColumns = buildPartyColumns(t, kind);
 
   return [
+    {
+      accessor: "id",
+      title: t("colId"),
+      width: "7%",
+      render: (row) => (
+        <Text size="sm" fw={600} py={4} lh={1.45}>
+          {row.id || "—"}
+        </Text>
+      ),
+    },
     {
       accessor: "medicalTestNameEn",
       title: t("colMedicalTest"),

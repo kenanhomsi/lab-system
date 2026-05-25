@@ -24,6 +24,7 @@ const NormalTable = () => {
   const tableHighlight = useMirror("tableHighlightOnHover");
   const dataTableVerticalSpacing = useMirror("dataTableVerticalSpacing");
   const dataTableHorizontalSpacing = useMirror("dataTableHorizontalSpacing");
+  const onRowClick = useMirror("onRowClick");
   const records = Array.isArray(data) ? data : [];
   const hasRecords = records.length > 0;
   const minHeight = hasRecords ? undefined : "20rem";
@@ -136,6 +137,20 @@ const NormalTable = () => {
                 tableWrapper={({ children }) => (
                   <div className={styles.tableScrollWrapper}>{children}</div>
                 )}
+                onRowClick={({ record, event }) => {
+                  const target = event.target as HTMLElement;
+                  const isInteractive = target.closest(
+                    'button, a, input, select, textarea, [role="button"], [data-interactive="true"]',
+                  );
+                  if (isInteractive) return;
+                  if (record.onClick) {
+                    record.onClick(record);
+                    return;
+                  }
+                  if (onRowClick && record.id) {
+                    onRowClick(String(record.id));
+                  }
+                }}
               />
             </>
           )}

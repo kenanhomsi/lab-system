@@ -1,0 +1,75 @@
+/**
+ * Profile page shell: hero gradient and subtle texture for depth without clutter.
+ */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--mantine-radius-xl);
+  background: linear-gradient(
+    125deg,
+    light-dark(var(--mantine-color-cyan-0), var(--mantine-color-dark-7)) 0%,
+    light-dark(var(--mantine-color-blue-0), var(--mantine-color-dark-6)) 42%,
+    light-dark(var(--mantine-color-teal-1), var(--mantine-color-dark-5)) 100%
+  );
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  box-shadow: var(--mantine-shadow-sm);
+}
+
+.heroPattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.07;
+  color: light-dark(var(--mantine-color-cyan-9), var(--mantine-color-dark-0));
+  background-image: radial-gradient(currentcolor 1px, transparent 1px);
+  background-size: 18px 18px;
+  pointer-events: none;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+}
+
+.tabPanel {
+  animation: profileFadeIn 0.2s ease-out;
+}
+
+@keyframes profileFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabPanel {
+    animation: none;
+  }
+}
+
+.quickLink {
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--mantine-radius-md);
+  transition: background-color 120ms ease, transform 120ms ease;
+
+  &:hover {
+    background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6));
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mantine-color-blue-6);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quickLink {
+    transition: none;
+  }
+}

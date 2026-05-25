@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import {
   Badge,
@@ -119,7 +120,11 @@ const Modals = () => {
     const [parameterPairs, setParameterPairs] = useState<ParameterPair[]>(
       parseParameterPairs(props.selected?.parameterSchema ?? ""),
     );
-    const [status, setStatus] = useState<string>(props.selected?.status ?? "active");
+    const [status, setStatus] = useState<string>(() => {
+      const raw = (props.selected?.status ?? "active").trim();
+      const lower = raw.toLowerCase();
+      return lower === "inactive" ? "inactive" : "active";
+    });
     const [step, setStep] = useState(0);
 
     const parameterSchemaModel = useMemo(
@@ -176,7 +181,6 @@ const Modals = () => {
       await updateMutation.mutateAsync({
         id: String(id),
         data: {
-          id: String(id),
           nameAr: nameAr.trim(),
           nameEn: nameEn.trim(),
           price,
@@ -191,6 +195,7 @@ const Modals = () => {
 
     return (
       <Stack gap="lg">
+          <MutationErrorAlert />
         <Group
           justify="space-between"
           align="center"
@@ -283,18 +288,20 @@ const Modals = () => {
                 radius="md"
                 required
               />
-              <Select
-                label={tm("statusLabel")}
-                value={status}
-                onChange={(v) => setStatus(v ?? "active")}
-                data={[
-                  { value: "active", label: tm("statusActive") },
-                  { value: "inactive", label: tm("statusInactive") },
-                ]}
-                size="md"
-                radius="md"
-                required
-              />
+              {props.mode === "edit" && (
+                <Select
+                  label={tm("statusLabel")}
+                  value={status}
+                  onChange={(v) => setStatus(v ?? "active")}
+                  data={[
+                    { value: "active", label: tm("statusActive") },
+                    { value: "inactive", label: tm("statusInactive") },
+                  ]}
+                  size="md"
+                  radius="md"
+                  required
+                />
+              )}
             </Stack>
           </Paper>
         )}
@@ -407,7 +414,6 @@ const Modals = () => {
             msOverflowStyle: "none",
           },
           header: {
-            background: "transparent",
             borderBottom: "1px solid light-dark(rgba(15,23,42,0.06), rgba(255,255,255,0.07))",
             padding: "var(--mantine-spacing-lg)",
             paddingBottom: "var(--mantine-spacing-md)",
@@ -457,7 +463,6 @@ const Modals = () => {
             msOverflowStyle: "none",
           },
           header: {
-            background: "transparent",
             borderBottom: "1px solid light-dark(rgba(15,23,42,0.06), rgba(255,255,255,0.07))",
             padding: "var(--mantine-spacing-lg)",
             paddingBottom: "var(--mantine-spacing-md)",
@@ -476,6 +481,7 @@ const Modals = () => {
 
       <Modal opened={activeModal === "delete"} onClose={closeModal} title={t("deleteModalTitle")} centered>
         <Stack>
+          <MutationErrorAlert />
           <Text size="sm" dir="auto">
             {t("deleteConfirmMessage", {
               name:

@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 
 import { frontendContainer } from "@/container";
 import { CreateTestResultCommand, testResultModuleNames } from "@/modules/TestResults";
 import type { CreateTestResultFrontendParams } from "@/modules/TestResults/frontend/types";
-import { useMutation } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "./store";
 
@@ -12,7 +13,7 @@ const command = frontendContainer.get<CreateTestResultCommand>(
 );
 
 const Api = ({ children }: PropsWithChildren) => {
-  const mutation = useMutation({
+  const mutation = useManagedMutation({
     mutationFn: async (payload: CreateTestResultFrontendParams) => {
       command.init(payload);
       return command.exec();
@@ -20,7 +21,7 @@ const Api = ({ children }: PropsWithChildren) => {
   });
   useMirrorRegistry("submitAction", mutation.mutateAsync);
   useMirrorRegistry("isSubmitting", mutation.isPending, "value");
-  return <>{children}</>;
+  return <MutationErrorProvider>{children}</MutationErrorProvider>;
 };
 
 export { Api };

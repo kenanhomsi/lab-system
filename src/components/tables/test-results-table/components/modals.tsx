@@ -5,6 +5,7 @@ import {
   DeleteTestResultModal,
   EditTestResultModal,
 } from "@/components/modals/test-results";
+import { ViewTestResultModal } from "./view-test-result-modal";
 import { isClinicalPatientUser } from "@/components/modals/test-requests/party-ids";
 import { useSessionUserStore } from "@/stores/session-user-store";
 import { useMirror } from "../store";
@@ -15,7 +16,7 @@ const Modals = () => {
   const selectedTestResult = useMirror("selectedTestResult");
   const setActiveModal = useMirror("setActiveModal");
 
-  if (isClinicalPatientUser(roles)) {
+  if (isClinicalPatientUser(roles) && activeModal !== "view") {
     return null;
   }
 
@@ -34,6 +35,13 @@ const Modals = () => {
         onClose={closeModal}
         testResult={selectedTestResult}
       />
+      {selectedTestResult && activeModal === "view" && (
+        <ViewTestResultModal
+          opened={true}
+          onClose={closeModal}
+          testResult={selectedTestResult}
+        />
+      )}
     </>
   );
 };

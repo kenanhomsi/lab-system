@@ -1,15 +1,39 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
-import CountUp from "react-countup";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
+
+const CountUp = dynamic(() => import("react-countup"), { ssr: false });
 
 export function PartnersStrip() {
   const t = useTranslations("landing.partners");
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const ref = useRef<HTMLElement | null>(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setIsInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setIsInView(true);
+            observer.disconnect();
+            break;
+          }
+        }
+      },
+      { rootMargin: "-100px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   const stats = [
     { value: t("stat1Value"), label: t("stat1Label"), icon: "science" },
@@ -18,7 +42,6 @@ export function PartnersStrip() {
     { value: t("stat4Value"), label: t("stat4Label"), icon: "support_agent" },
   ] as const;
 
-  // Extract prefix, number, and suffix from string value like "1000+" or "24/7"
   const parseValue = (str: string) => {
     const match = str.match(/(\d+)/);
     if (match) {
@@ -56,7 +79,7 @@ export function PartnersStrip() {
                 className="reveal-up flex flex-col items-center justify-center rounded-3xl bg-surface-container-lowest p-8 text-center shadow-sm ring-1 ring-outline-variant/30 transition-all hover:-translate-y-1 hover:bg-surface-container-low hover:shadow-md hover:ring-primary/20"
                 style={{ animationDelay: `${160 + i * 80}ms` }}
               >
-                <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#009cc2]/10 text-[#009cc2]">
                   <Icon name={s.icon} size="lg" />
                 </div>
                 <div className="text-4xl font-black tracking-tighter text-on-surface">

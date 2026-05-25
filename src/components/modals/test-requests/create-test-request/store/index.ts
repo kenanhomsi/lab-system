@@ -2,7 +2,7 @@ import { mirrorFactory } from "@/hooks/use-mirror-factory";
 import { Dispatch, SetStateAction } from "react";
 
 type TestRequestForm = {
-  medicalTestId: number;
+  medicalTestIds: number[];
   requestDate: string;
   status: string;
   totalAmount: number;
@@ -15,7 +15,7 @@ type TestRequestForm = {
 };
 
 const initialForm: TestRequestForm = {
-  medicalTestId: 0,
+  medicalTestIds: [],
   requestDate: "",
   status: "pending",
   totalAmount: 0,

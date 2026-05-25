@@ -65,7 +65,7 @@ export async function AboutLeadershipGrid() {
                   alt=""
                   fill
                   className="object-cover transition-all duration-700 group-hover:scale-105"
-                  unoptimized
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
               </div>
               <h4 className="mb-1 text-2xl font-bold">{s.title}</h4>

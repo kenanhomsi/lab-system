@@ -8,7 +8,7 @@ import { sideBarItem } from "./type";
 const Factory = ({ items }: { items: sideBarItem[] }) => {
     return (
         <Init items={items}>
-            <State>
+            <State items={items}>
                 <Observer>
                     <Utils>
                         <UI />

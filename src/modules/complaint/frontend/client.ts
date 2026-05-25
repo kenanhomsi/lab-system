@@ -2,13 +2,14 @@ import { injectable, injectFromBase } from "inversify";
 import { AxiosState } from "@/modules/axios";
 import { ComplaintClient } from "../abstraction";
 import { endpoint } from "./endpoint";
-import { FindAllComplaintParams, UpdateComplaintStatusParams } from "./types";
+import { FindAllComplaintParams, CreateComplaintMineParams, UpdateComplaintStatusParams } from "./types";
 
 type ComplaintItem = {
   id: number;
   userId: string;
   title: string;
   description: string;
+  note: string;
   attachmentUrl: string;
   status: string;
   createdAt: string;
@@ -40,14 +41,21 @@ const appendQueryParams = (
   return queryString ? `${path}?${queryString}` : path;
 };
 
+const unwrapResponse = <T>(response: unknown): T => {
+  if (response && typeof response === "object" && "data" in response) {
+    return (response as Record<string, unknown>).data as T;
+  }
+  return response as T;
+};
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends ComplaintClient<AxiosState> {
   async findAll(params: FindAllComplaintParams) {
     const res = await super
       .sharedFindAll({ endpoint: appendQueryParams(endpoint.findAll, params.query) })
-      .perform<ComplaintListResponse>();
-    return res.data;
+      .perform<unknown>();
+    return unwrapResponse<ComplaintListResponse>(res.data);
   }
 
   async updateStatus(params: UpdateComplaintStatusParams) {
@@ -55,7 +63,23 @@ class Client extends ComplaintClient<AxiosState> {
     const res = await super
       .sharedUpdateStatus({ endpoint: endpoint.updateStatus(id), status })
       .perform();
-    return res.data;
+    return unwrapResponse(res.data);
+  }
+
+  async createMine(params: CreateComplaintMineParams) {
+    const formData = new FormData();
+    formData.append("Title", params.title);
+    formData.append("Description", params.description);
+    if (params.attachment) {
+      formData.append("Attachment", params.attachment);
+    }
+    const res = await super
+      .sharedPostFormData({
+        endpoint: endpoint.createMine,
+        formData,
+      })
+      .perform<unknown>();
+    return unwrapResponse(res.data);
   }
 }
 

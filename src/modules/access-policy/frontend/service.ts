@@ -7,6 +7,8 @@ import {
   DisableAccessPolicyFrontendParams,
   EnableAccessPolicyFrontendParams,
   FindAllAccessPolicyFrontendParams,
+  FindAllAccessPolicyTablesFrontendParams,
+  FindAccessPolicyTableFieldsFrontendParams,
   FindOneAccessPolicyFrontendParams,
   UpdateAccessPolicyFrontendParams,
   ValidateAccessPolicyFrontendParams,
@@ -19,6 +21,14 @@ class Service {
 
   async findAll(params: FindAllAccessPolicyFrontendParams) {
     return this.Client.findAll(params);
+  }
+
+  async findAllTables(params?: FindAllAccessPolicyTablesFrontendParams) {
+    return this.Client.findAllTables(params);
+  }
+
+  async findTableFields(params: FindAccessPolicyTableFieldsFrontendParams) {
+    return this.Client.findTableFields(params);
   }
 
   async create(params: CreateAccessPolicyFrontendParams) {

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "أساسي",
+    "price": 29,
+    "validityDays": 30,
+    "includedTests": "حصتين طبيتين سنوياً,سجلات صحية رقمية,استشارة للأخصائي",
+    "targetAudience": "Patient",
+    "isActive": true
+  },
+  {
+    "name": "ذهبي",
+    "price": 79,
+    "validityDays": 365,
+    "includedTests": "6 فحوصات متقدمة سنوياً,إدارة عائلية (4 أفراد),استشارة الأخصائيين سنوياً",
+    "targetAudience": "Patient",
+    "isActive": true
+  },
+  {
+    "name": "بلاتيني",
+    "price": 199,
+    "validityDays": 365,
+    "includedTests": "فحوصات بطاقة غير محدودة,خريطة جينومية كاملة,جميع عيادات VIP مجاناً",
+    "targetAudience": "All",
+    "isActive": true
+  }
+]

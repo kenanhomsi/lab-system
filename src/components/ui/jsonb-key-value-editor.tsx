@@ -28,8 +28,31 @@ function buildJsonObjectFromPairs(pairs: JsonbKeyValuePair[]): Record<string, st
   }, {});
 }
 
-function parsePairsFromJsonObjectString(raw: string): JsonbKeyValuePair[] {
-  const trimmed = raw.trim();
+function parsePairsFromJsonObjectString(raw: unknown): JsonbKeyValuePair[] {
+  if (raw === null || raw === undefined) return [createJsonbKeyValuePair()];
+
+  let trimmed = "";
+  if (typeof raw !== "string") {
+    if (typeof raw === "object") {
+      if (Object.keys(raw).length === 0) return [createJsonbKeyValuePair()];
+      if (!Array.isArray(raw)) {
+        const entries = Object.entries(raw as Record<string, unknown>)
+          .map(([key, value]) => ({
+            id: createJsonbKeyValuePair().id,
+            key,
+            value: value == null ? "" : typeof value === "string" ? value : String(value),
+          }))
+          .filter((row) => row.key.trim().length > 0);
+        return entries.length > 0 ? entries : [createJsonbKeyValuePair()];
+      }
+      trimmed = JSON.stringify(raw);
+    } else {
+      trimmed = String(raw);
+    }
+  } else {
+    trimmed = raw.trim();
+  }
+
   if (!trimmed || trimmed === "{}") return [createJsonbKeyValuePair()];
   try {
     const parsed = JSON.parse(trimmed) as unknown;

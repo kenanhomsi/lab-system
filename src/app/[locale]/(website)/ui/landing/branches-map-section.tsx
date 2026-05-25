@@ -35,17 +35,17 @@ export async function BranchesMapSection() {
           {tl("eyebrow")}
         </span>
 
-        <h2 className="mt-6 max-w-xl font-headline text-4xl font-extrabold leading-tight tracking-tight text-slate-900 dark:text-on-surface md:text-5xl lg:text-[3.25rem]">
+        <h2 className="mt-6 max-w-xl font-headline text-4xl font-extrabold leading-tight tracking-tight text-on-surface md:text-5xl lg:text-[3.25rem]">
           {tl("title")}
         </h2>
 
-        <p className="mt-5 max-w-md text-base leading-relaxed text-slate-600 dark:text-on-surface-variant md:text-lg">
+        <p className="mt-5 max-w-md text-base leading-relaxed text-on-surface-variant md:text-lg">
           {tl("subtitle")}
         </p>
 
         <Link
           href="/contact#branch-locations"
-          className="mt-10 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 font-headline text-sm font-bold uppercase tracking-wider text-white shadow-lg shadow-primary/25 transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-primary/40 active:scale-95"
+          className="clinical-gradient mt-10 inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 font-headline text-sm font-bold uppercase tracking-wider text-on-primary shadow-lg shadow-primary/25 transition-all hover:-translate-y-1 hover:opacity-95 hover:shadow-primary/40 active:scale-95"
         >
           <span className="material-symbols-outlined text-lg">explore</span>
           {tl("cta")}
@@ -59,7 +59,7 @@ export async function BranchesMapSection() {
           branches={branches}
           openInOsmLabel={tl("openInOsm")}
         />
-        <p className="mx-auto mt-6 max-w-2xl px-6 text-center text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+        <p className="mx-auto mt-6 max-w-2xl px-6 text-center text-xs leading-relaxed text-on-surface-variant">
           {tl("attributionLine")}{" "}
           <a
             href="https://www.openstreetmap.org/copyright"

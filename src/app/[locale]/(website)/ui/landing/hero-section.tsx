@@ -2,9 +2,11 @@ import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
+import { Ripple } from "@/components/ui/ripple";
+import { HeroWordRotate } from "./hero-word-rotate";
 
 const HERO_IMG =
-  "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=2000&q=80";
+  "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=1920&q=80";
 
 export async function HeroSection() {
   const t = await getTranslations("landing.hero");
@@ -18,6 +20,11 @@ export async function HeroSection() {
     locale === "ar"
       ? "absolute inset-0 bg-linear-to-l from-background via-background/40 to-transparent"
       : "absolute inset-0 bg-linear-to-r from-background via-background/40 to-transparent";
+  const rotateWords = [
+    t("titleAccent"),
+    t("titleRotate2"),
+    t("titleRotate3"),
+  ];
 
   return (
     <section className="relative flex h-[min(760px,92svh)] items-center overflow-hidden bg-surface">
@@ -28,13 +35,25 @@ export async function HeroSection() {
           fill
           className="hero-image-enter object-cover opacity-80"
           priority
-          unoptimized
+          sizes="100vw"
+          fetchPriority="high"
         />
         <div className={overlayGradientClass} />
       </div>
       <div className="pointer-events-none absolute inset-0 z-1">
         <div className="bg-orb h-44 w-44 bg-primary/14 -inset-s-10 top-24" />
         <div className="bg-orb bg-orb-reverse h-52 w-52 bg-tertiary-fixed/14 inset-e-10 bottom-16" />
+      </div>
+      <div
+        className={`pointer-events-none absolute inset-y-0 z-2 w-[min(100%,42rem)] ${locale === "ar" ? "inset-s-0" : "inset-e-0"}`}
+        aria-hidden
+      >
+        <Ripple
+          numCircles={6}
+          mainCircleSize={180}
+          mainCircleOpacity={0.18}
+          className="mask-none opacity-80"
+        />
       </div>
       <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 md:px-8">
         <div className="max-w-2xl space-y-5">
@@ -50,7 +69,7 @@ export async function HeroSection() {
             style={{ animationDelay: "200ms" }}
           >
             {t("titleBefore")} <br />
-            <span className="text-primary">{t("titleAccent")}</span> <br />
+            <HeroWordRotate words={rotateWords} /> <br />
             {t("titleAfter")}
           </h1>
           <p

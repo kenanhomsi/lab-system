@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
+import { getTestsCatalogPublic } from "@/lib/clients/website-public-client";
 
 type Test = {
   id: string;
@@ -27,9 +28,10 @@ export function PriceCalculatorPage({ variant = "page" }: PriceCalculatorPagePro
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/tests")
-      .then((res) => res.json())
-      .then((data) => setAllTests(data))
+    getTestsCatalogPublic()
+      .then((data) =>
+        setAllTests(Array.isArray(data) ? (data as Test[]) : []),
+      )
       .catch(() => setAllTests([]));
   }, []);
 

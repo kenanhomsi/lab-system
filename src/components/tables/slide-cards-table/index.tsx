@@ -21,7 +21,10 @@ import {
   Title,
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import {
   IconAlignLeft,
   IconBookmark,
@@ -118,7 +121,7 @@ const SlideCardsTable = () => {
       }),
   });
 
-  const createMutation = useMutation({
+  const createMutation = useManagedMutation({
     mutationFn: async () => {
       if (!form.image) throw new Error("Image is required");
       return slideCardService.create({
@@ -215,6 +218,7 @@ const SlideCardsTable = () => {
   const isSubmitting = createMutation.isPending;
 
   return (
+    <MutationErrorProvider>
     <Stack gap="md">
       <Table
         type="normal"
@@ -283,6 +287,7 @@ const SlideCardsTable = () => {
         }}
       >
         <Stack gap="lg">
+          <MutationErrorAlert />
           <Text size="xs" c="dimmed">
             {t("formHint")}
           </Text>
@@ -530,6 +535,7 @@ const SlideCardsTable = () => {
         </Stack>
       </Modal>
     </Stack>
+    </MutationErrorProvider>
   );
 };
 

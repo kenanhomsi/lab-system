@@ -98,7 +98,7 @@ export async function ServicesGrid() {
                 width={600}
                 height={300}
                 className="h-full w-full object-cover"
-                unoptimized
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
           </div>

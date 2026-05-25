@@ -1,59 +1,54 @@
-"use client";
+﻿"use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
+import { frontendContainer } from "@/container";
+import {
+  subscriptionPackageModuleNames,
+  SubscriptionPackageFrontendService,
+} from "@/modules/subscription-package";
 import { useMirrorRegistry } from "../store";
 import {
   CreateSubscriptionPackageRequest,
   UpdateSubscriptionPackageRequest,
 } from "../types";
 
-async function parseOrThrow(response: Response) {
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) {
-    throw new Error("Subscription packages API request failed");
-  }
-  return payload;
-}
-
-async function requestJson<TPayload>(url: string, method: string, payload?: TPayload) {
-  const response = await fetch(url, {
-    method,
-    headers: payload ? { "Content-Type": "application/json" } : undefined,
-    body: payload ? JSON.stringify(payload) : undefined,
-  });
-  return parseOrThrow(response);
-}
+const packageService = frontendContainer.get<SubscriptionPackageFrontendService>(
+  subscriptionPackageModuleNames.service,
+);
 
 const PackageMutations = (props: PropsWithChildren) => {
   const queryClient = useQueryClient();
 
-  const createPackageMutation = useMutation({
+  const createPackageMutation = useManagedMutation({
     mutationFn: (payload: CreateSubscriptionPackageRequest) =>
-      requestJson("/api/admin/subscription-packages", "POST", payload),
+      packageService.create(payload),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["subscription-packages"] });
     },
   });
 
-  const updatePackageMutation = useMutation({
+  const updatePackageMutation = useManagedMutation({
     mutationFn: (params: { id: number; payload: UpdateSubscriptionPackageRequest }) =>
-      requestJson(`/api/admin/subscription-packages/${params.id}`, "PUT", params.payload),
+      packageService.update({ id: String(params.id), ...params.payload }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["subscription-packages"] });
     },
   });
 
-  const activatePackageMutation = useMutation({
-    mutationFn: (id: number) => requestJson(`/api/admin/subscription-packages/${id}/activate`, "POST"),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["subscription-packages"] });
-    },
-  });
-
-  const deactivatePackageMutation = useMutation({
+  const activatePackageMutation = useManagedMutation({
     mutationFn: (id: number) =>
-      requestJson(`/api/admin/subscription-packages/${id}/deactivate`, "POST"),
+      packageService.activate({ id: String(id) }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["subscription-packages"] });
+    },
+  });
+
+  const deactivatePackageMutation = useManagedMutation({
+    mutationFn: (id: number) =>
+      packageService.deactivate({ id: String(id) }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["subscription-packages"] });
     },
@@ -74,7 +69,7 @@ const PackageMutations = (props: PropsWithChildren) => {
     deactivatePackageMutation.mutateAsync(id),
   );
 
-  return props;
+  return <MutationErrorProvider>{props.children}</MutationErrorProvider>;
 };
 
 export { PackageMutations };

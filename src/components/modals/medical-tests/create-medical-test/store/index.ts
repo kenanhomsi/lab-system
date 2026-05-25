@@ -13,7 +13,7 @@ const noopSetStateBool = (() => undefined) as Dispatch<SetStateAction<boolean>>;
 
 const emptyCreateMutation = {} as UseMutationResult<
   unknown,
-  Error,
+  unknown,
   CreateMedicalTestForm
 >;
 

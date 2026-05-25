@@ -12,6 +12,7 @@ import {
     Stack,
     Stepper,
     Text,
+    Select,
     TextInput,
     ThemeIcon,
     Title,
@@ -28,8 +29,14 @@ import {
     IconUpload,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
+import {
+    BANNER_PLACEMENT,
+    BANNER_PLACEMENT_VALUES,
+    type BannerPlacement,
+} from "@/lib/banners/locations";
 import { toIso8601Utc } from "@/lib/dates/to-iso-8601";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import { useMirror } from "../store";
 import { CreateBannerRequest } from "../types";
 
@@ -70,7 +77,16 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
     const [step, setStep] = useState(0);
     const [title, setTitle] = useState("");
     const [type, setType] = useState("");
-    const [location, setLocation] = useState("");
+    const [location, setLocation] = useState<BannerPlacement>(BANNER_PLACEMENT.HOME_PAGE);
+
+    const locationSelectData = useMemo(
+        () =>
+            BANNER_PLACEMENT_VALUES.map((value) => ({
+                value,
+                label: t(`locationOptions.${value}`),
+            })),
+        [t],
+    );
     const [isActive, setIsActive] = useState(true);
     const [displayOrder, setDisplayOrder] = useState("0");
     const [internalLink, setInternalLink] = useState("");
@@ -86,7 +102,7 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
         setStep(0);
         setTitle("");
         setType("");
-        setLocation("");
+        setLocation(BANNER_PLACEMENT.HOME_PAGE);
         setIsActive(true);
         setDisplayOrder("0");
         setInternalLink("");
@@ -167,6 +183,7 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
             }}
         >
             <Stack gap="lg">
+                <MutationErrorAlert />
                 <Stepper active={step} size="sm" color="blue" mt="md">
                     <Stepper.Step label={t("stepDetails")} description={t("stepDetailsDesc")} />
                     <Stepper.Step label={t("stepLinks")} description={t("stepLinksDesc")} />
@@ -197,12 +214,17 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
                             value={type}
                             onChange={(e) => setType(e.currentTarget.value)}
                         />
-                        <TextInput
+                        <Select
                             label={t("locationLabel")}
                             placeholder={t("locationPlaceholder")}
+                            data={locationSelectData}
                             value={location}
-                            onChange={(e) => setLocation(e.currentTarget.value)}
+                            onChange={(value) =>
+                                setLocation((value as BannerPlacement) ?? BANNER_PLACEMENT.HOME_PAGE)
+                            }
+                            searchable
                             required
+                            allowDeselect={false}
                         />
                         <NumberInput
                             label={t("displayOrderLabel")}

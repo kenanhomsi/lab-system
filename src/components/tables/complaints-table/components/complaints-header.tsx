@@ -79,9 +79,10 @@ const ComplaintsHeader = ({
         size="xs"
         data={[
           { value: "all", label: t("allStatuses") },
-          { value: "received", label: t("received") },
-          { value: "in_progress", label: t("inProgress") },
-          { value: "resolved", label: t("resolved") },
+          { value: "Pending", label: t("pending") },
+          { value: "InReview", label: t("inReview") },
+          { value: "Resolved", label: t("resolved") },
+          { value: "Rejected", label: t("rejected") },
         ]}
         styles={{ input: { paddingInlineStart: 28 } }}
         style={{ minWidth: 150, flex: "0 0 auto" }}

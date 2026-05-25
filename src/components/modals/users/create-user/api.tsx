@@ -1,10 +1,11 @@
-"use client";
+﻿"use client";
 
 import { frontendContainer } from "@/container";
 import { roleModuleNames, RoleFrontendService } from "@/modules/role";
 import { CreateUserCommand, userModuleNames } from "@/modules/user";
 import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "./store";
 import { CreateUserPayload } from "./types";
@@ -37,7 +38,7 @@ const Api = ({ children }: PropsWithChildren) => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const createMutation = useMutation({
+  const createMutation = useManagedMutation({
     mutationFn: async (payload: CreateUserPayload) => {
       createUserCommand.init(payload);
       return createUserCommand.exec();
@@ -50,7 +51,7 @@ const Api = ({ children }: PropsWithChildren) => {
   useMirrorRegistry("roleOptions", roleOptions);
   useMirrorRegistry("isLoadingRoles", isLoadingRoles);
 
-  return <>{children}</>;
+  return <MutationErrorProvider>{children}</MutationErrorProvider>;
 };
 
 export { Api };

@@ -5,6 +5,7 @@ import {
   RoleFormModal,
 } from "@/components/modals/roles";
 import { useMirror } from "../store";
+import { RolePermissionsModal } from "./role-permissions-modal";
 
 const Modals = () => {
   const activeModal = useMirror("activeModal");
@@ -26,6 +27,11 @@ const Modals = () => {
       />
       <DeleteRoleModal
         isOpen={activeModal === "delete"}
+        onClose={close}
+        role={selectedRole}
+      />
+      <RolePermissionsModal
+        opened={activeModal === "permissions"}
         onClose={close}
         role={selectedRole}
       />

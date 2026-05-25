@@ -1,11 +1,11 @@
-import { ComplaintStatus } from "../types";
+import { COMPLAINT_STATUSES, ComplaintStatus } from "@/lib/complaint-status";
 
 type Params = {
   statusOptions: ComplaintStatus[];
 };
 
 const store = (): Params => ({
-  statusOptions: ["received", "in_progress", "resolved"],
+  statusOptions: [...COMPLAINT_STATUSES],
 });
 
 export { store as utilsStore };

@@ -2,30 +2,32 @@
 
 import { Badge } from "@mantine/core";
 import { useTranslations } from "next-intl";
-import { ComplaintStatus } from "../../types";
+import { ComplaintStatus, normalizeComplaintStatus } from "@/lib/complaint-status";
 
 type Props = {
   value: string;
 };
 
 const statusColors: Record<ComplaintStatus, string> = {
-  received: "blue",
-  in_progress: "orange",
-  resolved: "teal",
+  Pending: "blue",
+  InReview: "orange",
+  Resolved: "teal",
+  Rejected: "red",
 };
 
 const StatusBadge = ({ value }: Props) => {
   const t = useTranslations("admin.complaints");
-  const normalized = value.toLowerCase() as ComplaintStatus;
+  const normalized = normalizeComplaintStatus(value);
 
   const labelMap: Record<ComplaintStatus, string> = {
-    received: t("received"),
-    in_progress: t("inProgress"),
-    resolved: t("resolved"),
+    Pending: t("pending"),
+    InReview: t("inReview"),
+    Resolved: t("resolved"),
+    Rejected: t("rejected"),
   };
 
-  const label = labelMap[normalized] ?? value;
-  const color = statusColors[normalized] ?? "gray";
+  const label = normalized ? labelMap[normalized] : value;
+  const color = normalized ? statusColors[normalized] : "gray";
 
   return (
     <Badge color={color} variant="light" radius="sm">

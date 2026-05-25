@@ -1,7 +1,11 @@
 import { inject, injectable } from "inversify";
 import { complaintModuleNames } from "../names";
 import { ComplaintFrontendClient } from "./client";
-import { FindAllComplaintParams, UpdateComplaintStatusParams } from "./types";
+import {
+  CreateComplaintMineParams,
+  FindAllComplaintParams,
+  UpdateComplaintStatusParams,
+} from "./types";
 
 @injectable()
 class Service {
@@ -14,6 +18,10 @@ class Service {
 
   async updateStatus(params: UpdateComplaintStatusParams) {
     return this.Client.updateStatus(params);
+  }
+
+  async createMine(params: CreateComplaintMineParams) {
+    return this.Client.createMine(params);
   }
 }
 

@@ -5,7 +5,7 @@ export interface Complaint {
   title: string;
   text: string;
   attachmentUrl?: string;
-  status: "received" | "in_progress" | "resolved";
+  status: "Pending" | "InReview" | "Resolved" | "Rejected";
   createdAt: string;
 }
 

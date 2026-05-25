@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import { Button, Checkbox, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
 import { useMirror } from "./store";
@@ -20,6 +21,7 @@ const UI = () => {
   return (
     <Modal opened={isOpen} onClose={onClose} title="Manage Permissions" centered>
       <Stack>
+          <MutationErrorAlert />
         <Text size="sm">User: {user?.fullName || "-"}</Text>
         <Text size="sm" mb={4}>Current Permissions:</Text>
         <Stack gap={4} mb={8}>

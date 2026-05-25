@@ -63,7 +63,7 @@ export async function AboutHeritageTimeline() {
               alt=""
               fill
               className="object-cover"
-              unoptimized
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
             <GlassCard className="absolute bottom-6 start-6 end-6 border border-white/40 p-6 md:bottom-8 md:start-8 md:end-8">

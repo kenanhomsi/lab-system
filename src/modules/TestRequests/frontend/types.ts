@@ -3,6 +3,7 @@ type FindAllQueryFrontendParams = {
   PageSize?: string;
   MedicalTestId?: string;
   Status?: string;
+  Search?: string;
   SortBy?: string;
   SortDesc?: string;
 };
@@ -16,7 +17,7 @@ type FindOneTestRequestFrontendParams = {
 };
 
 type CreateTestRequestFrontendParams = {
-  medicalTestId: number;
+  medicalTestIds: number[];
   requestDate: string;
   status: string;
   totalAmount: number;
@@ -25,7 +26,7 @@ type CreateTestRequestFrontendParams = {
   doctorId: string | null;
   labClientId: string | null;
   directPatientId: string | null;
-  externalPatientId: number;
+  externalPatientId: number | null;
 };
 
 type UpdateTestRequestFrontendParams = {
@@ -39,7 +40,7 @@ type UpdateTestRequestFrontendParams = {
   doctorId: string | null;
   labClientId: string | null;
   directPatientId: string | null;
-  externalPatientId: number;
+  externalPatientId: number | null;
 };
 
 type DeleteTestRequestFrontendParams = {

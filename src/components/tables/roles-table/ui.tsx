@@ -12,6 +12,14 @@ const UI = () => {
   const rolesData = useMirror("rolesData");
   const setActiveModal = useMirror("setActiveModal");
   const setSelectedRole = useMirror("setSelectedRole");
+
+  const handleRowClick = (roleId: string) => {
+    const role = rolesData?.items?.find((item) => item.id === roleId);
+    if (!role) return;
+    setSelectedRole(role);
+    setActiveModal("permissions");
+  };
+
   return (
     <Stack>
       <Table
@@ -19,17 +27,18 @@ const UI = () => {
         isLoading={isLoading}
         schema={schema}
         OnPageNumberChange={setPageNumber}
+        onRowClick={handleRowClick}
         data={rolesData?.items || []}
         paginationStatic={{
-          count: rolesData?.totalPages || 0,
-          limit: rolesData?.pageSize,
-          page: rolesData?.page,
+          count: rolesData?.totalCount || 0,
+          limit: rolesData?.pageSize || 20,
+          page: rolesData?.page || 1,
         }}
       >
         <Table.Header>
           <RolesHeader
             totalRoles={rolesData?.totalCount || 0}
-            visibleRoles={rolesData?.totalPages || 0}
+            visibleRoles={rolesData?.items?.length || 0}
             onOpenCreate={() => {
               setSelectedRole(null);
               setActiveModal("create");

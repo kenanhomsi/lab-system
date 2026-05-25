@@ -1,10 +1,11 @@
-export type ComplaintStatus = "received" | "in_progress" | "resolved";
+export type { ComplaintStatus } from "@/lib/complaint-status";
 
 export type ComplaintItem = {
   id: number;
   userId: string;
   title: string;
   description: string;
+  note: string;
   attachmentUrl: string | null;
   status: string;
   createdAt: string;

@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import {
   Alert,
@@ -18,6 +19,8 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
+import dayjs from "dayjs";
 import {
   IconCalendarEvent,
   IconCurrencyDollar,
@@ -106,7 +109,7 @@ const UI = () => {
     doctorId: string | null;
     labClientId: string | null;
     directPatientId: string | null;
-    externalPatientId: number;
+    externalPatientId: number | null;
   }) => Promise<unknown>;
 
   const onClose = props.onClose || (() => undefined);
@@ -176,7 +179,7 @@ const EditTestRequestBody = ({
     doctorId: string | null;
     labClientId: string | null;
     directPatientId: string | null;
-    externalPatientId: number;
+    externalPatientId: number | null;
   }) => Promise<unknown>;
   locale: string;
 }) => {
@@ -226,7 +229,7 @@ const EditTestRequestBody = ({
   );
 
   const showExternalPatientField = Boolean(
-    hasUserId && (partyKind === "lab" || isStaffPartyUser(sessionUser?.roles))
+    hasUserId && (partyKind === "lab" || isStaffPartyUser(sessionUser?.roles)),
   );
 
   const payloadOrNull = hasUserId && sessionUser
@@ -247,7 +250,7 @@ const EditTestRequestBody = ({
         notes: form.notes,
         metadata: form.metadata,
         externalPatientId:
-          form.externalPatientId > 0 ? form.externalPatientId : 0,
+          form.externalPatientId > 0 ? form.externalPatientId : null,
         ...party,
       };
     })()
@@ -268,6 +271,7 @@ const EditTestRequestBody = ({
 
   return (
     <Stack gap="lg">
+          <MutationErrorAlert />
       <Stepper
         className="mt-1"
         active={activeStep}
@@ -277,6 +281,7 @@ const EditTestRequestBody = ({
         <Stepper.Step label={t("step1Label")} description={t("step1RequestDetails")}>
           <Paper withBorder radius="lg" p="md">
             <Stack gap="md">
+        <MutationErrorAlert />
               <Group justify="space-between" wrap="nowrap">
                 <Title order={5}>{t("requestDetailsTitle")}</Title>
                 <Text size="xs" c="dimmed">
@@ -327,16 +332,15 @@ const EditTestRequestBody = ({
                     setForm({ ...form, medicalTestId: v ? Number(v) : 0 })
                   }
                 />
-                <TextInput
+                <DatePickerInput
                   label={t("fieldRequestDate")}
                   withAsterisk
-                  type="date"
                   placeholder={t("datePlaceholder")}
                   description={t("fieldRequestDateDescEdit")}
-                  value={form.requestDate}
+                  value={form.requestDate ? dayjs(form.requestDate).toDate() : null}
                   leftSection={<IconCalendarEvent size={16} />}
-                  onChange={(e) =>
-                    setForm({ ...form, requestDate: e.currentTarget.value })
+                  onChange={(date) =>
+                    setForm({ ...form, requestDate: date ? dayjs(date).format("YYYY-MM-DD") : "" })
                   }
                 />
                 <Select
@@ -436,6 +440,7 @@ const EditTestRequestBody = ({
         <Stepper.Step label={t("step2Label")} description={t("step2NotesMeta")}>
           <Paper withBorder radius="lg" p="md">
             <Stack gap="md">
+        <MutationErrorAlert />
               <Title order={5}>{t("additionalInfoTitle")}</Title>
               <Divider />
               <Textarea

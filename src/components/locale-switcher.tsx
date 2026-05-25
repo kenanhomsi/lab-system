@@ -42,7 +42,7 @@ export function LocaleSwitcher({ className, stretch }: Props) {
             "rounded-md px-2 py-1 uppercase transition-colors",
             stretch && "min-h-9 flex-1 rounded-full px-3 py-2 text-[11px] font-bold tracking-wide",
             locale === loc
-              ? "bg-primary text-on-primary shadow-sm"
+              ? "bg-[#009cc2] text-white shadow-sm"
               : "text-on-surface-variant hover:bg-surface-container-high",
           )}
         >

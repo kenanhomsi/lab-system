@@ -3,6 +3,7 @@
 import { isClinicalPatientUser } from "@/components/modals/test-requests/party-ids";
 import { Anchor, Badge, Group, Text } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
+import { getTestRequestCreatorLabel } from "../get-test-request-creator-label";
 import { TestResultItem } from "../types";
 import { ActionsRender } from "./columns-rendering/actions-render";
 import { DateRender } from "./columns-rendering/date-render";
@@ -31,9 +32,17 @@ function cellText(value: unknown, whenEmpty = "-"): string {
 }
 
 function statusBadgeColor(status: string): string {
-  const normalized = status.trim().toLowerCase();
+  const normalized = status.trim().toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_");
   if (normalized === "pending") return "orange";
-  if (normalized === "failed" || normalized === "cancelled" || normalized === "canceled") return "red";
+  if (normalized === "in_progress") return "blue";
+  if (
+    normalized === "failed" ||
+    normalized === "cancelled" ||
+    normalized === "canceled" ||
+    normalized === "rejected"
+  ) {
+    return "red";
+  }
   if (
     normalized === "completed" ||
     normalized === "complete" ||
@@ -42,6 +51,18 @@ function statusBadgeColor(status: string): string {
     return "teal";
   }
   return "gray";
+}
+
+function translateStatusLabel(raw: string, t: TFunction): string {
+  const normalized = raw.trim().toLowerCase().replace(/\s+/g, " ").replace(/-/g, "_");
+  if (normalized === "pending") return t("statusPending");
+  if (normalized === "in_progress" || normalized === "in progress") return t("statusInProgress");
+  if (normalized === "completed" || normalized === "complete" || normalized === "ready") {
+    return t("statusCompleted");
+  }
+  if (normalized === "cancelled" || normalized === "canceled") return t("statusCancelled");
+  if (normalized === "failed" || normalized === "rejected") return t("statusRejected");
+  return raw.trim() || "—";
 }
 
 const getTestResultsColumns = (
@@ -64,7 +85,7 @@ const getTestResultsColumns = (
     {
       accessor: "testRequestId",
       title: t("colTestRequestId"),
-      width: "9%",
+      width: "8%",
       render: (row) => (
         <Text size="sm" py={4} style={numStyle}>
           {row.testRequestId}
@@ -72,10 +93,23 @@ const getTestResultsColumns = (
       ),
     },
     {
+      accessor: "testRequestCreatedByFullName",
+      title: t("colRequestCreatedBy"),
+      width: "14%",
+      render: (row) => {
+        const label = getTestRequestCreatorLabel(row);
+        return (
+          <Text size="sm" py={4} c={label ? undefined : "dimmed"}>
+            {label || "—"}
+          </Text>
+        );
+      },
+    },
+    {
       accessor: "resultDate",
       title: t("colResultDate"),
       width: "12%",
-      render: (row) => <DateRender value={row.resultDate} />,
+      render: (row) => <DateRender value={row.resultDate} context="result" />,
     },
     {
       accessor: "resultData",
@@ -106,17 +140,18 @@ const getTestResultsColumns = (
       title: t("tableStatus"),
       width: "10%",
       render: (row) => {
-        const label = cellText(row.status, "");
+        const raw = cellText(row.status, "");
+        const label = translateStatusLabel(raw, t);
         return (
           <Badge
-            color={statusBadgeColor(label)}
+            color={statusBadgeColor(raw)}
             variant="light"
             radius="sm"
             size="sm"
             tt="none"
-            styles={{ label: { textTransform: "none" } }}
+            styles={{ label: { textTransform: "none", fontWeight: 500 } }}
           >
-            {label || "—"}
+            {label}
           </Badge>
         );
       },
@@ -125,7 +160,7 @@ const getTestResultsColumns = (
       accessor: "createdAt",
       title: t("colCreatedAt"),
       width: "12%",
-      render: (row) => <DateRender value={row.createdAt} />,
+      render: (row) => <DateRender value={row.createdAt} context="created" />,
     },
   ];
 

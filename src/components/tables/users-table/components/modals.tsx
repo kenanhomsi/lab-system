@@ -6,6 +6,7 @@ import {
   EditUserModal,
   PermissionsModal,
   RolesModal,
+  UserDetailModal,
 } from "@/components/modals/users";
 import { useMirror } from "../store";
 
@@ -19,6 +20,11 @@ const Modals = () => {
   return (
     <>
       <CreateUserModal isOpen={activeModal === "create"} onClose={close} />
+      <UserDetailModal
+        isOpen={activeModal === "view"}
+        onClose={close}
+        user={selectedUser}
+      />
       <EditUserModal
         isOpen={activeModal === "edit"}
         onClose={close}

@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { getTestsCatalogPublic } from "@/lib/clients/website-public-client";
 
 type Test = {
   id: string;
@@ -28,9 +29,10 @@ export function TestsPage() {
   const alphabet = locale === "ar" ? ALPHABET_AR : ALPHABET_EN;
 
   useEffect(() => {
-    fetch("/api/tests")
-      .then((res) => res.json())
-      .then((data) => setTests(data))
+    getTestsCatalogPublic()
+      .then((data) =>
+        setTests(Array.isArray(data) ? (data as Test[]) : []),
+      )
       .catch(() => setTests([]))
       .finally(() => setLoading(false));
   }, []);

@@ -1,5 +1,12 @@
 .dashboardRoot {
   min-height: 100vh;
+  --primary: #009cc2;
+  --color-primary: #009cc2;
+}
+
+:global(html.dark) .dashboardRoot {
+  --primary: #5bd3f5;
+  --color-primary: #5bd3f5;
 }
 
 .sectionPadding {

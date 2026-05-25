@@ -5,6 +5,10 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  getVacanciesPublic,
+  postCareersApplication,
+} from "@/lib/clients/website-public-client";
 
 type Vacancy = {
   id: string;
@@ -24,9 +28,10 @@ export function CareersPage() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    fetch("/api/vacancies")
-      .then((res) => res.json())
-      .then((data) => setVacancies(data))
+    getVacanciesPublic()
+      .then((data) =>
+        setVacancies(Array.isArray(data) ? (data as Vacancy[]) : []),
+      )
       .catch(() => setVacancies([]))
       .finally(() => setLoading(false));
   }, []);
@@ -38,14 +43,9 @@ export function CareersPage() {
     const formData = new FormData(e.currentTarget);
 
     try {
-      const res = await fetch("/api/careers/apply", {
-        method: "POST",
-        body: formData,
-      });
-      if (res.ok) {
-        setSuccess(true);
-        (e.target as HTMLFormElement).reset();
-      }
+      await postCareersApplication(formData);
+      setSuccess(true);
+      (e.target as HTMLFormElement).reset();
     } catch {
       // silently fail
     } finally {

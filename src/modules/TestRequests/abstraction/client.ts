@@ -9,7 +9,21 @@ type FindAllParams = {
   endpoint: string;
 };
 
-type sharedCreateAndUpdateParams = {
+type SharedCreateParams = {
+  endpoint: string;
+  medicalTestIds: number[];
+  requestDate: string;
+  status: string;
+  totalAmount: number;
+  notes: string;
+  metadata: string;
+  doctorId: string | null;
+  labClientId: string | null;
+  directPatientId: string | null;
+  externalPatientId: number | null;
+};
+
+type SharedUpdateParams = {
   endpoint: string;
   medicalTestId: number;
   requestDate: string;
@@ -20,7 +34,7 @@ type sharedCreateAndUpdateParams = {
   doctorId: string | null;
   labClientId: string | null;
   directPatientId: string | null;
-  externalPatientId: number;
+  externalPatientId: number | null;
 };
 
 type SharedDeleteParams = {
@@ -37,7 +51,7 @@ abstract class Client<T extends AxiosState> {
     return res;
   }
 
-  protected sharedCreate(params: sharedCreateAndUpdateParams) {
+  protected sharedCreate(params: SharedCreateParams) {
     const { endpoint, ...body } = params;
     const res = this.axiosClient
       .post({ endpoint: endpoint })
@@ -52,7 +66,7 @@ abstract class Client<T extends AxiosState> {
     return res;
   }
 
-  protected sharedUpdate(params: sharedCreateAndUpdateParams) {
+  protected sharedUpdate(params: SharedUpdateParams) {
     const { endpoint, ...body } = params;
     const res = this.axiosClient
       .put({ endpoint: endpoint })

@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import { Button, Group, Modal, NumberInput, Stack, TextInput } from "@mantine/core";
 import { useMemo, useState } from "react";
@@ -53,7 +54,8 @@ const UI = () => {
         },
       }}
     >
-      <EditTestResultBody
+                <MutationErrorAlert />
+<EditTestResultBody
         key={initial?.id ?? "empty"}
         initial={initial}
         onClose={onClose}

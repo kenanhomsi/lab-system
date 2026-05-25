@@ -1,5 +1,10 @@
 import sanitizeHtml from "sanitize-html";
 import type { AppLocale } from "@/i18n/routing";
+import type {
+  FetchMetwaliBlogResult,
+  MetwaliBlogPost,
+  MetwaliPostDetail,
+} from "@/types/metwali-blog";
 
 const WP_BASE = "https://metwalilabs.com";
 const CAT_BLOG = 105;
@@ -160,16 +165,6 @@ function prepareWpArticleHtml(raw: string): string {
   return sanitizeWpContent(fixLazyWpImages(raw));
 }
 
-export type MetwaliBlogPost = {
-  id: number;
-  date: string;
-  title: string;
-  excerpt: string;
-  featuredImageUrl: string | null;
-  featuredImageAlt: string | null;
-  useArabicContentOnEn: boolean;
-};
-
 function featuredFromListRow(row: WpListPost): {
   url: string | null;
   alt: string | null;
@@ -242,10 +237,6 @@ function mergeById(rows: WpListPost[]): WpListPost[] {
   return [...byId.values()];
 }
 
-export type FetchMetwaliBlogResult =
-  | { ok: true; posts: MetwaliBlogPost[] }
-  | { ok: false };
-
 export async function fetchMetwaliBlogPosts(
   locale: AppLocale,
 ): Promise<FetchMetwaliBlogResult> {
@@ -278,17 +269,6 @@ export async function fetchMetwaliAllPostIds(): Promise<number[]> {
   }
 }
 
-export type MetwaliPostDetail = {
-  id: number;
-  date: string;
-  title: string;
-  excerpt: string;
-  contentHtml: string;
-  featuredImageUrl: string | null;
-  featuredImageAlt: string | null;
-  useArabicContentOnEn: boolean;
-};
-
 function mapDetailToDisplay(
   row: WpDetailPost,
   locale: AppLocale,
@@ -296,7 +276,7 @@ function mapDetailToDisplay(
   const list = mapWpToDisplay(row, locale);
   const media = row._embedded?.["wp:featuredmedia"]?.[0];
   const featuredImageUrl = media?.source_url ?? null;
-  const featuredImageAlt = media?.alt_text?.trim() || null;
+  const featuredImageAlt = media?.alt_text?.trim() ?? null;
 
   return {
     id: list.id,
@@ -315,13 +295,10 @@ export async function fetchMetwaliPostById(
   locale: AppLocale,
 ): Promise<MetwaliPostDetail | null> {
   try {
-    const res = await fetch(
-      `${WP_BASE}/wp-json/wp/v2/posts/${id}?_embed`,
-      {
-        next: { revalidate: 3600 },
-        headers: { Accept: "application/json" },
-      },
-    );
+    const res = await fetch(`${WP_BASE}/wp-json/wp/v2/posts/${id}?_embed`, {
+      next: { revalidate: 3600 },
+      headers: { Accept: "application/json" },
+    });
     if (!res.ok) {
       return null;
     }

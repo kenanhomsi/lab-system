@@ -1,7 +1,13 @@
 "use client";
 
+import { extractErrorMessage } from "@/lib/error";
 import { useTranslations } from "next-intl";
+import { frontendContainer } from "@/container";
+import { authModuleNames, } from "@/modules/auth";
+import { AuthFrontendService } from "@/modules/auth/frontend/service";
 import { useMirror } from "../store";
+
+const authService = frontendContainer.get<AuthFrontendService>(authModuleNames.service);
 
 export function NewPasswordForm() {
   const t = useTranslations("auth");
@@ -32,19 +38,14 @@ export function NewPasswordForm() {
     }
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code, newPassword }),
+      await authService.ResetPassword({
+        email,
+        code: Number(code.trim()),
+        newPassword,
       });
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || t("resetError"));
-        return;
-      }
       setSuccess(true);
-    } catch {
-      setError(t("resetError"));
+    } catch (err: unknown) {
+      setError(extractErrorMessage(err, t("resetError")));
     } finally {
       setLoading(false);
     }
@@ -100,7 +101,7 @@ export function NewPasswordForm() {
         disabled={!canSubmit}
         className="clinical-gradient w-full rounded-xl py-4 font-headline font-bold text-on-primary shadow-lg shadow-primary/20 transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {loading ? t("resetting") : t("resetPassword")}
+        {t("resetPassword")}
       </button>
     </form>
   );

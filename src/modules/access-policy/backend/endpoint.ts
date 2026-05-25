@@ -1,5 +1,8 @@
 const endpoint = {
   findAll: "/api/admin/access-policies",
+  findAllTables: "/api/admin/access-policies/tables",
+  findTableFields: (tableName: string) =>
+    `/api/admin/access-policies/tables/${encodeURIComponent(tableName)}/fields`,
   create: "/api/admin/access-policies",
   validate: "/api/admin/access-policies/validate",
   findOne: (id: string) => `/api/admin/access-policies/${id}`,

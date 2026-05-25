@@ -59,12 +59,12 @@ export async function invokeLeaveConversation(
 export async function invokeSendMessage(
   connection: HubConnection,
   conversationId: string,
-  text: string,
+  options: { text: string; messageType?: number },
 ): Promise<void> {
   const request: SendMessageRequest = {
     conversationId,
-    text,
-    messageType: 1,
+    text: options.text,
+    messageType: options.messageType ?? 1,
     fileUrl: null,
     replyToId: null,
   };

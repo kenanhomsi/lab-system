@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { frontendContainer } from "@/container";
 import {
@@ -12,7 +12,9 @@ import {
   DeleteTestRequestFrontendParams,
   UpdateTestRequestFrontendParams,
 } from "@/modules/TestRequests/frontend/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "../store";
 
@@ -23,7 +25,7 @@ const deleteCommand = frontendContainer.get<DeleteTestRequestCommand>(testReques
 const TestRequestsMutations = (props: PropsWithChildren) => {
   const queryClient = useQueryClient();
 
-  const createMutation = useMutation({
+  const createMutation = useManagedMutation({
     mutationFn: async (data: CreateTestRequestFrontendParams) => {
       createCommand.init(data);
       return createCommand.exec();
@@ -31,7 +33,7 @@ const TestRequestsMutations = (props: PropsWithChildren) => {
     onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["test-requests"] }); },
   });
 
-  const updateMutation = useMutation({
+  const updateMutation = useManagedMutation({
     mutationFn: async (params: { id: string; data: Omit<UpdateTestRequestFrontendParams, "id"> }) => {
       updateCommand.init({ id: params.id, ...params.data });
       return updateCommand.exec();
@@ -39,7 +41,7 @@ const TestRequestsMutations = (props: PropsWithChildren) => {
     onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["test-requests"] }); },
   });
 
-  const deleteMutation = useMutation({
+  const deleteMutation = useManagedMutation({
     mutationFn: async (params: DeleteTestRequestFrontendParams) => {
       deleteCommand.init(params);
       return deleteCommand.exec();
@@ -53,7 +55,7 @@ const TestRequestsMutations = (props: PropsWithChildren) => {
   });
   useMirrorRegistry("deleteMutation", { mutateAsync: async (id: string) => deleteMutation.mutateAsync({ id }) });
 
-  return <>{props.children}</>;
+  return <MutationErrorProvider>{props.children}</MutationErrorProvider>;
 };
 
 export { TestRequestsMutations };

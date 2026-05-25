@@ -18,8 +18,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 - All new pages must be Server Components unless they need client interactivity
 - Use route groups `(auth)`, `(dashboard)` for organizing routes without affecting URLs
-- Place business logic in `@/lib/actions` as Server Actions
-- API routes only for webhooks and external services
+- See `README_ARCHITECTURE.md` for the BFF + DI layering (frontend services → `/api/*` → backend services → upstream).
 
 ## Database & Auth
 

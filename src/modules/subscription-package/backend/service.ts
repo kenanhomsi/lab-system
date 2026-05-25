@@ -5,6 +5,7 @@ import {
   ActivateSubscriptionPackageParams,
   CreateSubscriptionPackageParams,
   DeactivateSubscriptionPackageParams,
+  FindAllPublicSubscriptionPackageParams,
   FindAllSubscriptionPackageParams,
   FindOneSubscriptionPackageParams,
   UpdateSubscriptionPackageParams,
@@ -17,6 +18,10 @@ class Service {
 
   async findAll(params: FindAllSubscriptionPackageParams) {
     return this.Client.findAll(params);
+  }
+
+  async findAllPublic(params: FindAllPublicSubscriptionPackageParams) {
+    return this.Client.findAllPublic(params);
   }
 
   async create(params: CreateSubscriptionPackageParams) {

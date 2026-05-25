@@ -7,6 +7,7 @@ import { LocaleSwitcher } from "@/components/locale-switcher";
 import { cn } from "@/lib/cn";
 
 import { BrandLogo } from "@/components/shared/brand-logo";
+import { SparkleNavbar } from "@/components/ui/sparkle-navbar";
 
 type WebsiteHeaderProps = {
   variant?: "light" | "dark";
@@ -34,6 +35,9 @@ export function WebsiteHeader({
   ];
   const isLinkActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+
+  const activeNavIndex = links.findIndex((l) => isLinkActive(l.href));
+  const navAccentColor = isDark ? "#5bd3f5" : "#009cc2";
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -93,27 +97,14 @@ export function WebsiteHeader({
             <BrandLogo variant="full" />
           </Link>
         </div>
-        <nav className="hidden items-center gap-8 md:flex">
-          {links.map((l) => {
-            const active = isLinkActive(l.href);
-            return (
-              <Link
-                key={l.href}
-                href={l.href}
-                className={cn(
-                  "text-sm font-semibold tracking-tight transition-colors",
-                  active
-                    ? "text-primary"
-                    : isDark
-                      ? "text-secondary hover:text-primary"
-                      : "text-slate-500 hover:text-primary",
-                )}
-              >
-                {l.label}
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="hidden md:flex">
+          <SparkleNavbar
+            items={links}
+            activeIndex={activeNavIndex}
+            color={navAccentColor}
+            isDark={isDark}
+          />
+        </div>
         <div className="flex shrink-0 items-center gap-3 md:gap-4">
           <LocaleSwitcher
             className={cn(
@@ -212,8 +203,8 @@ export function WebsiteHeader({
                           "block rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors",
                           active
                             ? isDark
-                              ? "bg-primary/15 text-primary"
-                              : "bg-primary/10 text-primary"
+                              ? "bg-[#009cc2]/15 text-[#009cc2]"
+                              : "bg-[#009cc2]/10 text-[#009cc2]"
                             : isDark
                               ? "text-on-surface hover:bg-white/10"
                               : "text-slate-700 hover:bg-slate-100",

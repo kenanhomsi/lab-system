@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import {
   Alert,
@@ -165,13 +166,12 @@ function CreateTestResultFormBody(props: {
 
   const resultEditorKey =
     selectedRequest !== undefined
-      ? `${selectedRequest.id}-${
-          medicalTestQuery.isError
-            ? "error"
-            : medicalTestQuery.isPending || !medicalTestQuery.data
-              ? "pending"
-              : String(medicalTestQuery.data.id)
-        }`
+      ? `${selectedRequest.id}-${medicalTestQuery.isError
+        ? "error"
+        : medicalTestQuery.isPending || !medicalTestQuery.data
+          ? "pending"
+          : String(medicalTestQuery.data.id)
+      }`
       : "none";
 
   const handleClose = () => {
@@ -186,8 +186,10 @@ function CreateTestResultFormBody(props: {
 
   return (
     <Stack gap="lg">
+      <MutationErrorAlert />
       <Paper withBorder radius="lg" p="md">
         <Stack gap="md">
+          <MutationErrorAlert />
           <Group justify="space-between" wrap="nowrap">
             <Title order={5}>{t("sectionRequestReport")}</Title>
             <Text size="xs" c="dimmed">
@@ -263,6 +265,7 @@ function CreateTestResultFormBody(props: {
 
       <Paper withBorder radius="lg" p="md">
         <Stack gap="md">
+          <MutationErrorAlert />
           <Group justify="space-between" wrap="nowrap">
             <Title order={5}>{t("sectionResultValues")}</Title>
             {medicalTestQuery.data ? (
@@ -354,14 +357,8 @@ function CreateTestResultFormBody(props: {
                 resultData,
               });
               handleClose();
-            } catch (e) {
-              const message =
-                e instanceof Error ? e.message : t("toastGenericError");
-              notifications.show({
-                title: t("toastCreateFailedTitle"),
-                message,
-                color: "red",
-              });
+            } catch {
+              // Errors are surfaced via MutationErrorAlert and global notifications.
             }
           }}
         >

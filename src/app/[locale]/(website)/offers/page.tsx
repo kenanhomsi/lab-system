@@ -1,15 +1,18 @@
 import { getLocale } from "next-intl/server";
 import { OffersFeatureFactory } from "./factory";
 import type { Offer } from "./store/api";
+import { getRequestOrigin } from "@/lib/api/request-origin";
+import { PageBannerServer } from "@/components/layout/page-banner-server";
+import { BANNER_PLACEMENT } from "@/lib/banners/locations";
 
 export const revalidate = 3600;
 
-async function fetchOffers(): Promise<Offer[]> {
+async function fetchOffers(locale: string): Promise<Offer[]> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/offers`,
-      { next: { revalidate: 3600 } },
-    );
+    const origin = await getRequestOrigin();
+    const url = new URL("/api/offers", origin);
+    url.searchParams.set("locale", locale);
+    const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
     if (!res.ok) return [];
     return res.json();
   } catch {
@@ -19,6 +22,11 @@ async function fetchOffers(): Promise<Offer[]> {
 
 export default async function Page() {
   const locale = await getLocale();
-  const offers = await fetchOffers();
-  return <OffersFeatureFactory offers={offers} locale={locale} />;
+  const offers = await fetchOffers(locale);
+  return (
+    <>
+      <PageBannerServer placement={BANNER_PLACEMENT.OFFERS} />
+      <OffersFeatureFactory offers={offers} locale={locale} />
+    </>
+  );
 }

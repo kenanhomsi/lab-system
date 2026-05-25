@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { frontendContainer } from "@/container";
 import {
@@ -9,7 +9,9 @@ import type {
   CreateExternalPatientFrontendParams,
   LinkDirectPatientFrontendParams,
 } from "@/modules/ExternalPatients/frontend/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "../store";
 
@@ -20,14 +22,14 @@ const service = frontendContainer.get<ExternalPatientsFrontendService>(
 const ExternalPatientsMutations = (props: PropsWithChildren) => {
   const queryClient = useQueryClient();
 
-  const createMutation = useMutation({
+  const createMutation = useManagedMutation({
     mutationFn: async (data: CreateExternalPatientFrontendParams) => service.create(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["external-patients"] });
     },
   });
 
-  const linkMutation = useMutation({
+  const linkMutation = useManagedMutation({
     mutationFn: async (params: LinkDirectPatientFrontendParams) =>
       service.linkDirectPatient(params),
     onSuccess: async () => {
@@ -38,7 +40,7 @@ const ExternalPatientsMutations = (props: PropsWithChildren) => {
   useMirrorRegistry("createMutation", { mutateAsync: createMutation.mutateAsync });
   useMirrorRegistry("linkMutation", { mutateAsync: linkMutation.mutateAsync });
 
-  return <>{props.children}</>;
+  return <MutationErrorProvider>{props.children}</MutationErrorProvider>;
 };
 
 export { ExternalPatientsMutations };

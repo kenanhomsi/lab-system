@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { getRequestOrigin } from "@/lib/api/request-origin";
 
 type PageProps = {
   params: Promise<{ locale: string; id: string }>;
@@ -11,10 +12,9 @@ type PageProps = {
 
 async function fetchTest(id: string) {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/tests/${id}`,
-      { next: { revalidate: 3600 } },
-    );
+    const origin = await getRequestOrigin();
+    const url = new URL(`/api/tests/${encodeURIComponent(id)}`, origin);
+    const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
     if (!res.ok) return null;
     return res.json();
   } catch {

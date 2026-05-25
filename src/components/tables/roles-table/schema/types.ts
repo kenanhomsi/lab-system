@@ -1,4 +1,4 @@
-import { RoleItem } from "../types";
+import { RoleTableItem } from "../types";
 
 type DataTableColumn<T> = {
   accessor: keyof T | string;
@@ -7,4 +7,4 @@ type DataTableColumn<T> = {
   render?: (row: T) => React.ReactNode;
 };
 
-export type { DataTableColumn, RoleItem as RolesTableRow };
+export type { DataTableColumn, RoleTableItem as RolesTableRow };

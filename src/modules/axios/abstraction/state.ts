@@ -15,7 +15,15 @@ class State {
   private endpoint: string;
   protected instance: AxiosInstance;
   private responseType: ResponseType = "json";
-  private onUpload: (progressEvent: AxiosProgressEvent) => void;
+  private onUpload?: (progressEvent: AxiosProgressEvent) => void;
+  private resetRequestState() {
+    this.headers = {};
+    this.query = {};
+    this.body = {};
+    this.formData = new FormData();
+    this.responseType = "json";
+    this.onUpload = undefined;
+  }
   setInstance(instance: AxiosInstance) {
     this.instance = instance;
   }
@@ -43,6 +51,7 @@ class State {
     return this;
   }
   setMethod(method: "get" | "post" | "put" | "patch" | "delete") {
+    this.resetRequestState();
     this.method = method;
     return this;
   }
@@ -68,26 +77,30 @@ class State {
     return this;
   }
   async perform<T = any>(): Promise<AxiosResponse<T>> {
-    if (this.method === "get" || this.method === "delete")
-      return this.instance[this.method](this.endpoint, {
+    try {
+      if (this.method === "get" || this.method === "delete")
+        return this.instance[this.method](this.endpoint, {
+          headers: this.headers,
+          params: this.query,
+          responseType: this.responseType,
+        });
+      const body =
+        this.body instanceof FormData
+          ? this.body
+          : this.method === "patch" && isEmpty(this.body)
+            ? {}
+            : isEmpty(this.body)
+              ? this.formData
+              : this.body;
+      return this.instance[this.method](this.endpoint, body, {
         headers: this.headers,
         params: this.query,
         responseType: this.responseType,
+        onUploadProgress: this.onUpload,
       });
-    const body =
-      this.body instanceof FormData
-        ? this.body
-        : this.method === "patch" && isEmpty(this.body)
-          ? {}
-          : isEmpty(this.body)
-            ? this.formData
-            : this.body;
-    return this.instance[this.method](this.endpoint, body, {
-      headers: this.headers,
-      params: this.query,
-      responseType: this.responseType,
-      onUploadProgress: this.onUpload,
-    });
+    } finally {
+      this.resetRequestState();
+    }
   }
 }
 export { State as AxiosState };

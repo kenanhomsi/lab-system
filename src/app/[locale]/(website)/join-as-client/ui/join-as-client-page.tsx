@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
+import { postClientApplicationPublic } from "@/lib/clients/website-public-client";
 
 const INPUT_CLASS =
   "w-full rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -21,15 +22,9 @@ export function JoinAsClientPage() {
     const body = Object.fromEntries(formData.entries());
 
     try {
-      const res = await fetch("/api/client-applications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (res.ok) {
-        setSuccess(true);
-        (e.target as HTMLFormElement).reset();
-      }
+      await postClientApplicationPublic(body);
+      setSuccess(true);
+      (e.target as HTMLFormElement).reset();
     } catch {
       // silently fail
     } finally {

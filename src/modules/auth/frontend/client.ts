@@ -60,7 +60,7 @@ class Client extends AuthClient<AxiosState> {
   async RefreshToken(refreshToken: string) {
     const res = await this.client
       .post({ endpoint: endpoint.refreshToken })
-      .setBody({ refreshToken })
+      .setBody({ token: refreshToken })
       .perform<RenewAccessTokenSchemaType>();
     return unwrapRenewAccessTokenResponse(res.data);
   }
@@ -87,6 +87,14 @@ class Client extends AuthClient<AxiosState> {
     return res.data;
   }
 
+  async ForgotPassword(params: CheckEmailFrontendProps) {
+    const res = await this.client
+      .post({ endpoint: endpoint.forgotPassword })
+      .setBody(params)
+      .perform();
+    return res.data;
+  }
+
   async ResetPassword(params: ResetPasswordFrontendProps) {
     const body = params;
     const res = await super
@@ -100,4 +108,9 @@ class Client extends AuthClient<AxiosState> {
 }
 
 export { Client as AuthFrontClient };
-export type { loginParams, RegisterFrontendProps };
+export type {
+  CheckEmailFrontendProps,
+  loginParams,
+  RegisterFrontendProps,
+  ResetPasswordFrontendProps,
+};

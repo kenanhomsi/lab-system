@@ -5,6 +5,7 @@ import { DataTableColumn } from "./types";
 import { UserItem } from "../types";
 import { ActionsRender } from "./columns-rendering/actions-render";
 import { DateRender } from "./columns-rendering/date-render";
+import { RolesRender } from "./columns-rendering/roles-render";
 import { StatusBadge } from "./columns-rendering/status-badge";
 import { UserAvatar } from "./columns-rendering/user-avatar";
 import { dataTableSurface } from "@/components/table";
@@ -16,7 +17,7 @@ const getUsersColumns = (t: TFunction, tc: TFunction): DataTableColumn<UserItem>
     {
       accessor: "fullName",
       title: t("colFullName"),
-      width: "22%",
+      width: "20%",
       render: (row) => (
         <Group gap="sm" wrap="nowrap">
           <UserAvatar fullName={row.fullName} />
@@ -32,9 +33,15 @@ const getUsersColumns = (t: TFunction, tc: TFunction): DataTableColumn<UserItem>
       ),
     },
     {
+      accessor: "roles",
+      title: t("colRoles"),
+      width: "12%",
+      render: (row) => <RolesRender roles={row.roles} />,
+    },
+    {
       accessor: "city",
       title: t("colCity"),
-      width: "10%",
+      width: "9%",
       render: (row) => (
         <Text
           size="sm"
@@ -48,7 +55,7 @@ const getUsersColumns = (t: TFunction, tc: TFunction): DataTableColumn<UserItem>
     {
       accessor: "phoneNumber",
       title: t("colPhone"),
-      width: "14%",
+      width: "12%",
       render: (row) => (
         <Text
           size="sm"
@@ -64,7 +71,7 @@ const getUsersColumns = (t: TFunction, tc: TFunction): DataTableColumn<UserItem>
     {
       accessor: "isActive",
       title: t("tableStatus"),
-      width: "10%",
+      width: "9%",
       render: (row) => (
         <StatusBadge
           value={row.isActive}
@@ -77,7 +84,7 @@ const getUsersColumns = (t: TFunction, tc: TFunction): DataTableColumn<UserItem>
     {
       accessor: "emailConfirmed",
       title: t("colConfirmed"),
-      width: "12%",
+      width: "10%",
       render: (row) => (
         <StatusBadge
           value={row.emailConfirmed}
@@ -90,7 +97,7 @@ const getUsersColumns = (t: TFunction, tc: TFunction): DataTableColumn<UserItem>
     {
       accessor: "createdAt",
       title: t("colCreatedAt"),
-      width: "14%",
+      width: "12%",
       render: (row) => <DateRender value={row.createdAt} />,
     },
     {

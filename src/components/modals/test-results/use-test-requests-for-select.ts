@@ -9,7 +9,7 @@ const service = frontendContainer.get<TestRequestFrontendService>(
   testRequestModuleNames.service,
 );
 
-/** Backend responds with `{ success, message, data: TestRequestItem[] }` or a bare array. */
+/** Accept bare arrays plus legacy/new paginated envelopes from the backend/BFF. */
 function extractRows(payload: unknown): TestRequestItem[] {
   if (Array.isArray(payload)) {
     return payload;
@@ -21,6 +21,25 @@ function extractRows(payload: unknown): TestRequestItem[] {
     Array.isArray((payload as { data: unknown }).data)
   ) {
     return (payload as { data: TestRequestItem[] }).data;
+  }
+  if (
+    payload !== null &&
+    typeof payload === "object" &&
+    "data" in payload &&
+    (payload as { data: unknown }).data !== null &&
+    typeof (payload as { data: unknown }).data === "object" &&
+    Array.isArray(
+      ((payload as { data: Record<string, unknown> }).data as Record<string, unknown>).items,
+    )
+  ) {
+    return ((payload as { data: { items: TestRequestItem[] } }).data.items ?? []);
+  }
+  if (
+    payload !== null &&
+    typeof payload === "object" &&
+    Array.isArray((payload as { items?: unknown }).items)
+  ) {
+    return (payload as { items: TestRequestItem[] }).items;
   }
   throw new Error("Failed to fetch test requests");
 }

@@ -33,7 +33,7 @@ export async function DepartmentsSection() {
                 width={400}
                 height={256}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                unoptimized
+                sizes="(max-width: 768px) 100vw, 33vw"
               />
             </div>
             <div className="p-8">
@@ -55,10 +55,10 @@ export async function DepartmentsSection() {
                 {t("immuneBody")}
               </p>
               <div className="flex flex-wrap gap-4">
-                <span className="rounded bg-slate-100 px-3 py-1 text-[10px] font-black uppercase dark:bg-slate-800">
+                <span className="rounded bg-primary-container px-3 py-1 text-[10px] font-black uppercase text-on-primary-container">
                   {t("immuneChip1")}
                 </span>
-                <span className="rounded bg-slate-100 px-3 py-1 text-[10px] font-black uppercase dark:bg-slate-800">
+                <span className="rounded bg-primary-container px-3 py-1 text-[10px] font-black uppercase text-on-primary-container">
                   {t("immuneChip2")}
                 </span>
               </div>
@@ -70,7 +70,7 @@ export async function DepartmentsSection() {
                 width={600}
                 height={400}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                unoptimized
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
           </div>

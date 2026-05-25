@@ -1,0 +1,1 @@
+export { MyComplaintsTable } from "./factory";

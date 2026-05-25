@@ -8,7 +8,7 @@ const State = ({ children }: PropsWithChildren) => {
   useMirrorRegistry("isSubmitting", isSubmitting);
   useMirrorRegistry("setIsSubmitting", setIsSubmitting);
   useMirrorRegistry("form", {
-    medicalTestId: 0,
+    medicalTestIds: [] as number[],
     requestDate: "",
     status: "pending",
     totalAmount: 0,

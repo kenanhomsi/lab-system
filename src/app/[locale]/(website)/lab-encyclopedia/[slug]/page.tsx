@@ -3,6 +3,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
+import { getRequestOrigin } from "@/lib/api/request-origin";
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -10,10 +11,9 @@ type PageProps = {
 
 async function fetchTestBySlug(slug: string) {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/tests/${slug}`,
-      { next: { revalidate: 3600 } },
-    );
+    const origin = await getRequestOrigin();
+    const url = new URL(`/api/tests/${encodeURIComponent(slug)}`, origin);
+    const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
     if (!res.ok) return null;
     return res.json();
   } catch {

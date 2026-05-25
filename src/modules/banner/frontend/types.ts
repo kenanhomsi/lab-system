@@ -9,6 +9,10 @@ type FindAllPublicBannerParams = {
   location?: string;
 };
 
+type DeleteBannerParams = {
+  id: string;
+};
+
 type CreateBannerParams = {
   title: string;
   type: string;
@@ -24,4 +28,9 @@ type CreateBannerParams = {
   Media: File;
 };
 
-export type { CreateBannerParams, FindAllBannerParams, FindAllPublicBannerParams };
+export type {
+  CreateBannerParams,
+  DeleteBannerParams,
+  FindAllBannerParams,
+  FindAllPublicBannerParams,
+};

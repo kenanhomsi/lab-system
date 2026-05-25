@@ -67,5 +67,6 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  // Exclude /hubs — SignalR negotiate/WebSocket must not get a locale prefix.
+  matcher: ["/((?!api|hubs|_next|_vercel|.*\\..*).*)"],
 };

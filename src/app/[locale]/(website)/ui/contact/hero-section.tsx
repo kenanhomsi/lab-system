@@ -42,7 +42,7 @@ export async function ContactHeroSection() {
           fill
           className="object-cover opacity-20"
           priority
-          unoptimized
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(248,249,252,0.88)_0%,rgba(219,234,254,0.72)_50%,rgba(248,249,252,0.92)_100%)]" />
       </div>

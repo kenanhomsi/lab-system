@@ -2,6 +2,7 @@
 
 import { ActionIcon, Group, Tooltip } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import { useMirror } from "../../store";
 import { MedicalTestItem } from "../../types";
 
@@ -10,6 +11,7 @@ type Props = {
 };
 
 const ActionsRender = ({ row }: Props) => {
+  const t = useTranslations("admin.common");
   const setSelectedMedicalTest = useMirror("setSelectedMedicalTest");
   const setActiveModal = useMirror("setActiveModal");
 
@@ -20,7 +22,7 @@ const ActionsRender = ({ row }: Props) => {
 
   return (
     <Group gap={4} wrap="nowrap" justify="flex-end">
-      <Tooltip label="Edit" withArrow position="top">
+      <Tooltip label={t("edit")} withArrow position="top">
         <ActionIcon
           variant="subtle"
           color="blue"
@@ -35,7 +37,7 @@ const ActionsRender = ({ row }: Props) => {
         </ActionIcon>
       </Tooltip>
 
-      <Tooltip label="Delete" withArrow position="top">
+      <Tooltip label={t("delete")} withArrow position="top">
         <ActionIcon
           variant="subtle"
           color="red"

@@ -1,3 +1,5 @@
+import type { BannerPlacement } from "@/lib/banners/locations";
+
 export type BannerItem = {
   id: string;
   title: string;
@@ -25,7 +27,7 @@ export type CreateBannerRequest = {
   internalLink: string;
   externalLink: string;
   targetType: string;
-  location: string;
+  location: BannerPlacement;
   displayOrder: number;
   isActive: boolean;
   visibilityRulesJson: string;

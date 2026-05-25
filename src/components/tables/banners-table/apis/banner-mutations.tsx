@@ -1,6 +1,8 @@
-"use client";
+﻿"use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "../store";
 import { CreateBannerRequest } from "../types";
@@ -11,7 +13,7 @@ const BannerMutations = ({ children }: PropsWithChildren) => {
     const queryClient = useQueryClient();
     const bannerService = frontendContainer.get<BannerFrontendService>(bannerModuleNames.service);
 
-    const createBannerMutation = useMutation({
+    const createBannerMutation = useManagedMutation({
         mutationFn: async (payload: CreateBannerRequest) => {
             return bannerService.create({
                 title: payload.title,
@@ -37,15 +39,9 @@ const BannerMutations = ({ children }: PropsWithChildren) => {
         createBannerMutation.mutateAsync(payload),
     );
 
-    const deleteBannerMutation = useMutation({
+    const deleteBannerMutation = useManagedMutation({
         mutationFn: async (id: string) => {
-            const res = await fetch(`/api/admin/banners/${id}`, {
-                method: "DELETE",
-                credentials: "same-origin",
-            });
-            if (!res.ok) {
-                throw new Error("Failed to delete banner");
-            }
+            await bannerService.delete({ id });
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["admin-banners"] });
@@ -55,7 +51,7 @@ const BannerMutations = ({ children }: PropsWithChildren) => {
     useMirrorRegistry("deleteBanner", async (id: string) =>
         deleteBannerMutation.mutateAsync(id),
     );
-    return <>{children}</>;
+    return <MutationErrorProvider>{children}</MutationErrorProvider>;
 };
 
 export { BannerMutations };

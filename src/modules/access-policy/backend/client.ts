@@ -9,6 +9,8 @@ import {
   DisableAccessPolicyParams,
   EnableAccessPolicyParams,
   FindAllAccessPolicyParams,
+  FindAllAccessPolicyTablesParams,
+  FindAccessPolicyTableFieldsParams,
   FindOneAccessPolicyParams,
   UpdateAccessPolicyParams,
   ValidateAccessPolicyParams,
@@ -44,7 +46,9 @@ function normalizeListPayload(body: unknown): AccessPolicyDto[] {
   return [];
 }
 
-function writeBodyFromPayload(payload: AccessPolicyWritePayload): Record<string, unknown> {
+function writeBodyFromPayload(
+  payload: AccessPolicyWritePayload,
+): Record<string, unknown> {
   const {
     resource,
     action,
@@ -83,6 +87,26 @@ class Client extends AccessPolicyClient<BackendState> {
       .withAuth(params.token)
       .perform<unknown>();
     return normalizeListPayload(res.data);
+  }
+
+  async findAllTables(params: FindAllAccessPolicyTablesParams) {
+    const res = await super
+      .sharedFindAll({
+        endpoint: endpoint.findAllTables,
+      })
+      .withAuth(params.token)
+      .perform<unknown>();
+    return res.data;
+  }
+
+  async findTableFields(params: FindAccessPolicyTableFieldsParams) {
+    const res = await super
+      .sharedFindAll({
+        endpoint: endpoint.findTableFields(params.tableName),
+      })
+      .withAuth(params.token)
+      .perform<unknown>();
+    return res.data;
   }
 
   async create(params: CreateAccessPolicyParams) {

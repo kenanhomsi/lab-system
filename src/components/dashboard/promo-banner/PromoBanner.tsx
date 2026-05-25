@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { frontendContainer } from "@/container";
-import { bannerModuleNames, BannerFrontendService } from "@/modules/banner";
+import {
+  type BannerPlacement,
+  useBannerCarousel,
+  usePublicBanners,
+} from "@/lib/banners";
 import type { BannerItem } from "@/types/banner";
 
 type PromoBannerProps = {
-  location: string;
+  location: BannerPlacement;
 };
-
-const ROTATE_EVERY_MS = 5000;
 
 const isVideoUrl = (url: string) => /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
 
@@ -21,49 +21,30 @@ export function PromoBanner({ location }: PromoBannerProps) {
   const locale = useLocale();
   const isRtl = locale === "ar";
   const dismissKey = `promo-banner-dismissed-${location}`;
-  const [activeIdx, setActiveIdx] = useState(0);
   const [dismissed, setDismissed] = useState(
     () =>
       typeof window !== "undefined" &&
       window.sessionStorage.getItem(dismissKey) === "1",
   );
-  const bannerService = frontendContainer.get<BannerFrontendService>(
-    bannerModuleNames.service,
-  );
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["website-banners", location],
-    queryFn: async () =>
-      bannerService.findAllPublic({
-        location,
-      }),
-    staleTime: 1000 * 60,
+  const { banners: items, isLoading } = usePublicBanners({
+    placement: location,
+    fallbackToHomepage: false,
   });
 
-  const items = useMemo(
-    () =>
-      (Array.isArray(data) ? data : [])
-        .filter((item) => item.isActive)
-        .sort((a, b) => a.displayOrder - b.displayOrder),
-    [data],
-  );
-
-  useEffect(() => {
-    if (items.length <= 1 || dismissed) return;
-    const timer = window.setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % items.length);
-    }, ROTATE_EVERY_MS);
-    return () => window.clearInterval(timer);
-  }, [dismissed, items.length]);
+  const { activeIdx, setActiveIdx } = useBannerCarousel({
+    count: items.length,
+    enabled: items.length > 1 && !dismissed,
+  });
 
   if (dismissed || isLoading || items.length === 0) return null;
 
-  const safeActiveIdx = Math.min(activeIdx, items.length - 1);
-  const active = items[safeActiveIdx] as BannerItem;
+  const active = items[activeIdx] as BannerItem;
   const href = active.internalLink || active.externalLink || "#";
   const isExternal = !!active.externalLink && !active.internalLink;
   const mediaUrl = active.mediaUrl;
   const mediaIsVideo = isVideoUrl(mediaUrl);
+  const slideLabelPrefix = locale === "ar" ? "الانتقال إلى الشريحة" : "Go to slide";
 
   const handleDismiss = () => {
     setDismissed(true);
@@ -148,6 +129,7 @@ export function PromoBanner({ location }: PromoBannerProps) {
             background: "rgba(0,0,0,0.15)",
             color: "white",
             cursor: "pointer",
+            zIndex: 2,
           }}
         >
           ×
@@ -167,6 +149,36 @@ export function PromoBanner({ location }: PromoBannerProps) {
             {body}
           </Link>
         )}
+
+        {items.length > 1 ? (
+          <div
+            style={{
+              position: "absolute",
+              bottom: 10,
+              [isRtl ? "left" : "right"]: 10,
+              display: "flex",
+              gap: 6,
+            }}
+          >
+            {items.map((item, idx) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveIdx(idx)}
+                aria-label={`${slideLabelPrefix} ${idx + 1}: ${item.title}`}
+                aria-current={idx === activeIdx}
+                style={{
+                  width: idx === activeIdx ? 22 : 8,
+                  height: 8,
+                  borderRadius: 99,
+                  border: "none",
+                  cursor: "pointer",
+                  background: idx === activeIdx ? "white" : "rgba(255,255,255,0.35)",
+                }}
+              />
+            ))}
+          </div>
+        ) : null}
       </div>
     </section>
   );

@@ -4,6 +4,12 @@ type FindAllAccessPolicyFrontendParams = {
   query?: Record<string, string | undefined>;
 };
 
+type FindAllAccessPolicyTablesFrontendParams = void;
+
+type FindAccessPolicyTableFieldsFrontendParams = {
+  tableName: string;
+};
+
 type FindOneAccessPolicyFrontendParams = {
   id: string;
 };
@@ -34,6 +40,8 @@ export type {
   DisableAccessPolicyFrontendParams,
   EnableAccessPolicyFrontendParams,
   FindAllAccessPolicyFrontendParams,
+  FindAllAccessPolicyTablesFrontendParams,
+  FindAccessPolicyTableFieldsFrontendParams,
   FindOneAccessPolicyFrontendParams,
   UpdateAccessPolicyFrontendParams,
   ValidateAccessPolicyFrontendParams,

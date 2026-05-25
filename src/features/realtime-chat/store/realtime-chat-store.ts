@@ -1,8 +1,12 @@
 "use client";
 
 import { create } from "zustand";
+import { chatMessageToReceivePayload } from "../utils/chat-helpers";
 import type {
+  ChatMessage,
   ConnectionStatusLabel,
+  Conversation,
+  ConversationUpdatedPayload,
   OnlineUser,
   RealtimeLogEntry,
   ReceiveMessagePayload,
@@ -14,12 +18,15 @@ export interface RealtimeChatState {
   chatError: string | null;
   onlineUsersError: string | null;
   logs: RealtimeLogEntry[];
+  conversations: Conversation[];
   openConversationIds: string[];
   activeConversationId: string | null;
   onlineUsersById: Record<string, OnlineUser>;
   presenceConnectionsByUser: Record<string, string[]>;
   messagesByConversation: Record<string, ReceiveMessagePayload[]>;
   typingByConversation: Record<string, Record<string, boolean>>;
+  hubsConnected: boolean;
+  conversationListVersion: number;
 }
 
 export interface RealtimeChatActions {
@@ -27,11 +34,19 @@ export interface RealtimeChatActions {
   setOnlineUsersStatus: (status: ConnectionStatusLabel) => void;
   setChatError: (error: string | null) => void;
   setOnlineUsersError: (error: string | null) => void;
+  setHubsConnected: (connected: boolean) => void;
   pushLog: (entry: Omit<RealtimeLogEntry, "id" | "at">) => void;
   clearLogs: () => void;
+  setConversations: (conversations: Conversation[]) => void;
   setActiveConversation: (conversationId: string | null) => void;
   markConversationOpen: (conversationId: string) => void;
   markConversationClosed: (conversationId: string) => void;
+  setHistoryMessages: (
+    conversationId: string,
+    messages: ChatMessage[],
+  ) => void;
+  updateConversationUpdated: (payload: ConversationUpdatedPayload) => void;
+  bumpConversationListVersion: () => void;
   upsertOnlineUserConnection: (user: OnlineUser) => void;
   removeOnlineUserConnection: (payload: {
     userId: string;
@@ -45,6 +60,21 @@ export interface RealtimeChatActions {
     isTyping: boolean;
   }) => void;
   clearTypingConversation: (conversationId: string) => void;
+  markConversationMessagesRead: (
+    conversationId: string,
+    upToMessageId?: string,
+  ) => void;
+  markMessagePendingAttachment: (
+    conversationId: string,
+    messageId: string,
+    meta: { fileName: string; fileType: string },
+  ) => void;
+  updateMessageFileUrl: (
+    conversationId: string,
+    messageId: string,
+    fileUrl: string,
+    meta?: { fileName?: string; fileType?: string },
+  ) => void;
   resetRealtimeState: () => void;
 }
 
@@ -54,12 +84,15 @@ const DEFAULT_STATE: RealtimeChatState = {
   chatError: null,
   onlineUsersError: null,
   logs: [],
+  conversations: [],
   openConversationIds: [],
   activeConversationId: null,
   onlineUsersById: {},
   presenceConnectionsByUser: {},
   messagesByConversation: {},
   typingByConversation: {},
+  hubsConnected: false,
+  conversationListVersion: 0,
 };
 
 function newLogId(): string {
@@ -73,6 +106,12 @@ export const useRealtimeChatStore = create<RealtimeChatState & RealtimeChatActio
     setOnlineUsersStatus: (onlineUsersStatus) => set({ onlineUsersStatus }),
     setChatError: (chatError) => set({ chatError }),
     setOnlineUsersError: (onlineUsersError) => set({ onlineUsersError }),
+    setHubsConnected: (hubsConnected) => set({ hubsConnected }),
+    setConversations: (conversations) => set({ conversations }),
+    bumpConversationListVersion: () =>
+      set((state) => ({
+        conversationListVersion: state.conversationListVersion + 1,
+      })),
     pushLog: (entry) =>
       set((state) => ({
         logs: [...state.logs.slice(-399), { ...entry, at: Date.now(), id: newLogId() }],
@@ -117,6 +156,50 @@ export const useRealtimeChatStore = create<RealtimeChatState & RealtimeChatActio
           typingByConversation: nextTyping,
         };
       }),
+    setHistoryMessages: (conversationId, messages) =>
+      set((state) => {
+        const normalized = conversationId.trim();
+        if (!normalized) return state;
+
+        const historyPayloads = messages.map(chatMessageToReceivePayload);
+        const live = state.messagesByConversation[normalized] ?? [];
+        const historyIds = new Set(historyPayloads.map((m) => m.messageId));
+        const liveOnly = live.filter((m) => !historyIds.has(m.messageId));
+
+        return {
+          ...state,
+          messagesByConversation: {
+            ...state.messagesByConversation,
+            [normalized]: [...historyPayloads, ...liveOnly],
+          },
+        };
+      }),
+    updateConversationUpdated: (payload) =>
+      set((state) => {
+        const conversationId = payload.conversationId?.trim();
+        if (!conversationId) {
+          return {
+            ...state,
+            conversationListVersion: state.conversationListVersion + 1,
+          };
+        }
+
+        const nextConversations = state.conversations.map((c) => {
+          if (c.id !== conversationId) return c;
+          return {
+            ...c,
+            ...(typeof payload.unreadCount === "number"
+              ? { unreadCount: payload.unreadCount }
+              : {}),
+          };
+        });
+
+        return {
+          ...state,
+          conversations: nextConversations,
+          conversationListVersion: state.conversationListVersion + 1,
+        };
+      }),
     upsertOnlineUserConnection: (user) =>
       set((state) => {
         const userId = user.userId?.trim();
@@ -125,7 +208,12 @@ export const useRealtimeChatStore = create<RealtimeChatState & RealtimeChatActio
         const existing = state.onlineUsersById[userId];
         const nextUser: OnlineUser = {
           userId,
-          displayName: user.displayName ?? existing?.displayName,
+          displayName:
+            user.displayName ??
+            user.fullName ??
+            existing?.displayName ??
+            existing?.fullName,
+          fullName: user.fullName ?? existing?.fullName,
           role: user.role ?? existing?.role,
           connectionId: user.connectionId ?? existing?.connectionId,
         };
@@ -192,7 +280,12 @@ export const useRealtimeChatStore = create<RealtimeChatState & RealtimeChatActio
           const current = nextById[userId];
           nextById[userId] = {
             userId,
-            displayName: user.displayName ?? current?.displayName,
+            displayName:
+              user.displayName ??
+              user.fullName ??
+              current?.displayName ??
+              current?.fullName,
+            fullName: user.fullName ?? current?.fullName,
             role: user.role ?? current?.role,
             connectionId: user.connectionId ?? current?.connectionId,
           };
@@ -225,7 +318,10 @@ export const useRealtimeChatStore = create<RealtimeChatState & RealtimeChatActio
           ...state,
           messagesByConversation: {
             ...state.messagesByConversation,
-            [conversationId]: [...existing.slice(-199), message],
+            [conversationId]: [
+              ...existing.slice(-199),
+              { ...message, isRead: false },
+            ],
           },
         };
       }),
@@ -263,6 +359,91 @@ export const useRealtimeChatStore = create<RealtimeChatState & RealtimeChatActio
         return {
           ...state,
           typingByConversation: nextTyping,
+        };
+      }),
+    markConversationMessagesRead: (conversationId, upToMessageId) =>
+      set((state) => {
+        const normalizedConversationId = conversationId.trim();
+        if (!normalizedConversationId) return state;
+        const messages =
+          state.messagesByConversation[normalizedConversationId];
+        if (!messages) return state;
+        const idx = upToMessageId
+          ? messages.findIndex((m) => m.messageId === upToMessageId)
+          : messages.length - 1;
+        if (idx === -1) return state;
+        const updated = messages.map((m, i) =>
+          i <= idx ? { ...m, isRead: true } : m,
+        );
+        return {
+          ...state,
+          messagesByConversation: {
+            ...state.messagesByConversation,
+            [normalizedConversationId]: updated,
+          },
+        };
+      }),
+    markMessagePendingAttachment: (conversationId, messageId, meta) =>
+      set((state) => {
+        const normalizedConversationId = conversationId.trim();
+        const normalizedMessageId = messageId.trim();
+        if (!normalizedConversationId || !normalizedMessageId) return state;
+
+        const messages =
+          state.messagesByConversation[normalizedConversationId];
+        if (!messages) return state;
+
+        const updated = messages.map((m) =>
+          m.messageId === normalizedMessageId
+            ? {
+                ...m,
+                messageType: 2,
+                attachmentFileName: meta.fileName,
+                attachmentFileType: meta.fileType,
+              }
+            : m,
+        );
+
+        return {
+          ...state,
+          messagesByConversation: {
+            ...state.messagesByConversation,
+            [normalizedConversationId]: updated,
+          },
+        };
+      }),
+    updateMessageFileUrl: (conversationId, messageId, fileUrl, meta) =>
+      set((state) => {
+        const normalizedConversationId = conversationId.trim();
+        const normalizedMessageId = messageId.trim();
+        if (!normalizedConversationId || !normalizedMessageId) return state;
+
+        const messages =
+          state.messagesByConversation[normalizedConversationId];
+        if (!messages) return state;
+
+        const updated = messages.map((m) =>
+          m.messageId === normalizedMessageId
+            ? {
+                ...m,
+                messageType: 2,
+                fileUrl,
+                ...(meta?.fileName
+                  ? { attachmentFileName: meta.fileName }
+                  : {}),
+                ...(meta?.fileType
+                  ? { attachmentFileType: meta.fileType }
+                  : {}),
+              }
+            : m,
+        );
+
+        return {
+          ...state,
+          messagesByConversation: {
+            ...state.messagesByConversation,
+            [normalizedConversationId]: updated,
+          },
         };
       }),
     resetRealtimeState: () => set({ ...DEFAULT_STATE }),

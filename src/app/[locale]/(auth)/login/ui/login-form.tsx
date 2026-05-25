@@ -15,6 +15,7 @@ import {
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import styles from "../scss/login-form.module.scss";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import { useMirror } from "../store";
 
 export function LoginForm() {
@@ -30,6 +31,7 @@ export function LoginForm() {
   return (
     <form className={styles.form} onSubmit={login}>
       <div className={styles.formBody}>
+        <MutationErrorAlert />
         <div className={styles.fieldsBlock}>
           <TextInput
             variant="filled"

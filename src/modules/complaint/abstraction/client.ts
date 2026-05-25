@@ -10,6 +10,11 @@ type UpdateStatusParams = {
   status: string;
 };
 
+type SharedPostFormParams = {
+  endpoint: string;
+  formData: FormData;
+};
+
 @injectable()
 abstract class Client<T extends AxiosState> {
   @inject(AxiosModuleNames.client) protected axiosClient: AxiosClient<T>;
@@ -21,6 +26,11 @@ abstract class Client<T extends AxiosState> {
   protected sharedUpdateStatus(params: UpdateStatusParams) {
     const { endpoint, ...body } = params;
     return this.axiosClient.put({ endpoint }).setBody(body);
+  }
+
+  protected sharedPostFormData(params: SharedPostFormParams) {
+    const { endpoint, formData } = params;
+    return this.axiosClient.post({ endpoint }).setBody(formData);
   }
 }
 

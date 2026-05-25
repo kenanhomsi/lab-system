@@ -1,5 +1,11 @@
 import { inject, injectable, injectFromBase } from "inversify";
-import { AuthFrontClient, loginParams, RegisterFrontendProps } from "./client";
+import {
+  AuthFrontClient,
+  CheckEmailFrontendProps,
+  loginParams,
+  RegisterFrontendProps,
+  ResetPasswordFrontendProps,
+} from "./client";
 import { authModuleNames } from "../names";
 
 @injectable()
@@ -15,6 +21,18 @@ class Service {
   async Register(params: RegisterFrontendProps) {
     const res = await this.client.Register(params);
     return res;
+  }
+
+  async ForgotPassword(params: CheckEmailFrontendProps) {
+    return this.client.ForgotPassword(params);
+  }
+
+  async ResetPassword(params: ResetPasswordFrontendProps) {
+    return this.client.ResetPassword(params);
+  }
+
+  async CheckEmail(params: CheckEmailFrontendProps) {
+    return this.client.CheckEmail(params);
   }
 }
 

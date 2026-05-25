@@ -13,6 +13,10 @@ type FindAllSubscriptionPackageParams = AuthParams & {
   query?: FindAllQueryParams;
 };
 
+type FindAllPublicSubscriptionPackageParams = {
+  query?: FindAllQueryParams;
+};
+
 type CreateSubscriptionPackageParams = AuthParams & {
   name: string;
   price: number;
@@ -48,6 +52,7 @@ export type {
   ActivateSubscriptionPackageParams,
   CreateSubscriptionPackageParams,
   DeactivateSubscriptionPackageParams,
+  FindAllPublicSubscriptionPackageParams,
   FindAllQueryParams,
   FindAllSubscriptionPackageParams,
   FindOneSubscriptionPackageParams,

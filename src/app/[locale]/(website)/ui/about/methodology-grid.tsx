@@ -84,7 +84,7 @@ export async function AboutMethodologyGrid() {
                   width={256}
                   height={192}
                   className="h-full w-full object-cover"
-                  unoptimized
+                  sizes="256px"
                 />
               </div>
             </div>

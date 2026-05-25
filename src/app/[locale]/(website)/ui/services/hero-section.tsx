@@ -22,7 +22,7 @@ export async function ServicesHeroSection() {
           fill
           className="object-cover opacity-50"
           priority
-          unoptimized
+          sizes="100vw"
         />
         <div className={overlayGradientClass} />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />

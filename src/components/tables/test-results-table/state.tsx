@@ -12,7 +12,7 @@ const State = ({ children }: { children: React.ReactNode }) => {
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortDesc, setSortDesc] = useState(true);
   const [selectedTestResult, setSelectedTestResult] = useState<TestResultItem | null>(null);
-  const [activeModal, setActiveModal] = useState<null | "create" | "edit" | "delete">(null);
+  const [activeModal, setActiveModal] = useState<null | "create" | "edit" | "delete" | "view">(null);
   const [debouncedValue] = useDebouncedValue(searchValue, 500);
 
   useMirrorRegistry("pageNumber", pageNumber);

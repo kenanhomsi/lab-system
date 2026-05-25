@@ -24,3 +24,34 @@ export async function GET(req: NextRequest, context: RouteContext) {
   return jsonError(error, 400);
  }
 }
+
+export async function PUT(req: NextRequest, context: RouteContext) {
+  try {
+    const { id } = await context.params;
+    const token = await resolveAccessToken(req);
+    if (!token) {
+      throw new Error("Missing authorization token");
+    }
+
+    const body = await req.json();
+    const res = await medicalTestService.update({ token, id, ...body });
+    return NextResponse.json(res);
+  } catch (error: unknown) {
+    return jsonError(error, 400);
+  }
+}
+
+export async function DELETE(req: NextRequest, context: RouteContext) {
+  try {
+    const { id } = await context.params;
+    const token = await resolveAccessToken(req);
+    if (!token) {
+      throw new Error("Missing authorization token");
+    }
+
+    await medicalTestService.delete({ token, id });
+    return new NextResponse(null, { status: 204 });
+  } catch (error: unknown) {
+    return jsonError(error, 400);
+  }
+}

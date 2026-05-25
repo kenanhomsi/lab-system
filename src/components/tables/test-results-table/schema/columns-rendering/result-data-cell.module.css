@@ -9,3 +9,4 @@
 :global([data-mantine-color-scheme="dark"]) .box:hover {
   background-color: var(--mantine-color-dark-6);
 }
+

@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
+import { postComplaintPublic } from "@/lib/clients/website-public-client";
 
 const INPUT_CLASS =
   "w-full rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -20,14 +21,9 @@ export function ComplaintPage() {
     const formData = new FormData(e.currentTarget);
 
     try {
-      const res = await fetch("/api/complaints", {
-        method: "POST",
-        body: formData,
-      });
-      if (res.ok) {
-        setSuccess(true);
-        (e.target as HTMLFormElement).reset();
-      }
+      await postComplaintPublic(formData);
+      setSuccess(true);
+      (e.target as HTMLFormElement).reset();
     } catch {
       // silently fail
     } finally {

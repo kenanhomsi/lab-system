@@ -15,11 +15,16 @@ async function getAllRoles(params: { pageNumber: number }): Promise<RolesRespons
     PageSize: "20",
   };
   const payload = await roleService.findAll({ query });
-  console.log('in apis ', payload)
   if (!payload) {
     throw new Error("Failed to fetch roles");
   }
-  return payload;
+  return {
+    ...payload,
+    items: (payload.items ?? []).map((item) => ({
+      ...item,
+      accessPolicies: item.accessPolicies ?? [],
+    })),
+  };
 }
 
 const GetAllRoles = (props: PropsWithChildren) => {
@@ -37,7 +42,7 @@ const GetAllRoles = (props: PropsWithChildren) => {
     void refetch();
   });
 
-  return props;
+  return <>{props.children}</>;
 };
 
 export { GetAllRoles };

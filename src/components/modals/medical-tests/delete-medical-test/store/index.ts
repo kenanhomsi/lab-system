@@ -5,7 +5,7 @@ import type { Dispatch, SetStateAction } from "react";
 
 const noopSetStateBool = (() => undefined) as Dispatch<SetStateAction<boolean>>;
 
-const emptyDeleteMutation = {} as UseMutationResult<unknown, Error, string>;
+const emptyDeleteMutation = {} as UseMutationResult<unknown, unknown, string>;
 
 const { useMirror, useMirrorRegistry } = mirrorFactory({
   isOpen: false,

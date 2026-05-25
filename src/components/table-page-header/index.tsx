@@ -138,7 +138,17 @@ const TablePageHeader = ({
         {hasFilters && (
           <>
             <Divider />
-            <Flex gap="xs" wrap="wrap" align="center" px="lg" py="sm">
+            <Flex
+              gap="xs"
+              wrap="wrap"
+              align="center"
+              px="lg"
+              py="sm"
+              style={{
+                background: "light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7))",
+                borderRadius: "0 0 var(--mantine-radius-lg) var(--mantine-radius-lg)",
+              }}
+            >
               {children}
             </Flex>
           </>

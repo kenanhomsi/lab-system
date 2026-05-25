@@ -40,7 +40,7 @@ const GetAllAccessPolicies = (props: PropsWithChildren) => {
     void refetch();
   });
 
-  return props;
+  return <>{props.children}</>;
 };
 
 export { GetAllAccessPolicies };

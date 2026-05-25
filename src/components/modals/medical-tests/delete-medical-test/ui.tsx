@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import { Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { useMirror } from "./store";
@@ -24,6 +25,7 @@ const UI = () => {
     return (
         <Modal opened={isOpen} onClose={onClose} title="Delete Medical Test" centered>
             <Stack>
+          <MutationErrorAlert />
                 <Text size="sm">
                     Are you sure you want to delete this medical test? This action cannot be undone.
                 </Text>

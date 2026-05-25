@@ -10,14 +10,33 @@ import {
   UpdateRoleParams,
 } from "./types";
 
+type RoleAccessPolicyItem = {
+  id: string;
+  resource: string;
+  action: string;
+  effect: string;
+  subjectType: string;
+  subjectKey: string;
+  priority: number;
+  isEnabled: boolean;
+  description: string | null;
+  validFrom: string | null;
+  validTo: string | null;
+};
+
 type ListItem = {
   id: string;
   name: string;
 };
+
 export type RoleItem = {
   hasNextPage: boolean;
   hasPreviousPage: boolean;
-  items: { id: string; name: string }[];
+  items: {
+    id: string;
+    name: string;
+    accessPolicies: RoleAccessPolicyItem[];
+  }[];
   page: number;
   pageSize: number;
   totalCount: number;
@@ -43,13 +62,11 @@ const appendQueryParams = (
 @injectFromBase({ extendProperties: true })
 class Client extends RoleClient<AxiosState> {
   async findAll(params: FindAllRoleParams) {
-    console.log("test here");
     const res = await super
       .sharedFindAll({
         endpoint: appendQueryParams(endpoint.findAll, params.query),
       })
       .perform<RoleItem>();
-    console.log("in frontend data", res);
     return res.data;
   }
 

@@ -25,6 +25,7 @@ import type {
   StopTypingPayload,
   TypingPayload,
 } from "../signalr/types";
+import { axiosInstanceFront } from "@/lib/clients/frontend-instance";
 import { GLOBAL_TYPING_CONVERSATION } from "../store/realtime-chat-selectors";
 import { useRealtimeChatStore } from "../store/realtime-chat-store";
 
@@ -42,6 +43,7 @@ export interface RealtimeChatEngineApi {
   sendMessage: (params: {
     conversationId: string;
     text: string;
+    messageType?: number;
   }) => Promise<void>;
   sendTyping: (conversationId: string) => Promise<void>;
   sendStopTyping: (conversationId: string) => Promise<void>;
@@ -59,10 +61,15 @@ function normalizeOnlineUsers(payload: OnlineUsersListPayload): OnlineUser[] {
     if (!entry || typeof entry !== "object") continue;
     const userId = typeof entry.userId === "string" ? entry.userId.trim() : "";
     if (!userId) continue;
+    const displayName =
+      typeof entry.displayName === "string"
+        ? entry.displayName
+        : typeof (entry as { fullName?: string }).fullName === "string"
+          ? (entry as { fullName: string }).fullName
+          : undefined;
     out.push({
       userId,
-      displayName:
-        typeof entry.displayName === "string" ? entry.displayName : undefined,
+      displayName,
       role: typeof entry.role === "string" ? entry.role : undefined,
       connectionId:
         typeof entry.connectionId === "string" ? entry.connectionId : undefined,
@@ -173,6 +180,17 @@ export function useRealtimeChatEngine({
       return;
     }
 
+    const hubBase = baseUrl.trim();
+    if (!hubBase) {
+      useRealtimeChatStore
+        .getState()
+        .setChatError("Chat hub URL is not ready yet.");
+      useRealtimeChatStore
+        .getState()
+        .setOnlineUsersError("Chat hub URL is not ready yet.");
+      return;
+    }
+
     if (chatConnectionRef.current || onlineUsersConnectionRef.current) {
       useRealtimeChatStore.getState().pushLog({
         hub: "app",
@@ -188,11 +206,11 @@ export function useRealtimeChatEngine({
     useRealtimeChatStore.getState().setOnlineUsersStatus("Connecting");
 
     const onlineConnection = createOnlineUsersConnection(
-      baseUrl,
+      hubBase,
       () => tokenRef.current,
     );
     const chatConnection = createChatConnection(
-      baseUrl,
+      hubBase,
       () => tokenRef.current,
     );
     onlineUsersConnectionRef.current = onlineConnection;
@@ -233,6 +251,31 @@ export function useRealtimeChatEngine({
     unregisterChatHandlersRef.current = registerChatHandlers(chatConnection, {
       onReceiveMessage: (payload: ReceiveMessagePayload) => {
         useRealtimeChatStore.getState().appendMessageIfNew(payload);
+
+        const conversationId = payload.conversationId?.trim();
+        const senderId = payload.senderId?.trim();
+        if (conversationId && senderId) {
+          useRealtimeChatStore
+            .getState()
+            .setTyping({ conversationId, userId: senderId, isTyping: false });
+        }
+
+        const activeId = useRealtimeChatStore.getState().activeConversationId;
+        const messageId = payload.messageId?.trim();
+        if (
+          activeId &&
+          messageId &&
+          activeId === conversationId
+        ) {
+          void axiosInstanceFront
+            .post(`/chat/messages/${messageId}/read`)
+            .catch(() => {
+              /* ignore */
+            });
+        }
+
+        useRealtimeChatStore.getState().bumpConversationListVersion();
+
         useRealtimeChatStore.getState().pushLog({
           hub: "chat",
           event: "ReceiveMessage",
@@ -240,6 +283,21 @@ export function useRealtimeChatEngine({
         });
       },
       onTyping: (payload: TypingPayload) => {
+        if (!payload.isTyping) {
+          const fallbackConversationId =
+            useRealtimeChatStore.getState().activeConversationId;
+          const conversationId = typingConversationId(
+            payload,
+            fallbackConversationId,
+          );
+          const userId = payload.userId?.trim();
+          if (!userId) return;
+          useRealtimeChatStore
+            .getState()
+            .setTyping({ conversationId, userId, isTyping: false });
+          return;
+        }
+
         const fallbackConversationId =
           useRealtimeChatStore.getState().activeConversationId;
         const conversationId = typingConversationId(
@@ -249,25 +307,9 @@ export function useRealtimeChatEngine({
         const userId = payload.userId?.trim();
         if (!userId) return;
 
-        const timerKey = `${conversationId}:${userId}`;
-        if (!payload.isTyping) {
-          clearTypingTimer(timerKey);
-          useRealtimeChatStore
-            .getState()
-            .setTyping({ conversationId, userId, isTyping: false });
-          return;
-        }
-
         useRealtimeChatStore
           .getState()
           .setTyping({ conversationId, userId, isTyping: true });
-        clearTypingTimer(timerKey);
-        typingTimersRef.current[timerKey] = window.setTimeout(() => {
-          clearTypingTimer(timerKey);
-          useRealtimeChatStore
-            .getState()
-            .setTyping({ conversationId, userId, isTyping: false });
-        }, 3000);
       },
       onStopTyping: (payload: StopTypingPayload) => {
         const fallbackConversationId =
@@ -285,6 +327,12 @@ export function useRealtimeChatEngine({
           .setTyping({ conversationId, userId, isTyping: false });
       },
       onReadReceipt: (payload) => {
+        const { conversationId, messageId } = payload;
+        if (conversationId) {
+          useRealtimeChatStore
+            .getState()
+            .markConversationMessagesRead(conversationId, messageId);
+        }
         useRealtimeChatStore.getState().pushLog({
           hub: "chat",
           event: "ReadReceipt",
@@ -292,6 +340,7 @@ export function useRealtimeChatEngine({
         });
       },
       onConversationUpdated: (payload) => {
+        useRealtimeChatStore.getState().updateConversationUpdated(payload);
         useRealtimeChatStore.getState().pushLog({
           hub: "chat",
           event: "ConversationUpdated",
@@ -383,6 +432,7 @@ export function useRealtimeChatEngine({
       await invokeGetOnlineUsers(onlineConnection);
       await chatConnection.start();
       useRealtimeChatStore.getState().setChatStatus("Connected");
+      useRealtimeChatStore.getState().setHubsConnected(true);
       useRealtimeChatStore.getState().pushLog({
         hub: "app",
         event: "Connections started",
@@ -394,6 +444,7 @@ export function useRealtimeChatEngine({
       useRealtimeChatStore.getState().setOnlineUsersError(message);
       useRealtimeChatStore.getState().setChatStatus("Disconnected");
       useRealtimeChatStore.getState().setOnlineUsersStatus("Disconnected");
+      useRealtimeChatStore.getState().setHubsConnected(false);
       useRealtimeChatStore.getState().pushLog({
         hub: "app",
         event: "Connections failed",
@@ -413,6 +464,8 @@ export function useRealtimeChatEngine({
     await stopConnections();
     useRealtimeChatStore.getState().setChatStatus("Disconnected");
     useRealtimeChatStore.getState().setOnlineUsersStatus("Disconnected");
+    useRealtimeChatStore.getState().setHubsConnected(false);
+    useRealtimeChatStore.getState().setActiveConversation(null);
     useRealtimeChatStore.getState().pushLog({
       hub: "app",
       event: "Connections stopped",
@@ -467,29 +520,34 @@ export function useRealtimeChatEngine({
     async ({
       conversationId,
       text,
+      messageType = 1,
     }: {
       conversationId: string;
       text: string;
+      messageType?: number;
     }) => {
       const normalizedConversationId = conversationId.trim();
       const normalizedText = text.trim();
       if (!normalizedConversationId)
         throw new Error("Conversation ID is required.");
-      if (!normalizedText) throw new Error("Message text is required.");
+      if (messageType === 1 && !normalizedText)
+        throw new Error("Message text is required.");
 
       const chatConn = chatConnectionRef.current;
       if (!chatConn) throw new Error("Chat hub is not connected.");
 
       try {
-        await invokeSendMessage(
-          chatConn,
-          normalizedConversationId,
-          normalizedText,
-        );
+        await invokeSendMessage(chatConn, normalizedConversationId, {
+          text: normalizedText,
+          messageType,
+        });
         useRealtimeChatStore.getState().pushLog({
           hub: "chat",
           event: "invoke SendMessage",
-          payload: { conversationId: normalizedConversationId },
+          payload: {
+            conversationId: normalizedConversationId,
+            messageType,
+          },
         });
       } catch (error) {
         useRealtimeChatStore.getState().setChatError(errMsg(error));

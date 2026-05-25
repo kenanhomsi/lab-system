@@ -3,34 +3,81 @@
 import { frontendContainer } from "@/container";
 import { ComplaintFrontendService, complaintModuleNames } from "@/modules/complaint";
 import { useQuery } from "@tanstack/react-query";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import { useMirror, useMirrorRegistry } from "../store";
-import { ComplaintsResponse } from "../types";
+import { ComplaintStatus } from "@/lib/complaint-status";
+import { ComplaintItem, ComplaintsResponse } from "../types";
 
 const complaintService = frontendContainer.get<ComplaintFrontendService>(
   complaintModuleNames.service,
 );
 
-async function getAllComplaints(params: {
-  pageNumber: number;
-  search: string;
-  status: "all" | "received" | "in_progress" | "resolved";
-  userId: string;
-}): Promise<ComplaintsResponse> {
-  const query: Record<string, string> = {
-    Page: String(params.pageNumber),
-    PageSize: "20",
-  };
+const PAGE_SIZE = 20;
+const FETCH_PAGE_SIZE = 10;
 
-  if (params.search.trim()) query.Search = params.search.trim();
-  if (params.status !== "all") query.Status = params.status;
-  if (params.userId.trim()) query.UserId = params.userId.trim();
+async function fetchAllComplaints(): Promise<ComplaintItem[]> {
+  const payload = await complaintService.findAll({
+    query: {
+      Page: "1",
+      PageSize: String(FETCH_PAGE_SIZE),
+    },
+  });
 
-  const payload = await complaintService.findAll({ query });
   if (!payload) {
     throw new Error("Failed to fetch complaints");
   }
-  return payload;
+
+  return payload.items ?? [];
+}
+
+function filterComplaints(
+  items: ComplaintItem[],
+  params: {
+    search: string;
+    status: "all" | ComplaintStatus;
+    userId: string;
+  },
+): ComplaintItem[] {
+  const search = params.search.trim().toLowerCase();
+  const userId = params.userId.trim().toLowerCase();
+
+  return items.filter((item) => {
+    if (params.status !== "all" && item.status !== params.status) {
+      return false;
+    }
+
+    if (userId && !item.userId.toLowerCase().includes(userId)) {
+      return false;
+    }
+
+    if (!search) {
+      return true;
+    }
+
+    const haystack = [item.title, item.description, item.userId].join(" ").toLowerCase();
+    return haystack.includes(search);
+  });
+}
+
+function paginateComplaints(
+  items: ComplaintItem[],
+  pageNumber: number,
+  pageSize: number,
+): ComplaintsResponse {
+  const totalCount = items.length;
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize) || 1);
+  const page = Math.min(Math.max(1, pageNumber), totalPages);
+  const start = (page - 1) * pageSize;
+
+  return {
+    items: items.slice(start, start + pageSize),
+    page,
+    pageSize,
+    totalCount,
+    totalPages,
+    hasNextPage: page < totalPages,
+    hasPreviousPage: page > 1,
+  };
 }
 
 const GetAllComplaints = (props: PropsWithChildren) => {
@@ -39,30 +86,23 @@ const GetAllComplaints = (props: PropsWithChildren) => {
   const statusFilter = useMirror("statusFilter");
   const userIdFilter = useMirror("userIdFilter");
 
-  const { data, isPending, refetch } = useQuery({
-    queryKey: ["complaints", pageNumber, debouncedValue, statusFilter, userIdFilter],
-    queryFn: () =>
-      getAllComplaints({
-        pageNumber,
-        search: debouncedValue,
-        status: statusFilter,
-        userId: userIdFilter,
-      }),
+  const { data: allItems = [], isPending, refetch } = useQuery({
+    queryKey: ["complaints"],
+    queryFn: fetchAllComplaints,
     refetchInterval: 1000 * 60,
   });
 
-  useMirrorRegistry(
-    "complaintsData",
-    data ?? {
-      items: [],
-      page: 1,
-      pageSize: 20,
-      totalCount: 0,
-      totalPages: 0,
-      hasNextPage: false,
-      hasPreviousPage: false,
-    },
-  );
+  const complaintsData = useMemo(() => {
+    const filtered = filterComplaints(allItems, {
+      search: debouncedValue,
+      status: statusFilter,
+      userId: userIdFilter,
+    });
+
+    return paginateComplaints(filtered, pageNumber, PAGE_SIZE);
+  }, [allItems, debouncedValue, statusFilter, userIdFilter, pageNumber]);
+
+  useMirrorRegistry("complaintsData", complaintsData);
   useMirrorRegistry("isPending", isPending);
   useMirrorRegistry("refetchComplaints", () => {
     void refetch();

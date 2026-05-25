@@ -2,7 +2,7 @@ import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
-import type { MetwaliBlogPost } from "@/lib/metwali-blog";
+import type { MetwaliBlogPost } from "@/types/metwali-blog";
 import type { AppLocale } from "@/i18n/routing";
 
 type BlogPostGridProps = {
@@ -85,7 +85,6 @@ export async function BlogPostGrid({ result }: BlogPostGridProps) {
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      unoptimized
                     />
                   ) : (
                     <div className="flex h-full min-h-[140px] items-center justify-center">

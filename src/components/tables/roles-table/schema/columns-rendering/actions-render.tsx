@@ -3,13 +3,11 @@
 import { ActionIcon, Menu } from "@mantine/core";
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
+import { RoleTableItem } from "../../types";
 import { useMirror } from "../../store";
 
 type Props = {
-  row: {
-    id: string;
-    name: string;
-  };
+  row: RoleTableItem;
 };
 
 const ActionsRender = ({ row }: Props) => {
@@ -45,7 +43,7 @@ const ActionsRender = ({ row }: Props) => {
         <Menu.Item
           leftSection={<IconEdit size={16} />}
           onClick={() => {
-            setSelectedRole({ id: row.id, name: row.name });
+            setSelectedRole(row);
             setActiveModal("edit");
           }}
         >

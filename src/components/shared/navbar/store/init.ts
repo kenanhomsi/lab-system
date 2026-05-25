@@ -11,6 +11,7 @@ const store = (): Params => ({
   config: {
     searchPlaceholder: "",
     actions: [],
+    quickActions: [],
     profile: {
       name: "",
       roleTitle: "",

@@ -10,6 +10,7 @@ import {
   IconTrash,
   IconUserCheck,
 } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import { useMirror } from "../../store";
 import { UserItem, UserModalType } from "../../types";
 import { dataTableSurface } from "@/components/table";
@@ -19,6 +20,7 @@ type Props = {
 };
 
 const ActionsRender = ({ row }: Props) => {
+  const t = useTranslations("admin.common");
   const setSelectedUser = useMirror("setSelectedUser");
   const setActiveModal = useMirror("setActiveModal");
   const activateUser = useMirror("activateUser");
@@ -41,7 +43,7 @@ const ActionsRender = ({ row }: Props) => {
   return (
     <div className={dataTableSurface.rowActions}>
       <Group gap={4} wrap="nowrap" justify="end">
-        <Tooltip label="Edit" withArrow position="top">
+        <Tooltip label={t("edit")} withArrow position="top">
           <ActionIcon
             variant="subtle"
             className={dataTableSurface.actionIconPrimary}
@@ -57,7 +59,7 @@ const ActionsRender = ({ row }: Props) => {
         </Tooltip>
 
         <Tooltip
-          label={row.isActive ? "Deactivate" : "Activate"}
+          label={row.isActive ? t("deactivate") : t("activate")}
           withArrow
           position="top"
         >
@@ -86,7 +88,7 @@ const ActionsRender = ({ row }: Props) => {
           trigger="click"
         >
           <Menu.Target>
-            <Tooltip label="More actions" withArrow position="top">
+            <Tooltip label={t("moreActions")} withArrow position="top">
               <ActionIcon
                 variant="subtle"
                 className={dataTableSurface.actionIconSecondary}
@@ -103,20 +105,20 @@ const ActionsRender = ({ row }: Props) => {
               color="red"
               onClick={() => openModal("delete")}
             >
-              Delete
+              {t("delete")}
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item
               leftSection={<IconShieldCheck size={15} />}
               onClick={() => openModal("roles")}
             >
-              Manage Roles
+              {t("manageRoles")}
             </Menu.Item>
             <Menu.Item
               leftSection={<IconSettings size={15} />}
               onClick={() => openModal("permissions")}
             >
-              Manage Permissions
+              {t("managePermissions")}
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>

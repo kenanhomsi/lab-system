@@ -3,6 +3,7 @@ import { bannerModuleNames } from "../names";
 import { BannerFrontendClient } from "./client";
 import {
   CreateBannerParams,
+  DeleteBannerParams,
   FindAllBannerParams,
   FindAllPublicBannerParams,
 } from "./types";
@@ -22,6 +23,10 @@ class Service {
 
   async create(params: CreateBannerParams) {
     return this.Client.create(params);
+  }
+
+  async delete(params: DeleteBannerParams) {
+    return this.Client.delete(params);
   }
 }
 

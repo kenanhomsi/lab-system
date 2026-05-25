@@ -14,7 +14,7 @@ import {
   CreateTestResultFrontendParams,
   UpdateTestResultFrontendParams,
 } from "./types";
-import { TestResultItem } from "@/components/tables/test-results-table/types";
+import { TestResultsResponse } from "@/components/tables/test-results-table/types";
 
 const appendQueryParams = (
   path: string,
@@ -39,7 +39,11 @@ class Client extends TestResultClient<AxiosState> {
       .sharedFindAll({
         endpoint: appendQueryParams(endpoint.findAll, params.query),
       })
-      .perform<{data: TestResultItem[]}>();
+      .perform<{
+        success: boolean;
+        message: string;
+        data: TestResultsResponse;
+      }>();
     return res.data;
   }
 

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
+import { EditorialHighlightedHeading } from "./editorial-highlighted-heading";
 
 const PORTRAIT =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuAd0bU_bfhV4iIkRXRj3JX01knb-9F13HKB3h8OrAhg9-7WQmgfKzA6OqNmnGWtFVvRiVzncXiKMo4yt0Tf39lHxHDdkC6X4GYtLcWtsQkoRDTyWgNZDM0Bw_5A-Q3pImxLARRrhqkE7qXa_snfpZvuTZM0JZfipvilv-Z_9BKpYS1jZrbUz6xpWX5reSYM4Yr0qif77gIfNeKunnXBql3Gn6JKmmGMXtMbXcNMFBIp0bYFwF4cPTzcxvHscW9EmpHEUw9cdGu6jOoK";
@@ -46,7 +47,7 @@ export async function EditorialSection() {
                     width={600}
                     height={750}
                     className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
-                    unoptimized
+                    sizes="(max-width: 1024px) 100vw, 40vw"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-primary/25 via-transparent to-primary-fixed/10 mix-blend-multiply dark:mix-blend-normal dark:from-primary/40" />
                   <div className="absolute inset-s-4 top-4 flex justify-end">
@@ -88,12 +89,12 @@ export async function EditorialSection() {
             </div>
 
             <div className="space-y-6">
-              <h2
+              <EditorialHighlightedHeading
                 id="editorial-heading"
+                before={t("sectionTitleBefore")}
+                highlight={t("sectionTitleHighlight")}
                 className="font-headline text-balance text-4xl font-extrabold leading-[1.08] tracking-tight text-on-surface md:text-5xl md:leading-[1.05] lg:text-[3rem] lg:leading-[1.02]"
-              >
-                {t("sectionTitle")}
-              </h2>
+              />
               <div className="max-w-xl space-y-5 text-base leading-relaxed text-on-surface-variant md:text-lg md:leading-8">
                 <p className="text-on-surface/90">{t("p1")}</p>
                 <p>{t("p2")}</p>

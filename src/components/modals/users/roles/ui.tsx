@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import { Badge, Box, Button, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
 import { useTranslations } from "next-intl";
@@ -21,6 +22,7 @@ const UI = () => {
   return (
     <Modal opened={isOpen} onClose={onClose} title={t("rolesModalTitle")} centered>
       <Stack>
+          <MutationErrorAlert />
         <Text size="sm" dir="auto">
           {t("rolesModalUser", { name: displayName })}
         </Text>

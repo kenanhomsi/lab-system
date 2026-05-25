@@ -1,7 +1,13 @@
 "use client";
 
+import { extractErrorMessage } from "@/lib/error";
 import { useTranslations } from "next-intl";
+import { frontendContainer } from "@/container";
+import { authModuleNames, } from "@/modules/auth";
 import { useMirror } from "../store";
+import { AuthFrontendService } from "@/modules/auth/frontend/service";
+
+const authService = frontendContainer.get<AuthFrontendService>(authModuleNames.service);
 
 export function IdentifierForm() {
   const t = useTranslations("auth");
@@ -18,19 +24,10 @@ export function IdentifierForm() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || t("sendCodeError"));
-        return;
-      }
+      await authService.ForgotPassword({ email });
       setStep("code");
-    } catch {
-      setError(t("sendCodeError"));
+    } catch (err: unknown) {
+      setError(extractErrorMessage(err, t("sendCodeError")));
     } finally {
       setLoading(false);
     }

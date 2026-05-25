@@ -3,8 +3,10 @@ import { bannerModuleNames } from "../names";
 import { BannerBackendClient } from "./client";
 import {
   CreateBannerParams,
+  DeleteBannerParams,
   FindAllBannerParams,
   FindAllPublicBannerParams,
+  UpdateBannerParams,
 } from "./types";
 
 @injectable()
@@ -22,6 +24,14 @@ class Service {
 
   async create(params: CreateBannerParams) {
     return this.Client.Create(params);
+  }
+
+  async update(params: UpdateBannerParams) {
+    return this.Client.Update(params);
+  }
+
+  async delete(params: DeleteBannerParams) {
+    return this.Client.Delete(params);
   }
 }
 

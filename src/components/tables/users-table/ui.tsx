@@ -1,8 +1,10 @@
 "use client";
 
+import { useCallback } from "react";
 import { Table } from "@/components/table";
 import { UsersHeader, UsersTableEmptyState } from "./components";
 import { useMirror } from "./store";
+import { UserItem } from "./types";
 
 const UI = () => {
   const schema = useMirror("schema");
@@ -20,7 +22,18 @@ const UI = () => {
   const sortDesc = useMirror("sortDesc");
   const setSortDesc = useMirror("setSortDesc");
   const setActiveModal = useMirror("setActiveModal");
+  const setSelectedUser = useMirror("setSelectedUser");
   const rolesOptions = useMirror("rolesOptions");
+
+  const handleRowClick = useCallback(
+    (id: string) => {
+      const user = usersData?.items?.find((item: UserItem) => item.id === id);
+      if (!user) return;
+      setSelectedUser(user);
+      setActiveModal("view");
+    },
+    [usersData?.items, setSelectedUser, setActiveModal],
+  );
   const hasActiveFilters =
     Boolean(searchValue.trim()) || Boolean(roleFilter.trim()) || isActiveFilter !== "all";
   const tableEmptyState = <UsersTableEmptyState />;
@@ -30,6 +43,7 @@ const UI = () => {
       isLoading={isLoading}
       schema={schema}
       OnPageNumberChange={setPageNumber}
+      onRowClick={handleRowClick}
       data={usersData?.items || []}
       paginationStatic={{
         count: usersData?.totalCount || 0,

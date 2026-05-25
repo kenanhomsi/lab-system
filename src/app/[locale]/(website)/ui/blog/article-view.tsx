@@ -2,7 +2,7 @@ import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
-import type { MetwaliPostDetail } from "@/lib/metwali-blog";
+import type { MetwaliPostDetail } from "@/types/metwali-blog";
 import type { AppLocale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 
@@ -82,7 +82,6 @@ export async function BlogArticleView({ post }: BlogArticleViewProps) {
               className="object-cover transition-transform duration-700 hover:scale-105"
               sizes="(max-width: 1024px) 100vw, 1024px"
               priority
-              unoptimized
             />
           </div>
         </div>

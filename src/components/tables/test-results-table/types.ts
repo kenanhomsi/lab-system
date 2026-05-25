@@ -1,12 +1,15 @@
 export type TestResultItem = {
   id: number;
   testRequestId: number;
+  testRequestCreatedByUserId?: string | null;
+  testRequestCreatedByName?: string | null;
+  testRequestCreatedByFullName?: string | null;
   resultDate: string;
-  resultData: string;
-  pdfUrl: string;
+  resultData: string | Record<string, string>;
+  pdfUrl: string | null;
   status: string;
   createdAt: string;
-  updatedAt: string;
+  updatedAt: string | null;
 };
 
 export type TestResultsResponse = {

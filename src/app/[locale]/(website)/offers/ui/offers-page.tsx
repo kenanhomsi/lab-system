@@ -1,12 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useOffersFeatureStore } from "../store-context";
-import { PageBanner } from "@/components/layout/page-banner";
 
 export function OffersPage() {
   const t = useTranslations("offers");
@@ -29,8 +29,6 @@ export function OffersPage() {
           </p>
         </div>
 
-        <PageBanner />
-
         {offers.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <Icon
@@ -50,10 +48,12 @@ export function OffersPage() {
                 >
                   <div className="relative aspect-video bg-surface-container-high">
                     {offer.image ? (
-                      <img
+                      <Image
                         src={offer.image}
                         alt={offer.name}
-                        className="h-full w-full object-cover"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center">

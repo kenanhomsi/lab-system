@@ -2,12 +2,15 @@ import { injectable, injectFromBase } from "inversify";
 import { toIso8601Utc } from "@/lib/dates/to-iso-8601";
 import { BackendState } from "@/modules/axios";
 import { BannerClient } from "../abstraction";
+import { normalizePublicBannerPayload } from "@/lib/banners/public-banner-payload";
 import { endpoint } from "./endpoint";
 import type { BannerItem } from "@/types/banner";
 import {
   CreateBannerParams,
+  DeleteBannerParams,
   FindAllBannerParams,
   FindAllPublicBannerParams,
+  UpdateBannerParams,
 } from "./types";
 
 type GetAllResponseType = {
@@ -21,18 +24,7 @@ type GetAllResponseType = {
   };
 };
 
-type PublicBannerResponse = BannerItem[] | {
-  success?: boolean;
-  message?: string;
-  data?: BannerItem[];
-};
-
-const normalizePublicBanners = (response: PublicBannerResponse): BannerItem[] => {
-  if (Array.isArray(response)) return response;
-  if (Array.isArray(response.data)) return response.data;
-  return [];
-};
-
+type PublicBannerResponse = BannerItem[] | Record<string, unknown>;
 /** Multipart to the upstream API: names match OpenAPI (PascalCase). */
 const toUpstreamBannerFormData = (params: CreateBannerParams) => {
   const formData = new FormData();
@@ -67,6 +59,18 @@ const parseJsonOrThrow = <T>(text: string, status: number): T => {
   }
 };
 
+const unwrapBannerPayload = (payload: unknown): unknown => {
+  if (
+    typeof payload === "object" &&
+    payload !== null &&
+    "data" in payload &&
+    (payload as { data: unknown }).data !== undefined
+  ) {
+    return (payload as { data: unknown }).data;
+  }
+  return payload;
+};
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends BannerClient<BackendState> {
@@ -86,7 +90,7 @@ class Client extends BannerClient<BackendState> {
       .sharedFindAllPublic({ endpoint: endpoint.findAllPublic })
       .withQuery(params.location ? { location: params.location } : undefined)
       .perform<PublicBannerResponse>();
-    return normalizePublicBanners(res.data);
+    return normalizePublicBannerPayload(res.data);
   }
 
   async Create(params: CreateBannerParams) {
@@ -130,6 +134,30 @@ class Client extends BannerClient<BackendState> {
     }
 
     return payload as BannerItem;
+  }
+
+  async Update(params: UpdateBannerParams) {
+    const { token, id, body } = params;
+    const ep = endpoint.update(id);
+    if (body instanceof FormData) {
+      const res = await super
+        .sharedPutFormData({ endpoint: ep, formData: body })
+        .withAuth(token)
+        .perform<unknown>();
+      return unwrapBannerPayload(res.data) as BannerItem;
+    }
+    const res = await super
+      .sharedPutJson({ endpoint: ep, body })
+      .withAuth(token)
+      .perform<unknown>();
+    return unwrapBannerPayload(res.data) as BannerItem;
+  }
+
+  async Delete(params: DeleteBannerParams) {
+    await super
+      .sharedDelete({ endpoint: endpoint.remove(params.id) })
+      .withAuth(params.token)
+      .perform<unknown>();
   }
 }
 export { Client as BannerBackendClient };

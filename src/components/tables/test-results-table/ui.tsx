@@ -49,13 +49,23 @@ const UI = () => {
     [tc],
   );
 
+  const dataWithRowClick = useMemo(() => {
+    return (testResultsData?.items || []).map((item) => ({
+      ...item,
+      onClick: () => {
+        setSelectedTestResult(item);
+        setActiveModal("view");
+      },
+    }));
+  }, [testResultsData?.items, setSelectedTestResult, setActiveModal]);
+
   return (
     <Table
       type="normal"
       isLoading={isPending}
       schema={schema}
       OnPageNumberChange={setPageNumber}
-      data={testResultsData?.items || []}
+      data={dataWithRowClick}
       paginationStatic={{
         count: testResultsData?.totalCount || 0,
         limit: testResultsData?.pageSize || pageSize || 20,

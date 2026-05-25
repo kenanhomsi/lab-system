@@ -8,21 +8,43 @@ import { TestRequestClient } from "../abstraction";
 import {
   CreateTestRequestParams,
   DeleteTestRequestParams,
+  FindAllQueryParams,
   FindAllTestRequestParams,
   FindTestRequestParams,
   UpdateTestRequestParams,
 } from "./types";
-import { TestRequestItem } from "@/components/tables/test-requests-table/types";
+import { TestRequestsResponse } from "@/components/tables/test-requests-table/types";
+
+const appendQueryParams = (
+  path: string,
+  query?: FindAllQueryParams,
+) => {
+  if (!query) return path;
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (value !== undefined && value !== "") {
+      params.set(key, value);
+    }
+  }
+  const queryString = params.toString();
+  return queryString ? `${path}?${queryString}` : path;
+};
 
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends TestRequestClient<BackendState> {
   async findAll(params: FindAllTestRequestParams) {
-    const { token } = params;
+    const { token, query } = params;
     const res = await super
-      .sharedFindAll({ endpoint: endpoint.findAll })
+      .sharedFindAll({
+        endpoint: appendQueryParams(endpoint.findAll, query),
+      })
       .withAuth(token)
-      .perform<{data: TestRequestItem[]}>();
+      .perform<{
+        success: boolean;
+        message: string;
+        data: TestRequestsResponse;
+      }>();
     console.log("res backend", res.data);
     return res.data;
   }

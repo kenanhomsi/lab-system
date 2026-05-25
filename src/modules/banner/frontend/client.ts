@@ -2,19 +2,17 @@ import { injectable, injectFromBase } from "inversify";
 import { toIso8601Utc } from "@/lib/dates/to-iso-8601";
 import { AxiosState } from "@/modules/axios";
 import { BannerClient } from "../abstraction";
+import { normalizePublicBannerPayload } from "@/lib/banners/public-banner-payload";
 import { endpoint } from "./endpoint";
 import type { BannerItem } from "@/types/banner";
 import {
   CreateBannerParams,
+  DeleteBannerParams,
   FindAllBannerParams,
   FindAllPublicBannerParams,
 } from "./types";
 
-type PublicBannerResponse = BannerItem[] | {
-  success?: boolean;
-  message?: string;
-  data?: BannerItem[];
-};
+type PublicBannerResponse = BannerItem[] | Record<string, unknown>;
 
 const appendQueryParams = (
   path: string,
@@ -31,14 +29,7 @@ const appendQueryParams = (
   return queryString ? `${path}?${queryString}` : path;
 };
 
-const normalizePublicBanners = (response: PublicBannerResponse): BannerItem[] => {
-  if (Array.isArray(response)) return response;
-  if (Array.isArray(response.data)) return response.data;
-  return [];
-};
-
-@injectable()
-@injectFromBase({ extendProperties: true })
+@injectable()@injectFromBase({ extendProperties: true })
 class Client extends BannerClient<AxiosState> {
   async findAll(params: FindAllBannerParams) {
     const res = await super
@@ -62,7 +53,7 @@ class Client extends BannerClient<AxiosState> {
         }),
       })
       .perform<PublicBannerResponse>();
-    return normalizePublicBanners(res.data);
+    return normalizePublicBannerPayload(res.data);
   }
 
   async create(params: CreateBannerParams) {
@@ -89,6 +80,12 @@ class Client extends BannerClient<AxiosState> {
       })
       .perform<BannerItem>();
     return res.data;
+  }
+
+  async delete(params: DeleteBannerParams) {
+    await super
+      .sharedDelete({ endpoint: endpoint.remove(params.id) })
+      .perform<unknown>();
   }
 }
 

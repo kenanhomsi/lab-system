@@ -14,14 +14,10 @@ export async function GET(req: NextRequest) {
     if (!token) {
       throw new Error("Missing authorization token");
     }
-    console.log("token in next route", token);
     const query = Object.fromEntries(req.nextUrl.searchParams.entries());
-    console.log("query in next route", query);
     const res = await medicalTestService.findAll({ token, query });
-    console.log("res in next route", res);
     return NextResponse.json(res);
   } catch (error: unknown) {
-    console.log("error in next route", error);
     return jsonError(error, 400);
   }
 }

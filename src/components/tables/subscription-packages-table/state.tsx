@@ -1,10 +1,12 @@
 "use client";
 
+import { useMounted } from "@mantine/hooks";
 import { PropsWithChildren, useState } from "react";
 import { SubscriptionPackageItem, SubscriptionPackageModalType, TargetAudience } from "./types";
 import { useMirrorRegistry } from "./store";
 
 const State = ({ children }: PropsWithChildren) => {
+  const isHydrated = useMounted();
   const [pageNumber, setPageNumber] = useState(1);
   const [targetAudienceFilter, setTargetAudienceFilter] = useState<TargetAudience | "all">(
     "all",
@@ -23,6 +25,10 @@ const State = ({ children }: PropsWithChildren) => {
   useMirrorRegistry("setActiveModal", setActiveModal);
   useMirrorRegistry("selectedPackage", selectedPackage);
   useMirrorRegistry("setSelectedPackage", setSelectedPackage);
+
+  if (!isHydrated) {
+    return null;
+  }
 
   return <>{children}</>;
 };

@@ -1,10 +1,13 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import {
   Alert,
   Button,
   Divider,
   Group,
+  Box,
+  Checkbox,
   Modal,
   NumberInput,
   Paper,
@@ -18,6 +21,8 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
+import dayjs from "dayjs";
 import {
   IconCalendarEvent,
   IconCurrencyDollar,
@@ -39,7 +44,7 @@ import { toRequestDateIso } from "@/modules/TestRequests/abstraction/request-dat
 import { useSyncedSessionUser } from "@/stores/use-synced-session-user";
 
 const INITIAL_FORM = {
-  medicalTestId: 0,
+  medicalTestIds: [] as number[],
   requestDate: "",
   status: "pending",
   totalAmount: 0,
@@ -64,14 +69,18 @@ function priceForMedicalTestId(id: number, items: MedicalTestItem[]): number {
   return row && Number.isFinite(row.price) ? row.price : 0;
 }
 
-const UI = () => {
+function totalPriceForMedicalTestIds(ids: number[], items: MedicalTestItem[]): number {
+  return ids.reduce((sum, id) => sum + priceForMedicalTestId(id, items), 0);
+}
+
+const CreateTestRequestForm = () => {
   const t = useTranslations("admin.testRequests");
   const tc = useTranslations("admin.common");
   const props = useMirror("props") as { opened?: boolean; onClose?: () => void };
   const locale = useLocale();
 
   const submitAction = useMirror("submitAction") as (p: {
-    medicalTestId: number;
+    medicalTestIds: number[];
     requestDate: string;
     status: string;
     totalAmount: number;
@@ -80,7 +89,7 @@ const UI = () => {
     doctorId: string | null;
     labClientId: string | null;
     directPatientId: string | null;
-    externalPatientId: number;
+    externalPatientId: number | null;
   }) => Promise<unknown>;
 
   const opened = Boolean(props.opened);
@@ -106,9 +115,9 @@ const UI = () => {
     const items = medicalTestsQuery.data;
     if (!items?.length) return;
     setForm((prev) => {
-      if (prev.medicalTestId <= 0) return prev;
-      const p = priceForMedicalTestId(prev.medicalTestId, items);
-      return prev.totalAmount === p ? prev : { ...prev, totalAmount: p };
+      if (prev.medicalTestIds.length === 0) return prev;
+      const total = totalPriceForMedicalTestIds(prev.medicalTestIds, items);
+      return prev.totalAmount === total ? prev : { ...prev, totalAmount: total };
     });
   }, [medicalTestsQuery.data]);
 
@@ -136,12 +145,12 @@ const UI = () => {
   );
 
   const showExternalPatientField = Boolean(
-    hasUserId && (partyKind === "lab" || isStaffPartyUser(sessionUser?.roles))
+    hasUserId && (partyKind === "lab" || isStaffPartyUser(sessionUser?.roles)),
   );
 
   /** Step 1: only form fields — profile is required on submit, not to move to step 2. */
   const isStepOneValid =
-    Boolean(form.requestDate.trim()) && form.medicalTestId > 0;
+    Boolean(form.requestDate.trim()) && form.medicalTestIds.length > 0;
 
   const canSubmitCreate = isStepOneValid && hasUserId;
 
@@ -153,7 +162,7 @@ const UI = () => {
   };
 
   const buildPayload = (): {
-    medicalTestId: number;
+    medicalTestIds: number[];
     requestDate: string;
     status: string;
     totalAmount: number;
@@ -162,7 +171,7 @@ const UI = () => {
     doctorId: string | null;
     labClientId: string | null;
     directPatientId: string | null;
-    externalPatientId: number;
+    externalPatientId: number | null;
   } | null => {
     if (!sessionUser) return null;
     const userId = sessionUser.id.trim();
@@ -175,13 +184,13 @@ const UI = () => {
       formDirectPatientId: form.directPatientId,
     });
     return {
-      medicalTestId: form.medicalTestId,
+      medicalTestIds: form.medicalTestIds,
       requestDate: toRequestDateIso(form.requestDate),
       status: "pending",
       totalAmount: form.totalAmount,
       notes: form.notes,
       metadata: form.metadata,
-      externalPatientId: form.externalPatientId > 0 ? form.externalPatientId : 0,
+      externalPatientId: form.externalPatientId > 0 ? form.externalPatientId : null,
       ...party,
     };
   };
@@ -214,10 +223,16 @@ const UI = () => {
           WebkitBackdropFilter: "blur(20px)",
           background: "light-dark(rgba(255,255,255,0.82), rgba(18,18,23,0.78))",
           border: "1px solid light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.09))",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
         },
       }}
     >
       <Stack gap="lg">
+        <MutationErrorAlert />
         <Stepper
           className="mt-1"
           active={activeStep}
@@ -227,6 +242,7 @@ const UI = () => {
           <Stepper.Step label={t("step1Label")} description={t("step1RequestDetails")}>
             <Paper withBorder radius="lg" p="md">
               <Stack gap="md">
+                <MutationErrorAlert />
                 <Group justify="space-between" wrap="nowrap">
                   <Title order={5}>{t("requestDetailsTitle")}</Title>
                   <Text size="xs" c="dimmed">
@@ -257,42 +273,61 @@ const UI = () => {
                   </Text>
                 ) : null}
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
-                  <Select
-                    label={t("fieldMedicalTest")}
-                    withAsterisk
-                    searchable
-                    allowDeselect={false}
-                    clearable={false}
-                    placeholder={
-                      medicalTestsQuery.isPending
-                        ? t("placeholderLoadingTests")
-                        : t("placeholderChooseTest")
-                    }
-                    description={t("fieldMedicalTestDesc")}
-                    data={medicalTestOptions}
-                    leftSection={<IconFlask2 size={16} />}
-                    disabled={medicalTestsQuery.isPending || medicalTestsQuery.isError}
-                    value={form.medicalTestId > 0 ? String(form.medicalTestId) : null}
-                    onChange={(v) => {
-                      const nextId = v ? Number(v) : 0;
-                      const items = medicalTestsQuery.data ?? [];
-                      setForm({
-                        ...form,
-                        medicalTestId: nextId,
-                        totalAmount: priceForMedicalTestId(nextId, items),
-                      });
-                    }}
-                  />
-                  <TextInput
+                  <Box style={{ gridColumn: "1 / -1" }}>
+                    <Stack gap={4}>
+                      <Group gap={6} wrap="nowrap">
+                        <ThemeIcon size={28} radius="md" variant="light" color="blue">
+                          <IconFlask2 size={16} />
+                        </ThemeIcon>
+                        <Text size="sm" fw={500}>
+                          {t("fieldMedicalTest")}
+                          <Text span c="red">
+                            {" "}
+                            *
+                          </Text>
+                        </Text>
+                      </Group>
+                      <Text size="xs" c="dimmed">
+                        {t("fieldMedicalTestDesc")}
+                      </Text>
+                      <Paper withBorder radius="md" p="sm">
+                        <Checkbox.Group
+                          value={form.medicalTestIds.map(String)}
+                          onChange={(values) => {
+                            const nextIds = values.map(Number);
+                            const items = medicalTestsQuery.data ?? [];
+                            setForm({
+                              ...form,
+                              medicalTestIds: nextIds,
+                              totalAmount: totalPriceForMedicalTestIds(nextIds, items),
+                            });
+                          }}
+                        >
+                          <Stack gap="sm">
+                            {medicalTestOptions.map((opt) => (
+                              <Checkbox
+                                key={opt.value}
+                                value={opt.value}
+                                label={opt.label}
+                                disabled={
+                                  medicalTestsQuery.isPending || medicalTestsQuery.isError
+                                }
+                              />
+                            ))}
+                          </Stack>
+                        </Checkbox.Group>
+                      </Paper>
+                    </Stack>
+                  </Box>
+                  <DatePickerInput
                     label={t("fieldRequestDate")}
                     withAsterisk
-                    type="date"
                     placeholder={t("datePlaceholder")}
                     description={t("fieldRequestDateDescCreate")}
-                    value={form.requestDate}
+                    value={form.requestDate ? dayjs(form.requestDate).toDate() : null}
                     leftSection={<IconCalendarEvent size={16} />}
-                    onChange={(e) =>
-                      setForm({ ...form, requestDate: e.currentTarget.value })
+                    onChange={(date) =>
+                      setForm({ ...form, requestDate: date ? dayjs(date).format("YYYY-MM-DD") : "" })
                     }
                   />
                   <NumberInput
@@ -372,6 +407,7 @@ const UI = () => {
           <Stepper.Step label={t("step2Label")} description={t("step2NotesMeta")}>
             <Paper withBorder radius="lg" p="md">
               <Stack gap="md">
+                <MutationErrorAlert />
                 <Title order={5}>{t("additionalInfoTitle")}</Title>
                 <Divider />
                 <Textarea
@@ -453,8 +489,8 @@ const UI = () => {
           </Group>
         </Group>
       </Stack>
-    </Modal>
+    </Modal >
   );
 };
 
-export { UI };
+export { CreateTestRequestForm };

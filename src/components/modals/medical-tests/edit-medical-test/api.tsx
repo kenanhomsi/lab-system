@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 
 import { frontendContainer } from "@/container";
 import { MedicalTestFrontendService, medicalTestModuleNames } from "@/modules/medical-tests";
-import { useMutation } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "./store";
 
@@ -11,7 +12,7 @@ const medicalTestService = frontendContainer.get<MedicalTestFrontendService>(
 );
 
 const Api = ({ children }: PropsWithChildren) => {
-    const updateMutation = useMutation({
+    const updateMutation = useManagedMutation({
         mutationFn: async (params: {
             id: string;
             data: { nameAr: string; nameEn: string; description: string };
@@ -30,7 +31,7 @@ const Api = ({ children }: PropsWithChildren) => {
 
     useMirrorRegistry("updateMutation", updateMutation);
 
-    return <>{children}</>;
+    return <MutationErrorProvider>{children}</MutationErrorProvider>;
 };
 
 export { Api };

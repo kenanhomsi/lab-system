@@ -3,6 +3,10 @@ type FindAllQueryParams = {
   PageSize?: string;
   MedicalTestId?: string;
   Status?: string;
+  /** Free-text filter forwarded to upstream API when present */
+  Search?: string;
+  SortBy?: string;
+  SortDesc?: string;
 };
 
 type AuthParams = {
@@ -17,7 +21,7 @@ type FindTestRequestParams = AuthParams & {
 };
 
 type CreateTestRequestParams = AuthParams & {
-  medicalTestId: number;
+  medicalTestIds: number[];
   requestDate: string;
   status: string;
   totalAmount: number;
@@ -26,7 +30,7 @@ type CreateTestRequestParams = AuthParams & {
   doctorId: string | null;
   labClientId: string | null;
   directPatientId: string | null;
-  externalPatientId: number;
+  externalPatientId: number | null;
 };
 
 type UpdateTestRequestParams = AuthParams & {
@@ -40,7 +44,7 @@ type UpdateTestRequestParams = AuthParams & {
   doctorId: string | null;
   labClientId: string | null;
   directPatientId: string | null;
-  externalPatientId: number;
+  externalPatientId: number | null;
 };
 
 type DeleteTestRequestParams = AuthParams & {
@@ -50,6 +54,7 @@ type DeleteTestRequestParams = AuthParams & {
 export type {
   CreateTestRequestParams,
   DeleteTestRequestParams,
+  FindAllQueryParams,
   FindAllTestRequestParams,
   FindTestRequestParams,
   UpdateTestRequestParams,

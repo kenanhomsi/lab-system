@@ -8,6 +8,12 @@ type FindAllAccessPolicyParams = AuthParams & {
   query?: Record<string, string | undefined>;
 };
 
+type FindAllAccessPolicyTablesParams = AuthParams;
+
+type FindAccessPolicyTableFieldsParams = AuthParams & {
+  tableName: string;
+};
+
 type CreateAccessPolicyParams = AuthParams & AccessPolicyWritePayload;
 
 type FindOneAccessPolicyParams = AuthParams & {
@@ -38,6 +44,8 @@ export type {
   DisableAccessPolicyParams,
   EnableAccessPolicyParams,
   FindAllAccessPolicyParams,
+  FindAllAccessPolicyTablesParams,
+  FindAccessPolicyTableFieldsParams,
   FindOneAccessPolicyParams,
   UpdateAccessPolicyParams,
   ValidateAccessPolicyParams,

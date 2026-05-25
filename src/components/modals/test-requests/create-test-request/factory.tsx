@@ -2,7 +2,15 @@
 import { Api } from "./api";
 import { Init } from "./init";
 import { State } from "./state";
-import { UI } from "./ui";
+import { CreateTestRequestForm } from "./create-test-request-form";
 import { FactoryProps } from "./types";
-const Factory = (props: FactoryProps) => <Init {...props}><State><Api><UI /></Api></State></Init>;
+const Factory = (props: FactoryProps) => (
+  <Init {...props}>
+    <State>
+      <Api>
+        <CreateTestRequestForm />
+      </Api>
+    </State>
+  </Init>
+);
 export { Factory };

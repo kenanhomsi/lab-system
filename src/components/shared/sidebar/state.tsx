@@ -7,26 +7,39 @@ import {
   useMemo,
   useState,
 } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
 import {
   useComputedColorScheme,
   useMantineColorScheme,
 } from "@mantine/core";
-import { useMirror, useMirrorRegistry } from "./store";
-import { utilityItem } from "./type";
+import { useMirrorRegistry } from "./store";
+import { sideBarItem, utilityItem } from "./type";
 
-const State = ({ children }: PropsWithChildren) => {
-  const items = useMirror("items");
+const State = ({
+  children,
+  items,
+}: PropsWithChildren<{ items: sideBarItem[] }>) => {
   const pathname = usePathname();
 
   const { setColorScheme } = useMantineColorScheme();
   const computedScheme = useComputedColorScheme("light");
 
   const pathBasedIndex = useMemo(() => {
-    const matchedIndex = items.findIndex((item) =>
-      pathname.startsWith(item.href),
-    );
-    return matchedIndex >= 0 ? matchedIndex : 0;
+    const isActiveRoute = (href: string) =>
+      pathname === href || pathname.startsWith(`${href}/`);
+
+    let bestIndex = -1;
+    let bestLength = -1;
+
+    items.forEach((item, index) => {
+      if (!isActiveRoute(item.href)) return;
+      if (item.href.length > bestLength) {
+        bestLength = item.href.length;
+        bestIndex = index;
+      }
+    });
+
+    return bestIndex >= 0 ? bestIndex : 0;
   }, [items, pathname]);
 
   const [activeIndex, setActiveIndex] = useState(pathBasedIndex);

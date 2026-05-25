@@ -1,15 +1,13 @@
 "use client";
 
 import { Text } from "@mantine/core";
+import { RoleTableItem } from "../types";
 import { DataTableColumn } from "./types";
 import { ActionsRender } from "./columns-rendering/actions-render";
 
 type Translate = (key: string) => string;
 
-const getRoleColumns = (t: Translate): DataTableColumn<{
-  id: string;
-  name: string;
-}>[] => {
+const getRoleColumns = (t: Translate): DataTableColumn<RoleTableItem>[] => {
   return [
     {
       accessor: "name",

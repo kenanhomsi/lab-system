@@ -8,13 +8,20 @@ function normalizeBaseUrl(baseUrl: string): string {
   return baseUrl.replace(/\/+$/, "");
 }
 
+/** Root-absolute hub URL so next-intl locale paths cannot affect negotiation. */
+function hubEndpoint(baseUrl: string, hubPath: string): string {
+  const base = normalizeBaseUrl(baseUrl);
+  const path = hubPath.startsWith("/") ? hubPath : `/${hubPath}`;
+  if (!base) return path;
+  return new URL(path, `${base}/`).href;
+}
+
 export function createOnlineUsersConnection(
   baseUrl: string,
   accessTokenFactory: () => string,
 ): HubConnection {
-  const base = normalizeBaseUrl(baseUrl);
   return new HubConnectionBuilder()
-    .withUrl(`${base}/hubs/online-users`, {
+    .withUrl(hubEndpoint(baseUrl, "/hubs/online-users"), {
       accessTokenFactory,
       transport:
         HttpTransportType.WebSockets | HttpTransportType.ServerSentEvents,
@@ -27,9 +34,8 @@ export function createChatConnection(
   baseUrl: string,
   accessTokenFactory: () => string,
 ): HubConnection {
-  const base = normalizeBaseUrl(baseUrl);
   return new HubConnectionBuilder()
-    .withUrl(`${base}/hubs/chat`, {
+    .withUrl(hubEndpoint(baseUrl, "/hubs/chat"), {
       accessTokenFactory,
       transport:
         HttpTransportType.WebSockets | HttpTransportType.ServerSentEvents,

@@ -1,0 +1,161 @@
+/**
+ * ChatTiko-inspired tokens. Light defaults; `html.dark` matches dashboard dark mode.
+ */
+.chat-app {
+  --chat-accent: #48cfcb;
+  --chat-accent-strong: #00a8cc;
+  --chat-accent-muted: rgba(72, 207, 203, 0.18);
+  --chat-shell-bg: #e8ecf4;
+  --chat-sidebar-bg: #ffffff;
+  --chat-main-bg: #dfe4ef;
+  --chat-header-bg: #ffffff;
+  --chat-composer-bg: #ffffff;
+  --chat-profile-bg: #ffffff;
+  --chat-border: #d8dee9;
+  --chat-text: #0f172a;
+  --chat-text-muted: #64748b;
+  --chat-incoming-bg: #ffffff;
+  --chat-incoming-text: #1e293b;
+  --chat-sent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --chat-sent-shadow: 0 2px 12px rgba(99, 102, 241, 0.28);
+  --chat-input-bg: #f8fafc;
+  --chat-input-border: #cbd5e1;
+  --chat-search-bg: #f1f5f9;
+  --chat-item-active: rgba(99, 102, 241, 0.14);
+  --chat-item-hover: #f1f5f9;
+  --chat-dot-pattern: rgba(15, 23, 42, 0.04);
+  --chat-typing-bg: #e2e8f0;
+  --chat-date-line: #cbd5e1;
+  --chat-send-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  --chat-focus-ring: rgba(99, 102, 241, 0.28);
+  --chat-avatar-border: #ffffff;
+}
+
+html.dark .chat-app {
+  --chat-accent: #48cfcb;
+  --chat-accent-strong: #5bd3f5;
+  --chat-accent-muted: rgba(72, 207, 203, 0.14);
+  --chat-shell-bg: #18181f;
+  --chat-sidebar-bg: #23232c;
+  --chat-main-bg: #1a1a22;
+  --chat-header-bg: #23232c;
+  --chat-composer-bg: #23232c;
+  --chat-profile-bg: #2a2a36;
+  --chat-border: #3a3a48;
+  --chat-text: #f1f5f9;
+  --chat-text-muted: #94a3b8;
+  --chat-incoming-bg: #2e2e3a;
+  --chat-incoming-text: #f8fafc;
+  --chat-sent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --chat-sent-shadow: 0 2px 14px rgba(99, 102, 241, 0.4);
+  --chat-input-bg: #2e2e3a;
+  --chat-input-border: #3a3a48;
+  --chat-search-bg: #2a2a36;
+  --chat-item-active: rgba(99, 102, 241, 0.24);
+  --chat-item-hover: #2e2e3a;
+  --chat-dot-pattern: rgba(255, 255, 255, 0.045);
+  --chat-typing-bg: #2e2e3a;
+  --chat-date-line: #3a3a48;
+  --chat-send-shadow: 0 4px 16px rgba(99, 102, 241, 0.5);
+  --chat-focus-ring: rgba(99, 102, 241, 0.35);
+  --chat-avatar-border: #23232c;
+}
+
+.chat-app {
+  background: var(--chat-shell-bg);
+  color: var(--chat-text);
+}
+
+.chat-sidebar {
+  background: var(--chat-sidebar-bg);
+  border-color: var(--chat-border);
+}
+
+.chat-main {
+  background: var(--chat-main-bg);
+}
+
+.chat-header,
+.chat-composer {
+  background: var(--chat-header-bg);
+  border-color: var(--chat-border);
+}
+
+.chat-profile {
+  background: var(--chat-profile-bg);
+  border-color: var(--chat-border);
+}
+
+.chat-thread-bg {
+  background-color: var(--chat-main-bg);
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    var(--chat-dot-pattern) 1px,
+    transparent 0
+  );
+  background-size: 22px 22px;
+}
+
+.chat-top-bar {
+  background: var(--chat-sidebar-bg);
+  border-bottom: 1px solid var(--chat-border);
+}
+
+.chat-search-input input {
+  background-color: var(--chat-search-bg) !important;
+  border-color: var(--chat-input-border) !important;
+  color: var(--chat-text) !important;
+}
+
+.chat-composer-input textarea {
+  background-color: var(--chat-input-bg) !important;
+  border-color: var(--chat-input-border) !important;
+  color: var(--chat-text) !important;
+}
+
+.chat-composer-input textarea:focus {
+  border-color: var(--chat-accent-strong) !important;
+  box-shadow: 0 0 0 2px var(--chat-focus-ring) !important;
+}
+
+.chat-list-item--active {
+  background: var(--chat-item-active) !important;
+}
+
+.chat-list-item:hover:not(.chat-list-item--active) {
+  background: var(--chat-item-hover) !important;
+}
+
+.chat-bubble--incoming {
+  background: var(--chat-incoming-bg);
+  color: var(--chat-incoming-text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+html.dark .chat-bubble--incoming {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.chat-bubble--sent {
+  background: var(--chat-sent-gradient);
+  color: #fff;
+  box-shadow: var(--chat-sent-shadow);
+}
+
+.chat-send-btn--ready {
+  background: var(--chat-sent-gradient) !important;
+  box-shadow: var(--chat-send-shadow);
+}
+
+.chat-section-label {
+  color: var(--chat-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.chat-brand {
+  color: var(--chat-accent);
+  font-weight: 800;
+}

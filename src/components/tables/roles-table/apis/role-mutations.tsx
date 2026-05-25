@@ -1,48 +1,36 @@
-"use client";
+﻿"use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
+import { frontendContainer } from "@/container";
+import { roleModuleNames, RoleFrontendService } from "@/modules/role";
 import { useMirrorRegistry } from "../store";
 import { CreateRoleRequest, UpdateRoleRequest } from "../types";
 
-async function parseOrThrow(response: Response) {
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) {
-    throw new Error("Roles API request failed");
-  }
-  return payload;
-}
-
-async function requestJson<TPayload>(url: string, method: string, payload?: TPayload) {
-  const response = await fetch(url, {
-    method,
-    headers: payload ? { "Content-Type": "application/json" } : undefined,
-    body: payload ? JSON.stringify(payload) : undefined,
-  });
-  return parseOrThrow(response);
-}
+const roleService = frontendContainer.get<RoleFrontendService>(roleModuleNames.service);
 
 const RoleMutations = (props: PropsWithChildren) => {
   const queryClient = useQueryClient();
 
-  const createRoleMutation = useMutation({
-    mutationFn: (payload: CreateRoleRequest) =>
-      requestJson("/api/admin/roles", "POST", payload),
+  const createRoleMutation = useManagedMutation({
+    mutationFn: (payload: CreateRoleRequest) => roleService.create(payload),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-roles"] });
     },
   });
 
-  const updateRoleMutation = useMutation({
+  const updateRoleMutation = useManagedMutation({
     mutationFn: (params: { id: string; payload: UpdateRoleRequest }) =>
-      requestJson(`/api/admin/roles/${params.id}`, "PUT", params.payload),
+      roleService.update({ id: params.id, name: params.payload.name }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-roles"] });
     },
   });
 
-  const deleteRoleMutation = useMutation({
-    mutationFn: (id: string) => requestJson(`/api/admin/roles/${id}`, "DELETE"),
+  const deleteRoleMutation = useManagedMutation({
+    mutationFn: (id: string) => roleService.delete({ id }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-roles"] });
     },
@@ -58,7 +46,7 @@ const RoleMutations = (props: PropsWithChildren) => {
   );
   useMirrorRegistry("deleteRole", async (id: string) => deleteRoleMutation.mutateAsync(id));
 
-  return props;
+  return <MutationErrorProvider>{props.children}</MutationErrorProvider>;
 };
 
 export { RoleMutations };

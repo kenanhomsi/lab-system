@@ -20,7 +20,7 @@ declare module "next-auth" {
       fullName: string;
       roles: string[];
       permissions: string[];
-      accessToken: string;
+      // accessToken is NOT included here — it stays in the encrypted JWT only (BFF pattern)
     };
     expires: string;
   }

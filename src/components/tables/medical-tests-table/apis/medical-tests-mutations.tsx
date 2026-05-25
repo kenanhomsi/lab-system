@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { frontendContainer } from "@/container";
 import {
@@ -7,7 +7,9 @@ import {
   UpdateMedicalTestCommand,
   medicalTestModuleNames,
 } from "@/modules/medical-tests";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "../store";
 import {
@@ -31,7 +33,7 @@ const deleteMedicalTestCommand = frontendContainer.get<DeleteMedicalTestCommand>
 const MedicalTestsMutations = (props: PropsWithChildren) => {
   const queryClient = useQueryClient();
 
-  const createMutation = useMutation({
+  const createMutation = useManagedMutation({
     mutationFn: async (data: CreateMedicalTestParams) => {
       createMedicalTestCommand.init(data);
       return await createMedicalTestCommand.exec();
@@ -41,7 +43,7 @@ const MedicalTestsMutations = (props: PropsWithChildren) => {
     },
   });
 
-  const updateMutation = useMutation({
+  const updateMutation = useManagedMutation({
     mutationFn: async (params: { id: string; data: Omit<UpdateMedicalTestParams, "id"> }) => {
       updateMedicalTestCommand.init({ id: params.id, ...params.data });
       return await updateMedicalTestCommand.exec();
@@ -51,7 +53,7 @@ const MedicalTestsMutations = (props: PropsWithChildren) => {
     },
   });
 
-  const deleteMutation = useMutation({
+  const deleteMutation = useManagedMutation({
     mutationFn: async (params: DeleteMedicalTestParams) => {
       deleteMedicalTestCommand.init(params);
       return await deleteMedicalTestCommand.exec();
@@ -73,7 +75,7 @@ const MedicalTestsMutations = (props: PropsWithChildren) => {
     },
   });
 
-  return <>{props.children}</>;
+  return <MutationErrorProvider>{props.children}</MutationErrorProvider>;
 };
 
 export { MedicalTestsMutations };

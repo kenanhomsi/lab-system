@@ -5,83 +5,28 @@ import { TestRequestFrontendService, testRequestModuleNames } from "@/modules/Te
 import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { useMirror, useMirrorRegistry } from "../store";
-import { TestRequestItem, TestRequestsResponse } from "../types";
+import { TestRequestsResponse } from "../types";
 
 const service = frontendContainer.get<TestRequestFrontendService>(testRequestModuleNames.service);
 
-/** Backend responds with `{ success, message, data: TestRequestItem[] }` (no paging wrapper). */
-function extractRows(payload: unknown): TestRequestItem[] {
-  if (Array.isArray(payload)) {
-    return payload;
-  }
+/** Backend responds with `{ success, message, data: TestRequestsResponse }` */
+function extractResponse(payload: unknown): TestRequestsResponse {
   if (
     payload !== null &&
     typeof payload === "object" &&
     "data" in payload &&
-    Array.isArray((payload as { data: unknown }).data)
+    typeof (payload as Record<string, unknown>).data === "object" &&
+    (payload as Record<string, unknown>).data !== null &&
+    "items" in ((payload as Record<string, unknown>).data as Record<string, unknown>)
   ) {
-    return (payload as { data: TestRequestItem[] }).data;
+    return (payload as Record<string, unknown>).data as TestRequestsResponse;
   }
+
+  if (payload !== null && typeof payload === "object" && "items" in payload) {
+    return payload as TestRequestsResponse;
+  }
+
   throw new Error("Failed to fetch test requests");
-}
-
-function sortItems(items: TestRequestItem[], sortBy: string, sortDesc: boolean): TestRequestItem[] {
-  const key = sortBy.trim() || "createdAt";
-  const dir = sortDesc ? -1 : 1;
-  const time = (v: string | undefined) => {
-    const t = v ? new Date(v).getTime() : NaN;
-    return Number.isFinite(t) ? t : 0;
-  };
-  return [...items].sort((a, b) => {
-    let cmp = 0;
-    if (key === "totalAmount") {
-      cmp = a.totalAmount - b.totalAmount;
-    } else if (key === "requestDate") {
-      cmp = time(a.requestDate) - time(b.requestDate);
-    } else if (key === "createdAt") {
-      cmp = time(a.createdAt) - time(b.createdAt);
-    } else {
-      cmp = String(a[key as keyof TestRequestItem] ?? "").localeCompare(String(b[key as keyof TestRequestItem] ?? ""));
-    }
-    return cmp * dir;
-  });
-}
-
-function filterBySearch(items: TestRequestItem[], search: string): TestRequestItem[] {
-  const q = search.trim();
-  if (!q) return items;
-  const asNum = Number(q);
-  if (!Number.isNaN(asNum)) {
-    return items.filter((row) => row.medicalTestId === asNum || row.id === asNum);
-  }
-  const lower = q.toLowerCase();
-  return items.filter((row) => {
-    const name = row.medicalTestNameEn?.toLowerCase() ?? "";
-    const patient = row.externalPatientFullName?.toLowerCase() ?? "";
-    return name.includes(lower) || patient.includes(lower);
-  });
-}
-
-function toPagedResponse(
-  items: TestRequestItem[],
-  pageNumber: number,
-  pageSize: number,
-): TestRequestsResponse {
-  const totalCount = items.length;
-  const totalPages = pageSize > 0 ? Math.ceil(totalCount / pageSize) : 0;
-  const safePage = totalPages > 0 ? Math.min(Math.max(1, pageNumber), totalPages) : 1;
-  const start = (safePage - 1) * pageSize;
-  const pageItems = pageSize > 0 ? items.slice(start, start + pageSize) : items;
-
-  return {
-    items: pageItems,
-    page: safePage,
-    pageSize,
-    totalCount,
-    totalPages,
-    hasNextPage: totalPages > 0 && safePage < totalPages,
-    hasPreviousPage: safePage > 1,
-  };
 }
 
 async function getAllTestRequests(params: {
@@ -99,18 +44,20 @@ async function getAllTestRequests(params: {
 
   const searchTrim = params.search.trim();
   if (searchTrim) {
-    const asMedicalTestId = Number(searchTrim);
-    if (!Number.isNaN(asMedicalTestId)) {
+    const useMedicalTestId =
+      /^\d+$/.test(searchTrim) &&
+      Number.isSafeInteger(Number(searchTrim)) &&
+      String(Number(searchTrim)) === searchTrim;
+    if (useMedicalTestId) {
       query.MedicalTestId = searchTrim;
+    } else {
+      query.Search = searchTrim;
     }
   }
   if (params.sortBy.trim()) query.SortBy = params.sortBy.trim();
 
   const payload = await service.findAll({ query });
-  const rows = extractRows(payload);
-  const filtered = filterBySearch(rows, params.search);
-  const sorted = sortItems(filtered, params.sortBy, params.sortDesc);
-  return toPagedResponse(sorted, params.pageNumber, params.pageSize);
+  return extractResponse(payload);
 }
 
 const GetAllTestRequests = (props: PropsWithChildren) => {

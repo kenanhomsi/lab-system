@@ -9,6 +9,8 @@ import {
   DisableAccessPolicyFrontendParams,
   EnableAccessPolicyFrontendParams,
   FindAllAccessPolicyFrontendParams,
+  FindAllAccessPolicyTablesFrontendParams,
+  FindAccessPolicyTableFieldsFrontendParams,
   FindOneAccessPolicyFrontendParams,
   UpdateAccessPolicyFrontendParams,
   ValidateAccessPolicyFrontendParams,
@@ -44,9 +46,20 @@ function normalizeListPayload(body: unknown): AccessPolicyDto[] {
   return [];
 }
 
-function writeBody(p: CreateAccessPolicyFrontendParams): Record<string, unknown> {
-  const { resource, action, effect, subjectType, subjectKey, condition, priority, isEnabled, description } =
-    p;
+function writeBody(
+  p: CreateAccessPolicyFrontendParams,
+): Record<string, unknown> {
+  const {
+    resource,
+    action,
+    effect,
+    subjectType,
+    subjectKey,
+    condition,
+    priority,
+    isEnabled,
+    description,
+  } = p;
   const payload: Record<string, unknown> = {
     resource,
     action,
@@ -73,6 +86,24 @@ class Client extends AccessPolicyClient<AxiosState> {
       })
       .perform<unknown>();
     return normalizeListPayload(res.data);
+  }
+
+  async findAllTables(_params?: FindAllAccessPolicyTablesFrontendParams) {
+    const res = await super
+      .sharedFindAll({
+        endpoint: endpoint.findAllTables,
+      })
+      .perform<unknown>();
+    return res.data;
+  }
+
+  async findTableFields(params: FindAccessPolicyTableFieldsFrontendParams) {
+    const res = await super
+      .sharedFindAll({
+        endpoint: endpoint.findTableFields(params.tableName),
+      })
+      .perform<unknown>();
+    return res.data;
   }
 
   async create(params: CreateAccessPolicyFrontendParams) {
@@ -104,17 +135,23 @@ class Client extends AccessPolicyClient<AxiosState> {
   }
 
   async delete(params: DeleteAccessPolicyFrontendParams) {
-    const res = await super.sharedDelete({ endpoint: endpoint.remove(params.id) }).perform<unknown>();
+    const res = await super
+      .sharedDelete({ endpoint: endpoint.remove(params.id) })
+      .perform<unknown>();
     return res.data;
   }
 
   async enable(params: EnableAccessPolicyFrontendParams) {
-    const res = await super.sharedPatch({ endpoint: endpoint.enable(params.id) }).perform<unknown>();
+    const res = await super
+      .sharedPatch({ endpoint: endpoint.enable(params.id) })
+      .perform<unknown>();
     return res.data;
   }
 
   async disable(params: DisableAccessPolicyFrontendParams) {
-    const res = await super.sharedPatch({ endpoint: endpoint.disable(params.id) }).perform<unknown>();
+    const res = await super
+      .sharedPatch({ endpoint: endpoint.disable(params.id) })
+      .perform<unknown>();
     return res.data;
   }
 

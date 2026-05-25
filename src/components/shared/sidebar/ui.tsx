@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useLayoutEffect, useState, useSyncExternalStore } from "react";
 import { ActionIcon, Divider, Group, Stack, UnstyledButton } from "@mantine/core";
 import {
@@ -10,18 +10,18 @@ import {
   FiCalendar,
   FiHome,
   FiMessageSquare,
-  FiMoon,
   FiSettings,
-  FiSun,
   FiUsers,
   FiUserPlus,
   FiActivity,
   FiClipboard,
   FiCheckCircle,
+  FiAlertCircle,
 } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
 import { useLocale, useTranslations } from "next-intl";
 import { useMirror } from "./store";
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import type { SidebarIconKey } from "./type";
 import styles from "./styles.module.scss";
 
@@ -36,6 +36,7 @@ const SIDEBAR_ICONS: Record<SidebarIconKey, IconType> = {
   clipboardList: FiClipboard,
   clipboardCheck: FiCheckCircle,
   userPlus: FiUserPlus,
+  alertCircle: FiAlertCircle,
 };
 
 const RAIL_W = "72px";
@@ -55,7 +56,6 @@ const getServerMobileViewportSnapshot = () => false;
 
 const UI = () => {
   const t = useTranslations("sidebar") as (key: string) => string;
-  const tn = useTranslations("navbar");
   const locale = useLocale();
   const rtl = locale === "ar";
 
@@ -111,14 +111,7 @@ const UI = () => {
 
   const items = useMirror("items");
   const activeIndex = useMirror("activeIndex");
-  const activeUtility = useMirror("activeUtility");
   const setActiveIndex = useMirror("setActiveIndex");
-  const setActiveUtility = useMirror("setActiveUtility");
-
-  const isLight = activeUtility === "light";
-  const ThemeIcon = isLight ? FiMoon : FiSun;
-  const themeLabel = isLight ? tn("darkMode") : tn("lightMode");
-  const toggleTheme = () => setActiveUtility(isLight ? "dark" : "light");
 
   const ExpandIcon = rtl ? FiChevronLeft : FiChevronRight;
   const CollapseIcon = rtl ? FiChevronRight : FiChevronLeft;
@@ -148,7 +141,8 @@ const UI = () => {
                       key={item.href}
                       component={Link}
                       href={item.href}
-                      variant="subtle"
+                      variant={index === activeIndex ? "filled" : "subtle"}
+                      color="brand"
                       aria-label={t(item.label)}
                       className={`${styles.iconButton} ${index === activeIndex ? styles.active : ""}`}
                       onClick={() => setActiveIndex(index)}
@@ -163,14 +157,7 @@ const UI = () => {
             </Stack>
 
             <Stack gap="xs" align="center">
-              <ActionIcon
-                variant="subtle"
-                aria-label={themeLabel}
-                className={styles.iconButton}
-                onClick={toggleTheme}
-              >
-                <ThemeIcon size={16} aria-hidden />
-              </ActionIcon>
+              <AnimatedThemeToggler className={styles.iconButton} />
             </Stack>
           </Stack>
         ) : (
@@ -211,14 +198,7 @@ const UI = () => {
             </Stack>
 
             <Stack gap={6}>
-              <UnstyledButton
-                aria-label={themeLabel}
-                className={styles.navRow}
-                onClick={toggleTheme}
-              >
-                <ThemeIcon size={17} aria-hidden />
-                <span className={styles.navLabel}>{themeLabel}</span>
-              </UnstyledButton>
+              <AnimatedThemeToggler className={styles.navRow} showLabel />
             </Stack>
           </Stack>
         )}
@@ -271,14 +251,7 @@ const UI = () => {
 
               <Divider className={styles.divider} />
               <Stack gap={6}>
-                <UnstyledButton
-                  aria-label={themeLabel}
-                  className={styles.navRow}
-                  onClick={toggleTheme}
-                >
-                  <ThemeIcon size={17} aria-hidden />
-                  <span className={styles.navLabel}>{themeLabel}</span>
-                </UnstyledButton>
+                <AnimatedThemeToggler className={styles.navRow} showLabel />
               </Stack>
             </Stack>
           </aside>

@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import {
   Button,
@@ -23,11 +24,15 @@ import {
   Badge,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconShieldLock, IconCode, IconX, IconHelp } from "@tabler/icons-react";
+import { IconShieldLock, IconCode, IconX, IconHelp, IconUser } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { frontendContainer } from "@/container";
+import {
+  AccessPolicyFrontendService,
+  accessPolicyModuleNames,
+} from "@/modules/access-policy";
 import { RoleFrontendService, roleModuleNames } from "@/modules/role";
 import { UserFrontendService, userModuleNames } from "@/modules/user";
 import { useMirror } from "../store";
@@ -37,12 +42,14 @@ import {
 } from "../types";
 
 type SelectOption = { value: string; label: string };
+type RoleOption = SelectOption & { roleId: string };
 type ActionValue = "*" | "read" | "write" | "delete" | "approve" | "assign";
 type ConditionType = "all" | "any";
 type ConditionRuleDraft = { field: string; operator: string; valueText: string };
 
 const ACTION_VALUES: ActionValue[] = ["*", "read", "write", "delete", "approve", "assign"];
 const RESOURCE_PATTERN = /^[a-z]+(?:_[a-z]+)*$/;
+const CURRENT_USER_ID_TOKEN = "@CurrentUserId";
 const OPERATOR_OPTIONS = [
   { value: "eq", labelKey: "operatorEq" },
   { value: "neq", labelKey: "operatorNeq" },
@@ -107,6 +114,7 @@ const parseConditionDraft = (
 const parseValueText = (valueText: string): unknown => {
   const trimmed = valueText.trim();
   if (trimmed === "") return "";
+  if (trimmed === CURRENT_USER_ID_TOKEN) return CURRENT_USER_ID_TOKEN;
   if (trimmed === "true") return true;
   if (trimmed === "false") return false;
   if (trimmed === "null") return null;
@@ -150,9 +158,65 @@ const prettifyJson = (input: string): string => {
 };
 
 const roleService = frontendContainer.get<RoleFrontendService>(roleModuleNames.service);
+const accessPolicyService = frontendContainer.get<AccessPolicyFrontendService>(
+  accessPolicyModuleNames.service,
+);
 const userService = frontendContainer.get<UserFrontendService>(userModuleNames.service);
 
-const toRoleOptions = (payload: unknown): SelectOption[] => {
+const toTableOptions = (payload: unknown): SelectOption[] => {
+  const list =
+    payload &&
+      typeof payload === "object" &&
+      "data" in payload &&
+      Array.isArray((payload as { data?: unknown }).data)
+      ? ((payload as { data: unknown[] }).data ?? [])
+      : Array.isArray(payload)
+        ? payload
+        : [];
+
+  return list
+    .map((item) => {
+      if (!item || typeof item !== "object") return null;
+      const tableName =
+        "tableName" in item && typeof item.tableName === "string" ? item.tableName : "";
+      if (!tableName) return null;
+      return { value: tableName, label: tableName };
+    })
+    .filter((item): item is SelectOption => Boolean(item));
+};
+
+const toFieldOptions = (payload: unknown): SelectOption[] => {
+  const list =
+    payload &&
+      typeof payload === "object" &&
+      "data" in payload &&
+      Array.isArray((payload as { data?: unknown }).data)
+      ? ((payload as { data: unknown[] }).data ?? [])
+      : Array.isArray(payload)
+        ? payload
+        : [];
+
+  return list
+    .map((item) => {
+      if (typeof item === "string" && item.length > 0) {
+        return { value: item, label: item };
+      }
+
+      if (!item || typeof item !== "object") return null;
+
+      const fieldName =
+        "fieldName" in item && typeof item.fieldName === "string" ? item.fieldName : "";
+      const columnName =
+        "columnName" in item && typeof item.columnName === "string" ? item.columnName : "";
+      const value = fieldName || columnName;
+
+      if (!value) return null;
+      return { value, label: value };
+    })
+    .filter((item): item is SelectOption => Boolean(item));
+};
+
+const toRoleOptions = (payload: unknown): RoleOption[] => {
   const fromArray = Array.isArray(payload) ? payload : null;
   const fromItems =
     !fromArray &&
@@ -180,10 +244,11 @@ const toRoleOptions = (payload: unknown): SelectOption[] => {
       if (!item || typeof item !== "object") return null;
       const id = "id" in item && typeof item.id === "string" ? item.id : "";
       const name = "name" in item && typeof item.name === "string" ? item.name : "";
-      if (!id) return null;
-      return { value: id, label: name || id };
+      const roleKey = name.trim() || id;
+      if (!roleKey) return null;
+      return { value: roleKey, label: roleKey, roleId: id };
     })
-    .filter((item): item is SelectOption => Boolean(item));
+    .filter((item): item is RoleOption => Boolean(item));
 };
 
 const toUserOptions = (payload: unknown): SelectOption[] => {
@@ -303,12 +368,36 @@ const Modals = () => {
     staleTime: 1000 * 60 * 5,
   });
 
+  const { data: tableOptions = [], isFetching: isLoadingTables } = useQuery({
+    queryKey: ["access-policy-table-options"],
+    queryFn: async () => {
+      const payload = await accessPolicyService.findAllTables();
+      return toTableOptions(payload);
+    },
+    enabled: formOpen,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const { data: fieldOptions = [], isFetching: isLoadingFields } = useQuery({
+    queryKey: ["access-policy-field-options", form.resource],
+    queryFn: async () => {
+      const payload = await accessPolicyService.findTableFields({ tableName: form.resource });
+      return toFieldOptions(payload);
+    },
+    enabled: formOpen && form.resource.trim().length > 0,
+    staleTime: 1000 * 60 * 5,
+  });
+
   const subjectOptions = isRoleSubject ? roleOptions : userOptions;
   const subjectOptionsWithCurrent = useMemo(() => {
     if (!form.subjectKey) return subjectOptions;
     if (subjectOptions.some((option) => option.value === form.subjectKey)) return subjectOptions;
     return [{ value: form.subjectKey, label: form.subjectKey }, ...subjectOptions];
   }, [form.subjectKey, subjectOptions]);
+  const roleNameById = useMemo(
+    () => new Map(roleOptions.map((option) => [option.roleId, option.value])),
+    [roleOptions],
+  );
 
   useEffect(() => {
     if (activeModal === "create") {
@@ -341,6 +430,8 @@ const Modals = () => {
   const resourceValue = form.resource.trim();
   const actionValue = form.action.trim().toLowerCase();
   const subjectKeyValue = form.subjectKey.trim();
+  const normalizedSubjectKeyValue =
+    form.subjectType === "Role" ? roleNameById.get(subjectKeyValue) ?? subjectKeyValue : subjectKeyValue;
   const formConditionStr = typeof form.condition === "string" ? form.condition : "";
   const conditionValue = formConditionStr.trim();
 
@@ -482,7 +573,7 @@ const Modals = () => {
       ...form,
       resource: resourceValue,
       action: actionValue,
-      subjectKey: subjectKeyValue,
+      subjectKey: normalizedSubjectKeyValue,
     };
     if (parsedCondition) {
       normalizedForm.condition = parsedCondition;
@@ -500,7 +591,7 @@ const Modals = () => {
       }
       close();
     } catch {
-      notifications.show({ title: t("toastErrorTitle"), message: t("toastErrorMessage"), color: "red" });
+      // Errors are surfaced via MutationErrorAlert and global notifications.
     } finally {
       setIsSubmitting(false);
     }
@@ -530,7 +621,7 @@ const Modals = () => {
       ...form,
       resource: resourceValue,
       action: actionValue,
-      subjectKey: subjectKeyValue,
+      subjectKey: normalizedSubjectKeyValue,
     };
     if (parsedCondition) {
       normalizedForm.condition = parsedCondition;
@@ -546,11 +637,7 @@ const Modals = () => {
         color: "teal",
       });
     } catch {
-      notifications.show({
-        title: t("toastValidateFailTitle"),
-        message: t("toastValidateFailMessage"),
-        color: "red",
-      });
+      // Errors are surfaced via MutationErrorAlert and global notifications.
     } finally {
       setIsSubmitting(false);
     }
@@ -569,7 +656,7 @@ const Modals = () => {
       });
       close();
     } catch {
-      notifications.show({ title: t("toastErrorTitle"), message: t("toastErrorMessage"), color: "red" });
+      // Errors are surfaced via MutationErrorAlert and global notifications.
     } finally {
       setIsSubmitting(false);
     }
@@ -616,16 +703,27 @@ const Modals = () => {
         }}
       >
         <Stack gap="md">
+          <MutationErrorAlert />
           <Group grow>
-            <TextInput
+            <Select
               label={t("resourceLabel")}
               placeholder={t("resourcePlaceholder")}
-              value={form.resource}
-              onChange={(e) => {
-                const value = e.currentTarget.value.toLowerCase().replace(/\s+/g, "_");
-                setForm((f) => ({ ...f, resource: value }));
+              data={tableOptions}
+              value={form.resource || null}
+              onChange={(value) => {
+                const nextResource = value ?? "";
+                setForm((f) => ({ ...f, resource: nextResource }));
+                if (nextResource !== form.resource) {
+                  setConditionFromBuilder(
+                    conditionType,
+                    conditionRules.map((rule) => ({ ...rule, field: "" })),
+                  );
+                }
               }}
               error={showErrors ? resourceError : null}
+              searchable
+              nothingFoundMessage={t("resourceNoOptions")}
+              disabled={isLoadingTables}
               required
               radius="md"
             />
@@ -801,18 +899,26 @@ const Modals = () => {
 
                   {conditionRules.map((rule, index) => (
                     <Group key={`${index}`} align="flex-end" wrap="nowrap">
-                      <TextInput
+                      <Select
                         label={index === 0 ? t("conditionFieldLabel") : undefined}
                         placeholder={t("conditionFieldPlaceholder")}
-                        value={rule.field}
-                        onChange={(e) =>
-                          updateConditionRule(index, { field: e.currentTarget.value })
+                        data={
+                          rule.field && !fieldOptions.some((option) => option.value === rule.field)
+                            ? [{ value: rule.field, label: rule.field }, ...fieldOptions]
+                            : fieldOptions
+                        }
+                        value={rule.field || null}
+                        onChange={(value) =>
+                          updateConditionRule(index, { field: value && value.length ? value : "" })
                         }
                         error={
                           showErrors && !rule.field.trim().length
                             ? t("conditionFieldRequired")
                             : null
                         }
+                        searchable
+                        nothingFoundMessage={t("conditionFieldNoOptions")}
+                        disabled={!form.resource.trim().length || isLoadingFields}
                         radius="md"
                         style={{ flex: 1 }}
                       />
@@ -846,6 +952,18 @@ const Modals = () => {
                         radius="md"
                         style={{ flex: 1 }}
                       />
+                      <Tooltip label={t("conditionUseCurrentUserId")}>
+                        <ActionIcon
+                          variant="light"
+                          color="cyan"
+                          onClick={() =>
+                            updateConditionRule(index, { valueText: CURRENT_USER_ID_TOKEN })
+                          }
+                          aria-label={t("conditionUseCurrentUserId")}
+                        >
+                          <IconUser size={16} />
+                        </ActionIcon>
+                      </Tooltip>
                       <Tooltip label={t("conditionRemoveRule")}>
                         <ActionIcon
                           variant="light"
@@ -937,6 +1055,7 @@ const Modals = () => {
         radius="md"
       >
         <Stack gap="md">
+          <MutationErrorAlert />
           <Text size="sm">
             {t("modalDeleteBody", {
               resource: selectedPolicy?.resource?.trim() || "—",

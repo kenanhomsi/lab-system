@@ -1,6 +1,7 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { createAppQueryClient } from "@/lib/query/create-query-client";
 import { useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { isDashboardRoute } from "@/lib/is-dashboard-route";
@@ -15,13 +16,14 @@ import {
 } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
+import { ErrorI18nSync } from "./error-i18n-sync";
 
 const colorSchemeManager = localStorageColorSchemeManager({
   key: "color-scheme",
 });
 
 const appTheme = createTheme({
-  primaryColor: "electric",
+  primaryColor: "brand",
   primaryShade: { light: 6, dark: 5 },
   fontFamily: "var(--font-inter), system-ui, sans-serif",
   headings: {
@@ -44,6 +46,18 @@ const appTheme = createTheme({
   },
   defaultRadius: "md",
   colors: {
+    brand: [
+      "#e6f7fb",
+      "#b3e8f4",
+      "#80d9ed",
+      "#4dcae6",
+      "#1abbe0",
+      "#00a8cc",
+      "#009cc2",
+      "#007a99",
+      "#005870",
+      "#003647",
+    ],
     electric: [
       "#eff6ff",
       "#dbeafe",
@@ -127,20 +141,11 @@ function MantineRouteProvider({ children }: { children: ReactNode }) {
 }
 
 export function AppProviders({ children }: { children: ReactNode }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 60_000,
-            retry: 1,
-          },
-        },
-      }),
-  );
+  const [queryClient] = useState(() => createAppQueryClient());
   return (
     <SessionProvider>
       <LocaleHtmlSync />
+      <ErrorI18nSync />
       <QueryClientProvider client={queryClient}>
         <MantineRouteProvider>{children}</MantineRouteProvider>
       </QueryClientProvider>

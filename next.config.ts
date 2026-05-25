@@ -4,10 +4,63 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  async rewrites() {
+    const backend = (
+      process.env.BACKEND_URL || "http://localhost:4000"
+    ).replace(/\/+$/, "");
+    return [
+      {
+        source: "/hubs/:path*",
+        destination: `${backend}/hubs/:path*`,
+      },
+    ];
+  },
   sassOptions: {
     includePaths: [path.join(process.cwd())],
   },
+  async headers() {
+    const isDev = process.env.NODE_ENV === "development";
+    if (isDev) {
+      return [
+        {
+          source: "/_next/static/:path*",
+          headers: [{ key: "Cache-Control", value: "no-store, must-revalidate" }],
+        },
+      ];
+    }
+    return [
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/_next/image/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/fonts/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {
         protocol: "https",
@@ -22,6 +75,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "fstorage.syrian-medical.tech",
         pathname: "/**",
       },
     ],

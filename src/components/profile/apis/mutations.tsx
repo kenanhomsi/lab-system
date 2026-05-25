@@ -1,44 +1,33 @@
-"use client";
+﻿"use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
+import { frontendContainer } from "@/container";
+import { userModuleNames, UserFrontendService } from "@/modules/user";
 import { useMirrorRegistry } from "../store";
 import type { ChangePasswordRequest, UpdateMeRequest } from "../types";
 
-async function parseOrThrow(response: Response) {
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) {
-    throw new Error("Profile API request failed");
-  }
-  return payload;
-}
-
-async function requestJson<TPayload>(url: string, method: string, payload?: TPayload) {
-  const response = await fetch(url, {
-    method,
-    headers: payload ? { "Content-Type": "application/json" } : undefined,
-    body: payload ? JSON.stringify(payload) : undefined,
-  });
-  return parseOrThrow(response);
-}
+const userService = frontendContainer.get<UserFrontendService>(userModuleNames.service);
 
 const Mutations = (props: PropsWithChildren) => {
   const queryClient = useQueryClient();
 
-  const updateMeMutation = useMutation({
-    mutationFn: (payload: UpdateMeRequest) => requestJson("/api/users/me", "PUT", payload),
+  const updateMeMutation = useManagedMutation({
+    mutationFn: (payload: UpdateMeRequest) => userService.updateMe(payload),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 
-  const changePasswordMutation = useMutation({
+  const changePasswordMutation = useManagedMutation({
     mutationFn: (payload: ChangePasswordRequest) =>
-      requestJson("/api/users/me/change-password", "PUT", payload),
+      userService.changePasswordMe(payload),
   });
 
-  const requestDeletionMutation = useMutation({
-    mutationFn: () => requestJson("/api/users/me/request-deletion", "POST"),
+  const requestDeletionMutation = useManagedMutation({
+    mutationFn: () => userService.requestDeletionMe({}),
   });
 
   useMirrorRegistry("updateMe", async (payload: UpdateMeRequest) =>
@@ -49,8 +38,7 @@ const Mutations = (props: PropsWithChildren) => {
   );
   useMirrorRegistry("requestDeletion", async () => requestDeletionMutation.mutateAsync());
 
-  return props;
+  return <MutationErrorProvider>{props.children}</MutationErrorProvider>;
 };
 
 export { Mutations };
-

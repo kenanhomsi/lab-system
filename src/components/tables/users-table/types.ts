@@ -1,3 +1,5 @@
+import type { UserEmbeddedAccessPolicy } from "@/modules/user/abstraction/schemas/find-one";
+
 export type UserItem = {
   id: string;
   email: string;
@@ -8,6 +10,7 @@ export type UserItem = {
   emailConfirmed: boolean;
   createdAt: string;
   roles?: string[];
+  accessPolicies?: UserEmbeddedAccessPolicy[];
 };
 
 export type UsersResponse = {
@@ -63,4 +66,5 @@ export type UserModalType =
   | "edit"
   | "delete"
   | "roles"
-  | "permissions";
+  | "permissions"
+  | "view";

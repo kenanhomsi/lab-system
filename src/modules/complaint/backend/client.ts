@@ -2,13 +2,19 @@ import { injectable, injectFromBase } from "inversify";
 import { BackendState } from "@/modules/axios";
 import { ComplaintClient } from "../abstraction";
 import { endpoint } from "./endpoint";
-import { FindAllComplaintParams, UpdateComplaintStatusParams } from "./types";
+import {
+  CreateMineComplaintParams,
+  FindAllComplaintParams,
+  FindMineComplaintParams,
+  UpdateComplaintStatusParams,
+} from "./types";
 
 type ComplaintItem = {
   id: number;
   userId: string;
   title: string;
   description: string;
+  note: string;
   attachmentUrl: string;
   status: string;
   createdAt: string;
@@ -40,6 +46,13 @@ const appendQueryParams = (
   return queryString ? `${path}?${queryString}` : path;
 };
 
+const unwrapResponse = <T>(response: unknown): T => {
+  if (response && typeof response === "object" && "data" in response) {
+    return (response as Record<string, unknown>).data as T;
+  }
+  return response as T;
+};
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends ComplaintClient<BackendState> {
@@ -47,8 +60,8 @@ class Client extends ComplaintClient<BackendState> {
     const res = await super
       .sharedFindAll({ endpoint: appendQueryParams(endpoint.findAll, params.query) })
       .withAuth(params.token)
-      .perform<ComplaintListResponse>();
-    return res.data;
+      .perform<unknown>();
+    return unwrapResponse<ComplaintListResponse>(res.data);
   }
 
   async updateStatus(params: UpdateComplaintStatusParams) {
@@ -57,7 +70,31 @@ class Client extends ComplaintClient<BackendState> {
       .sharedUpdateStatus({ endpoint: endpoint.updateStatus(id), status })
       .withAuth(token)
       .perform();
-    return res.data;
+    return unwrapResponse(res.data);
+  }
+
+  async findMine(params: FindMineComplaintParams) {
+    const res = await super
+      .sharedFindAll({
+        endpoint: appendQueryParams(endpoint.findMine, params.query),
+      })
+      .withAuth(params.token)
+      .perform<unknown>();
+    return unwrapResponse<unknown>(res.data);
+  }
+
+  async createMine(params: CreateMineComplaintParams) {
+    const res = await super
+      .sharedPostFormData({
+        endpoint: endpoint.createMine,
+        formData: params.formData,
+      })
+      .withAuth(params.token)
+      .perform<unknown>();
+    return {
+      data: unwrapResponse<unknown>(res.data),
+      status: res.status,
+    };
   }
 }
 

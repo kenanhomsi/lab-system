@@ -15,7 +15,14 @@ type UpdateComplaintStatusParams = {
   status: string;
 };
 
+type CreateComplaintMineParams = {
+  title: string;
+  description: string;
+  attachment?: File | null;
+};
+
 export type {
+  CreateComplaintMineParams,
   FindAllComplaintParams,
   FindAllQueryParams,
   UpdateComplaintStatusParams,

@@ -136,7 +136,8 @@ const authConfig: AuthOptions = {
           fullName: token.fullName,
           roles: token.roles,
           permissions: token.permissions,
-          accessToken: token.accessToken,
+          // accessToken is intentionally kept only in the encrypted JWT cookie
+          // and never exposed to client-side JS (BFF pattern)
         },
         expires: session.expires,
       };

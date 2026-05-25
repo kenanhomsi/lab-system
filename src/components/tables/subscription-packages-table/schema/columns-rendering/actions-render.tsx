@@ -2,6 +2,7 @@
 
 import { ActionIcon, Menu } from "@mantine/core";
 import { IconDotsVertical, IconEdit, IconLockOpen, IconLockOff } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import { useMirror } from "../../store";
 import { SubscriptionPackageItem } from "../../types";
 
@@ -10,6 +11,7 @@ type Props = {
 };
 
 const ActionsRender = ({ row }: Props) => {
+  const t = useTranslations("admin.common");
   const setSelectedPackage = useMirror("setSelectedPackage");
   const setActiveModal = useMirror("setActiveModal");
   const activatePackage = useMirror("activatePackage");
@@ -54,13 +56,13 @@ const ActionsRender = ({ row }: Props) => {
       </Menu.Target>
       <Menu.Dropdown>
         <Menu.Item leftSection={<IconEdit size={16} />} onClick={openEdit}>
-          Edit
+          {t("edit")}
         </Menu.Item>
         <Menu.Item
           leftSection={row.isActive ? <IconLockOff size={16} /> : <IconLockOpen size={16} />}
           onClick={toggleActivation}
         >
-          {row.isActive ? "Deactivate" : "Activate"}
+          {row.isActive ? t("deactivate") : t("activate")}
         </Menu.Item>
       </Menu.Dropdown>
     </Menu>

@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import {
   Alert,
@@ -112,6 +113,7 @@ const Modals = () => {
         transitionProps={{ transition: "pop", duration: 200 }}
       >
         <Stack gap="lg">
+          <MutationErrorAlert />
           {sessionStatus === "loading" ? (
             <Alert variant="light" color="gray" title={t("sessionLoadingTitle")}>
               {t("sessionLoadingBody")}
@@ -237,6 +239,7 @@ const Modals = () => {
       >
         {selectedPatient ? (
           <Stack gap="md">
+        <MutationErrorAlert />
             <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
               <Stack gap={4}>
                 <Text size="xs" c="dimmed" tt="uppercase" fw={600}>
@@ -315,6 +318,7 @@ const Modals = () => {
         overlayProps={{ backgroundOpacity: 0.45, blur: 4 }}
       >
         <Stack gap="md">
+        <MutationErrorAlert />
           <TextInput
             label={t("fieldDirectPatientUserId")}
             placeholder={t("fieldDirectPatientUserIdPlaceholder")}

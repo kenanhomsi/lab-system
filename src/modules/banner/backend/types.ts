@@ -26,4 +26,21 @@ type CreateBannerParams = {
   Media: File;
 };
 
-export type { CreateBannerParams, FindAllBannerParams, FindAllPublicBannerParams };
+type UpdateBannerParams = {
+  token: string;
+  id: string;
+  body: FormData | Record<string, unknown>;
+};
+
+type DeleteBannerParams = {
+  token: string;
+  id: string;
+};
+
+export type {
+  CreateBannerParams,
+  DeleteBannerParams,
+  FindAllBannerParams,
+  FindAllPublicBannerParams,
+  UpdateBannerParams,
+};

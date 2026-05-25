@@ -1,42 +1,26 @@
 import { getLocale, getTranslations } from "next-intl/server";
+import type { SubscriptionPackageItem } from "@/components/tables/subscription-packages-table/types";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { mapSubscriptionPackagesToPlans } from "@/lib/api/map-subscription-packages-to-plans";
+import { getRequestOrigin } from "@/lib/api/request-origin";
+
+async function fetchPublicPackages(): Promise<SubscriptionPackageItem[]> {
+  const origin = await getRequestOrigin();
+  const res = await fetch(`${origin}/api/subscriptions/packages`, {
+    cache: "no-store",
+  });
+  if (!res.ok) return [];
+  return (await res.json()) as SubscriptionPackageItem[];
+}
 
 export default async function PlansPage() {
   const t = await getTranslations("subscriptions");
   const locale = await getLocale();
   const numberFormatter = new Intl.NumberFormat(locale);
 
-  const plans = [
-    {
-      key: "basic",
-      title: t("basicTitle"),
-      desc: t("basicDesc"),
-      price: 29,
-      features: [t("basicF1"), t("basicF2"), t("basicF3")],
-      icon: "health_and_safety",
-      eyebrow: t("monthly"),
-    },
-    {
-      key: "gold",
-      title: t("goldTitle"),
-      desc: t("goldDesc"),
-      price: 79,
-      features: [t("goldF1"), t("goldF2"), t("goldF3")],
-      icon: "workspace_premium",
-      eyebrow: t("yearly"),
-      recommended: true,
-    },
-    {
-      key: "platinum",
-      title: t("platinumTitle"),
-      desc: t("platinumDesc"),
-      price: 199,
-      features: [t("platF1"), t("platF2"), t("platF3")],
-      icon: "diamond",
-      eyebrow: t("upgradeVip"),
-    },
-  ];
+  const packages = await fetchPublicPackages();
+  const plans = mapSubscriptionPackagesToPlans({ packages, t, locale });
 
   const subscriptionHighlights = [
     {
@@ -74,13 +58,13 @@ export default async function PlansPage() {
       key: "v3",
       title: t("v3Title"),
       sub: t("v3Sub"),
-      icon: "favorite",
+      icon: "immunology",
     },
     {
       key: "v4",
       title: t("v4Title"),
       sub: t("v4Sub"),
-      icon: "immunology",
+      icon: "favorite",
     },
   ];
 
@@ -101,7 +85,7 @@ export default async function PlansPage() {
               {t("packagesTitle")}
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-on-surface-variant md:text-lg">
-              {t("goldDesc")} {t("vouchersSubtitle")}
+              {t("vouchersSubtitle")}
             </p>
             <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-lowest p-1 shadow-sm">
               <span className="rounded-full bg-surface px-4 py-2 text-sm font-bold text-on-surface shadow-sm">
@@ -154,85 +138,99 @@ export default async function PlansPage() {
             </h2>
           </div>
 
-          <div className="mt-12 grid gap-6 xl:grid-cols-3">
-            {plans.map((plan) => (
-              <section
-                key={plan.key}
-                className={[
-                  "relative flex h-full flex-col rounded-[2rem] border bg-surface-container-lowest p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg",
-                  plan.recommended
-                    ? "border-primary/35 bg-linear-to-b from-primary/8 via-surface-container-lowest to-surface-container-lowest ring-1 ring-primary/12 xl:-translate-y-4 xl:shadow-[0_30px_70px_-40px_rgba(15,23,42,0.35)]"
-                    : "border-outline-variant/20",
-                ].join(" ")}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-primary/16 to-primary/6 text-primary">
-                    <Icon name={plan.icon} size="lg" className="text-primary" />
-                  </div>
-                  <div className="flex flex-col items-end gap-3">
-                    {plan.recommended ? (
-                      <div className="rounded-full bg-primary px-4 py-1.5 text-xs font-black tracking-[0.2em] text-on-primary">
-                        {t("vip")}
+          {plans.length === 0 ? (
+            <p className="mt-12 text-center text-base text-on-surface-variant">
+              {locale.startsWith("ar")
+                ? "لا توجد باقات اشتراك متاحة حالياً."
+                : "No subscription packages are available at the moment."}
+            </p>
+          ) : (
+            <div className="mt-12 grid gap-6 xl:grid-cols-3">
+              {plans.map((plan) => (
+                <section
+                  key={plan.key}
+                  className={[
+                    "relative flex h-full flex-col rounded-[2rem] border bg-surface-container-lowest p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg",
+                    plan.recommended
+                      ? "border-primary/35 bg-linear-to-b from-primary/8 via-surface-container-lowest to-surface-container-lowest ring-1 ring-primary/12 xl:-translate-y-4 xl:shadow-[0_30px_70px_-40px_rgba(15,23,42,0.35)]"
+                      : "border-outline-variant/20",
+                  ].join(" ")}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-primary/16 to-primary/6 text-primary">
+                      <Icon
+                        name={plan.icon}
+                        size="lg"
+                        className="text-primary"
+                      />
+                    </div>
+                    <div className="flex flex-col items-end gap-3">
+                      {plan.recommended ? (
+                        <div className="rounded-full bg-primary px-4 py-1.5 text-xs font-black tracking-[0.2em] text-on-primary">
+                          {t("vip")}
+                        </div>
+                      ) : null}
+                      <div className="rounded-full border border-outline-variant/20 bg-surface px-4 py-2 text-xs font-black tracking-[0.18em] text-on-surface-variant">
+                        {plan.eyebrow}
                       </div>
-                    ) : null}
-                    <div className="rounded-full border border-outline-variant/20 bg-surface px-4 py-2 text-xs font-black tracking-[0.18em] text-on-surface-variant">
-                      {plan.eyebrow}
                     </div>
                   </div>
-                </div>
 
-                <div className="mt-8 border-b border-outline-variant/15 pb-8">
-                  <h3 className="font-headline text-3xl font-black tracking-tight text-on-surface">
-                    {plan.title}
-                  </h3>
-                  <p className="mt-3 min-h-[3.5rem] text-sm leading-7 text-on-surface-variant">
-                    {plan.desc}
-                  </p>
-                  <div className="mt-7 flex items-end gap-2">
-                    <span
-                      className={[
-                        "text-5xl font-black tracking-tight text-on-surface",
-                        plan.recommended && "text-primary",
-                      ].join(" ")}
-                    >
-                      ${numberFormatter.format(plan.price)}
-                    </span>
-                    <span className="pb-2 text-sm font-semibold text-on-surface-variant">
-                      {t("perMonth")}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-8 flex-1 space-y-4">
-                  {plan.features.map((feature) => (
-                    <div
-                      key={feature}
-                      className="flex items-start gap-3 text-sm leading-7 text-on-surface"
-                    >
-                      <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        <Icon name="check" size="sm" className="text-sm!" />
-                      </div>
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-10">
-                  <Button
-                    variant={plan.recommended ? "primary" : "secondary"}
-                    className="w-full"
-                  >
-                    {plan.recommended ? t("currentSelection") : t("selectPlan")}
-                  </Button>
-                  {plan.recommended ? (
-                    <p className="mt-3 text-center text-xs font-medium text-primary">
-                      {t("activePlan")}
+                  <div className="mt-8 border-b border-outline-variant/15 pb-8">
+                    <h3 className="font-headline text-3xl font-black tracking-tight text-on-surface">
+                      {plan.title}
+                    </h3>
+                    <p className="mt-3 min-h-[3.5rem] text-sm leading-7 text-on-surface-variant">
+                      {plan.desc}
                     </p>
-                  ) : null}
-                </div>
-              </section>
-            ))}
-          </div>
+                    <div className="mt-7 flex items-end gap-2">
+                      <span
+                        className={[
+                          "text-5xl font-black tracking-tight text-on-surface",
+                          plan.recommended && "text-primary",
+                        ].join(" ")}
+                      >
+                        ${numberFormatter.format(plan.price)}
+                      </span>
+                      <span className="pb-2 text-sm font-semibold text-on-surface-variant">
+                        {plan.pricePeriodLabel}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 flex-1 space-y-4">
+                    {plan.features.map((feature) => (
+                      <div
+                        key={feature}
+                        className="flex items-start gap-3 text-sm leading-7 text-on-surface"
+                      >
+                        <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                          <Icon name="check" size="sm" className="text-sm!" />
+                        </div>
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-10">
+                    <Button
+                      variant={plan.recommended ? "primary" : "secondary"}
+                      className="w-full"
+                    >
+                      {plan.recommended
+                        ? t("currentSelection")
+                        : t("selectPlan")}
+                    </Button>
+                    {plan.recommended ? (
+                      <p className="mt-3 text-center text-xs font-medium text-primary">
+                        {t("activePlan")}
+                      </p>
+                    ) : null}
+                  </div>
+                </section>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -12,7 +12,7 @@ import {
   FindTestResultParams,
   UpdateTestResultParams,
 } from "./types";
-import { TestResultItem } from "@/components/tables/test-results-table/types";
+import { TestResultsResponse } from "@/components/tables/test-results-table/types";
 
 const appendQueryParams = (
   path: string,
@@ -52,7 +52,11 @@ class Client extends TestResultClient<BackendState> {
     const res = await super
       .sharedFindAll({ endpoint: appendQueryParams(endpoint.findAll, query) })
       .withAuth(token)
-      .perform <{data: TestResultItem[]}>();
+      .perform<{
+        success: boolean;
+        message: string;
+        data: TestResultsResponse;
+      }>();
     return res.data;
   }
 

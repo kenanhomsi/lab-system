@@ -9,8 +9,11 @@ export type TestRequestItem = {
   notes: string | null | string;
   metadata: string | null | string;
   doctorId: number | string | null;
+  doctorName?: string | null;
   labClientId: string | null;
+  labPartnerName?: string | null;
   directPatientId: string | number | null;
+  patientName?: string | null;
   externalPatientId?: number | null;
   createdByUserId?: string;
   createdAt: string;

@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import {
   Badge,
@@ -104,6 +105,7 @@ const UI = () => {
       }}
     >
       <Stack gap="lg">
+          <MutationErrorAlert />
         <Group
           justify="space-between"
           align="center"

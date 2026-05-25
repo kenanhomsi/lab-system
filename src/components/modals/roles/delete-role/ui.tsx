@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import {
   Alert,
@@ -55,6 +56,7 @@ const UI = () => {
       }}
     >
       <Stack gap="lg">
+          <MutationErrorAlert />
         <Alert
           color="red"
           radius="lg"

@@ -1,4 +1,5 @@
 "use client";
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
 import {
   Button,
@@ -105,6 +106,7 @@ const UI = () => {
       }}
     >
       <Stack gap="lg">
+          <MutationErrorAlert />
         <Stepper active={step} size="sm" color="blue" mt="md">
           <Stepper.Step label={t("editStepAccountOverview")} description={t("editStepAccountOverviewDesc")} />
           <Stepper.Step label={t("editStepProfileDetails")} description={t("editStepProfileDetailsDesc")} />
@@ -113,6 +115,7 @@ const UI = () => {
         {step === 0 && (
           <Paper withBorder radius="lg" p="md">
             <Stack gap="md">
+        <MutationErrorAlert />
               <SectionHeader
                 icon={<IconSparkles size={18} />}
                 title={t("editSectionAccountOverview")}
@@ -140,6 +143,7 @@ const UI = () => {
         {step === 1 && (
           <Paper withBorder radius="lg" p="md">
             <Stack gap="md">
+        <MutationErrorAlert />
               <SectionHeader
                 icon={<IconIdBadge2 size={18} />}
                 title={t("editSectionProfileDetails")}

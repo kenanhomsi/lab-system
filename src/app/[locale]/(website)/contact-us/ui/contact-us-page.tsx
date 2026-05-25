@@ -4,6 +4,10 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
+import {
+  getContactSettingsPublic,
+  postContactPublic,
+} from "@/lib/clients/website-public-client";
 
 const INPUT_CLASS =
   "w-full rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -35,9 +39,8 @@ export function ContactUsPage() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    fetch("/api/settings/contact")
-      .then((res) => res.json())
-      .then((data) => setContactInfo(data))
+    getContactSettingsPublic()
+      .then((data) => setContactInfo((data ?? {}) as ContactInfo))
       .catch(() => {});
   }, []);
 
@@ -49,15 +52,9 @@ export function ContactUsPage() {
     const body = Object.fromEntries(formData.entries());
 
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (res.ok) {
-        setSuccess(true);
-        (e.target as HTMLFormElement).reset();
-      }
+      await postContactPublic(body);
+      setSuccess(true);
+      (e.target as HTMLFormElement).reset();
     } catch {
       // silently fail
     } finally {

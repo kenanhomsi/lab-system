@@ -15,7 +15,6 @@ export default async function LocaleLayout({
   children,
 }: Readonly<{
   children: ReactNode;
-  params: Promise<{ locale: string }>;
 }>) {
   const session = await getServerSession(serverAuthConfig);
   const requestedRole = session?.user.roles?.[0]?.toLowerCase();
@@ -28,7 +27,6 @@ export default async function LocaleLayout({
     name: session?.user.fullName,
     roleTitle: requestedRole ? formatRoleTitle(requestedRole) : undefined,
   });
-
   return (
     <div className={styles.dashboardRoot}>
       <SidebarFactory items={siderBarItems} />

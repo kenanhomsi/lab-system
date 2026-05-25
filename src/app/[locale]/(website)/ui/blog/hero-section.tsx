@@ -16,7 +16,7 @@ export async function BlogHeroSection() {
           fill
           className="object-cover opacity-20"
           priority
-          unoptimized
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/80 to-background" />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background/50" />

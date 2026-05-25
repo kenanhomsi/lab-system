@@ -10,6 +10,15 @@ type SharedCreateParams = {
   formData: FormData;
 };
 
+type SharedPutJsonParams = {
+  endpoint: string;
+  body: object;
+};
+
+type SharedDeleteParams = {
+  endpoint: string;
+};
+
 @injectable()
 abstract class Client<T extends AxiosState> {
   @inject(AxiosModuleNames.client) protected axiosClient: AxiosClient<T>;
@@ -25,6 +34,20 @@ abstract class Client<T extends AxiosState> {
   protected sharedCreate(params: SharedCreateParams) {
     const { endpoint, formData } = params;
     return this.axiosClient.post({ endpoint }).setBody(formData);
+  }
+
+  protected sharedPutFormData(params: SharedCreateParams) {
+    const { endpoint, formData } = params;
+    return this.axiosClient.put({ endpoint }).setBody(formData);
+  }
+
+  protected sharedPutJson(params: SharedPutJsonParams) {
+    const { endpoint, body } = params;
+    return this.axiosClient.put({ endpoint }).setBody(body);
+  }
+
+  protected sharedDelete(params: SharedDeleteParams) {
+    return this.axiosClient.delete({ endpoint: params.endpoint });
   }
 }
 

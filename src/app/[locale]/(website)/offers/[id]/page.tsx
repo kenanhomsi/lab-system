@@ -1,20 +1,36 @@
+import Image from "next/image";
+import { cache } from "react";
 import { notFound } from "next/navigation";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { getRequestOrigin } from "@/lib/api/request-origin";
 
 type PageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
 
-async function fetchOffer(id: string) {
+type OfferDetail = {
+  id: string;
+  name: string;
+  description: string;
+  originalPrice: number;
+  discountedPrice: number;
+  discountPercent: number;
+  expiryDate: string;
+  image?: string;
+  details?: string;
+  includedTests?: { name: string }[];
+};
+
+async function fetchOffer(locale: string, id: string): Promise<OfferDetail | null> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/offers/${id}`,
-      { next: { revalidate: 3600 } },
-    );
+    const origin = await getRequestOrigin();
+    const url = new URL(`/api/offers/${encodeURIComponent(id)}`, origin);
+    url.searchParams.set("locale", locale);
+    const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
     if (!res.ok) return null;
     return res.json();
   } catch {
@@ -22,9 +38,11 @@ async function fetchOffer(id: string) {
   }
 }
 
+const getCachedOffer = cache((locale: string, id: string) => fetchOffer(locale, id));
+
 export async function generateMetadata({ params }: PageProps) {
-  const { id } = await params;
-  const offer = await fetchOffer(id);
+  const { id, locale } = await params;
+  const offer = await getCachedOffer(locale, id);
   if (!offer) return {};
   return {
     title: `${offer.name} | Al Mutawali Lab`,
@@ -33,12 +51,11 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function OfferDetailsPage({ params }: PageProps) {
-  const { id } = await params;
-  const offer = await fetchOffer(id);
+  const { id, locale } = await params;
+  const offer = await getCachedOffer(locale, id);
   if (!offer) notFound();
 
   const t = await getTranslations("offerDetails");
-  const locale = await getLocale();
 
   const savings = offer.originalPrice - offer.discountedPrice;
 
@@ -58,12 +75,15 @@ export default async function OfferDetailsPage({ params }: PageProps) {
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <div className="relative mb-8 overflow-hidden rounded-2xl bg-surface-container-high">
+            <div className="relative mb-8 aspect-video overflow-hidden rounded-2xl bg-surface-container-high">
               {offer.image ? (
-                <img
+                <Image
                   src={offer.image}
                   alt={offer.name}
-                  className="aspect-video w-full object-cover"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-cover"
                 />
               ) : (
                 <div className="flex aspect-video items-center justify-center">
@@ -104,13 +124,13 @@ export default async function OfferDetailsPage({ params }: PageProps) {
               </Card>
             )}
 
-            {offer.includedTests?.length > 0 && (
+            {(offer.includedTests ?? []).length > 0 && (
               <Card className="mt-6">
                 <h2 className="mb-4 font-headline text-lg font-bold text-on-surface">
                   {t("includedTests")}
                 </h2>
                 <ul className="space-y-2">
-                  {offer.includedTests.map(
+                  {(offer.includedTests ?? []).map(
                     (test: { name: string }, i: number) => (
                       <li
                         key={i}

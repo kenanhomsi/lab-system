@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
-import { useSession } from "next-auth/react";
+import { useEffect, useMemo, useState } from "react";
 import { useSessionUserStore } from "@/stores/session-user-store";
+import { axiosInstanceFront } from "@/lib/clients/frontend-instance";
 import { useRealtimeChatEngine } from "./use-realtime-chat-engine";
 
 export interface UseRealtimeChatFacade {
@@ -10,25 +10,50 @@ export interface UseRealtimeChatFacade {
   disconnect: () => Promise<void>;
   joinConversation: (conversationId: string) => Promise<void>;
   leaveConversation: (conversationId: string) => Promise<void>;
-  sendMessage: (conversationId: string, text: string) => Promise<void>;
+  sendMessage: (
+    conversationId: string,
+    text: string,
+    messageType?: number,
+  ) => Promise<void>;
   typing: (conversationId: string) => Promise<void>;
   stopTyping: (conversationId: string) => Promise<void>;
 }
 
-function resolveHubBaseUrl(): string {
-  const fromEnv = process.env.NEXT_PUBLIC_BACKEND_URL?.trim();
-  if (fromEnv) return fromEnv;
-  // Default to the same port as process.env.BACKEND_URL uses in the server
-  return "http://localhost:4000";
-}
+type NegotiateResponse = {
+  hubBaseUrl: string;
+  accessToken: string | null;
+};
 
 export function useRealtimeChat(): UseRealtimeChatFacade {
-  const { data: session } = useSession();
   const sessionUser = useSessionUserStore((state) => state.user);
+  const [hubBaseUrl, setHubBaseUrl] = useState(() =>
+    typeof window !== "undefined" ? window.location.origin : "",
+  );
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    axiosInstanceFront
+      .get<NegotiateResponse>("/chat/negotiate")
+      .then((res) => {
+        if (cancelled) return;
+        const url = res.data?.hubBaseUrl?.trim();
+        if (url) setHubBaseUrl(url);
+        setAccessToken(res.data?.accessToken ?? null);
+      })
+      .catch(() => {
+        if (!cancelled && typeof window !== "undefined") {
+          setHubBaseUrl(window.location.origin);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const engine = useRealtimeChatEngine({
-    baseUrl: resolveHubBaseUrl(),
-    accessToken: session?.user.accessToken ?? null,
+    baseUrl: hubBaseUrl,
+    accessToken,
     currentUserId: sessionUser?.id ?? null,
   });
 
@@ -38,8 +63,11 @@ export function useRealtimeChat(): UseRealtimeChatFacade {
       disconnect: engine.disconnect,
       joinConversation: engine.joinConversation,
       leaveConversation: engine.leaveConversation,
-      sendMessage: async (conversationId: string, text: string) =>
-        engine.sendMessage({ conversationId, text }),
+      sendMessage: async (
+        conversationId: string,
+        text: string,
+        messageType?: number,
+      ) => engine.sendMessage({ conversationId, text, messageType }),
       typing: engine.sendTyping,
       stopTyping: engine.sendStopTyping,
     }),

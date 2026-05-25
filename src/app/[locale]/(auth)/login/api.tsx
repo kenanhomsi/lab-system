@@ -1,7 +1,8 @@
 "use client";
 import { frontendContainer } from "@/container";
 import { authModuleNames, LoginCommand } from "@/modules/auth";
-import { useMutation } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
 import { useMirror, useMirrorRegistry } from "./store";
 const loginCommand = frontendContainer.get<LoginCommand>(
@@ -10,7 +11,7 @@ const loginCommand = frontendContainer.get<LoginCommand>(
 const Api = (props: PropsWithChildren) => {
     const { children } = props;
     const values = useMirror("values");
-    const { isPending, mutateAsync } = useMutation({
+    const { isPending, mutateAsync } = useManagedMutation({
         mutationFn: () => {
             loginCommand.init(values);
             return loginCommand.exec();
@@ -18,6 +19,6 @@ const Api = (props: PropsWithChildren) => {
     });
     useMirrorRegistry("loading", isPending);
     useMirrorRegistry("preformLogin", mutateAsync);
-    return <>{children}</>;
+    return <MutationErrorProvider>{children}</MutationErrorProvider>;
 };
 export { Api };

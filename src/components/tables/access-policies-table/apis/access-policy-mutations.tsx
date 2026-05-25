@@ -1,77 +1,64 @@
-"use client";
+﻿"use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { MutationErrorProvider } from "@/hooks/mutation-error-context";
+import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
+import { frontendContainer } from "@/container";
+import {
+  AccessPolicyFrontendService,
+  accessPolicyModuleNames,
+} from "@/modules/access-policy";
 import { useMirrorRegistry } from "../store";
 import { CreateAccessPolicyRequest, UpdateAccessPolicyRequest } from "../types";
 
-async function parseOrThrow(response: Response) {
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) {
-    throw new Error("Access policies API request failed");
-  }
-  return payload;
-}
-
-async function requestJson<TPayload>(url: string, method: string, payload?: TPayload) {
-  const response = await fetch(url, {
-    method,
-    headers: payload !== undefined ? { "Content-Type": "application/json" } : undefined,
-    body: payload !== undefined ? JSON.stringify(payload) : undefined,
-  });
-  return parseOrThrow(response);
-}
-
-async function requestWithoutBody(url: string, method: string) {
-  const response = await fetch(url, { method });
-  return parseOrThrow(response);
-}
+const accessPolicyService = frontendContainer.get<AccessPolicyFrontendService>(
+  accessPolicyModuleNames.service,
+);
 
 const AccessPolicyMutations = (props: PropsWithChildren) => {
   const queryClient = useQueryClient();
 
-  const createMutation = useMutation({
+  const createMutation = useManagedMutation({
     mutationFn: (payload: CreateAccessPolicyRequest) =>
-      requestJson("/api/admin/access-policies", "POST", payload),
+      accessPolicyService.create(payload),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-access-policies"] });
     },
   });
 
-  const updateMutation = useMutation({
+  const updateMutation = useManagedMutation({
     mutationFn: (params: { id: string; payload: UpdateAccessPolicyRequest }) =>
-      requestJson(`/api/admin/access-policies/${params.id}`, "PUT", params.payload),
+      accessPolicyService.update({ id: params.id, ...params.payload }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-access-policies"] });
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => requestWithoutBody(`/api/admin/access-policies/${id}`, "DELETE"),
+  const deleteMutation = useManagedMutation({
+    mutationFn: (id: string) => accessPolicyService.delete({ id }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-access-policies"] });
     },
   });
 
-  const enableMutation = useMutation({
-    mutationFn: (id: string) =>
-      requestWithoutBody(`/api/admin/access-policies/${encodeURIComponent(id)}/enable`, "PATCH"),
+  const enableMutation = useManagedMutation({
+    mutationFn: (id: string) => accessPolicyService.enable({ id }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-access-policies"] });
     },
   });
 
-  const disableMutation = useMutation({
-    mutationFn: (id: string) =>
-      requestWithoutBody(`/api/admin/access-policies/${encodeURIComponent(id)}/disable`, "PATCH"),
+  const disableMutation = useManagedMutation({
+    mutationFn: (id: string) => accessPolicyService.disable({ id }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-access-policies"] });
     },
   });
 
-  const validateMutation = useMutation({
+  const validateMutation = useManagedMutation({
     mutationFn: (payload: CreateAccessPolicyRequest) =>
-      requestJson("/api/admin/access-policies/validate", "POST", payload),
+      accessPolicyService.validate(payload),
   });
 
   useMirrorRegistry(
@@ -100,7 +87,7 @@ const AccessPolicyMutations = (props: PropsWithChildren) => {
     async (payload: CreateAccessPolicyRequest) => validateMutation.mutateAsync(payload),
   );
 
-  return props;
+  return <MutationErrorProvider>{props.children}</MutationErrorProvider>;
 };
 
 export { AccessPolicyMutations };

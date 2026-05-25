@@ -2,14 +2,17 @@
 
 import { ActionIcon, Menu } from "@mantine/core";
 import { IconDotsVertical } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
+import { ComplaintStatus } from "@/lib/complaint-status";
 import { useMirror } from "../../store";
-import { ComplaintItem, ComplaintStatus } from "../../types";
+import { ComplaintItem } from "../../types";
 
 type Props = {
   row: ComplaintItem;
 };
 
 const ActionsRender = ({ row }: Props) => {
+  const t = useTranslations("admin.complaints");
   const updateComplaintStatus = useMirror("updateComplaintStatus");
 
   const updateStatus = (status: ComplaintStatus) => {
@@ -41,10 +44,13 @@ const ActionsRender = ({ row }: Props) => {
         </ActionIcon>
       </Menu.Target>
       <Menu.Dropdown>
-        <Menu.Item onClick={() => updateStatus("received")}>Mark as Received</Menu.Item>
-        <Menu.Item onClick={() => updateStatus("in_progress")}>Mark as In Progress</Menu.Item>
-        <Menu.Item onClick={() => updateStatus("resolved")} color="teal">
-          Mark as Resolved
+        <Menu.Item onClick={() => updateStatus("Pending")}>{t("markAsPending")}</Menu.Item>
+        <Menu.Item onClick={() => updateStatus("InReview")}>{t("markAsInReview")}</Menu.Item>
+        <Menu.Item onClick={() => updateStatus("Resolved")} color="teal">
+          {t("markAsResolved")}
+        </Menu.Item>
+        <Menu.Item onClick={() => updateStatus("Rejected")} color="red">
+          {t("markAsRejected")}
         </Menu.Item>
       </Menu.Dropdown>
     </Menu>
