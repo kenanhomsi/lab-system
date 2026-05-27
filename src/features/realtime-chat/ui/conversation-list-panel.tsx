@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ActionIcon,
   Avatar,
   Badge,
   Button,
@@ -13,9 +12,6 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import {
-  IconChevronDown,
-  IconChevronUp,
-  IconMessagePlus,
   IconPlus,
   IconSearch,
 } from "@tabler/icons-react";
@@ -37,7 +33,7 @@ interface ConversationListPanelProps {
   onlineUsersById: Record<string, OnlineUser>;
   nameLookup: Map<string, { displayName: string; role?: string }>;
   onOpen: (conversation: Conversation) => void;
-  onJoinById: (conversationId: string) => void;
+  onJoinById?: (conversationId: string) => void;
   onNewChat: () => void;
 }
 
@@ -214,8 +210,7 @@ export function ConversationListPanel({
   onJoinById,
   onNewChat,
 }: ConversationListPanelProps): JSX.Element {
-  const [joinConversationId, setJoinConversationId] = useState("");
-  const [showJoinById, setShowJoinById] = useState(false);
+  void onJoinById;
   const [searchQuery, setSearchQuery] = useState("");
 
   const uid = currentUserId ?? "";

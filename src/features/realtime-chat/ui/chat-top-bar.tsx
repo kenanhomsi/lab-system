@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Group, SegmentedControl, Stack, Text } from "@mantine/core";
+import { Flex, Group, SegmentedControl, Text } from "@mantine/core";
 import {
   IconBrandWechat,
   IconMessageCircle,
