@@ -9,6 +9,7 @@ import { slideCardModuleNames, SlideCardFrontendService } from "@/modules/slide-
 import { Icon } from "@/components/ui/icon";
 import { SectionHeader } from "@/components/ui/section-header";
 import type { SlideCardItem } from "@/types/slide-card";
+import offerStyles from "@/components/dashboard/api-dashboard/offers-aside.module.scss";
 
 const isExternalLink = (href: string) => /^https?:\/\//i.test(href);
 
@@ -101,10 +102,113 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
 
   if (!isLoading && cards.length === 0) return null;
 
-  const isCompact = variant === "dashboard" || variant === "sidebar";
+  if (variant === "sidebar") {
+    const items = isLoading ? [] : cards.slice(0, 6);
+    const sidebarIdx = items.length === 0 ? 0 : Math.min(safeActiveIdx, items.length - 1);
+    const activeItem = items[sidebarIdx];
+
+    const renderOfferInner = (item: SlideCardItem) => {
+      const hasDiscount = item.discount > 0;
+      const finalPrice = getFinalPrice(item.price, item.discount);
+      const href = item.detailPageLink || "";
+      const isExternal = href ? isExternalLink(href) : false;
+
+      const inner = (
+        <div className={offerStyles.offerBox}>
+          <div className={offerStyles.thumb}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={item.imageUrl} alt={item.title} />
+          </div>
+          <div className={offerStyles.copy}>
+            <p className={offerStyles.offerTitle}>{item.title}</p>
+            <div className={offerStyles.prices}>
+              <span className={offerStyles.priceNow}>{formatNumber(finalPrice)}</span>
+              {hasDiscount ? (
+                <span className={offerStyles.priceWas}>{formatNumber(item.price)}</span>
+              ) : null}
+            </div>
+            <p className={offerStyles.expiry}>
+              {t("expires")}: {formatDate(item.expiryDate)}
+            </p>
+          </div>
+          <div className={offerStyles.offerActions}>
+            {hasDiscount ? (
+              <span className={offerStyles.discountBadge}>-{item.discount}%</span>
+            ) : (
+              <span />
+            )}
+            {href ? (
+              <span className={offerStyles.cta}>
+                {t("viewMore")}
+                <Icon
+                  name={locale === "ar" ? "arrow_back" : "arrow_forward"}
+                  size="sm"
+                  aria-hidden
+                />
+              </span>
+            ) : null}
+          </div>
+        </div>
+      );
+
+      if (!href) return inner;
+      if (isExternal) {
+        return (
+          <a href={href} target="_blank" rel="noreferrer" className="block">
+            {inner}
+          </a>
+        );
+      }
+      return (
+        <Link href={href} className="block">
+          {inner}
+        </Link>
+      );
+    };
+
+    return (
+      <section className={offerStyles.panel} aria-label={t("title")}>
+        <div className={offerStyles.header}>
+          <div className={offerStyles.headerMain}>
+            <h2 className={offerStyles.title}>{t("title")}</h2>
+            <p className={offerStyles.subtitle}>{t("subtitle")}</p>
+          </div>
+          {!isLoading ? (
+            <span className={offerStyles.countBadge}>{sidebarIdx + 1}</span>
+          ) : null}
+          <span className={offerStyles.infoBtn} aria-hidden>
+            <Icon name="info" size="sm" />
+          </span>
+        </div>
+
+        {isLoading ? (
+          <div className={offerStyles.skeleton} />
+        ) : activeItem ? (
+          renderOfferInner(activeItem)
+        ) : null}
+
+        {!isLoading && items.length > 1 ? (
+          <div className={offerStyles.carousel}>
+            {items.map((c, idx) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setActiveIdx(idx)}
+                aria-label={`${slideLabelPrefix} ${idx + 1}: ${c.title}`}
+                aria-current={idx === sidebarIdx}
+                className={`${offerStyles.dot} ${idx === sidebarIdx ? offerStyles.dotActive : ""}`}
+              />
+            ))}
+          </div>
+        ) : null}
+      </section>
+    );
+  }
+
+  const isCompact = variant === "dashboard";
 
   if (isCompact) {
-    const maxItems = variant === "sidebar" ? 3 : 4;
+    const maxItems = 4;
     const items = isLoading ? [] : cards.slice(0, maxItems);
 
     return (

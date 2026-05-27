@@ -13,3 +13,4 @@ export * from "./test-requests-dependencies";
 export * from "./test-results-dependencies";
 export * from "./slide-card-dependencies";
 export * from "./external-patients-dependencies";
+export * from "./dashboard-dependencies";

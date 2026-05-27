@@ -2,26 +2,14 @@
 
 import type { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "./store";
-import type { ActivityItem, HealthSummary, RecentResult, StatCard } from "./type";
+import type { DashboardData } from "./type";
 
 type Props = PropsWithChildren<{
-  stats: StatCard[];
-  recentResults: RecentResult[];
-  healthSummary: HealthSummary;
-  activity: ActivityItem[];
+  dashboard: DashboardData | null;
 }>;
 
-const Init = ({
-  children,
-  stats,
-  recentResults,
-  healthSummary,
-  activity,
-}: Props) => {
-  useMirrorRegistry("stats", stats);
-  useMirrorRegistry("recentResults", recentResults);
-  useMirrorRegistry("healthSummary", healthSummary);
-  useMirrorRegistry("activity", activity);
+const Init = ({ children, dashboard }: Props) => {
+  useMirrorRegistry("dashboard", dashboard);
   return <>{children}</>;
 };
 

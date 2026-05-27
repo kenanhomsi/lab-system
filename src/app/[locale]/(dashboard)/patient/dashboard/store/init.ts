@@ -1,21 +1,11 @@
-import type { ActivityItem, HealthSummary, RecentResult, StatCard } from "../type";
+import type { DashboardData } from "../type";
 
 type Params = {
-  stats: StatCard[];
-  recentResults: RecentResult[];
-  healthSummary: HealthSummary;
-  activity: ActivityItem[];
+  dashboard: DashboardData | null;
 };
 
 const store = (): Params => ({
-  stats: [],
-  recentResults: [],
-  healthSummary: {
-    lastCheckup: "—",
-    bloodType: "—",
-    nextReminder: "—",
-  },
-  activity: [],
+  dashboard: null,
 });
 
 export { store as initStore };

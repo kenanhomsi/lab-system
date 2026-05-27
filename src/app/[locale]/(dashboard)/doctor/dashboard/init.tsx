@@ -2,26 +2,14 @@
 
 import type { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "./store";
-import type { PendingReferral, RecentPatient, StatCard, WeeklyBar } from "./type";
+import type { DashboardData } from "./type";
 
 type Props = PropsWithChildren<{
-  stats: StatCard[];
-  pendingReferrals: PendingReferral[];
-  recentPatients: RecentPatient[];
-  weeklySummary: WeeklyBar[];
+  dashboard: DashboardData | null;
 }>;
 
-const Init = ({
-  children,
-  stats,
-  pendingReferrals,
-  recentPatients,
-  weeklySummary,
-}: Props) => {
-  useMirrorRegistry("stats", stats);
-  useMirrorRegistry("pendingReferrals", pendingReferrals);
-  useMirrorRegistry("recentPatients", recentPatients);
-  useMirrorRegistry("weeklySummary", weeklySummary);
+const Init = ({ children, dashboard }: Props) => {
+  useMirrorRegistry("dashboard", dashboard);
   return <>{children}</>;
 };
 

@@ -314,7 +314,7 @@ export function ConversationListPanel({
       >
         New chat
       </Button>
-
+      {/* 
       <Group justify="flex-end">
         <ActionIcon
           size="sm"
@@ -367,7 +367,7 @@ export function ConversationListPanel({
             <IconMessagePlus size={18} />
           </ActionIcon>
         </Group>
-      ) : null}
+      ) : null} */}
 
       {conversationsLoading ? (
         <ConversationListSkeleton />

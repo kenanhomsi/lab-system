@@ -158,7 +158,7 @@ export function ChatPageShell() {
                   variant="filled"
                   px="md"
                   disabled={!conversationId.trim()}
-                  onClick={() => {}}
+                  onClick={() => { }}
                   aria-label={t("joinCta")}
                 >
                   <IconArrowRight size={22} aria-hidden />

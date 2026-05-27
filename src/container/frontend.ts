@@ -17,6 +17,7 @@ import {
   bindFrontTestRequestsDependencies,
   bindFrontTestResultsDependencies,
   bindFrontSlideCardDependencies,
+  bindFrontDashboardDependencies,
 } from "./bindings";
 
 const c = new Container({ parent: container });
@@ -36,6 +37,7 @@ const frontendContainer = pipe(
   bindFrontRoleDependencies,
   bindFrontAccessPolicyDependencies,
   bindFrontComplaintDependencies,
+  bindFrontDashboardDependencies,
 )(c);
 
 export { frontendContainer };

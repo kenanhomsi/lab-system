@@ -46,17 +46,64 @@ function unwrapData<T>(payload: T | { data: T }): T {
   return payload as T;
 }
 
+function normalizeParticipant(
+  row: ChatUserSummary | Record<string, unknown>,
+): ChatUserSummary | null {
+  const record = row as Record<string, unknown>;
+  const nested = record.user as ChatUserSummary | undefined;
+  const userId =
+    (typeof record.userId === "string" ? record.userId : undefined)?.trim() ||
+    nested?.userId?.trim();
+  if (!userId) return null;
+
+  const fullName =
+    (typeof record.fullName === "string" ? record.fullName : undefined)?.trim() ||
+    nested?.fullName?.trim() ||
+    (typeof record.name === "string" ? record.name : undefined)?.trim() ||
+    "";
+  const nestedDisplayName =
+    nested && "displayName" in nested
+      ? (nested as { displayName?: string }).displayName?.trim()
+      : undefined;
+  const displayName =
+    (typeof record.displayName === "string" ? record.displayName : undefined)?.trim() ||
+    nestedDisplayName;
+
+  return {
+    userId,
+    fullName: fullName || displayName || "",
+    email:
+      nested?.email ??
+      (typeof record.email === "string" ? record.email : undefined),
+    phoneNumber:
+      nested?.phoneNumber ??
+      (typeof record.phoneNumber === "string" ? record.phoneNumber : undefined),
+    role:
+      nested?.role ??
+      (typeof record.role === "string" ? record.role : undefined),
+    isOnline:
+      (typeof record.isOnline === "boolean" ? record.isOnline : undefined) ??
+      nested?.isOnline,
+  };
+}
+
 function normalizeConversation(raw: Conversation & Record<string, unknown>): Conversation {
-  const participants =
+  const participantRows =
     Array.isArray(raw.participants)
       ? raw.participants
       : Array.isArray(raw.participantUsers)
         ? raw.participantUsers
         : undefined;
 
+  const participants = participantRows
+    ?.map((row) =>
+      normalizeParticipant(row as ChatUserSummary | Record<string, unknown>),
+    )
+    .filter((row): row is ChatUserSummary => row !== null);
+
   return {
     ...raw,
-    ...(participants ? { participants: participants as Conversation["participants"] } : {}),
+    ...(participants?.length ? { participants } : {}),
   };
 }
 

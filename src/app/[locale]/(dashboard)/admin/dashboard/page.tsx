@@ -3,25 +3,19 @@ import State from "./state";
 import Observer from "./observer";
 import Utils from "./utils";
 import UI from "./ui";
-import {
-  queue,
-  recentAnalysis,
-  stats,
-  systemHealth,
-  testDist,
-  throughput,
-} from "./mock-data";
+import { fetchDashboardData } from "@/lib/api/fetch-dashboard";
 
-export default function Page() {
+export default async function Page() {
+  let dashboard = null;
+
+  try {
+    dashboard = await fetchDashboardData();
+  } catch {
+    dashboard = null;
+  }
+
   return (
-    <Init
-      stats={stats}
-      queue={queue}
-      throughput={throughput}
-      testDist={testDist}
-      recentAnalysis={recentAnalysis}
-      systemHealth={systemHealth}
-    >
+    <Init dashboard={dashboard}>
       <State>
         <Observer>
           <Utils>

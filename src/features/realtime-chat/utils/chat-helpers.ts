@@ -285,6 +285,9 @@ export function chatMessageToReceivePayload(
   };
 }
 
+/** Fallback label when a direct-chat peer name cannot be resolved. */
+export const CHAT_UNKNOWN_USER_LABEL = "Unknown user";
+
 export interface ConversationTitleOptions {
   messages?: Array<{
     senderId: string;
@@ -295,6 +298,32 @@ export interface ConversationTitleOptions {
     { displayName?: string | null; fullName?: string | null }
   >;
   nameLookup?: Map<string, { displayName: string; role?: string }>;
+  unknownUserLabel?: string;
+}
+
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function isConversationIdFragment(value: string, conversationId: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  if (trimmed === conversationId) return true;
+  if (UUID_PATTERN.test(trimmed)) return true;
+  const normalizedId = conversationId.toLowerCase();
+  const normalizedValue = trimmed.toLowerCase();
+  return (
+    normalizedValue.length >= 8 &&
+    normalizedId.startsWith(normalizedValue)
+  );
+}
+
+function isUsableConversationTitle(
+  value: string | null | undefined,
+  conversationId: string,
+): boolean {
+  const trimmed = value?.trim();
+  if (!trimmed || trimmed === "string") return false;
+  return !isConversationIdFragment(trimmed, conversationId);
 }
 
 function resolveParticipantName(
@@ -302,17 +331,21 @@ function resolveParticipantName(
   fullName?: string | null,
   displayName?: string | null,
   options?: ConversationTitleOptions,
+  email?: string | null,
 ): string {
   const direct = displayName?.trim() || fullName?.trim();
-  if (direct) return direct;
+  if (direct && direct !== userId) return direct;
 
   const known = options?.nameLookup?.get(userId)?.displayName?.trim();
-  if (known) return known;
+  if (known && known !== userId) return known;
 
   const online = options?.onlineUsersById?.[userId];
   const fromOnline =
     online?.displayName?.trim() || online?.fullName?.trim();
-  if (fromOnline) return fromOnline;
+  if (fromOnline && fromOnline !== userId) return fromOnline;
+
+  const emailLocal = email?.split("@")[0]?.trim();
+  if (emailLocal && emailLocal !== userId) return emailLocal;
 
   return userId;
 }
@@ -327,6 +360,7 @@ export function getConversationTitle(
       userId: string;
       fullName?: string | null;
       displayName?: string | null;
+      email?: string | null;
     }>;
     lastMessage?: {
       text?: string | null;
@@ -341,8 +375,11 @@ export function getConversationTitle(
   options?: ConversationTitleOptions,
 ): string {
   const title = conversation.title?.trim();
-  if (conversation.type === "Group" && title && title !== "string") {
-    return title;
+  if (
+    conversation.type === "Group" &&
+    isUsableConversationTitle(title, conversation.id)
+  ) {
+    return title!;
   }
 
   const normalizedCurrentUserId = currentUserId.trim();
@@ -350,6 +387,7 @@ export function getConversationTitle(
     userId: string;
     fullName?: string | null;
     displayName?: string | null;
+    email?: string | null;
   }> = [];
 
   for (const participant of conversation.participants ?? []) {
@@ -392,12 +430,14 @@ export function getConversationTitle(
       candidate.fullName,
       candidate.displayName,
       options,
+      candidate.email,
     );
     if (name !== userId) return name;
   }
 
-  if (title && title !== "string") {
-    return title;
+  if (isUsableConversationTitle(title, conversation.id)) {
+    return title!;
   }
-  return conversation.id.slice(0, 8);
+
+  return options?.unknownUserLabel ?? CHAT_UNKNOWN_USER_LABEL;
 }

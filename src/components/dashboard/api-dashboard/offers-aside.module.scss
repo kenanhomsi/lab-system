@@ -1,0 +1,247 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--primary, #009cc2) 10%, transparent);
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 10px 28px -12px rgba(15, 23, 42, 0.1);
+}
+
+:global(html.dark) .panel {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.headerMain {
+  min-width: 0;
+  flex: 1;
+}
+
+.infoBtn {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--primary, #009cc2) 22%, transparent);
+  background: color-mix(in srgb, var(--primary, #009cc2) 8%, transparent);
+  color: var(--primary, #009cc2);
+  display: grid;
+  place-items: center;
+  cursor: default;
+}
+
+.title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--on-surface);
+  line-height: 1.25;
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  font-size: 10px;
+  line-height: 1.35;
+  color: var(--on-surface-variant);
+}
+
+.countBadge {
+  flex-shrink: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: color-mix(in srgb, var(--primary, #009cc2) 85%, #fff);
+  background: color-mix(in srgb, var(--primary, #009cc2) 12%, transparent);
+}
+
+.offerBox {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(248, 250, 252, 0.65);
+}
+
+:global(html.dark) .offerBox {
+  background: rgba(30, 41, 59, 0.45);
+  border-color: rgba(148, 163, 184, 0.15);
+}
+
+.offerActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 52px;
+  grid-column: 1;
+}
+
+.discountBadge {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  background: #dcfce7;
+  color: #166534;
+  white-space: nowrap;
+}
+
+.copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  grid-column: 2;
+}
+
+.offerTitle {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--on-surface);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.priceNow {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--primary, #009cc2);
+}
+
+.priceWas {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+  text-decoration: line-through;
+}
+
+.expiry {
+  margin: 0;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--primary, #009cc2);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(148, 163, 184, 0.2);
+  grid-column: 3;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.carousel {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(148, 163, 184, 0.45);
+  transition: width 200ms ease, background 200ms ease;
+}
+
+.dotActive {
+  width: 18px;
+  background: var(--primary, #009cc2);
+}
+
+.skeleton {
+  height: 68px;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.15) 25%,
+    rgba(148, 163, 184, 0.08) 50%,
+    rgba(148, 163, 184, 0.15) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+:global([dir="ltr"]) .offerBox {
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+}
+
+:global([dir="ltr"]) .thumb {
+  grid-column: 1;
+}
+
+:global([dir="ltr"]) .copy {
+  grid-column: 2;
+}
+
+:global([dir="ltr"]) .offerActions {
+  grid-column: 3;
+}

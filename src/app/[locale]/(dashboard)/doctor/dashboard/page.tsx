@@ -3,16 +3,19 @@ import State from "./state";
 import Observer from "./observer";
 import Utils from "./utils";
 import UI from "./ui";
-import { pendingReferrals, recentPatients, stats, weeklySummary } from "./mock-data";
+import { fetchDashboardData } from "@/lib/api/fetch-dashboard";
 
-export default function Page() {
+export default async function Page() {
+  let dashboard = null;
+
+  try {
+    dashboard = await fetchDashboardData();
+  } catch {
+    dashboard = null;
+  }
+
   return (
-    <Init
-      stats={stats}
-      pendingReferrals={pendingReferrals}
-      recentPatients={recentPatients}
-      weeklySummary={weeklySummary}
-    >
+    <Init dashboard={dashboard}>
       <State>
         <Observer>
           <Utils>

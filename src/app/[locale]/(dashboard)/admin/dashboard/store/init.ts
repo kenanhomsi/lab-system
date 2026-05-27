@@ -1,28 +1,11 @@
-import type {
-  QueueStage,
-  RecentAnalysis,
-  StatCard,
-  SystemHealth,
-  TestDistItem,
-  ThroughputBar,
-} from "../type";
+import type { DashboardData } from "../type";
 
 type Params = {
-  stats: StatCard[];
-  queue: QueueStage[];
-  throughput: ThroughputBar[];
-  testDist: TestDistItem[];
-  recentAnalysis: RecentAnalysis[];
-  systemHealth: SystemHealth;
+  dashboard: DashboardData | null;
 };
 
 const store = (): Params => ({
-  stats: [],
-  queue: [],
-  throughput: [],
-  testDist: [],
-  recentAnalysis: [],
-  systemHealth: { uptime: "—", latency: "—" },
+  dashboard: null,
 });
 
 export { store as initStore };

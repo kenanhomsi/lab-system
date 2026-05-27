@@ -62,6 +62,7 @@ export default async function LocaleLayout({
     darkMode: locale === "ar" ? "الوضع الداكن" : "Dark mode",
   };
   const messages = {
+    ...fallbackMessages,
     ...loadedMessages,
     navbar:
       loadedMessages?.navbar ?? fallbackMessages?.navbar ?? navbarFallback,

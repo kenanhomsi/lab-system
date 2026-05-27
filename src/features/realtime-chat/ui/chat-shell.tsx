@@ -45,6 +45,7 @@ import type { Conversation } from "../signalr/types";
 import { useRealtimeChatStore } from "../store/realtime-chat-store";
 import {
   buildUserNameLookup,
+  CHAT_UNKNOWN_USER_LABEL,
   getConversationTitle,
   mergeOnlineUsersForDisplay,
   waitForOwnNewMessage,
@@ -282,7 +283,7 @@ export function ChatShell() {
 
   const activeConversationTitle = useMemo(() => {
     if (!activeConversation) {
-      return activeConversationId ?? "";
+      return CHAT_UNKNOWN_USER_LABEL;
     }
     return getConversationTitle(activeConversation, currentUserId ?? "", {
       messages: activeConversationId
@@ -373,19 +374,19 @@ export function ChatShell() {
       const peer = pickerUsers.find((user) => user.userId === otherUserId);
       const enrichedConversation: Conversation = peer
         ? {
-            ...conversation,
-            participants: [
-              ...(conversation.participants ?? []),
-              {
-                userId: peer.userId,
-                fullName: peer.displayName,
-                email: "",
-                phoneNumber: "",
-                role: peer.role ?? "",
-                isOnline: true,
-              },
-            ],
-          }
+          ...conversation,
+          participants: [
+            ...(conversation.participants ?? []),
+            {
+              userId: peer.userId,
+              fullName: peer.displayName,
+              email: "",
+              phoneNumber: "",
+              role: peer.role ?? "",
+              isOnline: true,
+            },
+          ],
+        }
         : conversation;
       await queryClient.refetchQueries({ queryKey: ["chat", "conversations"] });
       if (peer) {
@@ -532,259 +533,259 @@ export function ChatShell() {
         }}
       >
         {showSidebar ? (
-        <Box
-          className="chat-sidebar"
-          w={{ base: "100%", md: 300 }}
-          style={{
-            borderRight: "1px solid var(--chat-border)",
-            display: "flex",
-            flexDirection: "column",
-            flexShrink: 0,
-            flex: compactLayout ? 1 : undefined,
-          }}
-        >
           <Box
-            p="md"
-            style={{ borderBottom: "1px solid var(--chat-border)" }}
+            className="chat-sidebar"
+            w={{ base: "100%", md: 300 }}
+            style={{
+              borderRight: "1px solid var(--chat-border)",
+              display: "flex",
+              flexDirection: "column",
+              flexShrink: 0,
+              flex: compactLayout ? 1 : undefined,
+            }}
           >
-            <ConnectionStatusCard
-              chatStatus={chatStatus}
-              onlineUsersStatus={onlineUsersStatus}
-              chatError={chatError}
-              onlineUsersError={onlineUsersError}
-              onConnect={() => void handleConnect()}
-              onDisconnect={() =>
-                void runAction("Disconnect", chatApi.disconnect)
-              }
-            />
-          </Box>
-
-          <Box style={{ flex: 1, overflowY: "auto" }} p="md">
-            {sidebarView === "messages" ? (
-              <ConversationListPanel
-                conversations={conversations}
-                conversationsLoading={conversationsLoading}
-                activeConversationId={activeConversationId}
-                currentUserId={currentUserId}
-                hubsConnected={hubsConnected}
-                messagesByConversation={messagesByConversation}
-                onlineUsersById={onlineUsersById}
-                nameLookup={userNameLookup}
-                onNewChat={handleOpenNewChatPicker}
-                onOpen={(conversation) =>
-                  void runAction("Open conversation", () =>
-                    openConversation(conversation),
-                  )
-                }
-                onJoinById={(conversationId) =>
-                  void handleJoinById(conversationId)
+            <Box
+              p="md"
+              style={{ borderBottom: "1px solid var(--chat-border)" }}
+            >
+              <ConnectionStatusCard
+                chatStatus={chatStatus}
+                onlineUsersStatus={onlineUsersStatus}
+                chatError={chatError}
+                onlineUsersError={onlineUsersError}
+                onConnect={() => void handleConnect()}
+                onDisconnect={() =>
+                  void runAction("Disconnect", chatApi.disconnect)
                 }
               />
-            ) : (
-              <OnlineUsersPanel
-                users={displayUsers}
-                currentUserId={currentUserId}
-                dmPendingUserId={dmPendingUserId}
-                loading={pickerUsersLoading}
-                onStartDm={(userId) => createDirectMutation.mutate(userId)}
-              />
-            )}
-          </Box>
+            </Box>
 
-          <Box
-            p="xs"
-            style={{ borderTop: "1px solid var(--chat-border)" }}
-          >
-            <Group justify="center">
-              <Button
-                size="xs"
-                variant="subtle"
-                color="gray"
-                leftSection={<IconBug size={14} />}
-                onClick={() => setShowLogs(!showLogs)}
-              >
-                {showLogs ? "Hide Logs" : "Show Logs"}
-              </Button>
-            </Group>
+            <Box style={{ flex: 1, overflowY: "auto" }} p="md">
+              {sidebarView === "messages" ? (
+                <ConversationListPanel
+                  conversations={conversations}
+                  conversationsLoading={conversationsLoading}
+                  activeConversationId={activeConversationId}
+                  currentUserId={currentUserId}
+                  hubsConnected={hubsConnected}
+                  messagesByConversation={messagesByConversation}
+                  onlineUsersById={onlineUsersById}
+                  nameLookup={userNameLookup}
+                  onNewChat={handleOpenNewChatPicker}
+                  onOpen={(conversation) =>
+                    void runAction("Open conversation", () =>
+                      openConversation(conversation),
+                    )
+                  }
+                  onJoinById={(conversationId) =>
+                    void handleJoinById(conversationId)
+                  }
+                />
+              ) : (
+                <OnlineUsersPanel
+                  users={displayUsers}
+                  currentUserId={currentUserId}
+                  dmPendingUserId={dmPendingUserId}
+                  loading={pickerUsersLoading}
+                  onStartDm={(userId) => createDirectMutation.mutate(userId)}
+                />
+              )}
+            </Box>
+
+            <Box
+              p="xs"
+              style={{ borderTop: "1px solid var(--chat-border)" }}
+            >
+              <Group justify="center">
+                <Button
+                  size="xs"
+                  variant="subtle"
+                  color="gray"
+                  leftSection={<IconBug size={14} />}
+                  onClick={() => setShowLogs(!showLogs)}
+                >
+                  {showLogs ? "Hide Logs" : "Show Logs"}
+                </Button>
+              </Group>
+            </Box>
           </Box>
-        </Box>
         ) : null}
 
         {showMain ? (
-        <Box
-          className="chat-main"
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            position: "relative",
-            minWidth: 0,
-            width: compactLayout ? "100%" : undefined,
-          }}
-        >
-        {activeConversationId ? (
-          <>
-            <Box className="chat-header" p="md" style={{ zIndex: 10 }}>
-              <Group justify="space-between" wrap="nowrap">
-                {compactLayout ? (
-                  <ActionIcon
-                    variant="subtle"
-                    color="gray"
-                    onClick={() => setActiveConversation(null)}
-                    aria-label="Back to conversations"
-                  >
-                    <IconArrowLeft size={18} />
-                  </ActionIcon>
-                ) : null}
-                <Group wrap="nowrap" gap="sm" style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ position: "relative", flexShrink: 0 }}>
-                    <Avatar color="violet" radius="xl" size="md">
-                      {activeConversationTitle.substring(0, 2).toUpperCase()}
-                    </Avatar>
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: 0,
-                        right: 0,
-                        width: 10,
-                        height: 10,
-                        borderRadius: "50%",
-                        backgroundColor: "var(--mantine-color-green-6)",
-                        border: "2px solid var(--chat-avatar-border)",
-                      }}
-                    />
-                  </div>
-                  <Text fw={600} size="lg" truncate>
-                    {activeConversationTitle}
-                  </Text>
-                </Group>
-                <Group gap="xs" wrap="nowrap">
-                  <Button
-                    variant="subtle"
-                    color="gray"
-                    size="compact-sm"
-                    leftSection={<IconFile size={14} />}
-                  >
-                    Files
-                  </Button>
-                  <Button
-                    variant="subtle"
-                    color="gray"
-                    size="compact-sm"
-                    leftSection={<IconUser size={14} />}
-                    onClick={toggleProfile}
-                  >
-                    Profile
-                  </Button>
-                  <Tooltip label="Leave Chat">
-                    <ActionIcon
-                      variant="light"
-                      color="red"
-                      onClick={() =>
-                        void runAction(
-                          "Leave conversation",
-                          leaveActiveConversation,
-                        )
-                      }
-                    >
-                      <IconX size={18} />
-                    </ActionIcon>
-                  </Tooltip>
-                </Group>
-              </Group>
-            </Box>
+          <Box
+            className="chat-main"
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              position: "relative",
+              minWidth: 0,
+              width: compactLayout ? "100%" : undefined,
+            }}
+          >
+            {activeConversationId ? (
+              <>
+                <Box className="chat-header" p="md" style={{ zIndex: 10 }}>
+                  <Group justify="space-between" wrap="nowrap">
+                    {compactLayout ? (
+                      <ActionIcon
+                        variant="subtle"
+                        color="gray"
+                        onClick={() => setActiveConversation(null)}
+                        aria-label="Back to conversations"
+                      >
+                        <IconArrowLeft size={18} />
+                      </ActionIcon>
+                    ) : null}
+                    <Group wrap="nowrap" gap="sm" style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ position: "relative", flexShrink: 0 }}>
+                        <Avatar color="violet" radius="xl" size="md">
+                          {activeConversationTitle.substring(0, 2).toUpperCase()}
+                        </Avatar>
+                        <div
+                          style={{
+                            position: "absolute",
+                            bottom: 0,
+                            right: 0,
+                            width: 10,
+                            height: 10,
+                            borderRadius: "50%",
+                            backgroundColor: "var(--mantine-color-green-6)",
+                            border: "2px solid var(--chat-avatar-border)",
+                          }}
+                        />
+                      </div>
+                      <Text fw={600} size="lg" truncate>
+                        {activeConversationTitle}
+                      </Text>
+                    </Group>
+                    <Group gap="xs" wrap="nowrap">
+                      <Button
+                        variant="subtle"
+                        color="gray"
+                        size="compact-sm"
+                        leftSection={<IconFile size={14} />}
+                      >
+                        Files
+                      </Button>
+                      <Button
+                        variant="subtle"
+                        color="gray"
+                        size="compact-sm"
+                        leftSection={<IconUser size={14} />}
+                        onClick={toggleProfile}
+                      >
+                        Profile
+                      </Button>
+                      <Tooltip label="Leave Chat">
+                        <ActionIcon
+                          variant="light"
+                          color="red"
+                          onClick={() =>
+                            void runAction(
+                              "Leave conversation",
+                              leaveActiveConversation,
+                            )
+                          }
+                        >
+                          <IconX size={18} />
+                        </ActionIcon>
+                      </Tooltip>
+                    </Group>
+                  </Group>
+                </Box>
 
-            <Box style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
-              <MessageThreadPanel
-                messages={messages}
-                typingUserIds={typingUserIds}
-                currentUserId={currentUserId}
-                isLoading={threadLoading}
-              />
-            </Box>
+                <Box style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
+                  <MessageThreadPanel
+                    messages={messages}
+                    typingUserIds={typingUserIds}
+                    currentUserId={currentUserId}
+                    isLoading={threadLoading}
+                  />
+                </Box>
 
-            <Box className="chat-composer" p="md">
-              <ComposerPanel
-                conversationId={activeConversationId}
-                disabled={!connected}
-                onSend={(text, file) =>
-                  void runAction("Send message", async () => {
-                    if (!activeConversationId || !currentUserId) return;
+                <Box className="chat-composer" p="md">
+                  <ComposerPanel
+                    conversationId={activeConversationId}
+                    disabled={!connected}
+                    onSend={(text, file) =>
+                      void runAction("Send message", async () => {
+                        if (!activeConversationId || !currentUserId) return;
 
-                    const textToSend = file
-                      ? text.trim() || file.name
-                      : text.trim();
-                    const knownMessageIds = new Set(
-                      (
-                        useRealtimeChatStore.getState().messagesByConversation[
-                          activeConversationId
-                        ] ?? []
-                      ).map((m) => m.messageId),
-                    );
+                        const textToSend = file
+                          ? text.trim() || file.name
+                          : text.trim();
+                        const knownMessageIds = new Set(
+                          (
+                            useRealtimeChatStore.getState().messagesByConversation[
+                            activeConversationId
+                            ] ?? []
+                          ).map((m) => m.messageId),
+                        );
 
-                    // Hub only accepts Text (1); attachment is uploaded via REST.
-                    await chatApi.sendMessage(
-                      activeConversationId,
-                      textToSend,
-                      1,
-                    );
+                        // Hub only accepts Text (1); attachment is uploaded via REST.
+                        await chatApi.sendMessage(
+                          activeConversationId,
+                          textToSend,
+                          1,
+                        );
 
-                    if (file) {
-                      const sentMessage = await waitForOwnNewMessage({
-                        conversationId: activeConversationId,
-                        currentUserId,
-                        knownMessageIds,
-                      });
-                      markMessagePendingAttachment(
-                        activeConversationId,
-                        sentMessage.messageId,
-                        {
-                          fileName: file.name,
-                          fileType: file.type,
-                        },
-                      );
-                      const attachment = await uploadAttachment(
-                        sentMessage.messageId,
-                        file,
-                      );
-                      updateMessageFileUrl(
-                        activeConversationId,
-                        sentMessage.messageId,
-                        attachment.fileUrl,
-                        {
-                          fileName: attachment.fileName,
-                          fileType: attachment.fileType,
-                        },
-                      );
+                        if (file) {
+                          const sentMessage = await waitForOwnNewMessage({
+                            conversationId: activeConversationId,
+                            currentUserId,
+                            knownMessageIds,
+                          });
+                          markMessagePendingAttachment(
+                            activeConversationId,
+                            sentMessage.messageId,
+                            {
+                              fileName: file.name,
+                              fileType: file.type,
+                            },
+                          );
+                          const attachment = await uploadAttachment(
+                            sentMessage.messageId,
+                            file,
+                          );
+                          updateMessageFileUrl(
+                            activeConversationId,
+                            sentMessage.messageId,
+                            attachment.fileUrl,
+                            {
+                              fileName: attachment.fileName,
+                              fileType: attachment.fileType,
+                            },
+                          );
+                        }
+
+                        await chatApi.stopTyping(activeConversationId);
+                      })
                     }
-
-                    await chatApi.stopTyping(activeConversationId);
-                  })
-                }
-                onTyping={() => {
-                  if (!activeConversationId) return;
-                  void chatApi.typing(activeConversationId);
-                }}
-                onStopTyping={() => {
-                  if (!activeConversationId) return;
-                  void chatApi.stopTyping(activeConversationId);
-                }}
-              />
-            </Box>
-          </>
-        ) : (
-          <Center style={{ flex: 1, flexDirection: "column", gap: "16px" }}>
-            <IconMessageCircle
-              size={64}
-              color="var(--chat-text-muted)"
-              stroke={1.5}
-            />
-            <Text c="dimmed" size="lg" fw={500}>
-              Select or start a conversation to begin chatting
-            </Text>
-          </Center>
-        )}
-        </Box>
+                    onTyping={() => {
+                      if (!activeConversationId) return;
+                      void chatApi.typing(activeConversationId);
+                    }}
+                    onStopTyping={() => {
+                      if (!activeConversationId) return;
+                      void chatApi.stopTyping(activeConversationId);
+                    }}
+                  />
+                </Box>
+              </>
+            ) : (
+              <Center style={{ flex: 1, flexDirection: "column", gap: "16px" }}>
+                <IconMessageCircle
+                  size={64}
+                  color="var(--chat-text-muted)"
+                  stroke={1.5}
+                />
+                <Text c="dimmed" size="lg" fw={500}>
+                  Select or start a conversation to begin chatting
+                </Text>
+              </Center>
+            )}
+          </Box>
         ) : null}
 
         {showProfileColumn ? (
