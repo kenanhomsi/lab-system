@@ -49,7 +49,7 @@ jobs:
           script: |
             cd /home/lab-system-front
             git pull --ff-only origin main
-            docker compose down --remove-orphans
-            docker compose build --pull web
-            docker compose up -d web
+            APP_IMAGE_TAG=${{ github.sha }} docker compose pull web
+            APP_IMAGE_TAG=${{ github.sha }} docker compose down --remove-orphans
+            APP_IMAGE_TAG=${{ github.sha }} docker compose up -d --force-recreate web
             docker image prune -f

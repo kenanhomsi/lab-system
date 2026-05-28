@@ -1,6 +1,7 @@
 # NEXT_PUBLIC_* build args are inlined at image build; run: docker compose build --no-cache web after changing them.
 services:
   web:
+    image: kenahomsi/lab-system-front:${APP_IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile
