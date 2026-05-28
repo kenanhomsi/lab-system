@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSessionUserStore } from "@/stores/session-user-store";
 import { axiosInstanceFront } from "@/lib/clients/frontend-instance";
+import { getPublicBackendBaseUrl } from "@/lib/api/signalr-hub-base-url";
 import { useRealtimeChatEngine } from "./use-realtime-chat-engine";
 
 export interface UseRealtimeChatFacade {
@@ -26,9 +27,7 @@ type NegotiateResponse = {
 
 export function useRealtimeChat(): UseRealtimeChatFacade {
   const sessionUser = useSessionUserStore((state) => state.user);
-  const [hubBaseUrl, setHubBaseUrl] = useState(() =>
-    typeof window !== "undefined" ? window.location.origin : "",
-  );
+  const [hubBaseUrl, setHubBaseUrl] = useState(getPublicBackendBaseUrl);
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,9 +41,7 @@ export function useRealtimeChat(): UseRealtimeChatFacade {
         setAccessToken(res.data?.accessToken ?? null);
       })
       .catch(() => {
-        if (!cancelled && typeof window !== "undefined") {
-          setHubBaseUrl(window.location.origin);
-        }
+        if (!cancelled) setHubBaseUrl(getPublicBackendBaseUrl());
       });
     return () => {
       cancelled = true;
