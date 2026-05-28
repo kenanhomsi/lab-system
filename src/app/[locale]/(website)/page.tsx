@@ -38,7 +38,6 @@ const PartnersStrip = dynamic(() =>
 export default function LandingPage() {
   return (
     <main>
-      kenan
       <HeroSection />
       <Suspense fallback={null}>
         <PageBannerServer placement={BANNER_PLACEMENT.HOME_PAGE} />
