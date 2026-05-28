@@ -39,6 +39,7 @@ jobs:
             NEXT_PUBLIC_CKEDITOR_LICENSE_KEY=${{ secrets.NEXT_PUBLIC_CKEDITOR_LICENSE_KEY }}
             NEXT_PUBLIC_VERSION=${{ secrets.NEXT_PUBLIC_VERSION }}
             NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
+            BACKEND_URL=${{ secrets.BACKEND_URL }}
 
       - name: Copy docker-compose.yml to VPS
         uses: appleboy/scp-action@v0.1.7

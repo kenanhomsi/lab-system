@@ -5,8 +5,14 @@ import path from "path";
 const nextConfig: NextConfig = {
   output: "standalone",
   async rewrites() {
+    // NOTE: rewrites() runs at BUILD time in Next.js, not at runtime.
+    // BACKEND_URL must therefore be available as a build arg (see Dockerfile).
+    // We fall back to NEXT_PUBLIC_BACKEND_URL which CI already passes, so the
+    // app keeps working even if BACKEND_URL was not provided to the build.
     const backend = (
-      process.env.BACKEND_URL || "http://localhost:4000"
+      process.env.BACKEND_URL ||
+      process.env.NEXT_PUBLIC_BACKEND_URL ||
+      "http://localhost:4000"
     ).replace(/\/+$/, "");
     return [
       {
