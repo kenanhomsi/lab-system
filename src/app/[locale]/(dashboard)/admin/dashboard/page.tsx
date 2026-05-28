@@ -16,6 +16,7 @@ export default async function Page() {
 
   return (
     <Init dashboard={dashboard}>
+      kenan
       <State>
         <Observer>
           <Utils>

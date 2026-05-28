@@ -20,6 +20,7 @@ export function createOnlineUsersConnection(
   baseUrl: string,
   accessTokenFactory: () => string,
 ): HubConnection {
+  console.log('the baseUrl here is', baseUrl)
   return new HubConnectionBuilder()
     .withUrl(hubEndpoint(baseUrl, "/hubs/online-users"), {
       accessTokenFactory,
