@@ -4,6 +4,7 @@ import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 import { getToken } from "next-auth/jwt";
 import { getAuthSecret } from "./lib/auth-secret";
+import { getMiddlewareHubRewriteBackend } from "./lib/api/signalr-hub-base-url";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
@@ -34,8 +35,23 @@ function getRequiredRoles(pathname: string): string[] | null {
   return null;
 }
 
+/** Runtime rewrite: same-origin `/hubs/*` → upstream API (not build-time rewrites). */
+function rewriteSignalRHub(request: NextRequest): NextResponse | null {
+  const pathname = request.nextUrl.pathname;
+  if (!pathname.startsWith("/hubs/")) return null;
+
+  const backend = getMiddlewareHubRewriteBackend();
+  if (!backend) return null;
+
+  const target = new URL(`${pathname}${request.nextUrl.search}`, `${backend}/`);
+  return NextResponse.rewrite(target);
+}
+
 export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+
+  const hubRewrite = rewriteSignalRHub(request);
+  if (hubRewrite) return hubRewrite;
 
   const requiredRoles = getRequiredRoles(pathname);
 
@@ -67,6 +83,8 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Exclude /hubs — SignalR negotiate/WebSocket must not get a locale prefix.
-  matcher: ["/((?!api|hubs|_next|_vercel|.*\\..*).*)"],
+  matcher: [
+    "/hubs/:path*",
+    "/((?!api|hubs|_next|_vercel|.*\\..*).*)",
+  ],
 };

@@ -3,7 +3,6 @@ import {
   HubConnectionBuilder,
   HttpTransportType,
 } from "@microsoft/signalr";
-import { SIGNALR_HUB_PROXY_PREFIX } from "@/lib/api/hub-proxy";
 
 function normalizeBaseUrl(baseUrl: string): string {
   return baseUrl.replace(/\/+$/, "");
@@ -22,15 +21,11 @@ export function createOnlineUsersConnection(
   accessTokenFactory: () => string,
 ): HubConnection {
   return new HubConnectionBuilder()
-    .withUrl(
-      hubEndpoint(baseUrl, `${SIGNALR_HUB_PROXY_PREFIX}/online-users`),
-      {
-        accessTokenFactory,
-        // HTTP-only transports: proxied through `/api/hubs/*` at runtime.
-        transport:
-          HttpTransportType.LongPolling | HttpTransportType.ServerSentEvents,
-      },
-    )
+    .withUrl(hubEndpoint(baseUrl, "/hubs/online-users"), {
+      accessTokenFactory,
+      // Long polling only — works through HTTP proxies; SSE/WebSockets break easily.
+      transport: HttpTransportType.LongPolling,
+    })
     .withAutomaticReconnect()
     .build();
 }
@@ -40,10 +35,9 @@ export function createChatConnection(
   accessTokenFactory: () => string,
 ): HubConnection {
   return new HubConnectionBuilder()
-    .withUrl(hubEndpoint(baseUrl, `${SIGNALR_HUB_PROXY_PREFIX}/chat`), {
+    .withUrl(hubEndpoint(baseUrl, "/hubs/chat"), {
       accessTokenFactory,
-      transport:
-        HttpTransportType.LongPolling | HttpTransportType.ServerSentEvents,
+      transport: HttpTransportType.LongPolling,
     })
     .withAutomaticReconnect()
     .build();
