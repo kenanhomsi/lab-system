@@ -6,7 +6,11 @@ export function isUpstreamBackendReady(): boolean {
 
 /** Normalized BACKEND_URL origin (no trailing slash). */
 export function getBackendBaseUrl(): string {
-  return (process.env.BACKEND_URL || "http://localhost:4000").replace(/\/+$/, "");
+  return (
+    process.env.BACKEND_URL ||
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    "http://localhost:4000"
+  ).replace(/\/+$/, "");
 }
 
 export type BuildUpstreamUrlOptions = {
