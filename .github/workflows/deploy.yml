@@ -40,16 +40,37 @@ jobs:
             NEXT_PUBLIC_VERSION=${{ secrets.NEXT_PUBLIC_VERSION }}
             NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
 
+      - name: Copy docker-compose.yml to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: "docker-compose.yml"
+          target: "/home/lab-system-front"
+
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
+          script_stop: true
+          envs: APP_IMAGE_TAG,DOCKER_USERNAME,DOCKER_PASSWORD
           script: |
+            set -e
             cd /home/lab-system-front
-            git pull --ff-only origin main
-            APP_IMAGE_TAG=${{ github.sha }} docker compose pull web
-            APP_IMAGE_TAG=${{ github.sha }} docker compose down --remove-orphans
-            APP_IMAGE_TAG=${{ github.sha }} docker compose up -d --force-recreate web
+            export APP_IMAGE_TAG='${{ github.sha }}'
+            if docker compose version >/dev/null 2>&1; then
+              DC="docker compose"
+            elif command -v docker-compose >/dev/null 2>&1; then
+              DC="docker-compose"
+            else
+              echo "ERROR: Neither 'docker compose' (v2) nor 'docker-compose' (v1) is installed on the VPS." >&2
+              exit 1
+            fi
+            echo "Using compose command: $DC"
+            echo '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin
+            $DC pull web
+            $DC up -d --force-recreate --remove-orphans web
             docker image prune -f
