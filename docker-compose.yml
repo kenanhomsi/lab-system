@@ -20,5 +20,8 @@ services:
     environment:
       NODE_ENV: production
       UPSTREAM_BACKEND_READY: ${UPSTREAM_BACKEND_READY:-false}
+      BACKEND_URL: ${BACKEND_URL:?BACKEND_URL is required (e.g. https://api.syrian-medical.tech)}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:?NEXTAUTH_URL is required (e.g. https://syrian-medical.tech)}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?NEXTAUTH_SECRET is required}
     extra_hosts:
       - "host.docker.internal:host-gateway"
