@@ -225,16 +225,6 @@ export const roleStrategy = {
         icon: "users",
       },
       {
-        label: "adminSubscriptions",
-        href: "/admin/subscription-packages",
-        icon: "creditCard",
-      },
-      {
-        label: "adminComplaints",
-        href: "/admin/complaints",
-        icon: "alertCircle",
-      },
-      {
         label: "adminMedicalTests",
         href: "/admin/medical-tests",
         icon: "flask",
@@ -253,6 +243,16 @@ export const roleStrategy = {
         label: "chat",
         href: "/admin/chat",
         icon: "messageSquare",
+      },
+            {
+        label: "adminSubscriptions",
+        href: "/admin/subscription-packages",
+        icon: "creditCard",
+      },
+      {
+        label: "adminComplaints",
+        href: "/admin/complaints",
+        icon: "alertCircle",
       },
       {
         label: "adminSettings",

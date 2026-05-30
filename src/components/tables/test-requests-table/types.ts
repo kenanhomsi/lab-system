@@ -1,6 +1,16 @@
+export type TestRequestTestItem = {
+  testRequestId: number;
+  medicalTestId: number;
+  medicalTestNameEn?: string | null;
+  parameterSchema?: string | null;
+  parameters?: unknown[];
+};
+
 export type TestRequestItem = {
   id: number;
-  medicalTestId: number;
+  medicalTestId?: number;
+  testRequestIds?: number[];
+  tests?: TestRequestTestItem[];
   medicalTestNameEn?: string | null;
   externalPatientFullName?: string | null;
   requestDate: string;

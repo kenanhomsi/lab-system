@@ -1,8 +1,24 @@
 import { z } from "zod";
 
+const parameterSchemaValue = z.union([
+  z.string(),
+  z.record(z.string(), z.unknown()),
+  z.array(z.unknown()),
+]);
+
+export const TestRequestTestItemSchema = z.object({
+  testRequestId: z.number(),
+  medicalTestId: z.number(),
+  medicalTestNameEn: z.string().nullable().optional(),
+  parameterSchema: parameterSchemaValue.nullable().optional(),
+  parameters: z.array(z.unknown()).optional(),
+});
+
 export const TestRequestItemSchema = z.object({
   id: z.number(),
-  medicalTestId: z.number(),
+  medicalTestId: z.number().optional(),
+  testRequestIds: z.array(z.number()).optional(),
+  tests: z.array(TestRequestTestItemSchema).optional(),
   medicalTestNameEn: z.string().nullable().optional(),
   requestDate: z.string(),
   status: z.string(),

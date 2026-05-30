@@ -3,6 +3,7 @@
 import { resolveClinicalPartyKind } from "@/components/modals/test-requests/party-ids";
 import { ExternalIdCell } from "@/components/tables/external-patients-table/schema/columns-rendering/external-id-cell";
 import { Badge, Box, Code, Text, Tooltip } from "@mantine/core";
+import { getMedicalTestNamesLabel } from "../get-medical-test-names-label";
 import { TestRequestItem } from "../types";
 import { ActionsRender } from "./columns-rendering/actions-render";
 import { DateRender } from "./columns-rendering/date-render";
@@ -195,11 +196,17 @@ const getTestRequestsColumns = (
       accessor: "medicalTestNameEn",
       title: t("colMedicalTest"),
       width: "14%",
-      render: (row) => (
-        <Text size="sm" fw={600} py={4} lh={1.45}>
-          {row.medicalTestNameEn || "—"}
-        </Text>
-      ),
+      render: (row) => {
+        const label = getMedicalTestNamesLabel(row);
+        const isEmpty = !label;
+        return (
+          <Tooltip label={label} disabled={isEmpty || label.length < 40} withArrow openDelay={400}>
+            <Text size="sm" fw={600} py={4} lineClamp={2} c={isEmpty ? "dimmed" : undefined} lh={1.45}>
+              {label || "—"}
+            </Text>
+          </Tooltip>
+        );
+      },
     },
     {
       accessor: "requestDate",

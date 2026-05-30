@@ -1,6 +1,7 @@
 "use client";
 
 import { frontendContainer } from "@/container";
+import { getMedicalTestNamesLabel } from "@/components/tables/test-requests-table/get-medical-test-names-label";
 import type { TestRequestItem } from "@/components/tables/test-requests-table/types";
 import { TestRequestFrontendService, testRequestModuleNames } from "@/modules/TestRequests";
 import { useQuery } from "@tanstack/react-query";
@@ -57,8 +58,14 @@ async function fetchTestRequestsForSelect(): Promise<TestRequestItem[]> {
 }
 
 function testRequestOptionLabel(row: TestRequestItem): string {
-  const patient = row.externalPatientFullName?.trim() ?? "";
-  const test = row.medicalTestNameEn?.trim() ?? "";
+  const patient =
+    row.externalPatientFullName?.trim() ||
+    row.patientName?.trim() ||
+    "";
+  let test = getMedicalTestNamesLabel(row);
+  if (!test && row.tests && row.tests.length > 0) {
+    test = `${row.tests.length} tests`;
+  }
   const parts = [`#${row.id}`, patient || null, test || null].filter(Boolean);
   return parts.join(" · ");
 }

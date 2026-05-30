@@ -24,7 +24,7 @@ import {
   IconLink,
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { normalizeMedicalTestItem } from "@/components/tables/medical-tests-table/apis/normalize-medical-tests-response";
 import { frontendContainer } from "@/container";
@@ -36,6 +36,12 @@ import {
   parameterSchemaToResultFields,
   validateRequiredResultFields,
 } from "@/modules/medical-tests";
+import { TestRequestFrontendService, testRequestModuleNames } from "@/modules/TestRequests";
+import {
+  resolveRequestTests,
+  unwrapTestRequestPayload,
+  type ResolvedRequestTest,
+} from "../normalize-test-request-detail";
 import { ResultDataFromSchema } from "./result-data-from-schema";
 import { useMirror } from "./store";
 import {
@@ -45,6 +51,10 @@ import {
 
 const medicalTestService = frontendContainer.get<MedicalTestFrontendService>(
   medicalTestModuleNames.service,
+);
+
+const testRequestService = frontendContainer.get<TestRequestFrontendService>(
+  testRequestModuleNames.service,
 );
 
 function unwrapMedicalTestPayload(payload: unknown): unknown {
@@ -80,6 +90,16 @@ function datetimeLocalToIso(local: string): string {
   return new Date(ms).toISOString();
 }
 
+function buildResultDataJson(
+  test: ResolvedRequestTest,
+  values: Record<string, unknown>,
+): string {
+  const fields = parameterSchemaToResultFields(test.parameterSchemaInput);
+  if (fields.length === 0) return "{}";
+  const payloadObject = buildResultObjectFromDescriptors(fields, values);
+  return JSON.stringify(payloadObject);
+}
+
 /** Form mounted only while `Modal` `opened`; holds queries, schema-driven payload, submit. */
 function CreateTestResultFormBody(props: {
   onCloseParent: () => void;
@@ -100,10 +120,14 @@ function CreateTestResultFormBody(props: {
     [t],
   );
 
-  const snapshotResultValuesRef = useRef<Record<string, unknown>>({});
-  const handleResultSnapshot = useCallback((row: Record<string, unknown>) => {
-    snapshotResultValuesRef.current = row;
-  }, []);
+  const snapshotResultValuesRef = useRef<Record<number, Record<string, unknown>>>({});
+
+  const handleResultSnapshot = useCallback(
+    (testRequestId: number, row: Record<string, unknown>) => {
+      snapshotResultValuesRef.current[testRequestId] = row;
+    },
+    [],
+  );
 
   const [form, setForm] = useState<CreateTestResultFrontendParams>(() => {
     const iso = new Date().toISOString();
@@ -136,43 +160,62 @@ function CreateTestResultFormBody(props: {
     [rows],
   );
 
-  const selectedRequest = useMemo(
-    () => rows.find((r) => r.id === form.testRequestId),
-    [rows, form.testRequestId],
-  );
+  const selectedRequestDetailQuery = useQuery({
+    queryKey: ["create-test-result", "test-request-detail", form.testRequestId],
+    queryFn: async () => {
+      const rawUnknown: unknown = await testRequestService.findOne({
+        id: String(form.testRequestId),
+      });
+      const detail = unwrapTestRequestPayload(rawUnknown);
+      if (!detail) {
+        throw new Error("Failed to load test request details");
+      }
+      return detail;
+    },
+    enabled: form.testRequestId > 0,
+    staleTime: 60_000,
+  });
 
-  const medicalTestId = selectedRequest?.medicalTestId ?? 0;
+  const requestDetail = selectedRequestDetailQuery.data;
 
-  const medicalTestQuery = useQuery({
-    queryKey: ["create-test-result", "medical-test", medicalTestId],
+  const legacyMedicalTestId = useMemo(() => {
+    if (!requestDetail) return 0;
+    if (requestDetail.tests && requestDetail.tests.length > 0) return 0;
+    return requestDetail.medicalTestId ?? 0;
+  }, [requestDetail]);
+
+  const legacyMedicalTestQuery = useQuery({
+    queryKey: ["create-test-result", "legacy-medical-test", legacyMedicalTestId],
     queryFn: async () => {
       const rawUnknown: unknown = await medicalTestService.findOne({
-        id: String(medicalTestId),
+        id: String(legacyMedicalTestId),
       });
       const inner = unwrapMedicalTestPayload(rawUnknown);
       return normalizeMedicalTestItem(inner);
     },
-    enabled: medicalTestId > 0,
+    enabled: legacyMedicalTestId > 0,
     staleTime: 60_000,
   });
 
-  const schemaFields = useMemo(
-    () => parameterSchemaToResultFields(medicalTestQuery.data?.parameterSchema),
-    [medicalTestQuery.data?.parameterSchema],
+  const requestTests = useMemo(
+    () =>
+      resolveRequestTests(
+        requestDetail,
+        legacyMedicalTestQuery.data?.parameterSchema ?? null,
+      ),
+    [requestDetail, legacyMedicalTestQuery.data?.parameterSchema],
   );
 
-  const schemaLoading = Boolean(medicalTestId > 0 && medicalTestQuery.isPending);
-  const schemaError = Boolean(medicalTestId > 0 && medicalTestQuery.isError);
+  useEffect(() => {
+    snapshotResultValuesRef.current = {};
+  }, [form.testRequestId]);
 
-  const resultEditorKey =
-    selectedRequest !== undefined
-      ? `${selectedRequest.id}-${medicalTestQuery.isError
-        ? "error"
-        : medicalTestQuery.isPending || !medicalTestQuery.data
-          ? "pending"
-          : String(medicalTestQuery.data.id)
-      }`
-      : "none";
+  const detailLoading = Boolean(form.testRequestId > 0 && selectedRequestDetailQuery.isPending);
+  const detailError = Boolean(form.testRequestId > 0 && selectedRequestDetailQuery.isError);
+  const legacySchemaLoading = Boolean(legacyMedicalTestId > 0 && legacyMedicalTestQuery.isPending);
+  const legacySchemaError = Boolean(legacyMedicalTestId > 0 && legacyMedicalTestQuery.isError);
+  const schemaLoading = detailLoading || legacySchemaLoading;
+  const schemaError = detailError || legacySchemaError;
 
   const handleClose = () => {
     if (isSubmitting) return;
@@ -181,8 +224,9 @@ function CreateTestResultFormBody(props: {
 
   const canSubmit =
     form.testRequestId > 0 &&
-    !medicalTestQuery.isPending &&
-    !(medicalTestQuery.isError && medicalTestId > 0);
+    requestTests.length > 0 &&
+    !schemaLoading &&
+    !schemaError;
 
   return (
     <Stack gap="lg">
@@ -268,30 +312,56 @@ function CreateTestResultFormBody(props: {
           <MutationErrorAlert />
           <Group justify="space-between" wrap="nowrap">
             <Title order={5}>{t("sectionResultValues")}</Title>
-            {medicalTestQuery.data ? (
-              <Text size="xs" c="dimmed" lineClamp={1}>
-                {t("schemaFrom", {
-                  name:
-                    medicalTestQuery.data.nameEn?.trim() ||
-                    medicalTestQuery.data.nameAr?.trim() ||
-                    "—",
-                })}
+            {requestTests.length > 1 ? (
+              <Text size="xs" c="dimmed">
+                {t("testsInRequest", { count: requestTests.length })}
               </Text>
             ) : null}
           </Group>
           <Divider />
-          {!selectedRequest ? (
+          {form.testRequestId <= 0 ? (
             <Text size="sm" c="dimmed">
               {t("selectRequestFirst")}
             </Text>
+          ) : schemaLoading ? (
+            <Text size="sm" c="dimmed">
+              {t("loadingRequestDetail")}
+            </Text>
+          ) : schemaError ? (
+            <Alert color="red" variant="light" title={t("toastSchemaUnavailableTitle")}>
+              {t("toastSchemaUnavailableBody")}
+            </Alert>
+          ) : requestTests.length === 0 ? (
+            <Alert color="orange" variant="light" title={t("toastInvalidSelectionTitle")}>
+              {t("toastInvalidSelectionBody")}
+            </Alert>
           ) : (
-            <ResultDataFromSchema
-              key={resultEditorKey}
-              parameterSchema={medicalTestQuery.data?.parameterSchema}
-              schemaLoading={schemaLoading}
-              schemaError={schemaError}
-              onValuesChange={handleResultSnapshot}
-            />
+            <Stack gap="lg">
+              {requestTests.map((test) => {
+                const testName =
+                  test.medicalTestNameEn?.trim() ||
+                  `#${test.medicalTestId}`;
+                return (
+                  <Paper key={test.testRequestId} withBorder radius="md" p="md">
+                    <Stack gap="md">
+                      <Group justify="space-between" wrap="nowrap">
+                        <Title order={6}>{t("testSectionTitle", { name: testName })}</Title>
+                        <Text size="xs" c="dimmed">
+                          {t("testRequestIdLabel", { id: test.testRequestId })}
+                        </Text>
+                      </Group>
+                      <ResultDataFromSchema
+                        key={`${form.testRequestId}-${test.testRequestId}`}
+                        parameterSchema={test.parameterSchemaInput}
+                        onValuesChange={(values) =>
+                          handleResultSnapshot(test.testRequestId, values)
+                        }
+                      />
+                    </Stack>
+                  </Paper>
+                );
+              })}
+            </Stack>
           )}
         </Stack>
       </Paper>
@@ -314,7 +384,7 @@ function CreateTestResultFormBody(props: {
               });
               return;
             }
-            if (!selectedRequest || medicalTestId <= 0) {
+            if (requestTests.length === 0) {
               notifications.show({
                 title: t("toastInvalidSelectionTitle"),
                 message: t("toastInvalidSelectionBody"),
@@ -322,7 +392,7 @@ function CreateTestResultFormBody(props: {
               });
               return;
             }
-            if (medicalTestQuery.isError) {
+            if (schemaError) {
               notifications.show({
                 title: t("toastSchemaUnavailableTitle"),
                 message: t("toastSchemaUnavailableBody"),
@@ -331,38 +401,41 @@ function CreateTestResultFormBody(props: {
               return;
             }
 
-            const resultValuesSnapshot = snapshotResultValuesRef.current;
-            const requiredErr = validateRequiredResultFields(schemaFields, resultValuesSnapshot);
-            if (requiredErr) {
-              notifications.show({
-                title: t("toastCheckFieldsTitle"),
-                message: requiredErr,
-                color: "red",
-              });
-              return;
+            for (const test of requestTests) {
+              const fields = parameterSchemaToResultFields(test.parameterSchemaInput);
+              const values = snapshotResultValuesRef.current[test.testRequestId] ?? {};
+              const requiredErr = validateRequiredResultFields(fields, values);
+              if (requiredErr) {
+                const testName = test.medicalTestNameEn?.trim() || `#${test.medicalTestId}`;
+                notifications.show({
+                  title: t("toastCheckFieldsTitle"),
+                  message: `${testName}: ${requiredErr}`,
+                  color: "red",
+                });
+                return;
+              }
             }
 
-            const payloadObject =
-              schemaFields.length === 0
-                ? ({} as Record<string, unknown>)
-                : buildResultObjectFromDescriptors(schemaFields, resultValuesSnapshot);
-            const resultData =
-              schemaFields.length === 0 ? "{}" : JSON.stringify(payloadObject);
             const resultDate = datetimeLocalToIso(resultDateLocal);
 
             try {
-              await submitAction({
-                ...form,
-                resultDate,
-                resultData,
-              });
+              for (const test of requestTests) {
+                const values = snapshotResultValuesRef.current[test.testRequestId] ?? {};
+                await submitAction({
+                  testRequestId: test.testRequestId,
+                  resultDate,
+                  status: form.status,
+                  pdfUrl: form.pdfUrl,
+                  resultData: buildResultDataJson(test, values),
+                });
+              }
               handleClose();
             } catch {
               // Errors are surfaced via MutationErrorAlert and global notifications.
             }
           }}
         >
-          {tc("create")}
+          {requestTests.length > 1 ? t("createMultipleLabel", { count: requestTests.length }) : tc("create")}
         </Button>
       </Group>
     </Stack>

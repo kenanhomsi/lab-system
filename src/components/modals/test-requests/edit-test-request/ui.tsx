@@ -57,29 +57,59 @@ function medicalTestLabel(item: MedicalTestItem, locale: string): string {
 
 type TestRequestInitial = {
   id: number;
-  medicalTestId: number;
+  medicalTestId?: number;
+  tests?: Array<{ medicalTestId: number; medicalTestNameEn?: string | null }>;
+  medicalTestNameEn?: string | null;
   requestDate: string;
   status: string;
   totalAmount: number;
   notes: string;
   metadata: string;
-  doctorId: string | null;
+  doctorId: string | number | null;
   labClientId: string | null;
-  directPatientId: string | null;
+  directPatientId: string | number | null;
   externalPatientId?: number | null;
 };
 
+function resolveMedicalTestId(initial?: TestRequestInitial | null): number {
+  if (!initial) return 0;
+  if (initial.medicalTestId != null && initial.medicalTestId > 0) {
+    return initial.medicalTestId;
+  }
+  const fromTests = initial.tests?.[0]?.medicalTestId;
+  return fromTests != null && fromTests > 0 ? fromTests : 0;
+}
+
+function resolveMedicalTestLabel(
+  initial: TestRequestInitial | null | undefined,
+  locale: string,
+): string {
+  if (!initial) return "";
+  const top = initial.medicalTestNameEn?.trim();
+  if (top) return top;
+  const nested = initial.tests?.[0]?.medicalTestNameEn?.trim();
+  if (nested) return nested;
+  const id = resolveMedicalTestId(initial);
+  return id > 0 ? `#${id}` : "";
+}
+
 const buildInitialForm = (initial?: TestRequestInitial | null) => ({
   id: initial ? String(initial.id) : "",
-  medicalTestId: initial?.medicalTestId ?? 0,
+  medicalTestId: resolveMedicalTestId(initial),
   requestDate: toDateInputValue(initial?.requestDate ?? ""),
   status: initial?.status ?? "pending",
   totalAmount: initial?.totalAmount ?? 0,
   notes: initial?.notes ?? "",
   metadata: initial?.metadata ?? "",
-  doctorId: initial?.doctorId ?? "",
+  doctorId:
+    initial?.doctorId != null && String(initial.doctorId).trim()
+      ? String(initial.doctorId)
+      : "",
   labClientId: initial?.labClientId ?? "",
-  directPatientId: initial?.directPatientId ?? "",
+  directPatientId:
+    initial?.directPatientId != null && String(initial.directPatientId).trim()
+      ? String(initial.directPatientId)
+      : "",
   externalPatientId:
     initial?.externalPatientId != null &&
       Number.isFinite(Number(initial.externalPatientId))
@@ -143,6 +173,18 @@ const UI = () => {
           WebkitBackdropFilter: "blur(20px)",
           background: "light-dark(rgba(255,255,255,0.82), rgba(18,18,23,0.78))",
           border: "1px solid light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.09))",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        },
+        body: {
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
         },
       }}
     >
@@ -208,11 +250,24 @@ const EditTestRequestBody = ({
 
   const medicalTestOptions = useMemo(() => {
     const items = medicalTestsQuery.data ?? [];
-    return items.map((row) => ({
+    const options = items.map((row) => ({
       value: String(row.id),
       label: medicalTestLabel(row, locale),
     }));
-  }, [medicalTestsQuery.data, locale]);
+
+    const selectedId = form.medicalTestId;
+    if (
+      selectedId > 0 &&
+      !options.some((option) => option.value === String(selectedId))
+    ) {
+      options.unshift({
+        value: String(selectedId),
+        label: resolveMedicalTestLabel(initial, locale),
+      });
+    }
+
+    return options;
+  }, [medicalTestsQuery.data, locale, form.medicalTestId, initial]);
 
   const externalPatientOptions = useMemo(() => {
     const rows = externalPatientsQuery.data ?? [];
