@@ -40,6 +40,7 @@ import {
 } from "./type";
 import { useMirror } from "./store";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { NotificationsMenu } from "@/features/push-notifications/ui/notifications-menu";
 import styles from "./styles.module.scss";
 
 const actionIconMap: Record<navbarActionIcon, IconType> = {
@@ -293,6 +294,10 @@ const UI = () => {
           )}
 
           {config.actions.map((action) => {
+            if (action.icon === "notification") {
+              return <NotificationsMenu key={action.label} />;
+            }
+
             const Icon = actionIconMap[action.icon];
             if (action.href) {
               return (

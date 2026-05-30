@@ -75,6 +75,13 @@ const initialFormState: FormState = {
 
 const TOTAL_STEPS = 4;
 
+const formatDateCell = (value: string | undefined) => {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toLocaleDateString();
+};
+
 const SlideCardsTable = () => {
   const t = useTranslations("admin.settings.slideCards");
   const tc = useTranslations("admin.common");
@@ -196,17 +203,21 @@ const SlideCardsTable = () => {
       {
         accessor: "displayOrder",
         title: t("columnOrder"),
-        width: "10%",
+        width: "8%",
         render: (row) => <Text size="sm">{row.displayOrder}</Text>,
       },
       {
-        accessor: "expiryDate",
-        title: t("columnExpiryDate"),
-        width: "20%",
+        accessor: "startDate",
+        title: t("columnStartDate"),
+        width: "12%",
+        render: (row) => <Text size="sm">{formatDateCell(row.startDate)}</Text>,
+      },
+      {
+        accessor: "endDate",
+        title: t("columnEndDate"),
+        width: "12%",
         render: (row) => (
-          <Text size="sm">
-            {row.expiryDate ? new Date(row.expiryDate).toLocaleDateString() : "-"}
-          </Text>
+          <Text size="sm">{formatDateCell(row.endDate ?? row.expiryDate)}</Text>
         ),
       },
     ],

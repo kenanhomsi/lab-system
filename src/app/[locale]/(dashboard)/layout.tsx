@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { SidebarFactory } from "@/components/shared/sidebar";
 import { NavbarFactory } from "@/components/shared/navbar";
 import styles from "./styles.module.scss";
+import { DashboardPushNotifications } from "./dashboard-push-notifications";
 
 const formatRoleTitle = (role: string) =>
   role.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
@@ -28,10 +29,12 @@ export default async function LocaleLayout({
     roleTitle: requestedRole ? formatRoleTitle(requestedRole) : undefined,
   });
   return (
-    <div className={styles.dashboardRoot}>
-      <SidebarFactory items={siderBarItems} />
-      <NavbarFactory config={navbarConfig} />
-      <main className={styles.sectionPadding}>{children}</main>
-    </div>
+    <DashboardPushNotifications>
+      <div className={styles.dashboardRoot}>
+        <SidebarFactory items={siderBarItems} />
+        <NavbarFactory config={navbarConfig} />
+        <main className={styles.sectionPadding}>{children}</main>
+      </div>
+    </DashboardPushNotifications>
   );
 }

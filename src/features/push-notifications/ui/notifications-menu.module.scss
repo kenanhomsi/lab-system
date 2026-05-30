@@ -1,0 +1,20 @@
+.bellButton {
+  &[data-active="true"] {
+    color: var(--mantine-color-cyan-6);
+  }
+}
+
+.dropdown {
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.emptyHint {
+  border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  padding-top: 0.5rem;
+}

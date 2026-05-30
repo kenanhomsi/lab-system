@@ -70,6 +70,10 @@
     border-color 220ms ease;
 }
 
+.statCard {
+  border-top: 3px solid var(--stat-accent, var(--primary, #009cc2));
+}
+
 .statCardAnimated {
   animation: cardIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
@@ -122,9 +126,9 @@
   align-self: start;
   background: linear-gradient(
     135deg,
-    #2563eb 0%,
-    #1d4ed8 52%,
-    #1e40af 100%
+    color-mix(in srgb, var(--primary, #009cc2) 92%, #0369a1) 0%,
+    color-mix(in srgb, var(--primary, #009cc2) 68%, #0c4a6e) 48%,
+    color-mix(in srgb, var(--primary, #009cc2) 42%, #082f49) 100%
   );
   box-shadow: 0 20px 44px -14px color-mix(in srgb, var(--primary, #009cc2) 55%, transparent);
   position: relative;
@@ -178,32 +182,106 @@
   max-width: 42ch;
 }
 
-.heroCta {
+.heroCta,
+.heroCtaSecondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   margin-top: auto;
   padding: 10px 18px;
   border-radius: 12px;
-  background: #fff;
-  color: #1d4ed8;
   font-size: 13px;
   font-weight: 800;
   text-decoration: none;
-  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.25);
-  transition: transform 200ms ease, box-shadow 200ms ease;
+  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
   width: fit-content;
 }
 
-.heroCta:hover {
+.heroCta {
+  background: #fff;
+  color: color-mix(in srgb, var(--primary, #009cc2) 75%, #0c4a6e);
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.25);
+}
+
+.heroCtaSecondary {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  margin-top: 0;
+  padding: 7px 12px;
+  font-size: 11px;
+}
+
+.heroCta:hover,
+.heroCtaSecondary:hover {
   transform: translateY(-1px);
+}
+
+.heroCta:hover {
   box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.3);
+}
+
+.heroCtaSecondary:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.heroCta:focus-visible,
+.heroCtaSecondary:focus-visible,
+.quickActionChip:focus-visible,
+.recentViewAll:focus-visible,
+.errorRetryBtn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 .heroMeta {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
+}
+
+.quickActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.quickActionChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--primary, #009cc2) 18%, transparent);
+  background: color-mix(in srgb, var(--primary, #009cc2) 6%, #fff);
+  color: var(--on-surface);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.quickActionChip:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--primary, #009cc2) 35%, transparent);
+  box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--primary, #009cc2) 35%, transparent);
+}
+
+.quickActionArrow {
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+:global(html.dark) .quickActionChip {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .scopeBadge,
@@ -389,6 +467,39 @@
   background: rgba(248, 250, 252, 0.5);
 }
 
+:global(html.dark) .chartPlaceholder {
+  background: rgba(30, 41, 59, 0.35);
+}
+
+.emptyIllustration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.emptyIconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--primary, #009cc2) 10%, transparent);
+  color: var(--primary, #009cc2);
+}
+
+.emptyMessage {
+  margin: 0;
+  font-size: 12px;
+  color: var(--on-surface-variant);
+  max-width: 28ch;
+  line-height: 1.45;
+}
+
 .emptyInline {
   margin: 0;
   font-size: 12px;
@@ -469,11 +580,47 @@
 .recentCardHead {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 12px 14px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
   font-size: 12px;
   font-weight: 700;
+}
+
+.recentCardTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.recentCardIcon {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--primary, #009cc2) 10%, transparent);
+  color: var(--primary, #009cc2);
+  flex-shrink: 0;
+}
+
+.recentViewAll {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--primary, #009cc2);
+  text-decoration: none;
+  margin-inline-start: auto;
+  white-space: nowrap;
+}
+
+.recentViewAll:hover {
+  text-decoration: underline;
 }
 
 .recentGroupCount {
@@ -578,6 +725,32 @@
   text-align: center;
   font-size: 12px;
   color: var(--on-surface-variant);
+}
+
+.errorRetryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  background: #fff;
+  color: #991b1b;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.errorRetryBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -12px rgba(220, 38, 38, 0.35);
+}
+
+:global(html.dark) .errorRetryBtn {
+  background: rgba(30, 41, 59, 0.9);
+  color: #fecaca;
 }
 
 .sideCardTitle {
@@ -711,6 +884,17 @@
     gap: 12px;
   }
 
+  .quickActions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+
+  .quickActionChip {
+    flex-shrink: 0;
+  }
+
   .recentHead span:nth-child(3),
   .recentRow span:nth-child(3) {
     display: none;
@@ -719,5 +903,33 @@
   .recentHead,
   .recentRow {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .recentViewAll {
+    width: 100%;
+    margin-inline-start: 0;
+    justify-content: flex-end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page,
+  .statCardAnimated {
+    animation: none;
+  }
+
+  .liveDot {
+    animation: none;
+  }
+
+  .statCard:hover,
+  .glassCard:hover,
+  .sideCard:hover,
+  .recentCard:hover,
+  .heroCta:hover,
+  .heroCtaSecondary:hover,
+  .quickActionChip:hover,
+  .errorRetryBtn:hover {
+    transform: none;
   }
 }

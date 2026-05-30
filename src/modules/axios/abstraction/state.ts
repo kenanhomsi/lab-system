@@ -76,14 +76,39 @@ class State {
     this.onUpload = onUpload;
     return this;
   }
+  private hasRequestBody(): boolean {
+    if (this.body instanceof FormData) {
+      return [...this.body.keys()].length > 0;
+    }
+    return !isEmpty(this.body);
+  }
+
   async perform<T = any>(): Promise<AxiosResponse<T>> {
     try {
-      if (this.method === "get" || this.method === "delete")
-        return this.instance[this.method](this.endpoint, {
+      if (this.method === "get") {
+        return this.instance.get(this.endpoint, {
           headers: this.headers,
           params: this.query,
           responseType: this.responseType,
         });
+      }
+      if (this.method === "delete" && !this.hasRequestBody()) {
+        return this.instance.delete(this.endpoint, {
+          headers: this.headers,
+          params: this.query,
+          responseType: this.responseType,
+        });
+      }
+      if (this.method === "delete" && this.hasRequestBody()) {
+        const body =
+          this.body instanceof FormData ? this.body : (this.body as object);
+        return this.instance.delete(this.endpoint, {
+          data: body,
+          headers: this.headers,
+          params: this.query,
+          responseType: this.responseType,
+        });
+      }
       const body =
         this.body instanceof FormData
           ? this.body

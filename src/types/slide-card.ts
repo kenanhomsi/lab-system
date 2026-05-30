@@ -5,6 +5,8 @@ export type SlideCardItem = {
   imageUrl: string;
   price: number;
   discount: number;
+  startDate?: string;
+  endDate?: string;
   expiryDate: string;
   badge: string;
   detailPageLink: string;

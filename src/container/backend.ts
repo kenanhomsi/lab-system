@@ -16,6 +16,7 @@ import {
   bindBackTestResultsDependencies,
   bindBackSlideCardDependencies,
   bindBackDashboardDependencies,
+  bindBackNotificationsDependencies,
 } from "./bindings";
 
 const c = new Container({ parent: container });
@@ -34,6 +35,7 @@ const backendContainer = pipe(
   bindBackAccessPolicyDependencies,
   bindBackComplaintDependencies,
   bindBackDashboardDependencies,
+  bindBackNotificationsDependencies,
 )(c);
 
 export { backendContainer };

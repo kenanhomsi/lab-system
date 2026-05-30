@@ -12,7 +12,7 @@ const UI = () => {
       summaryKeys={PATIENT_SUMMARY_KEYS}
       translationNamespace="patient.dashboard"
       promoLocation="patient_dashboard"
-      layout="simple"
+      layout="split"
     />
   );
 };

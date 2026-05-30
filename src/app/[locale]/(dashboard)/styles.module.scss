@@ -10,14 +10,15 @@
 }
 
 .sectionPadding {
-  padding-block: 6rem 2rem;
-  padding-inline-end: 2rem;
+  padding-block: 6rem 2.5rem;
+  padding-inline-end: clamp(1rem, 2.5vw, 2rem);
   padding-inline-start: max(
     7rem,
     calc(20px + var(--dashboard-sidebar-width, 72px) + 2rem)
   );
   transition: padding-inline-start 0.2s linear;
   will-change: padding-inline-start;
+  max-width: 1600px;
 }
 
 @media (max-width: 62rem) {

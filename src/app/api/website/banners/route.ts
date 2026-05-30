@@ -1,19 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import { jsonError } from "@/lib/api/bff-errors";
-import { backendContainer } from "@/container";
-import { bannerModuleNames } from "@/modules/banner";
-import { BannerBackendService } from "@/modules/banner/backend";
+import { type NextRequest, NextResponse } from "next/server";
+import { fetchUpstreamGet } from "@/lib/api/bff-proxy";
+import { normalizePublicBannerPayload } from "@/lib/banners/public-banner-payload";
 
-const bannerService = backendContainer.get<BannerBackendService>(
-  bannerModuleNames.service,
-);
+export async function GET(request: NextRequest) {
+  const upstream = await fetchUpstreamGet(request, "/api/website/banners");
 
-export async function GET(req: NextRequest) {
-  try {
-    const location = req.nextUrl.searchParams.get("location") ?? undefined;
-    const res = await bannerService.findAllPublic({ location });
-    return NextResponse.json(res);
-  } catch (error: unknown) {
-    return jsonError(error);
+  if (upstream.ok) {
+    const res = upstream.response;
+    if (!res.ok) {
+      return NextResponse.json([]);
+    }
+    const payload: unknown = await res.json().catch(() => []);
+    return NextResponse.json(normalizePublicBannerPayload(payload));
   }
+
+  return NextResponse.json([]);
 }
