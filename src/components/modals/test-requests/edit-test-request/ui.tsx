@@ -82,7 +82,6 @@ function resolveMedicalTestId(initial?: TestRequestInitial | null): number {
 
 function resolveMedicalTestLabel(
   initial: TestRequestInitial | null | undefined,
-  locale: string,
 ): string {
   if (!initial) return "";
   const top = initial.medicalTestNameEn?.trim();
@@ -262,7 +261,7 @@ const EditTestRequestBody = ({
     ) {
       options.unshift({
         value: String(selectedId),
-        label: resolveMedicalTestLabel(initial, locale),
+        label: resolveMedicalTestLabel(initial),
       });
     }
 
@@ -326,7 +325,7 @@ const EditTestRequestBody = ({
 
   return (
     <Stack gap="lg">
-          <MutationErrorAlert />
+      <MutationErrorAlert />
       <Stepper
         className="mt-1"
         active={activeStep}
@@ -336,7 +335,7 @@ const EditTestRequestBody = ({
         <Stepper.Step label={t("step1Label")} description={t("step1RequestDetails")}>
           <Paper withBorder radius="lg" p="md">
             <Stack gap="md">
-        <MutationErrorAlert />
+              <MutationErrorAlert />
               <Group justify="space-between" wrap="nowrap">
                 <Title order={5}>{t("requestDetailsTitle")}</Title>
                 <Text size="xs" c="dimmed">
@@ -495,7 +494,7 @@ const EditTestRequestBody = ({
         <Stepper.Step label={t("step2Label")} description={t("step2NotesMeta")}>
           <Paper withBorder radius="lg" p="md">
             <Stack gap="md">
-        <MutationErrorAlert />
+              <MutationErrorAlert />
               <Title order={5}>{t("additionalInfoTitle")}</Title>
               <Divider />
               <Textarea
