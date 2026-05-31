@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
@@ -23,7 +24,13 @@ export function WebsiteHeader({
   const t = useTranslations();
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const isDark = variant === "dark";
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   const links = [
     { href: "/", label: t("nav.home") },
@@ -40,10 +47,9 @@ export function WebsiteHeader({
   const navAccentColor = isDark ? "#5bd3f5" : "#009cc2";
 
   useEffect(() => {
-    if (!drawerOpen) return;
-    const timer = window.setTimeout(() => setDrawerOpen(false), 0);
-    return () => window.clearTimeout(timer);
-  }, [pathname, drawerOpen]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDrawerOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -144,12 +150,12 @@ export function WebsiteHeader({
         )}
       />
 
-      {drawerOpen ? (
+      {drawerOpen && mounted ? createPortal(
         <>
           <button
             type="button"
             suppressHydrationWarning
-            className="fixed inset-0 z-60 bg-black/40 md:hidden"
+            className="fixed inset-0 z-[60] bg-black/40 md:hidden"
             aria-label={t("header.closeMenu")}
             onClick={() => setDrawerOpen(false)}
           />
@@ -159,7 +165,7 @@ export function WebsiteHeader({
             aria-modal="true"
             aria-label={t("header.menuTitle")}
             className={cn(
-              "fixed inset-y-0 inset-s-0 z-70 flex h-dvh max-h-dvh w-[min(100%,20rem)] max-w-full flex-col overflow-hidden border-e shadow-2xl md:hidden",
+              "fixed inset-y-0 inset-s-0 z-[70] flex h-dvh max-h-dvh w-[min(100%,20rem)] max-w-full flex-col overflow-hidden border-e shadow-2xl md:hidden",
               isDark
                 ? "border-white/10 bg-surface"
                 : "border-slate-200 bg-white",
@@ -261,7 +267,8 @@ export function WebsiteHeader({
               ) : null}
             </div>
           </div>
-        </>
+        </>,
+        document.body
       ) : null}
     </header>
   );
