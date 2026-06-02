@@ -100,7 +100,7 @@ export function BannerSliderSection() {
   );
 
   return (
-    <section aria-label={t("regionAria")} className="mx-auto mt-6 max-w-screen-2xl px-6 md:px-8">
+    <section aria-label={t("regionAria")} className="content-container mt-6">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
         <div className="lg:col-span-8">
           <div

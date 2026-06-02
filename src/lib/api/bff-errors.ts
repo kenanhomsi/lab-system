@@ -18,6 +18,26 @@ export function jsonError(
   return NextResponse.json({ error: "Unknown error" }, { status: fallbackStatus });
 }
 
+function isEmptyUpstreamBody(data: unknown): boolean {
+  if (data === undefined || data === null || data === "") return true;
+  if (typeof data === "object" && !Array.isArray(data) && Object.keys(data).length === 0) {
+    return true;
+  }
+  return false;
+}
+
+/** Returns 204 when upstream has no body; otherwise JSON with the given status. */
+export function jsonOrNoContent(
+  data: unknown,
+  options?: { successStatus?: number },
+): NextResponse {
+  const successStatus = options?.successStatus ?? 200;
+  if (isEmptyUpstreamBody(data)) {
+    return new NextResponse(null, { status: successStatus === 201 ? 201 : 204 });
+  }
+  return NextResponse.json(data, { status: successStatus });
+}
+
 export function extractBearerToken(
   authorization: string | null,
 ): string | undefined {

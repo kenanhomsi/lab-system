@@ -23,7 +23,7 @@ export async function AboutLeadershipGrid() {
 
   return (
     <section className="bg-surface-container-low py-20 md:py-32">
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <div
           className="reveal-up mb-16 flex flex-col justify-between gap-8 md:mb-24 md:flex-row md:items-start"
           style={{ animationDelay: "80ms" }}

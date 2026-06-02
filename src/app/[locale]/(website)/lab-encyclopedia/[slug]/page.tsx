@@ -75,7 +75,7 @@ export default async function LabEncyclopediaDetailPage({
     <main className="bg-background py-12 md:py-20">
       <JsonLd test={test} locale={locale} />
 
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <nav className="mb-8 flex items-center gap-2 text-sm text-on-surface-variant">
           <Link
             href="/lab-encyclopedia"

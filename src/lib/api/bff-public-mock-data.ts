@@ -311,68 +311,63 @@ export function getMockOfferById(id: string): MockOffer | undefined {
   return MOCK_OFFERS.find((o) => o.id === id || o.slug === id);
 }
 
-export interface MockVacancy {
-  id: string;
+export interface MockVacantJob {
+  id: number;
   titleEn: string;
   titleAr: string;
-  departmentEn: string;
-  departmentAr: string;
-  locationEn: string;
-  locationAr: string;
-  employmentTypeEn: string;
-  employmentTypeAr: string;
   descriptionEn: string;
   descriptionAr: string;
-  requirementsEn: string;
-  requirementsAr: string;
-  postedAt: string;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export const MOCK_VACANCIES: MockVacancy[] = [
+export const MOCK_VACANT_JOBS: MockVacantJob[] = [
   {
-    id: "vac-lab-tech-001",
+    id: 1,
     titleEn: "Senior medical laboratory technologist",
     titleAr: "فني مختبر طبي أول",
-    departmentEn: "Core laboratory",
-    departmentAr: "المختبر المركزي",
-    locationEn: "Riyadh — main branch",
-    locationAr: "الرياض — الفرع الرئيسي",
-    employmentTypeEn: "Full-time",
-    employmentTypeAr: "دوام كامل",
     descriptionEn:
-      "Perform and validate routine and specialized analyses, maintain QC records, and support accreditation activities (ISO 15189 mindset).",
+      "Perform and validate routine and specialized analyses, maintain QC records, and support accreditation activities.",
     descriptionAr:
-      "تنفيذ واعتماد التحاليل الروتينية والمتخصصة، حفظ سجلات ضبط الجودة، ودعم أنشطة الاعتماد (وفق منهجية ISO 15189).",
-    requirementsEn:
-      "Bachelor in MLS or equivalent, 3+ years experience, Saudi license or eligibility, strong documentation habits.",
-    requirementsAr:
-      "بكالوريوس علوم مختبرات أو ما يعادله، خبرة لا تقل عن 3 سنوات، ترخيص أو أهلية سعودية، دقة في التوثيق.",
-    postedAt: "2026-03-20T10:00:00.000Z",
+      "تنفيذ واعتماد التحاليل الروتينية والمتخصصة، حفظ سجلات ضبط الجودة، ودعم أنشطة الاعتماد.",
+    isActive: true,
+    sortOrder: 0,
+    createdAt: "2026-03-20T10:00:00.000Z",
+    updatedAt: "2026-03-20T10:00:00.000Z",
   },
   {
-    id: "vac-phlebotomist-002",
+    id: 2,
     titleEn: "Phlebotomist (home visit team)",
     titleAr: "أخصائي سحب عينات (زيارات منزلية)",
-    departmentEn: "Patient services",
-    departmentAr: "خدمات المرضى",
-    locationEn: "Jeddah & surrounding",
-    locationAr: "جدة والمناطق المجاورة",
-    employmentTypeEn: "Full-time / rotating shifts",
-    employmentTypeAr: "دوام كامل / نوبات متناوبة",
     descriptionEn:
       "Safe venous collection, labeling, and transport; educate patients on preparation; maintain cold chain for samples.",
     descriptionAr:
       "سحب وريدي آمن، تسمية ونقل العينات؛ توعية المرضى بالتحضير؛ الحفاظ على سلسلة التبريد للعينات.",
-    requirementsEn:
-      "Certified phlebotomy training, 1+ years experience, valid driver's license, excellent Arabic communication.",
-    requirementsAr:
-      "تدريب معتمد في سحب العينات، سنة خبرة فأكثر، رخصة قيادة، تواصل ممتاز بالعربية.",
-    postedAt: "2026-03-28T08:30:00.000Z",
+    isActive: true,
+    sortOrder: 1,
+    createdAt: "2026-03-28T08:30:00.000Z",
+    updatedAt: "2026-03-28T08:30:00.000Z",
   },
 ];
 
-export function getMockVacancyById(id: string): MockVacancy | undefined {
-  return MOCK_VACANCIES.find((v) => v.id === id);
+export const MOCK_VACANT_JOBS_RESPONSE = {
+  items: MOCK_VACANT_JOBS,
+  page: 1,
+  pageSize: 100,
+  totalCount: MOCK_VACANT_JOBS.length,
+  totalPages: 1,
+  hasNextPage: false,
+  hasPreviousPage: false,
+};
+
+/** @deprecated Use MOCK_VACANT_JOBS_RESPONSE */
+export const MOCK_VACANCIES = MOCK_VACANT_JOBS;
+
+export function getMockVacantJobById(id: number | string): MockVacantJob | undefined {
+  const n = typeof id === "string" ? Number(id) : id;
+  return MOCK_VACANT_JOBS.find((v) => v.id === n);
 }
 
 export interface ContactSettingsMock {

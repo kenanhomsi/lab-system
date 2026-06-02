@@ -12,6 +12,7 @@ import { AccessPoliciesTable } from "@/components/tables/access-policies-table";
 import { RolesTable } from "@/components/tables/roles-table";
 import { BannersTable } from "@/components/tables/banners-table";
 import { SlideCardsTable } from "@/components/tables/slide-cards-table";
+import { AccountingSettingsForm } from "@/components/forms/accounting-settings-form/AccountingSettingsForm";
 
 const AdminSettingsUI = () => {
   const t = useTranslations("admin.settings");
@@ -51,6 +52,7 @@ const AdminSettingsUI = () => {
           <Tabs.Tab value="accessPolicies">{t("tabAccessPolicies")}</Tabs.Tab>
           <Tabs.Tab value="banners">{t("tabBanners")}</Tabs.Tab>
           <Tabs.Tab value="slideCards">{t("tabSlideCards")}</Tabs.Tab>
+          <Tabs.Tab value="accounting">{t("tabAccounting")}</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="roles" pt="md">
@@ -65,6 +67,9 @@ const AdminSettingsUI = () => {
         </Tabs.Panel>
         <Tabs.Panel value="slideCards" pt="md">
           <SlideCardsTable />
+        </Tabs.Panel>
+        <Tabs.Panel value="accounting" pt="md">
+          <AccountingSettingsForm />
         </Tabs.Panel>
       </Tabs>
     </Stack>

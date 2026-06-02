@@ -8,6 +8,13 @@
 :root {
   /* Sidebar width is updated by the dashboard sidebar (icon rail 72px, expanded ≈ 260px). */
   --dashboard-sidebar-width: 72px;
+  /* Fluid page width: grows with viewport, soft-caps on ultra-wide monitors */
+  --layout-inline-gutter: clamp(1rem, 2.5vw, 2.5rem);
+  --layout-content-max: 2400px;
+  --layout-content-width: min(
+    calc(100% - 2 * var(--layout-inline-gutter)),
+    var(--layout-content-max)
+  );
   --background: #f8f9fc;
   --foreground: #0f172a;
   --surface-container-lowest: #ffffff;
@@ -339,6 +346,15 @@ html.dark body {
 }
 body[data-locale-ar="true"] {
   font-family: var(--font-qomra-arabic), system-ui, sans-serif;
+}
+
+/* Fluid layout container (website sections, shared wrappers) */
+.content-container {
+  width: var(--layout-content-width);
+  max-width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--layout-inline-gutter);
+  box-sizing: border-box;
 }
 
 /* Design utilities */

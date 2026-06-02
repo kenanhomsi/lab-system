@@ -70,8 +70,8 @@ export default async function PlansPage() {
 
   return (
     <main className="bg-linear-to-b from-surface via-surface to-surface-container-low pb-24">
-      <section className="px-6 pt-10 md:px-8 md:pt-14">
-        <div className="mx-auto max-w-screen-2xl">
+      <section className="pt-10 md:pt-14">
+        <div className="content-container">
           <div className="mx-auto max-w-4xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/6 px-4 py-2 text-xs font-black tracking-[0.22em] text-primary">
               <Icon
@@ -127,8 +127,8 @@ export default async function PlansPage() {
         </div>
       </section>
 
-      <section className="px-6 pt-16 md:px-8 md:pt-20">
-        <div className="mx-auto max-w-screen-2xl">
+      <section className="pt-16 md:pt-20">
+        <div className="content-container">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-xs font-black tracking-[0.22em] text-primary">
               {t("activePlan")}
@@ -234,8 +234,8 @@ export default async function PlansPage() {
         </div>
       </section>
 
-      <section className="px-6 pt-16 md:px-8 md:pt-20">
-        <div className="mx-auto max-w-screen-2xl rounded-[2rem] border border-outline-variant/20 bg-linear-to-br from-surface-container-lowest via-surface-container-lowest to-primary/5 p-6 shadow-sm md:p-8">
+      <section className="pt-16 md:pt-20">
+        <div className="content-container rounded-[2rem] border border-outline-variant/20 bg-linear-to-br from-surface-container-lowest via-surface-container-lowest to-primary/5 p-6 shadow-sm md:p-8">
           <div className="flex flex-col gap-6 border-b border-outline-variant/15 pb-8 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl">
               <p className="text-xs font-black tracking-[0.22em] text-primary">

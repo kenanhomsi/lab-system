@@ -50,7 +50,7 @@ export function TestsPage() {
 
   return (
     <main className="bg-background py-12 md:py-20">
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <div className="mb-12 max-w-2xl">
           <h1 className="font-headline text-4xl font-black tracking-tight text-on-surface md:text-5xl">
             {t("title")}

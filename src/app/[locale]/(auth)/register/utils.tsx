@@ -6,11 +6,19 @@ import { extractErrorMessage } from "@/lib/error";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { frontendContainer } from "@/container";
-import { authModuleNames, } from "@/modules/auth";
+import { authModuleNames } from "@/modules/auth";
 import { AuthFrontendService } from "@/modules/auth/frontend/service";
+import { ValidationError } from "@/modules/errors";
+import { validationModuleNames, Validator } from "@/modules/validation";
 import { useMirror, useMirrorRegistry } from "./store";
+import { registerValidationSchema } from "./validation-schema/register";
 
-const authService = frontendContainer.get<AuthFrontendService>(authModuleNames.service);
+const authService = frontendContainer.get<AuthFrontendService>(
+  authModuleNames.service,
+);
+const validationService = frontendContainer.get<Validator>(
+  validationModuleNames.validator,
+);
 
 const Utils = (props: PropsWithChildren) => {
   const { children } = props;
@@ -19,6 +27,7 @@ const Utils = (props: PropsWithChildren) => {
   const setLoading = useMirror("setLoading");
   const setError = useMirror("setError");
   const setSuccess = useMirror("setSuccess");
+  const setSuccessMessage = useMirror("setSuccessMessage");
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("auth");
@@ -57,7 +66,12 @@ const Utils = (props: PropsWithChildren) => {
       }
 
       try {
-        await authService.Register({
+        validationService.validate({
+          data: payload,
+          schema: registerValidationSchema(),
+        });
+
+        const res = await authService.Register({
           email: payload.email,
           password: payload.password,
           fullName: payload.fullName,
@@ -66,15 +80,34 @@ const Utils = (props: PropsWithChildren) => {
           role: payload.role,
         });
 
+        const apiMessage =
+          typeof res?.message === "string" && res.message.trim().length > 0
+            ? res.message.trim()
+            : "";
+        setSuccessMessage(apiMessage);
         setSuccess(true);
-        setTimeout(() => router.push(`/${locale}/login`), 2000);
+        setTimeout(() => router.push(`/${locale}/login`), 3000);
       } catch (err: unknown) {
-        setError(extractErrorMessage(err, t("registerError")));
+        if (err instanceof ValidationError) {
+          const errors = err.getErrors();
+          setError(errors[0]?.message ?? t("registerError"));
+        } else {
+          setError(extractErrorMessage(err, t("registerError")));
+        }
       } finally {
         setLoading(false);
       }
     },
-    [locale, router, selectedRole, setError, setLoading, setSuccess, t],
+    [
+      locale,
+      router,
+      selectedRole,
+      setError,
+      setLoading,
+      setSuccess,
+      setSuccessMessage,
+      t,
+    ],
   );
 
   useMirrorRegistry("submitRegisterForm", submitRegisterForm);

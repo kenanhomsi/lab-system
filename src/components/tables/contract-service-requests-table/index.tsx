@@ -1,0 +1,1 @@
+export { ContractServiceRequestsTable } from "./factory";

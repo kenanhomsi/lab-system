@@ -18,7 +18,7 @@ export async function TestsOverview() {
       id="tests-catalog"
       className="bg-surface py-16 md:py-24 scroll-mt-24"
     >
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <div
           className="reveal-up mb-16 text-center"
           style={{ animationDelay: "80ms" }}

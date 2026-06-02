@@ -2,6 +2,7 @@ import { injectable, injectFromBase } from "inversify";
 import {
   AuthService,
   type CheckEmailProps,
+  type ForgotPasswordProps,
   type RegisterProps,
   type ResetPasswordProps,
 } from "../abstraction";
@@ -33,6 +34,11 @@ class Service extends AuthService<AuthBackendClient> {
 
   override async CheckEmail(params: CheckEmailProps) {
     const res = await this.client.CheckEmail(params);
+    return res;
+  }
+
+  override async ForgotPassword(params: ForgotPasswordProps) {
+    const res = await this.client.ForgotPassword(params);
     return res;
   }
 

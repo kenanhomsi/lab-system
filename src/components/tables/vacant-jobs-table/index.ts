@@ -1,0 +1,1 @@
+export { VacantJobsTable } from "./factory";

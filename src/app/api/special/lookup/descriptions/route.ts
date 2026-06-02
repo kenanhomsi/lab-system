@@ -1,28 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isUpstreamBackendReady } from "@/lib/api/upstream-config";
-import { MOCK_DESCRIPTION_LOOKUP } from "@/lib/api/special-mock-store";
+import { jsonError } from "@/lib/api/bff-errors";
+import { backendContainer } from "@/container";
+import { resolveAccessToken } from "@/lib/api/resolve-access-token";
+import {
+  SpecialAccountBackendService,
+  specialAccountModuleNames,
+} from "@/modules/special-account";
 
-export async function GET(request: NextRequest) {
-  const backendUrl = process.env.BACKEND_URL || "http://localhost:4000";
+const service = backendContainer.get<SpecialAccountBackendService>(
+  specialAccountModuleNames.service,
+);
 
-  if (isUpstreamBackendReady()) {
-    try {
-      const target = new URL(`${backendUrl}/special/lookup/descriptions`);
-      request.nextUrl.searchParams.forEach((value, key) => {
-        target.searchParams.set(key, value);
-      });
-      const res = await fetch(target.toString(), { cache: "no-store" });
-      if (!res.ok) {
-        return NextResponse.json(
-          { error: "Upstream request failed" },
-          { status: res.status },
-        );
-      }
-      return NextResponse.json(await res.json());
-    } catch {
-      return NextResponse.json({ error: "Upstream unavailable" }, { status: 502 });
-    }
+export async function GET(req: NextRequest) {
+  try {
+    const token = await resolveAccessToken(req);
+    if (!token) throw new Error("Missing authorization token");
+    const items = await service.listDescriptions({ token });
+    return NextResponse.json({ items });
+  } catch (error: unknown) {
+    return jsonError(error);
   }
-
-  return NextResponse.json({ items: MOCK_DESCRIPTION_LOOKUP });
 }

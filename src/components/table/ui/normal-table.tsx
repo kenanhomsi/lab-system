@@ -57,7 +57,7 @@ const NormalTable = () => {
   const horizontalSpacing = dataTableHorizontalSpacing ?? "xs";
 
   return (
-    <Box className={styles.tableBox}>
+    <Box className={styles.tableBox} w="100%">
       {headerComp}
       {isLoading && <SkeletonTable rows={5} columns={schema?.length || 4} />}
       {!isLoading && (
@@ -68,6 +68,7 @@ const NormalTable = () => {
                 {(provided) => (
                   <div ref={provided.innerRef} {...provided.droppableProps}>
                     <DataTable
+                      w="100%"
                       columns={[
                         { accessor: "", hiddenContent: true, width: 30 },
                         ...schema,
@@ -123,6 +124,7 @@ const NormalTable = () => {
           ) : (
             <>
               <DataTable
+                w="100%"
                 columns={schema}
                 records={records}
                 minHeight={minHeight}

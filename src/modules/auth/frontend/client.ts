@@ -28,7 +28,7 @@ type CheckEmailFrontendProps = { email: string };
 
 type ResetPasswordFrontendProps = {
   email: string;
-  code: number;
+  token: string;
   newPassword: string;
 };
 

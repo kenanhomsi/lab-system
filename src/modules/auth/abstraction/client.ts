@@ -19,7 +19,7 @@ type CheckEmailProps = {
 type ResetPasswordProps = {
   endpoint: string;
   email: string;
-  code: number;
+  token: string;
   newPassword: string;
 };
 

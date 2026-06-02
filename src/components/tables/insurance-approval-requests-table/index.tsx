@@ -1,0 +1,1 @@
+export { InsuranceApprovalRequestsTable } from "./factory";

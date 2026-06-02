@@ -1,79 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isUpstreamBackendReady } from "@/lib/api/upstream-config";
+import { jsonError } from "@/lib/api/bff-errors";
+import { backendContainer } from "@/container";
+import { resolveAccessToken } from "@/lib/api/resolve-access-token";
 import {
-  mockSpecialTasksCreate,
-  mockSpecialTasksList,
-} from "@/lib/api/special-mock-store";
+  SpecialAccountBackendService,
+  createTaskSchema,
+  specialAccountModuleNames,
+} from "@/modules/special-account";
 
-export async function GET(request: NextRequest) {
-  const backendUrl = process.env.BACKEND_URL || "http://localhost:4000";
+const service = backendContainer.get<SpecialAccountBackendService>(
+  specialAccountModuleNames.service,
+);
 
-  if (isUpstreamBackendReady()) {
-    try {
-      const target = new URL(`${backendUrl}/special/tasks`);
-      request.nextUrl.searchParams.forEach((value, key) => {
-        target.searchParams.set(key, value);
-      });
-      const res = await fetch(target.toString(), { cache: "no-store" });
-      if (!res.ok) {
-        return NextResponse.json(
-          { error: "Upstream request failed" },
-          { status: res.status },
-        );
-      }
-      return NextResponse.json(await res.json());
-    } catch {
-      return NextResponse.json({ error: "Upstream unavailable" }, { status: 502 });
-    }
+export async function GET(req: NextRequest) {
+  try {
+    const token = await resolveAccessToken(req);
+    if (!token) throw new Error("Missing authorization token");
+    const res = await service.listTasks({ token });
+    return NextResponse.json(res);
+  } catch (error: unknown) {
+    return jsonError(error);
   }
-
-  return NextResponse.json(mockSpecialTasksList());
 }
 
-export async function POST(request: NextRequest) {
-  const backendUrl = process.env.BACKEND_URL || "http://localhost:4000";
-
+export async function POST(req: NextRequest) {
   try {
-    const body = (await request.json()) as {
-      title?: string;
-      description?: string;
-      dueDate?: string;
-      dueTime?: string;
-      reminderEnabled?: boolean;
-    };
-
-    if (!body?.title?.trim() || !body?.dueDate) {
-      return NextResponse.json(
-        { error: "title and dueDate are required" },
-        { status: 400 },
-      );
-    }
-
-    if (isUpstreamBackendReady()) {
-      const res = await fetch(`${backendUrl}/special/tasks`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const payload = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        return NextResponse.json(
-          { error: (payload as { message?: string }).message || "Create failed" },
-          { status: res.status },
-        );
-      }
-      return NextResponse.json(payload, { status: res.status === 201 ? 201 : 200 });
-    }
-
-    const created = mockSpecialTasksCreate({
-      title: body.title.trim(),
-      description: body.description ?? "",
-      dueDate: body.dueDate,
-      dueTime: body.dueTime ?? "",
-      reminderEnabled: Boolean(body.reminderEnabled),
-    });
-    return NextResponse.json(created, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    const token = await resolveAccessToken(req);
+    if (!token) throw new Error("Missing authorization token");
+    const body = createTaskSchema.parse(await req.json());
+    const res = await service.createTask({ token, ...body });
+    return NextResponse.json(res, { status: 201 });
+  } catch (error: unknown) {
+    return jsonError(error, 400);
   }
 }

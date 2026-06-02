@@ -41,7 +41,7 @@ export function ContactForm() {
         <div className="h-[400px] w-[400px] rounded-full bg-tertiary/[0.04] blur-[100px]" />
       </div>
 
-      <div className="relative mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="relative content-container">
         <div className="grid grid-cols-1 items-start gap-14 lg:grid-cols-[1fr_520px] lg:gap-16">
           <div
             className="reveal-up lg:sticky lg:top-28"

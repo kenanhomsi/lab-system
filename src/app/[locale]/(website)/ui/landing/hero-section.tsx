@@ -55,7 +55,7 @@ export async function HeroSection() {
           className="mask-none opacity-80"
         />
       </div>
-      <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 md:px-8">
+      <div className="relative z-10 content-container w-full">
         <div className="max-w-2xl space-y-5">
           <div
             className="reveal-up inline-flex items-center rounded-full bg-tertiary-fixed/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-on-tertiary-fixed"

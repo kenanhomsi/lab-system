@@ -9,20 +9,20 @@ class Command {
   @inject(eventModuleNames.service) private eventService: EventService;
   private newPassword: string;
   private email: string;
-  private code: number;
+  private token: string;
   init(params: ResetPasswordProps) {
-    const { email, newPassword, code } = params;
+    const { email, newPassword, token } = params;
     this.email = email;
     this.newPassword = newPassword;
-    this.code = code;
+    this.token = token;
   }
   async exec() {
-    const res = await this.service.ResetPassword({
+    await this.service.ResetPassword({
       email: this.email,
       newPassword: this.newPassword,
-      code: this.code,
+      token: this.token,
     });
-    this.eventService.emit("ResetPasswordSucceeded", res.email);
+    this.eventService.emit("ResetPasswordSucceeded", this.email);
   }
 }
 export { Command as ResetPasswordCommand };

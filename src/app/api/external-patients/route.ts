@@ -17,8 +17,8 @@ export async function GET(req: NextRequest) {
     if (!token) {
       throw new Error("Missing authorization token");
     }
-    const res = await externalPatientsService.findAll({ token });
-    return NextResponse.json(res.data);
+    const items = await externalPatientsService.findAll({ token });
+    return NextResponse.json(items);
   } catch (error: unknown) {
     return jsonError(error);
   }

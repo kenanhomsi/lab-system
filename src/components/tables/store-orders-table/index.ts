@@ -1,0 +1,1 @@
+export { StoreOrdersTable } from "./factory";

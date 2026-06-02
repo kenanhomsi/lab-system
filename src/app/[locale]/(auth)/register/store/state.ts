@@ -12,6 +12,8 @@ type StateParams = {
   setError: (error: string) => void;
   success: boolean;
   setSuccess: (success: boolean) => void;
+  successMessage: string;
+  setSuccessMessage: (message: string) => void;
   submitRegisterForm: (e: FormEvent<HTMLFormElement>) => Promise<void>;
 };
 
@@ -24,6 +26,8 @@ const store = (): StateParams => ({
   setError: () => {},
   success: false,
   setSuccess: () => {},
+  successMessage: "",
+  setSuccessMessage: () => {},
   submitRegisterForm: async () => {},
 });
 

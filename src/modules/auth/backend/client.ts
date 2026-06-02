@@ -19,7 +19,12 @@ type RegisterProps = {
 };
 
 type CheckEmailProps = { email: string };
-type ResetPasswordProps = { email: string; code: number; newPassword: string };
+type ForgotPasswordProps = { email: string };
+type ResetPasswordProps = {
+  email: string;
+  token: string;
+  newPassword: string;
+};
 
 const unwrapRenewAccessTokenResponse = (
   response: RenewAccessTokenSchemaType,
@@ -63,12 +68,18 @@ class AuthBackendClient extends AuthClient<BackendState> {
     return res.data;
   }
 
+  async ForgotPassword(params: ForgotPasswordProps) {
+    const res = await this.client
+      .post({ endpoint: endpoint.forgotPassword })
+      .setBody(params)
+      .perform();
+    return res.data;
+  }
+
   async ResetPassword(params: ResetPasswordProps) {
-    const body = params;
     const res = await super
       .sharedResetPassword({
-        ...body,
-        code: +body.code,
+        ...params,
         endpoint: endpoint.resetPassword,
       })
       .perform();

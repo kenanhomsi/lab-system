@@ -10,7 +10,7 @@ const endpoint = {
   permissions: (id: string) => `/user-managment/${id}/permissions`,
   removePermission: (id: string, permission: string) =>
     `/user-managment/${id}/permissions/${permission}`,
-  me: "/user/me",
+  me: "/users/me",
   updateMe: "/users/me",
   changePasswordMe: "/users/me/change-password",
   requestDeletionMe: "/users/me/request-deletion",

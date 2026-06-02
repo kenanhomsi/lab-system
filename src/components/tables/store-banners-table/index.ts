@@ -1,0 +1,1 @@
+export { StoreBannersTable } from "./factory";

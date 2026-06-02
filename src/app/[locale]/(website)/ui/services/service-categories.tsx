@@ -54,7 +54,7 @@ export async function ServiceCategories() {
         <div className="bg-orb h-52 w-52 bg-primary/8 inset-s-[6%] top-[12%]" />
         <div className="bg-orb bg-orb-reverse h-64 w-64 bg-tertiary-fixed/8 inset-e-[7%] bottom-[10%]" />
       </div>
-      <div className="relative mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="relative content-container">
         <div className="reveal-up" style={{ animationDelay: "80ms" }}>
           <SectionHeader
             title={t("sectionTitle")}

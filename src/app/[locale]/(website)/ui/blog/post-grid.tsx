@@ -15,7 +15,7 @@ export async function BlogPostGrid({ result }: BlogPostGridProps) {
 
   if (!result.ok) {
     return (
-      <section className="mx-auto max-w-screen-2xl px-6 py-16 md:px-8">
+      <section className="content-container py-16">
         <p className="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest px-6 py-8 text-center text-on-surface-variant">
           {t("error")}
         </p>
@@ -25,7 +25,7 @@ export async function BlogPostGrid({ result }: BlogPostGridProps) {
 
   if (result.posts.length === 0) {
     return (
-      <section className="mx-auto max-w-screen-2xl px-6 py-16 md:px-8">
+      <section className="content-container py-16">
         <p className="text-center text-on-surface-variant">{t("empty")}</p>
       </section>
     );
@@ -41,7 +41,7 @@ export async function BlogPostGrid({ result }: BlogPostGridProps) {
       : "transition-transform group-hover:translate-x-0.5";
 
   return (
-    <section className="mx-auto max-w-screen-2xl px-6 py-16 md:px-8 lg:py-24">
+    <section className="content-container py-16 lg:py-24">
       <div className="mb-12 flex flex-col items-center justify-between gap-6 md:flex-row md:items-end">
         <div>
           <p

@@ -15,9 +15,13 @@ type CheckEmailProps = {
   email: string;
 };
 
+type ForgotPasswordProps = {
+  email: string;
+};
+
 type ResetPasswordProps = {
   email: string;
-  code: number;
+  token: string;
   newPassword: string;
 };
 
@@ -40,6 +44,11 @@ class Service<T extends AuthBackendClient = AuthBackendClient> {
     return res;
   }
 
+  async ForgotPassword(params: ForgotPasswordProps) {
+    const res = await this.client.ForgotPassword(params);
+    return res;
+  }
+
   async ResetPassword(params: ResetPasswordProps) {
     const res = await this.client.ResetPassword(params);
     return res;
@@ -47,4 +56,9 @@ class Service<T extends AuthBackendClient = AuthBackendClient> {
 }
 
 export { Service as AuthService };
-export type { RegisterProps, CheckEmailProps, ResetPasswordProps };
+export type {
+  RegisterProps,
+  CheckEmailProps,
+  ForgotPasswordProps,
+  ResetPasswordProps,
+};

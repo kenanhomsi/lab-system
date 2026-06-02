@@ -10,15 +10,31 @@ import type {
   LinkDirectPatientParams,
 } from "./types";
 
+function extractExternalPatientsList(payload: unknown): ExternalPatient[] {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== "object") return [];
+
+  const record = payload as Record<string, unknown>;
+  if (Array.isArray(record.items)) return record.items as ExternalPatient[];
+
+  const data = record.data;
+  if (Array.isArray(data)) return data as ExternalPatient[];
+  if (data && typeof data === "object" && Array.isArray((data as Record<string, unknown>).items)) {
+    return (data as { items: ExternalPatient[] }).items;
+  }
+
+  return [];
+}
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends ExternalPatientsClientBase<BackendState> {
   async findAll(params: FindAllExternalPatientsParams) {
     const { token } = params;
-    const res = await this.getEndpoint(endpoint.findAll)
+    const res = await this.getEndpoint(`${endpoint.findAll}?Page=1&PageSize=500`)
       .withAuth(token)
-      .perform<{ data: ExternalPatient[] }>();
-    return res.data;
+      .perform<unknown>();
+    return extractExternalPatientsList(res.data);
   }
 
   async create(params: CreateExternalPatientParams) {

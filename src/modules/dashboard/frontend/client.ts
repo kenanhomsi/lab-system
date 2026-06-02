@@ -9,6 +9,7 @@ import type { GetDashboardFrontendParams } from "./types";
 @injectFromBase({ extendProperties: true })
 class Client extends DashboardClient<AxiosState> {
   async getDashboard(_params: GetDashboardFrontendParams) {
+    void _params;
     const res = await super
       .sharedFindAll({ endpoint: endpoint.getDashboard })
       .perform<DashboardResponse>();

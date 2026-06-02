@@ -8,14 +8,31 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren, useMemo } from "react";
 import { useMirror, useMirrorRegistry } from "../store";
+import type { ExternalPatient } from "@/modules/ExternalPatients";
 import type { ExternalPatientsPageData } from "../types";
 
 const service = frontendContainer.get<ExternalPatientsFrontendService>(
   externalPatientsModuleNames.service,
 );
 
+function normalizeExternalPatientsList(payload: unknown): ExternalPatient[] {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== "object") return [];
+
+  const record = payload as Record<string, unknown>;
+  if (Array.isArray(record.items)) return record.items as ExternalPatient[];
+
+  const data = record.data;
+  if (Array.isArray(data)) return data as ExternalPatient[];
+  if (data && typeof data === "object" && Array.isArray((data as Record<string, unknown>).items)) {
+    return (data as { items: ExternalPatient[] }).items;
+  }
+
+  return [];
+}
+
 function filterPatients(
-  list: Awaited<ReturnType<ExternalPatientsFrontendService["findAll"]>>,
+  list: ExternalPatient[],
   search: string,
 ) {
   const q = search.trim().toLowerCase();
@@ -41,7 +58,7 @@ const GetAllExternalPatients = (props: PropsWithChildren) => {
 
   const { data: list = [], isPending, refetch } = useQuery({
     queryKey: ["external-patients"],
-    queryFn: () => service.findAll(),
+    queryFn: async () => normalizeExternalPatientsList(await service.findAll()),
     refetchInterval: 1000 * 60,
   });
 

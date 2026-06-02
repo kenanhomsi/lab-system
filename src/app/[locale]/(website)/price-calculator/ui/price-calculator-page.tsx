@@ -228,7 +228,7 @@ export function PriceCalculatorPage({ variant = "page" }: PriceCalculatorPagePro
 
   return (
     <main className="bg-background py-12 md:py-20">
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <div className="mx-auto max-w-4xl">{body}</div>
       </div>
     </main>

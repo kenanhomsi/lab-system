@@ -24,6 +24,12 @@ export const BANNER_PLACEMENT = {
   DOCTOR_DASHBOARD: "doctor_dashboard",
   PATIENT_DASHBOARD: "patient_dashboard",
   LAB_DASHBOARD: "lab_dashboard",
+  MEDICAL_ADVICE: "medical_advice",
+  EQUIPMENT: "equipment",
+  CLIENTS: "clients",
+  PARTNERS: "partners",
+  DEPARTMENTS: "departments",
+  WELCOME: "welcome",
 } as const;
 
 export type BannerPlacement =
@@ -39,19 +45,24 @@ const PLACEMENT_ALIASES: Record<string, BannerPlacement> = {
   home: BANNER_PLACEMENT.HOME_PAGE,
   homepage: BANNER_PLACEMENT.HOME_PAGE,
   "الصفحة الرئيسية": BANNER_PLACEMENT.HOME_PAGE,
-  "الرئيسية": BANNER_PLACEMENT.HOME_PAGE,
+  الرئيسية: BANNER_PLACEMENT.HOME_PAGE,
   about: BANNER_PLACEMENT.ABOUT,
   "من نحن": BANNER_PLACEMENT.ABOUT,
   blog: BANNER_PLACEMENT.BLOG,
-  "المدونة": BANNER_PLACEMENT.BLOG,
+  المدونة: BANNER_PLACEMENT.BLOG,
   contact: BANNER_PLACEMENT.CONTACT,
   "اتصل بنا": BANNER_PLACEMENT.CONTACT,
   services: BANNER_PLACEMENT.SERVICES,
-  "الخدمات": BANNER_PLACEMENT.SERVICES,
+  الخدمات: BANNER_PLACEMENT.SERVICES,
   careers: BANNER_PLACEMENT.CAREERS,
   ad: BANNER_PLACEMENT.AD_BAR,
   ad_bar: BANNER_PLACEMENT.AD_BAR,
   offers: BANNER_PLACEMENT.OFFERS,
+  partners: BANNER_PLACEMENT.PARTNERS,
+  clients: BANNER_PLACEMENT.CLIENTS,
+  equipment: BANNER_PLACEMENT.EQUIPMENT,
+  departments: BANNER_PLACEMENT.DEPARTMENTS,
+  medical_advice: BANNER_PLACEMENT.MEDICAL_ADVICE,
   plans: BANNER_PLACEMENT.PLANS,
   tests: BANNER_PLACEMENT.TESTS,
   dashboard: BANNER_PLACEMENT.DASHBOARD,
@@ -67,7 +78,8 @@ export function normalizeBannerPlacement(raw: string): BannerPlacement | null {
   const trimmed = raw.trim();
   if (!trimmed) return null;
 
-  const aliasHit = PLACEMENT_ALIASES[trimmed] ?? PLACEMENT_ALIASES[trimmed.toLowerCase()];
+  const aliasHit =
+    PLACEMENT_ALIASES[trimmed] ?? PLACEMENT_ALIASES[trimmed.toLowerCase()];
   if (aliasHit) return aliasHit;
 
   if (CANONICAL_SET.has(trimmed)) return trimmed as BannerPlacement;
@@ -89,7 +101,10 @@ export function bannerMatchesPlacement(
   if (normBanner === normWanted) return true;
 
   // Generic "dashboard" banner appears on every role dashboard.
-  if (normBanner === BANNER_PLACEMENT.DASHBOARD && isRoleDashboard(normWanted)) {
+  if (
+    normBanner === BANNER_PLACEMENT.DASHBOARD &&
+    isRoleDashboard(normWanted)
+  ) {
     return true;
   }
 
@@ -101,7 +116,9 @@ export function filterBannersByPlacement(
   wanted: string,
 ): BannerItem[] {
   return items
-    .filter((item) => item.isActive && bannerMatchesPlacement(item.location, wanted))
+    .filter(
+      (item) => item.isActive && bannerMatchesPlacement(item.location, wanted),
+    )
     .sort((a, b) => a.displayOrder - b.displayOrder);
 }
 

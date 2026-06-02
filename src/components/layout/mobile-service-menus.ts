@@ -18,7 +18,7 @@ export const serviceMenus: Record<UserRole, ServiceMenuItem[]> = {
     { href: "/contact", label: "nav.contact", icon: "mail" },
     { href: "/my-results", label: "myResults", icon: "lab_research" },
     { href: "/dashboard/price-calculator", label: "priceCalculator", icon: "calculate" },
-    { href: "/insurance-request", label: "insuranceRequest", icon: "health_and_safety" },
+    { href: "/patient/insurance-approval-requests", label: "insuranceRequest", icon: "health_and_safety" },
     { href: "/subscriptions", label: "subscriptions", icon: "card_membership" },
   ],
   doctor: [

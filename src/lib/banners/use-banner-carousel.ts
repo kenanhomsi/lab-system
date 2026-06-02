@@ -15,14 +15,6 @@ export function useBannerCarousel({
   const [activeIdx, setActiveIdx] = useState(0);
 
   useEffect(() => {
-    if (activeIdx >= count && count > 0) {
-      setActiveIdx(0);
-    } else if (count === 0) {
-      setActiveIdx(0);
-    }
-  }, [activeIdx, count]);
-
-  useEffect(() => {
     if (!enabled || count <= 1) return;
     const timer = window.setInterval(() => {
       setActiveIdx((prev) => (prev + 1) % count);

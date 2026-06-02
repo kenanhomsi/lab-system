@@ -16,6 +16,9 @@ type WebsiteHeaderProps = {
   ctaHref?: string;
 };
 
+/**
+ * Renders the public website navigation header.
+ */
 export function WebsiteHeader({
   variant = "light",
   showCta = true,
@@ -36,7 +39,9 @@ export function WebsiteHeader({
     { href: "/", label: t("nav.home") },
     { href: "/about", label: t("nav.about") },
     { href: "/services", label: t("nav.services") },
-    { href: "/plans", label: t("nav.plans") },
+    { href: "/#quality-control", label: t("footer.quality") },
+    { href: "/careers", label: t("nav.careers") },
+    { href: "/join-as-client", label: t("nav.joinAsClient") },
     { href: "/blog", label: t("nav.blog") },
     { href: "/contact", label: t("nav.contact") },
   ];
@@ -74,7 +79,7 @@ export function WebsiteHeader({
           : "bg-slate-50/80 shadow-sm shadow-slate-200/50",
       )}
     >
-      <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-4 px-6 py-4 font-headline tracking-tight antialiased md:px-8">
+      <div className="content-container flex items-center justify-between gap-4 py-4 font-headline tracking-tight antialiased">
         <div className="flex min-w-0 items-center gap-2 md:gap-0">
           <button
             type="button"

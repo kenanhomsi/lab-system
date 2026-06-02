@@ -12,7 +12,7 @@ export async function DepartmentsSection() {
 
   return (
     <section className="bg-surface-container-low py-16 md:py-24">
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <div className="reveal-up" style={{ animationDelay: "80ms" }}>
           <SectionHeader
             className="mb-12 md:mb-16"

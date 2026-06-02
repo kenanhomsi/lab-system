@@ -25,7 +25,7 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
-    role: z.enum(["patient", "doctor", "lab"], {
+    role: z.enum(["patient", "doctor", "LabPartner"], {
       error: () => "نوع الحساب غير صالح",
     }),
     email: z.email(MSG_EMAIL),
@@ -77,7 +77,7 @@ export const registerSchema = z
         path: ["specialty"],
       });
     }
-    if (data.role === "lab" && !data.labName?.trim()) {
+    if (data.role === "LabPartner" && !data.labName?.trim()) {
       ctx.addIssue({
         code: "custom",
         message: "اسم المخبر مطلوب",
@@ -94,7 +94,7 @@ const optionalUrl = z
     message: "رابط الملف غير صالح",
   });
 
-export const insuranceRequestSchema = z.object({
+export const insuranceApprovalCreateSchema = z.object({
   insuredName: z
     .string({ error: () => MSG_REQUIRED })
     .min(2, "اسم المؤمن مطلوب")
@@ -103,10 +103,11 @@ export const insuranceRequestSchema = z.object({
     .string({ error: () => MSG_REQUIRED })
     .min(3, "رقم التأمين مطلوب")
     .max(50, "رقم التأمين طويل جداً"),
-  mobile: mobileSchema,
-  cardImageUrl: optionalUrl,
-  prescriptionImageUrl: optionalUrl,
+  mobileNumber: mobileSchema,
 });
+
+/** @deprecated Use insuranceApprovalCreateSchema */
+export const insuranceRequestSchema = insuranceApprovalCreateSchema;
 
 export const complaintSchema = z.object({
   name: z
@@ -168,12 +169,40 @@ export const clientApplicationSchema = z.object({
     .string({ error: () => MSG_REQUIRED })
     .min(2, "اسم المخبر مطلوب")
     .max(120, "الاسم طويل جداً"),
-  mobile: mobileSchema,
+  mobileNumber: mobileSchema,
   email: z.email(MSG_EMAIL),
   address: z
     .string({ error: () => MSG_REQUIRED })
     .min(5, "العنوان مطلوب")
     .max(500, "العنوان طويل جداً"),
+  additionalInfo: z.string().max(2000).optional(),
+});
+
+export const contractServiceRequestSchema = z.object({
+  contractType: z.enum(["Individual", "Organization"], {
+    error: () => MSG_REQUIRED,
+  }),
+  responsibleName: z
+    .string({ error: () => MSG_REQUIRED })
+    .min(2, "اسم المسؤول مطلوب")
+    .max(120, "الاسم طويل جداً"),
+  organizationName: z
+    .string({ error: () => MSG_REQUIRED })
+    .min(2, "اسم المؤسسة مطلوب")
+    .max(120, "الاسم طويل جداً"),
+  expectedSubscribersCount: z.coerce
+    .number({ error: () => MSG_REQUIRED })
+    .int("يجب أن يكون عدداً صحيحاً")
+    .min(0, "العدد يجب أن يكون 0 أو أكثر"),
+  contactNumber: mobileSchema,
+  email: z.email(MSG_EMAIL),
+  address: z
+    .string({ error: () => MSG_REQUIRED })
+    .min(5, "العنوان مطلوب")
+    .max(500, "العنوان طويل جداً"),
+  contractDuration: z.enum(["ThreeMonths", "SixMonths", "OneYear"], {
+    error: () => MSG_REQUIRED,
+  }),
   additionalInfo: z.string().max(2000).optional(),
 });
 

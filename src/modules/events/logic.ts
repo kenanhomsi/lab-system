@@ -5,6 +5,7 @@ import type {
   doctorAppointmentEvents,
   labAppointmentEvents,
   medicalTestEvents,
+  vacantJobEvents,
   patientAppointmentEvents,
   testRequestEvents,
   testResultEvents,
@@ -13,6 +14,7 @@ type IEvents = authEvents &
   doctorAppointmentEvents &
   labAppointmentEvents &
   medicalTestEvents &
+  vacantJobEvents &
   patientAppointmentEvents &
   testRequestEvents &
   testResultEvents;

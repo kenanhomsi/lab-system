@@ -10,7 +10,7 @@ export async function AboutMethodologyGrid() {
 
   return (
     <section className="bg-surface py-20 md:py-32">
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <div className="reveal-up mb-16 text-center md:mb-24" style={{ animationDelay: "80ms" }}>
           <span className="text-xs font-black tracking-[0.4em] text-tertiary">
             {t("eyebrow")}

@@ -1,0 +1,1 @@
+export { ClientJoinRequestsTable } from "./factory";

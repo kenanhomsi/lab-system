@@ -17,6 +17,7 @@ export const WEBSITE_MESSAGE_NAMESPACES = [
   "careers",
   "complaint",
   "joinAsClient",
+  "contractServiceRequest",
   "joinClient",
   "labEncyclopedia",
   "labEncyclopediaDetail",

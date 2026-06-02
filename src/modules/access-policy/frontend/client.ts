@@ -164,6 +164,11 @@ class Client extends AccessPolicyClient<AxiosState> {
       .perform<unknown>();
     return res.data;
   }
+
+  async findAllPublic(_params: Record<string, never>) {
+    void _params;
+    throw new Error("Method not implemented.");
+  }
 }
 
 export { Client as AccessPolicyFrontendClient };

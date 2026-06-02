@@ -24,6 +24,9 @@ type SlideCardsWebsiteProps = {
   variant?: SlideCardsVariant;
 };
 
+/**
+ * Renders active dashboard-managed service and offer cards.
+ */
 export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProps = {}) {
   const t = useTranslations("landing.slideCards");
   const tServices = useTranslations("landing.services");
@@ -34,6 +37,9 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [favoriteIds, setFavoriteIds] = useState<ReadonlySet<number>>(
+    () => new Set<number>(),
+  );
 
   const { data, isLoading } = useQuery({
     queryKey: ["website-slide-cards"],
@@ -64,10 +70,23 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
     el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
   };
 
+  const toggleFavorite = (id: number) => {
+    setFavoriteIds((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   const safeActiveIdx = cards.length === 0 ? 0 : Math.min(activeIdx, cards.length - 1);
   const canPrev = safeActiveIdx > 0;
   const canNext = safeActiveIdx < cards.length - 1;
   const slideLabelPrefix = locale === "ar" ? "الانتقال إلى العرض" : "Go to item";
+
+  const favoriteLabel = locale === "ar" ? "إضافة للمفضلة" : "Add to favorites";
+  const removeFavoriteLabel =
+    locale === "ar" ? "إزالة من المفضلة" : "Remove from favorites";
 
   useEffect(() => {
     if (cards.length === 0) {
@@ -335,13 +354,13 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
       description={t("subtitle")}
       action={
         showCarousel && cards.length > 1 ? (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => scrollToIndex(Math.max(0, safeActiveIdx - 1))}
               disabled={!canPrev}
               aria-label={tServices("prev")}
-              className="grid h-10 w-10 place-items-center rounded-full border border-outline-variant/20 bg-surface-container-lowest text-on-surface shadow-sm transition-opacity disabled:opacity-40"
+              className="grid h-9 w-9 place-items-center rounded-lg border border-outline-variant/20 bg-surface-container-lowest text-on-surface shadow-sm transition-opacity disabled:opacity-40"
             >
               <Icon name={locale === "ar" ? "arrow_forward" : "arrow_back"} size="sm" />
             </button>
@@ -350,14 +369,25 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
               onClick={() => scrollToIndex(Math.min(cards.length - 1, safeActiveIdx + 1))}
               disabled={!canNext}
               aria-label={tServices("next")}
-              className="grid h-10 w-10 place-items-center rounded-full border border-outline-variant/20 bg-surface-container-lowest text-on-surface shadow-sm transition-opacity disabled:opacity-40"
+              className="grid h-9 w-9 place-items-center rounded-lg border border-outline-variant/20 bg-surface-container-lowest text-on-surface shadow-sm transition-opacity disabled:opacity-40"
             >
               <Icon name={locale === "ar" ? "arrow_back" : "arrow_forward"} size="sm" />
             </button>
+            <Link
+              href="/offers"
+              className="inline-flex min-h-9 items-center gap-2 rounded-lg border border-primary/20 bg-primary/8 px-3.5 text-sm font-black text-primary"
+            >
+              {locale === "ar" ? "عرض الكل" : "View all"}
+              <Icon
+                name={locale === "ar" ? "arrow_back" : "arrow_forward"}
+                size="sm"
+                aria-hidden
+              />
+            </Link>
           </div>
         ) : null
       }
-      className="mb-8 md:mb-10"
+      className="mb-5 md:mb-6"
     />
   );
 
@@ -372,6 +402,7 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
     const hasDiscount = item.discount > 0;
     const finalPrice = getFinalPrice(item.price, item.discount);
     const saved = Math.max(0, item.price - finalPrice);
+    const isFavorite = favoriteIds.has(item.id);
 
     const href = item.detailPageLink || "";
     const isExternal = href ? isExternalLink(href) : false;
@@ -382,7 +413,7 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
           href={href}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-black text-on-primary shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-sm font-black text-on-primary shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
         >
           {t("viewMore")}
           <Icon name={locale === "ar" ? "arrow_back" : "arrow_forward"} size="sm" aria-hidden />
@@ -390,7 +421,7 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
       ) : (
         <Link
           href={href}
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-black text-on-primary shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-sm font-black text-on-primary shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
         >
           {t("viewMore")}
           <Icon name={locale === "ar" ? "arrow_back" : "arrow_forward"} size="sm" aria-hidden />
@@ -400,8 +431,8 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
 
     const widthClass =
       mode === "grid"
-        ? "w-full max-w-[520px]"
-        : "w-[min(420px,calc(100%-3rem))] sm:w-[420px]";
+        ? "w-full max-w-[420px]"
+        : "w-[min(340px,calc(100%-2rem))] sm:w-[340px]";
 
     return (
       <article
@@ -410,11 +441,11 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
           itemRefs.current[idx] = el;
         }}
         className={[
-          "group snap-start shrink-0 overflow-hidden rounded-4xl border border-outline-variant/15 bg-surface-container-lowest shadow-[0_14px_40px_-22px_rgba(0,36,46,0.35)] transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_64px_-22px_rgba(0,36,46,0.35)] dark:shadow-[0_26px_60px_-30px_rgba(0,0,0,0.7)]",
+          "group snap-start shrink-0 overflow-hidden rounded-lg border border-outline-variant/15 bg-surface-container-lowest shadow-sm transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-md",
           widthClass,
         ].join(" ")}
       >
-        <div className="relative aspect-16/9 w-full overflow-hidden bg-surface-variant/30">
+        <div className="relative aspect-[2/1] w-full overflow-hidden bg-surface-variant/30">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={item.imageUrl}
@@ -423,34 +454,46 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
           />
           <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/55 via-black/15 to-black/0" />
 
-          <div className="absolute inset-s-5 top-5 flex flex-wrap items-center gap-2">
+          <div className="absolute inset-s-3 top-3 flex flex-wrap items-center gap-2">
             {item.badge ? (
-              <span className="inline-flex items-center rounded-full bg-surface-container-lowest/90 px-3 py-1 text-xs font-black tracking-wide text-primary shadow-md backdrop-blur-md ring-1 ring-outline-variant/20">
+              <span className="inline-flex items-center rounded bg-surface-container-lowest/90 px-2.5 py-1 text-[11px] font-black tracking-wide text-primary shadow-md backdrop-blur-md ring-1 ring-outline-variant/20">
                 {item.badge}
               </span>
             ) : null}
             {hasDiscount ? (
-              <span className="inline-flex items-center rounded-full bg-tertiary-fixed/90 px-3 py-1 text-xs font-black tracking-wide text-on-tertiary-fixed shadow-md backdrop-blur-md">
+              <span className="inline-flex items-center rounded bg-tertiary-fixed/90 px-2.5 py-1 text-[11px] font-black tracking-wide text-on-tertiary-fixed shadow-md backdrop-blur-md">
                 -{item.discount}% {t("off")}
               </span>
             ) : null}
           </div>
+          <button
+            type="button"
+            onClick={() => toggleFavorite(item.id)}
+            aria-label={isFavorite ? removeFavoriteLabel : favoriteLabel}
+            className="absolute inset-e-3 top-3 grid h-9 w-9 place-items-center rounded-lg bg-surface-container-lowest/92 text-primary shadow-sm"
+          >
+            <Icon
+              name={isFavorite ? "favorite" : "favorite_border"}
+              filled={isFavorite}
+              size="sm"
+            />
+          </button>
         </div>
 
-        <div className="bg-linear-to-b from-surface-container-lowest to-surface-container-low p-6">
-          <div className="space-y-2">
-            <h3 className="line-clamp-1 text-xl font-extrabold tracking-tight text-on-surface">
+        <div className="bg-linear-to-b from-surface-container-lowest to-surface-container-low p-4">
+          <div className="space-y-1.5">
+            <h3 className="line-clamp-1 text-lg font-extrabold tracking-tight text-on-surface">
               {item.title}
             </h3>
-            <p className="line-clamp-2 text-sm leading-relaxed text-on-surface-variant">
+            <p className="line-clamp-1 text-sm leading-6 text-on-surface-variant">
               {item.description}
             </p>
           </div>
 
-          <div className="mt-5 flex flex-wrap items-end justify-between gap-3">
+          <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
             <div className="flex flex-col">
               <div className="flex flex-wrap items-baseline gap-2">
-                <span className="text-2xl font-black tracking-tight text-primary">
+                <span className="text-xl font-black tracking-tight text-primary">
                   {formatNumber(finalPrice)}
                 </span>
                 {hasDiscount ? (
@@ -459,7 +502,7 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
                   </span>
                 ) : null}
               </div>
-              <div className="mt-1 flex flex-wrap items-center gap-2 text-xs font-semibold text-on-surface-variant">
+              <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-on-surface-variant">
                 <span>
                   {t("expires")}: {formatDate(item.expiryDate)}
                 </span>
@@ -478,22 +521,8 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
   };
 
   return (
-    <section className="relative overflow-hidden border-y border-outline-variant/10 bg-linear-to-b from-background via-surface-container-low/45 to-background py-12 md:py-16">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.28] dark:opacity-15"
-        style={{
-          backgroundImage:
-            "linear-gradient(var(--outline-variant) 1px, transparent 1px), linear-gradient(90deg, var(--outline-variant) 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
-        }}
-        aria-hidden
-      />
-      <div className="pointer-events-none absolute inset-0">
-        <div className="bg-orb h-56 w-56 bg-primary/12 inset-s-[10%] top-[18%]" />
-        <div className="bg-orb bg-orb-reverse h-64 w-64 bg-tertiary-fixed/12 inset-e-[8%] bottom-[10%]" />
-      </div>
-
-      <div className="relative mx-auto max-w-screen-2xl px-6 md:px-8">
+    <section className="relative overflow-hidden border-y border-outline-variant/10 bg-surface py-8 md:py-10">
+      <div className="relative content-container">
         {header}
 
         {showGrid ? (
@@ -504,17 +533,17 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
           <>
             <div
               ref={scrollerRef}
-              className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-5 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-6 px-6 md:-mx-8 md:px-8"
+              className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-6 px-6 md:-mx-8 md:px-8"
             >
               {(isLoading ? Array.from({ length: 4 }) : cards).map((card, idx) => {
                 if (isLoading) {
                   return (
                     <div
                       key={`skeleton-${idx}`}
-                      className="animate-pulse snap-start shrink-0 overflow-hidden rounded-4xl border border-outline-variant/15 bg-surface-container-lowest shadow-sm w-[min(420px,calc(100%-3rem))] sm:w-[420px]"
+                      className="animate-pulse snap-start shrink-0 overflow-hidden rounded-lg border border-outline-variant/15 bg-surface-container-lowest shadow-sm w-[min(340px,calc(100%-2rem))] sm:w-[340px]"
                     >
-                      <div className="aspect-16/9 w-full bg-surface-variant/40" />
-                      <div className="space-y-3 p-6">
+                      <div className="aspect-[2/1] w-full bg-surface-variant/40" />
+                      <div className="space-y-2 p-4">
                         <div className="h-5 w-2/3 rounded bg-surface-variant/40" />
                         <div className="h-4 w-full rounded bg-surface-variant/40" />
                         <div className="h-4 w-5/6 rounded bg-surface-variant/40" />
@@ -553,10 +582,16 @@ export function SlideCardsWebsite({ variant = "website" }: SlideCardsWebsiteProp
 
 export const SlideCardsSection = SlideCardsWebsite;
 
+/**
+ * Renders the compact dashboard version of the slide cards.
+ */
 export function SlideCardsDashboard() {
   return <SlideCardsWebsite variant="dashboard" />;
 }
 
+/**
+ * Renders the sidebar offer carousel used in dashboard surfaces.
+ */
 export function SlideCardsSidebar() {
   return <SlideCardsWebsite variant="sidebar" />;
 }

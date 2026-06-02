@@ -22,7 +22,9 @@ const useQuickActionFromUrl = (modal: string, onOpen: () => void) => {
   const pathname = usePathname();
   const onOpenRef = useRef(onOpen);
 
-  onOpenRef.current = onOpen;
+  useEffect(() => {
+    onOpenRef.current = onOpen;
+  }, [onOpen]);
 
   useEffect(() => {
     const normalizedPath = normalizePathForQuickAction(pathname);
@@ -35,10 +37,7 @@ const useQuickActionFromUrl = (modal: string, onOpen: () => void) => {
 
     const openFromUrl = fromUrl === modal;
     const openFromPending =
-      !fromUrl &&
-      !!pending &&
-      pending.modal === modal &&
-      pendingPathOk;
+      !fromUrl && !!pending && pending.modal === modal && pendingPathOk;
 
     if (!openFromUrl && !openFromPending) {
       return;
@@ -59,7 +58,9 @@ const useQuickActionFromUrl = (modal: string, onOpen: () => void) => {
     const query = params.toString();
 
     const replaceTimeoutId = window.setTimeout(() => {
-      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+      router.replace(query ? `${pathname}?${query}` : pathname, {
+        scroll: false,
+      });
     }, 0);
 
     return () => {

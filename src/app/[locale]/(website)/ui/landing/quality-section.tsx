@@ -7,16 +7,18 @@ const AV1 =
 const AV2 =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBgg9YBL74Zpa3Jm76FKjSs1u_RR349auws9NmTSzspIlcTo1W7JzyXoZf2cXrZp-mhpHRMiE4TOdPtKR9fAaRxyabs1QO8PpgllI-1M3D0HkDuzP4hL1BC6RxyMgkDOJPuKzLe6WoAx5yxWCWt7WltDRJE1WUEliuqoX3l1Rpvahy3x_jbnXQsdWyj9X7qFppNwr-zGPnxI5HlLpyiEG60wwc2HXTikxZqTIGwiiIqaISibOoCoXSPSoE52RwxEDWLZXX6N7KBewZt";
 
+/**
+ * Renders the public quality-control overview section.
+ */
 export async function QualitySection() {
   const t = await getTranslations("landing.quality");
 
   return (
-    <section className="relative overflow-hidden bg-surface py-16 md:py-24">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="bg-orb h-44 w-44 bg-primary/10 inset-s-[10%] top-[14%]" />
-        <div className="bg-orb bg-orb-reverse h-56 w-56 bg-primary-fixed/10 inset-e-[4%] bottom-[12%]" />
-      </div>
-      <div className="relative mx-auto max-w-screen-2xl px-6 md:px-8">
+    <section
+      id="quality-control"
+      className="relative overflow-hidden bg-surface py-16 md:py-24"
+    >
+      <div className="relative content-container">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="space-y-8">
             <div
@@ -33,7 +35,7 @@ export async function QualitySection() {
             </h2>
             <div className="space-y-6">
               <div
-                className="reveal-up flex gap-4 rounded-xl border-s-4 border-tertiary bg-surface-container-low p-6 shadow-sm"
+                className="reveal-up flex gap-4 rounded-lg border-s-4 border-tertiary bg-surface-container-low p-6 shadow-sm"
                 style={{ animationDelay: "220ms" }}
               >
                 <Icon
@@ -50,7 +52,7 @@ export async function QualitySection() {
                 </div>
               </div>
               <div
-                className="reveal-up flex gap-4 rounded-xl border-s-4 border-primary bg-surface-container-low p-6 shadow-sm"
+                className="reveal-up flex gap-4 rounded-lg border-s-4 border-primary bg-surface-container-low p-6 shadow-sm"
                 style={{ animationDelay: "290ms" }}
               >
                 <Icon name="verified_user" className="text-primary" size="sm" />
@@ -64,8 +66,7 @@ export async function QualitySection() {
             </div>
           </div>
           <div className="reveal-up relative" style={{ animationDelay: "350ms" }}>
-            <div className="absolute -inset-s-12 -top-12 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
-            <div className="relative z-10 rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-8 shadow-2xl">
+            <div className="relative z-10 rounded-lg border border-outline-variant/10 bg-surface-container-lowest p-8 shadow-sm">
               <div className="mb-8">
                 <div className="mb-6 flex items-center justify-between">
                   <h5 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">

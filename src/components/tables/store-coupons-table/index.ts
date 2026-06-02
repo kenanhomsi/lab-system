@@ -1,0 +1,1 @@
+export { StoreCouponsTable } from "./factory";

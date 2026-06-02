@@ -9,12 +9,25 @@ type SidebarIconKey =
   | "clipboardList"
   | "clipboardCheck"
   | "userPlus"
-  | "alertCircle";
+  | "alertCircle"
+  | "shieldCheck"
+  | "briefcase"
+  | "fileText"
+  | "store"
+  | "dollarSign"
+  | "layers"
+  | "userCheck"
+  | "filePlus"
+  | "minusCircle"
+  | "barChart"
+  | "checkSquare";
 
 type sideBarItem = {
   label: string;
   href: string;
   icon: SidebarIconKey;
+  /** Optional translation key under sidebar.* for section grouping */
+  group?: string;
 };
 
 type utilityItem = "light" | "dark";

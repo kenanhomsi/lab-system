@@ -29,7 +29,7 @@ export async function AboutHeroSection() {
 
         <div className="absolute right-0 inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
       </div>
-      <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 md:px-8">
+      <div className="relative z-10 content-container w-full">
         <div className="max-w-3xl">
           <span
             className="reveal-up mb-6 inline-block rounded-full border border-primary/30 bg-primary/5 px-4 py-1 text-xs font-bold tracking-[0.2em] text-primary"

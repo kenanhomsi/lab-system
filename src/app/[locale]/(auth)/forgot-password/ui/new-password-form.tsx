@@ -5,14 +5,18 @@ import { useTranslations } from "next-intl";
 import { frontendContainer } from "@/container";
 import { authModuleNames, } from "@/modules/auth";
 import { AuthFrontendService } from "@/modules/auth/frontend/service";
+import { AuthPasswordField } from "@/components/ui/auth-password-field";
 import { useMirror } from "../store";
+
+const passwordInputClassName =
+  "w-full rounded-xl border-none bg-surface-container-low px-4 py-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40";
 
 const authService = frontendContainer.get<AuthFrontendService>(authModuleNames.service);
 
 export function NewPasswordForm() {
   const t = useTranslations("auth");
   const email = useMirror("email");
-  const code = useMirror("code");
+  const token = useMirror("token");
   const newPassword = useMirror("newPassword");
   const setNewPassword = useMirror("setNewPassword");
   const confirmPassword = useMirror("confirmPassword");
@@ -40,7 +44,7 @@ export function NewPasswordForm() {
     try {
       await authService.ResetPassword({
         email,
-        code: Number(code.trim()),
+        token: token.trim(),
         newPassword,
       });
       setSuccess(true);
@@ -53,42 +57,28 @@ export function NewPasswordForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <AuthPasswordField
+        id="newPassword"
+        label={t("newPassword")}
+        inputClassName={passwordInputClassName}
+        value={newPassword}
+        onValueChange={setNewPassword}
+        required
+        autoComplete="new-password"
+        minLength={6}
+      />
       <div>
-        <label
-          htmlFor="newPassword"
-          className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary"
-        >
-          {t("newPassword")}
-        </label>
-        <input
-          id="newPassword"
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-          autoComplete="new-password"
-          minLength={6}
-          className="w-full rounded-xl border-none bg-surface-container-low px-4 py-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="confirmNewPassword"
-          className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary"
-        >
-          {t("confirmPassword")}
-        </label>
-        <input
+        <AuthPasswordField
           id="confirmNewPassword"
-          type="password"
+          label={t("confirmPassword")}
+          inputClassName={passwordInputClassName}
           value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          onValueChange={setConfirmPassword}
           required
           autoComplete="new-password"
           minLength={6}
           aria-invalid={passwordMismatch}
           aria-describedby={passwordMismatch ? "confirm-password-error" : undefined}
-          className="w-full rounded-xl border-none bg-surface-container-low px-4 py-4 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
         />
         {passwordMismatch ? (
           <p id="confirm-password-error" className="mt-2 text-sm text-red-500">

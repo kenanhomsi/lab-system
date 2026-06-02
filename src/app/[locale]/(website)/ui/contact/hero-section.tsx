@@ -52,7 +52,7 @@ export async function ContactHeroSection() {
         <div className="absolute right-1/4 top-1/3 h-[200px] w-[200px] rounded-full bg-secondary/[0.05] blur-[60px]" />
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 py-20 md:px-8 md:py-28 lg:py-32">
+      <div className="relative z-10 content-container w-full py-20 md:py-28 lg:py-32">
         <div className="grid items-start gap-16 lg:grid-cols-[1fr_420px] lg:gap-20">
           <div className="max-w-[680px]">
             <div

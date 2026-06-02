@@ -218,46 +218,97 @@ export const roleStrategy = {
         label: "dashboard",
         href: "/admin/dashboard",
         icon: "home",
+        group: "navGroupOverview",
       },
       {
         label: "adminUsers",
         href: "/admin/users",
         icon: "users",
+        group: "navGroupOverview",
       },
       {
         label: "adminMedicalTests",
         href: "/admin/medical-tests",
         icon: "flask",
+        group: "navGroupClinical",
       },
       {
         label: "adminTestRequests",
         href: "/admin/test-requests",
         icon: "clipboardList",
+        group: "navGroupClinical",
       },
       {
         label: "adminTestResults",
         href: "/admin/test-results",
         icon: "clipboardCheck",
+        group: "navGroupClinical",
       },
       {
         label: "chat",
         href: "/admin/chat",
         icon: "messageSquare",
-      },
-            {
-        label: "adminSubscriptions",
-        href: "/admin/subscription-packages",
-        icon: "creditCard",
+        group: "navGroupCommunication",
       },
       {
         label: "adminComplaints",
         href: "/admin/complaints",
         icon: "alertCircle",
+        group: "navGroupCommunication",
+      },
+      {
+        label: "adminSubscriptions",
+        href: "/admin/subscription-packages",
+        icon: "layers",
+        group: "navGroupBusiness",
+      },
+      {
+        label: "adminAccounting",
+        href: "/admin/accounting",
+        icon: "dollarSign",
+        group: "navGroupBusiness",
+      },
+      {
+        label: "adminInsuranceApproval",
+        href: "/admin/insurance-approval-requests",
+        icon: "shieldCheck",
+        group: "navGroupBusiness",
+      },
+      {
+        label: "adminClientJoinRequests",
+        href: "/admin/client-join-requests",
+        icon: "userPlus",
+        group: "navGroupBusiness",
+      },
+      {
+        label: "adminContractServiceRequests",
+        href: "/admin/contract-service-requests",
+        icon: "filePlus",
+        group: "navGroupBusiness",
+      },
+      {
+        label: "adminStore",
+        href: "/admin/store",
+        icon: "store",
+        group: "navGroupBusiness",
+      },
+      {
+        label: "adminVacantJobs",
+        href: "/admin/vacant-jobs",
+        icon: "briefcase",
+        group: "navGroupHr",
+      },
+      {
+        label: "adminEmploymentApplications",
+        href: "/admin/employment-applications",
+        icon: "userCheck",
+        group: "navGroupHr",
       },
       {
         label: "adminSettings",
         href: "/admin/settings",
         icon: "settings",
+        group: "navGroupSystem",
       },
     ],
     getNavbarConfig: withNavbarProfileOverrides(
@@ -284,6 +335,11 @@ export const roleStrategy = {
         label: "doctorTestResults",
         href: "/doctor/test-results",
         icon: "clipboardCheck",
+      },
+      {
+        label: "doctorMedicalTests",
+        href: "/doctor/medical-tests",
+        icon: "flask",
       },
       {
         label: "externalPatients",
@@ -327,9 +383,19 @@ export const roleStrategy = {
         icon: "clipboardCheck",
       },
       {
+        label: "patientMedicalTests",
+        href: "/patient/medical-tests",
+        icon: "flask",
+      },
+      {
         label: "patientComplaints",
         href: "/patient/complaints",
         icon: "alertCircle",
+      },
+      {
+        label: "patientInsuranceApproval",
+        href: "/patient/insurance-approval-requests",
+        icon: "shieldCheck",
       },
       {
         label: "chat",
@@ -363,6 +429,21 @@ export const roleStrategy = {
         icon: "clipboardCheck",
       },
       {
+        label: "labMedicalTests",
+        href: "/lab/medical-tests",
+        icon: "flask",
+      },
+      {
+        label: "accounting",
+        href: "/lab/accounting",
+        icon: "dollarSign",
+      },
+      {
+        label: "store",
+        href: "/lab/store",
+        icon: "store",
+      },
+      {
         label: "externalPatients",
         href: "/lab/external-patients",
         icon: "userPlus",
@@ -384,6 +465,37 @@ export const roleStrategy = {
       labQuickActions,
     ),
     canAccess: (route: string) => route.startsWith("/lab"),
+  },
+  special: {
+    getDashboardRoute: () => "/special/daily-tasks",
+    getSiderBarItems: (): sideBarItem[] => [
+      {
+        label: "newPayment",
+        href: "/special/new-payment",
+        icon: "creditCard",
+      },
+      {
+        label: "newExpense",
+        href: "/special/new-expense",
+        icon: "minusCircle",
+      },
+      {
+        label: "accountStatement",
+        href: "/special/account-statement",
+        icon: "barChart",
+      },
+      {
+        label: "dailyTasks",
+        href: "/special/daily-tasks",
+        icon: "checkSquare",
+      },
+    ],
+    getNavbarConfig: withNavbarProfileOverrides(
+      "Special Account",
+      "SPECIAL",
+      [],
+    ),
+    canAccess: (route: string) => route.startsWith("/special"),
   },
   secretary: {
     getDashboardRoute: () => "/secretary/dashboard",

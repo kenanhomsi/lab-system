@@ -65,6 +65,16 @@ export const DOCTOR_SUMMARY_KEYS: SummaryKey[] = [
   "totalMedicalTests",
 ];
 
+export const LAB_PARTNER_SUMMARY_KEYS: SummaryKey[] = [
+  "totalTestRequests",
+  "totalResults",
+  "completedResults",
+  "totalMedicalTests",
+  "totalExternalPatients",
+  "totalComplaints",
+  "totalRevenue",
+];
+
 /** Top metrics highlighted in the hero strip */
 export const HERO_HIGHLIGHT_KEYS: SummaryKey[] = [
   "totalTestRequests",

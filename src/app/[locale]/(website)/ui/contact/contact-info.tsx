@@ -59,7 +59,7 @@ export async function ContactInfo() {
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-outline-variant/20 to-transparent" />
 
-      <div className="relative mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="relative content-container">
         <div
           className="reveal-up mb-14 md:mb-20"
           style={{ animationDelay: "80ms" }}

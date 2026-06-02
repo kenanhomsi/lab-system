@@ -1,27 +1,11 @@
-export interface LabOrderPatient {
-  name: string;
-  age: number;
-  gender: "male" | "female";
-  tests: LabOrderTest[];
-}
+export type {
+  AccountingSettings,
+  AccountingStatement,
+  AccountingPayment,
+  PaginatedPayments,
+} from "@/modules/accounting/abstraction/schemas";
 
-export interface LabOrderTest {
-  testId: string;
-  testName: string;
-  requiredSample: string;
-  price: number;
-}
-
-export interface LabOrder {
-  id: string;
-  labId: string;
-  date: string;
-  patients: LabOrderPatient[];
-  totalAmount: number;
-  status: "pending" | "received" | "processing" | "completed";
-  createdAt: string;
-}
-
+/** @deprecated Use AccountingStatement from @/modules/accounting */
 export interface LabAccountingEntry {
   id: string;
   labId: string;
@@ -33,6 +17,7 @@ export interface LabAccountingEntry {
   date: string;
 }
 
+/** @deprecated Use AccountingStatement from @/modules/accounting */
 export interface LabAccountingSummary {
   entries: LabAccountingEntry[];
   totalTestsAmount: number;

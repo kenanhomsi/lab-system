@@ -836,6 +836,12 @@
   max-width: 36ch;
 }
 
+@media (min-width: 1920px) {
+  .dashboardGrid {
+    gap: 20px;
+  }
+}
+
 /* Responsive: collapse 12-col spans */
 @media (max-width: 1200px) {
   .span8,

@@ -66,7 +66,7 @@ export async function WebsiteFooter({
           : "border-outline-variant/25",
       )}
     >
-      <div className="mx-auto w-full max-w-screen-2xl px-6 py-12 md:px-8">
+      <div className="content-container w-full py-12">
         <div
           className={cn(
             "relative overflow-hidden rounded-3xl border px-6 py-10 shadow-sm md:px-10",

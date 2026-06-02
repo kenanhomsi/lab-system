@@ -10,7 +10,7 @@ const intlMiddleware = createIntlMiddleware(routing);
 
 const protectedRoutes: Record<string, string[]> = {
   "/my-results": ["patient", "doctor", "LabPartner"],
-  "/insurance-request": ["patient"],
+  "/patient/insurance-approval-requests": ["patient"],
   "/subscriptions": ["patient"],
   "/profile": ["patient", "doctor", "LabPartner", "admin", "special"],
   "/admin": ["admin"],

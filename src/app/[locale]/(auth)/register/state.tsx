@@ -11,6 +11,7 @@ const State = (props: PropsWithChildren) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useMirrorRegistry("selectedRole", selectedRole);
   useMirrorRegistry("setSelectedRole", setSelectedRole);
@@ -20,6 +21,8 @@ const State = (props: PropsWithChildren) => {
   useMirrorRegistry("setError", setError);
   useMirrorRegistry("success", success);
   useMirrorRegistry("setSuccess", setSuccess);
+  useMirrorRegistry("successMessage", successMessage);
+  useMirrorRegistry("setSuccessMessage", setSuccessMessage);
 
   return <>{children}</>;
 };

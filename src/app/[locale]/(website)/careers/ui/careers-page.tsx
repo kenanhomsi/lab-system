@@ -1,49 +1,78 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   getVacanciesPublic,
   postCareersApplication,
 } from "@/lib/clients/website-public-client";
+import type { Vacancy } from "@/types/career";
 
-type Vacancy = {
-  id: string;
+type DisplayVacancy = {
+  id: number;
   title: string;
-  department: string;
-  type: string;
+  description: string;
 };
 
 const INPUT_CLASS =
   "w-full rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20";
 
+function truncateText(text: string, maxLength = 120): string {
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trim()}…`;
+}
+
+function toDisplayVacancy(job: Vacancy, locale: string): DisplayVacancy {
+  const isAr = locale === "ar";
+  return {
+    id: job.id,
+    title: isAr ? job.titleAr : job.titleEn,
+    description: truncateText(isAr ? job.descriptionAr : job.descriptionEn),
+  };
+}
+
 export function CareersPage() {
   const t = useTranslations("careers");
-  const [vacancies, setVacancies] = useState<Vacancy[]>([]);
+  const locale = useLocale();
+  const [vacancies, setVacancies] = useState<DisplayVacancy[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     getVacanciesPublic()
-      .then((data) =>
-        setVacancies(Array.isArray(data) ? (data as Vacancy[]) : []),
-      )
+      .then((items) => setVacancies(items.map((job) => toDisplayVacancy(job, locale))))
       .catch(() => setVacancies([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [locale]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
 
-    const formData = new FormData(e.currentTarget);
+    const fd = new FormData(e.currentTarget);
+    const apiFormData = new FormData();
+
+    apiFormData.append("FullName", fd.get("fullName") as string);
+    apiFormData.append("ResidencePlace", fd.get("city") as string);
+    apiFormData.append("MobileNumber", fd.get("mobile") as string);
+    apiFormData.append("Email", fd.get("email") as string);
+    apiFormData.append("AcademicDegree", fd.get("degree") as string);
+    apiFormData.append("PreviousExperience", fd.get("previousExperience") as string);
+    apiFormData.append("YearsOfExperience", fd.get("yearsOfExperience") as string);
+    apiFormData.append("Skills", fd.get("skills") as string);
+    apiFormData.append("AdditionalCertificates", fd.get("additionalCertifications") as string);
+    apiFormData.append("VacantJobId", fd.get("position") as string);
+
+    const cvFile = fd.get("cv");
+    if (cvFile) {
+      apiFormData.append("CvFile", cvFile);
+    }
 
     try {
-      await postCareersApplication(formData);
+      await postCareersApplication(apiFormData);
       setSuccess(true);
       (e.target as HTMLFormElement).reset();
     } catch {
@@ -55,7 +84,7 @@ export function CareersPage() {
 
   return (
     <main className="bg-background py-12 md:py-20">
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <div className="mb-16 text-center">
           <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-xs font-bold tracking-[0.2em] text-primary">
             <Icon name="work" filled size="sm" />
@@ -104,10 +133,11 @@ export function CareersPage() {
                   <h3 className="font-headline text-base font-bold text-on-surface">
                     {v.title}
                   </h3>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    <Badge tone="default">{v.department}</Badge>
-                    <Badge tone="muted">{v.type}</Badge>
-                  </div>
+                  {v.description ? (
+                    <p className="mt-2 line-clamp-3 text-sm text-on-surface-variant">
+                      {v.description}
+                    </p>
+                  ) : null}
                 </Card>
               ))}
             </div>
@@ -278,7 +308,7 @@ export function CareersPage() {
                       >
                         <option value="">{t("selectPosition")}</option>
                         {vacancies.map((v) => (
-                          <option key={v.id} value={v.id}>
+                          <option key={v.id} value={String(v.id)}>
                             {v.title}
                           </option>
                         ))}

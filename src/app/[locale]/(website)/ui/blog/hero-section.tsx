@@ -22,7 +22,7 @@ export async function BlogHeroSection() {
         <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background/50" />
         <div className="bg-orb absolute inset-s-[-10%] top-[-10%] h-[500px] w-[500px] bg-primary/10 blur-[100px]" />
       </div>
-      <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 py-20 md:px-8">
+      <div className="relative z-10 content-container w-full py-20">
         <div className="max-w-3xl">
           <span
             className="reveal-up mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-bold tracking-[0.2em] text-primary backdrop-blur-md"

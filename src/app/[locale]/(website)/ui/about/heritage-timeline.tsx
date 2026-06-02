@@ -28,7 +28,7 @@ export async function AboutHeritageTimeline() {
 
   return (
     <section className="overflow-hidden bg-surface-container-low py-20 md:py-32">
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-24">
           <div className="reveal-up relative" style={{ animationDelay: "100ms" }}>
             <div className="absolute -end-12 -top-12 h-64 w-64 rounded-full bg-primary/10 blur-[100px]" />

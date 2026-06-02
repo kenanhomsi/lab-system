@@ -1,10 +1,13 @@
 export interface Vacancy {
-  id: string;
+  id: number;
   titleAr: string;
   titleEn: string;
-  descriptionAr?: string;
-  descriptionEn?: string;
+  descriptionAr: string;
+  descriptionEn: string;
   isActive: boolean;
+  sortOrder: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface EmploymentApplication {

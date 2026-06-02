@@ -15,7 +15,7 @@ export function OffersPage() {
 
   return (
     <main className="bg-background py-12 md:py-20">
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <div className="mb-12 text-center">
           <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-tertiary-fixed px-4 py-1.5 text-xs font-bold tracking-[0.2em] text-on-tertiary-fixed">
             <Icon name="local_offer" filled size="sm" />

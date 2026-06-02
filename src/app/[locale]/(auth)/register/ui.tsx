@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
+import { AuthPasswordField } from "@/components/ui/auth-password-field";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { RoleSelector } from "../login/ui/role-selector";
 import { useMirror } from "./store";
@@ -13,6 +14,7 @@ const UI = () => {
   const loading = useMirror("loading");
   const error = useMirror("error");
   const success = useMirror("success");
+  const successMessage = useMirror("successMessage");
   const submitRegisterForm = useMirror("submitRegisterForm");
   const locale = useLocale();
   const t = useTranslations("auth");
@@ -27,6 +29,9 @@ const UI = () => {
             <Icon name="check_circle" className="text-5xl text-green-600" />
           </div>
           <h2 className="mb-2 font-headline text-2xl font-bold">{t("registerSuccess")}</h2>
+          {successMessage ? (
+            <p className="mb-2 text-on-surface">{successMessage}</p>
+          ) : null}
           <p className="text-secondary">{t("redirectToLogin")}</p>
         </div>
       </main>
@@ -188,34 +193,24 @@ const UI = () => {
           )}
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="password" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
-                {t("password")}
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                autoComplete="new-password"
-                minLength={6}
-                className={inputClassName}
-              />
-            </div>
-            <div>
-              <label htmlFor="confirmPassword" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
-                {t("confirmPassword")}
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                autoComplete="new-password"
-                minLength={6}
-                className={inputClassName}
-              />
-            </div>
+            <AuthPasswordField
+              id="password"
+              name="password"
+              label={t("password")}
+              inputClassName={inputClassName}
+              required
+              autoComplete="new-password"
+              minLength={6}
+            />
+            <AuthPasswordField
+              id="confirmPassword"
+              name="confirmPassword"
+              label={t("confirmPassword")}
+              inputClassName={inputClassName}
+              required
+              autoComplete="new-password"
+              minLength={6}
+            />
           </div>
 
           <div className="pt-2">

@@ -16,6 +16,7 @@ export function PartnersStrip() {
     const node = ref.current;
     if (!node) return;
     if (typeof IntersectionObserver === "undefined") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsInView(true);
       return;
     }

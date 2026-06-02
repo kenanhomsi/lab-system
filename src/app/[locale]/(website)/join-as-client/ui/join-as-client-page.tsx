@@ -2,31 +2,56 @@
 
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { postClientApplicationPublic } from "@/lib/clients/website-public-client";
+import { clientApplicationSchema } from "@/lib/validation";
 
 const INPUT_CLASS =
   "w-full rounded-xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20";
 
+/**
+ * Public "Join our clients" partnership application form.
+ */
 export function JoinAsClientPage() {
   const t = useTranslations("joinAsClient");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitting(true);
+    setError("");
 
     const formData = new FormData(e.currentTarget);
-    const body = Object.fromEntries(formData.entries());
+    const raw = Object.fromEntries(formData.entries());
+    const parsed = clientApplicationSchema.safeParse({
+      managerName: String(raw.managerName ?? ""),
+      labName: String(raw.labName ?? ""),
+      mobileNumber: String(raw.mobileNumber ?? ""),
+      email: String(raw.email ?? ""),
+      address: String(raw.address ?? ""),
+      additionalInfo: raw.additionalInfo
+        ? String(raw.additionalInfo)
+        : undefined,
+    });
+
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? t("errorGeneric"));
+      return;
+    }
+
+    setSubmitting(true);
 
     try {
-      await postClientApplicationPublic(body);
+      const message = await postClientApplicationPublic(raw);
+      setSuccessMessage(message || t("successMessage"));
       setSuccess(true);
       (e.target as HTMLFormElement).reset();
     } catch {
-      // silently fail
+      setError(t("errorGeneric"));
     } finally {
       setSubmitting(false);
     }
@@ -34,7 +59,7 @@ export function JoinAsClientPage() {
 
   return (
     <main className="bg-background py-12 md:py-20">
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <div className="mx-auto max-w-3xl">
           <div className="mb-12 text-center">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-xs font-bold tracking-[0.2em] text-primary">
@@ -61,12 +86,18 @@ export function JoinAsClientPage() {
                 {t("successTitle")}
               </h3>
               <p className="mt-2 text-on-surface-variant">
-                {t("successMessage")}
+                {successMessage}
               </p>
             </Card>
           ) : (
             <Card className="shadow-xl">
               <form onSubmit={handleSubmit} className="space-y-6">
+                {error ? (
+                  <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {error}
+                  </p>
+                ) : null}
+
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div>
                     <label
@@ -105,15 +136,15 @@ export function JoinAsClientPage() {
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div>
                     <label
-                      htmlFor="mobile"
+                      htmlFor="mobileNumber"
                       className="mb-2 block text-sm font-bold text-on-surface"
                     >
                       {t("mobile")}
                     </label>
                     <input
                       type="tel"
-                      id="mobile"
-                      name="mobile"
+                      id="mobileNumber"
+                      name="mobileNumber"
                       required
                       placeholder={t("mobilePlaceholder")}
                       className={INPUT_CLASS}
@@ -191,6 +222,16 @@ export function JoinAsClientPage() {
               </form>
             </Card>
           )}
+
+          <p className="mt-8 text-center text-sm text-on-surface-variant">
+            {t("crossLinkPrefix")}{" "}
+            <Link
+              href="/contract-service-request"
+              className="font-semibold text-primary underline-offset-2 hover:underline"
+            >
+              {t("crossLinkContractService")}
+            </Link>
+          </p>
         </div>
       </div>
     </main>

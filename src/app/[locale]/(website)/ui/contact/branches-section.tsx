@@ -43,7 +43,7 @@ export async function BranchesSection() {
         <div className="h-[300px] w-[300px] rounded-full bg-primary/[0.04] blur-[80px]" />
       </div>
 
-      <div className="relative mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="relative content-container">
         <div
           className="reveal-up mb-12 md:mb-16"
           style={{ animationDelay: "60ms" }}

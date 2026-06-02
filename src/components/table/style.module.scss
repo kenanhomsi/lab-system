@@ -12,6 +12,7 @@
 }
 
 .tableBox {
+  width: 100%;
   border-radius: 24px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -119,6 +120,7 @@
 }
 
 .tableScrollWrapper {
+  width: 100%;
   overflow-x: auto;
 }
 

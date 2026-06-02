@@ -35,6 +35,7 @@ export function PageBanner({ banners }: PageBannerProps) {
 
   const media = mediaIsVideo ? (
     <video
+      key={banner.id}
       src={banner.mediaUrl}
       muted
       loop
@@ -44,6 +45,7 @@ export function PageBanner({ banners }: PageBannerProps) {
     />
   ) : (
     <Image
+      key={banner.id}
       src={banner.mediaUrl}
       alt={banner.title}
       fill
@@ -53,7 +55,7 @@ export function PageBanner({ banners }: PageBannerProps) {
   );
 
   const imagePanel = (
-    <div className="relative h-full min-h-52 w-full overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden">
       {media}
 
       <div
@@ -158,7 +160,10 @@ export function PageBanner({ banners }: PageBannerProps) {
             ].join(" ")}
           />
         ))}
-        <span className="ms-auto text-[11px] font-semibold tabular-nums text-on-surface-variant/70">
+        <span
+          dir="ltr"
+          className="ms-auto text-[11px] font-semibold tabular-nums text-on-surface-variant/70"
+        >
           {activeIdx + 1}&thinsp;/&thinsp;{banners.length}
         </span>
       </div>
@@ -172,7 +177,7 @@ export function PageBanner({ banners }: PageBannerProps) {
         rel="noreferrer"
         tabIndex={-1}
         aria-hidden
-        className="group relative flex h-full min-h-52 shrink-0 self-stretch overflow-hidden md:w-[46%] lg:w-[44%] no-underline"
+        className="group relative block h-full min-h-52 overflow-hidden md:min-h-0 no-underline"
       >
         {imagePanel}
       </a>
@@ -181,13 +186,13 @@ export function PageBanner({ banners }: PageBannerProps) {
         href={href}
         tabIndex={-1}
         aria-hidden
-        className="group relative flex h-full min-h-52 shrink-0 self-stretch overflow-hidden md:w-[46%] lg:w-[44%] no-underline"
+        className="group relative block h-full min-h-52 overflow-hidden md:min-h-0 no-underline"
       >
         {imagePanel}
       </Link>
     )
   ) : (
-    <div className="group relative flex h-full min-h-52 shrink-0 self-stretch md:w-[46%] lg:w-[44%]">
+    <div className="group relative block h-full min-h-52 overflow-hidden md:min-h-0">
       {imagePanel}
     </div>
   );
@@ -195,7 +200,7 @@ export function PageBanner({ banners }: PageBannerProps) {
   return (
     <section
       aria-label={t("regionAria")}
-      className="mx-auto my-6 max-w-screen-2xl px-4 sm:px-6 md:px-8"
+      className="content-container my-6"
     >
       <div className="relative overflow-hidden rounded-3xl shadow-2xl ring-1 ring-outline-variant/30">
         <div
@@ -209,9 +214,11 @@ export function PageBanner({ banners }: PageBannerProps) {
         />
 
         <div
-          className={`relative z-10 flex min-h-[260px] flex-col md:min-h-[280px] md:flex-row ${isRtl ? "md:flex-row-reverse" : ""}`}
+          className={`relative z-10 grid min-h-[260px] grid-cols-1 md:min-h-[280px] ${isRtl ? "md:grid-cols-[46%_1fr] lg:grid-cols-[44%_1fr]" : "md:grid-cols-[1fr_46%] lg:grid-cols-[1fr_44%]"}`}
         >
-          <div className="relative flex min-w-0 flex-1 flex-col bg-surface">
+          <div
+            className={`relative flex min-w-0 flex-col bg-surface ${isRtl ? "md:col-start-2" : ""}`}
+          >
             <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent" />
             <div
               className={`clinical-gradient pointer-events-none absolute top-0 z-1 h-[3px] w-24 rounded-full ${isRtl ? "right-7 md:right-10" : "left-7 md:left-10"}`}
@@ -220,7 +227,11 @@ export function PageBanner({ banners }: PageBannerProps) {
             {carouselDots}
           </div>
 
-          {imageColumn}
+          <div
+            className={`min-h-52 md:min-h-0 md:h-full ${isRtl ? "md:col-start-1 md:row-start-1" : ""}`}
+          >
+            {imageColumn}
+          </div>
         </div>
       </div>
     </section>

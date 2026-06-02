@@ -33,12 +33,20 @@ import {
 import { getStatusVariant } from "./status-utils";
 import styles from "./styles.module.scss";
 
-type PromoLocation = "admin_dashboard" | "doctor_dashboard" | "patient_dashboard";
+type PromoLocation =
+  | "admin_dashboard"
+  | "doctor_dashboard"
+  | "patient_dashboard"
+  | "lab_dashboard";
 
 type Props = {
   dashboard: DashboardData | null;
   summaryKeys: SummaryKey[];
-  translationNamespace: "admin.dashboard" | "patient.dashboard" | "doctor.dashboard";
+  translationNamespace:
+    | "admin.dashboard"
+    | "patient.dashboard"
+    | "doctor.dashboard"
+    | "lab.dashboard";
   layout?: "split" | "simple";
   /** @deprecated Promo slot replaced by square offers sidebar; kept for call-site compatibility */
   promoLocation?: PromoLocation;

@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   Card,
-  Container,
   CopyButton,
   Divider,
   Grid,
@@ -200,7 +199,7 @@ const UI = () => {
   const adminAccount = useMemo(() => hasAdminRole(me?.roles), [me?.roles]);
 
   return (
-    <Container size="xl" px={{ base: "xs", sm: "md" }} py={{ base: "sm", md: "lg" }}>
+    <Box w="100%" maw="100%" px={{ base: "xs", sm: "md" }} py={{ base: "sm", md: "lg" }}>
       <Stack gap="xl">
         <Stack gap={6}>
           <Title order={2} fz={{ base: 22, sm: 28 }}>
@@ -777,7 +776,7 @@ const UI = () => {
           </Grid.Col>
         </Grid>
       </Stack>
-    </Container>
+    </Box>
   );
 };
 

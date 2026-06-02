@@ -6,6 +6,7 @@ import {
   bindFrontAxiosDependencies,
   bindFrontBannerDependencies,
   bindFrontComplaintDependencies,
+  bindFrontInsuranceApprovalRequestDependencies,
   bindFrontExternalPatientsDependencies,
   bindFrontEventDependencies,
   bindFrontAccessPolicyDependencies,
@@ -14,11 +15,15 @@ import {
   bindFrontUserDependencies,
   bindFrontValidatorDependencies,
   bindFrontMedicalTestDependencies,
+  bindFrontVacantJobDependencies,
   bindFrontTestRequestsDependencies,
   bindFrontTestResultsDependencies,
   bindFrontSlideCardDependencies,
   bindFrontDashboardDependencies,
   bindFrontNotificationsDependencies,
+  bindFrontAccountingDependencies,
+  bindFrontSpecialAccountDependencies,
+  bindFrontStoreDependencies,
 } from "./bindings";
 
 const c = new Container({ parent: container });
@@ -28,6 +33,7 @@ const frontendContainer = pipe(
   bindFrontTestResultsDependencies,
   bindFrontSlideCardDependencies,
   bindFrontMedicalTestDependencies,
+  bindFrontVacantJobDependencies,
   bindFrontBannerDependencies,
   bindFrontAxiosDependencies,
   bindFrontEventDependencies,
@@ -38,8 +44,12 @@ const frontendContainer = pipe(
   bindFrontRoleDependencies,
   bindFrontAccessPolicyDependencies,
   bindFrontComplaintDependencies,
+  bindFrontInsuranceApprovalRequestDependencies,
   bindFrontDashboardDependencies,
   bindFrontNotificationsDependencies,
+  bindFrontAccountingDependencies,
+  bindFrontSpecialAccountDependencies,
+  bindFrontStoreDependencies,
 )(c);
 
 export { frontendContainer };

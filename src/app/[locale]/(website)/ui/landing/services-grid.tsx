@@ -22,7 +22,7 @@ export async function ServicesGrid() {
         <div className="bg-orb h-44 w-44 bg-primary/8 inset-s-[8%] top-[18%]" />
         <div className="bg-orb bg-orb-reverse h-56 w-56 bg-tertiary-fixed/8 inset-e-[6%] bottom-[8%]" />
       </div>
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
+      <div className="content-container">
         <div className="reveal-up" style={{ animationDelay: "80ms" }}>
           <SectionHeader
             title={t("gridTitle")}
