@@ -1,4 +1,4 @@
 export * from "./abstraction";
-export * from "./backend";
-export * from "./frontend";
 export * from "./names";
+export { StoreFrontendClient, StoreFrontendService } from "./frontend";
+export { StoreBackendClient, StoreBackendService } from "./backend";

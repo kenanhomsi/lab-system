@@ -61,6 +61,7 @@ export const storeSliderSchema = z.object({
   title: z.string(),
   type: z.string(),
   displayOrder: z.number(),
+  isActive: z.boolean().optional(),
   products: z.array(storeProductSchema),
 });
 

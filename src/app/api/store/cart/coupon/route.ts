@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jsonError } from "@/lib/api/bff-errors";
 import { resolveAccessToken } from "@/lib/api/resolve-access-token";
-import { getBackendBaseUrl, isUpstreamBackendReady } from "@/lib/api/upstream-config";
+import { getBackendBaseUrl } from "@/lib/api/bff-proxy";
+import { isUpstreamBackendReady } from "@/lib/api/upstream-config";
 
 export async function DELETE(req: NextRequest) {
   try {

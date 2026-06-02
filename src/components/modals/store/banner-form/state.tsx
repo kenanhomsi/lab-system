@@ -16,7 +16,7 @@ function bannerToForm(banner: StoreBanner): UpsertStoreBannerInput {
     location: banner.location,
     categoryId: banner.categoryId,
     displayOrder: banner.displayOrder,
-    isActive: banner.isActive,
+    isActive: banner.isActive ?? true,
     startsAt: toDateTimeLocal(banner.startsAt),
     endsAt: toDateTimeLocal(banner.endsAt),
   };
