@@ -7,6 +7,8 @@ import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getTestsCatalogPublic } from "@/lib/clients/website-public-client";
+import { BANNER_PLACEMENT } from "@/lib/banners/locations";
+import { PageBannerOverflowClient, PageBannerSlotClient } from "@/components/layout/page-banner-slot-client";
 
 type Test = {
   id: string;
@@ -59,6 +61,7 @@ export function TestsPage() {
             {t("description")}
           </p>
         </div>
+        <PageBannerSlotClient placement={BANNER_PLACEMENT.TESTS} order={1} />
 
         <div className="relative mb-8">
           <Icon
@@ -74,7 +77,6 @@ export function TestsPage() {
             className="w-full rounded-xl border border-outline-variant/30 bg-surface py-3.5 pe-4 ps-12 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </div>
-
         <div className="flex gap-8">
           <aside className="hidden w-12 shrink-0 lg:block">
             <div className="sticky top-24 flex flex-col items-center gap-1">
@@ -144,6 +146,8 @@ export function TestsPage() {
             )}
           </div>
         </div>
+        <PageBannerSlotClient placement={BANNER_PLACEMENT.TESTS} order={2} />
+        <PageBannerOverflowClient placement={BANNER_PLACEMENT.TESTS} />
       </div>
     </main>
   );

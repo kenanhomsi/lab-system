@@ -3,7 +3,7 @@ import type { UserRole } from "@/types/user";
 export const FORM_ERROR_KEY = "form" as const;
 
 export const roleRedirects: Record<UserRole, string> = {
-  patient: "/dashboard",
+  patient: "/",
   doctor: "/doctor/request-tests",
   LabPartner: "/lab/dashboard",
   special: "/special/daily-tasks",

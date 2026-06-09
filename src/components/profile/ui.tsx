@@ -53,9 +53,13 @@ import { showSuccessNotification } from "@/lib/error";
 import { useTranslations, useLocale } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
+import { MyInsuranceApprovalRequestsTable } from "@/components/tables/my-insurance-approval-requests-table";
+import { TestRequestsTable } from "@/components/tables/test-requests-table";
+import { TestResultsTable } from "@/components/tables/test-results-table";
 
 import { useMirror } from "./store";
 import { hasAdminRole, hasPatientRole, resolveDashboardBaseFromRoles } from "./role-path";
+import type { ProfileTab } from "./store/state";
 import type { ChangePasswordRequest, UpdateMeRequest } from "./types";
 import styles from "./styles.module.scss";
 
@@ -65,6 +69,14 @@ const initials = (name: string) => {
   const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? "" : "";
   return (first + last).toUpperCase() || name.slice(0, 2).toUpperCase();
 };
+
+const isProfileTab = (value: string | null): value is ProfileTab =>
+  value === "profile" ||
+  value === "security" ||
+  value === "danger" ||
+  value === "testRequests" ||
+  value === "testResults" ||
+  value === "insuranceApprovals";
 
 /**
  * Dashboard profile surface: identity summary, account metadata, and editable tabs.
@@ -434,7 +446,7 @@ const UI = () => {
                     <Stack gap={4}>
                       <UnstyledButton
                         component={Link}
-                        href={`${dashboardBase}/dashboard`}
+                        href={patientAccount ? "/" : `${dashboardBase}/dashboard`}
                         className={styles.quickLink}
                       >
                         <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
@@ -443,7 +455,7 @@ const UI = () => {
                               <IconLayoutDashboard size={18} aria-hidden />
                             </ThemeIcon>
                             <Text size="sm" fw={600}>
-                              {t("backToDashboard")}
+                              {patientAccount ? t("backToWebsite") : t("backToDashboard")}
                             </Text>
                           </Group>
                           <IconChevronRight
@@ -453,32 +465,77 @@ const UI = () => {
                           />
                         </Group>
                       </UnstyledButton>
-                      <UnstyledButton
-                        component={Link}
-                        href={`${dashboardBase}/test-results`}
-                        className={styles.quickLink}
-                      >
-                        <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
-                          <Group gap="sm" wrap="nowrap">
-                            <ThemeIcon size={34} radius="md" variant="light" color="green">
-                              <IconClipboardCheck size={18} aria-hidden />
-                            </ThemeIcon>
-                            <Text size="sm" fw={600}>
-                              {t("goToResults")}
-                            </Text>
+                      {patientAccount ? (
+                        <UnstyledButton
+                          className={styles.quickLink}
+                          onClick={() => setActiveTab("testResults")}
+                        >
+                          <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
+                            <Group gap="sm" wrap="nowrap">
+                              <ThemeIcon size={34} radius="md" variant="light" color="green">
+                                <IconClipboardCheck size={18} aria-hidden />
+                              </ThemeIcon>
+                              <Text size="sm" fw={600}>
+                                {t("goToResults")}
+                              </Text>
+                            </Group>
+                            <IconChevronRight
+                              size={18}
+                              style={{ opacity: 0.5, transform: rtl ? "scaleX(-1)" : undefined }}
+                              aria-hidden
+                            />
                           </Group>
-                          <IconChevronRight
-                            size={18}
-                            style={{ opacity: 0.5, transform: rtl ? "scaleX(-1)" : undefined }}
-                            aria-hidden
-                          />
-                        </Group>
-                      </UnstyledButton>
-                      <UnstyledButton
-                        component={Link}
-                        href={`${dashboardBase}/test-requests`}
-                        className={styles.quickLink}
-                      >
+                        </UnstyledButton>
+                      ) : (
+                        <UnstyledButton
+                          component={Link}
+                          href={`${dashboardBase}/test-results`}
+                          className={styles.quickLink}
+                        >
+                          <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
+                            <Group gap="sm" wrap="nowrap">
+                              <ThemeIcon size={34} radius="md" variant="light" color="green">
+                                <IconClipboardCheck size={18} aria-hidden />
+                              </ThemeIcon>
+                              <Text size="sm" fw={600}>
+                                {t("goToResults")}
+                              </Text>
+                            </Group>
+                            <IconChevronRight
+                              size={18}
+                              style={{ opacity: 0.5, transform: rtl ? "scaleX(-1)" : undefined }}
+                              aria-hidden
+                            />
+                          </Group>
+                        </UnstyledButton>
+                      )}
+                      {patientAccount ? (
+                        <UnstyledButton
+                          className={styles.quickLink}
+                          onClick={() => setActiveTab("testRequests")}
+                        >
+                          <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
+                            <Group gap="sm" wrap="nowrap">
+                              <ThemeIcon size={34} radius="md" variant="light" color="orange">
+                                <IconClipboardList size={18} aria-hidden />
+                              </ThemeIcon>
+                              <Text size="sm" fw={600}>
+                                {t("quickLinkTestRequests")}
+                              </Text>
+                            </Group>
+                            <IconChevronRight
+                              size={18}
+                              style={{ opacity: 0.5, transform: rtl ? "scaleX(-1)" : undefined }}
+                              aria-hidden
+                            />
+                          </Group>
+                        </UnstyledButton>
+                      ) : (
+                        <UnstyledButton
+                          component={Link}
+                          href={`${dashboardBase}/test-requests`}
+                          className={styles.quickLink}
+                        >
                         <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
                           <Group gap="sm" wrap="nowrap">
                             <ThemeIcon size={34} radius="md" variant="light" color="orange">
@@ -494,25 +551,62 @@ const UI = () => {
                             aria-hidden
                           />
                         </Group>
-                      </UnstyledButton>
-                      {patientAccount ? (
-                        <UnstyledButton component={Link} href="/plans" className={styles.quickLink}>
-                          <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
-                            <Group gap="sm" wrap="nowrap">
-                              <ThemeIcon size={34} radius="md" variant="light" color="violet">
-                                <IconExternalLink size={18} aria-hidden />
-                              </ThemeIcon>
-                              <Text size="sm" fw={600}>
-                                {t("goToSubscriptions")}
-                              </Text>
-                            </Group>
-                            <IconChevronRight
-                              size={18}
-                              style={{ opacity: 0.5, transform: rtl ? "scaleX(-1)" : undefined }}
-                              aria-hidden
-                            />
-                          </Group>
                         </UnstyledButton>
+                      )}
+                      {patientAccount ? (
+                        <>
+                          <UnstyledButton className={styles.quickLink} onClick={() => setActiveTab("insuranceApprovals")}>
+                            <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
+                              <Group gap="sm" wrap="nowrap">
+                                <ThemeIcon size={34} radius="md" variant="light" color="cyan">
+                                  <IconShieldLock size={18} aria-hidden />
+                                </ThemeIcon>
+                                <Text size="sm" fw={600}>
+                                  {t("tabInsuranceApprovals")}
+                                </Text>
+                              </Group>
+                              <IconChevronRight
+                                size={18}
+                                style={{ opacity: 0.5, transform: rtl ? "scaleX(-1)" : undefined }}
+                                aria-hidden
+                              />
+                            </Group>
+                          </UnstyledButton>
+                          <UnstyledButton component={Link} href="/order-test-request" className={styles.quickLink}>
+                            <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
+                              <Group gap="sm" wrap="nowrap">
+                                <ThemeIcon size={34} radius="md" variant="light" color="orange">
+                                  <IconExternalLink size={18} aria-hidden />
+                                </ThemeIcon>
+                                <Text size="sm" fw={600}>
+                                  {t("orderTestRequest")}
+                                </Text>
+                              </Group>
+                              <IconChevronRight
+                                size={18}
+                                style={{ opacity: 0.5, transform: rtl ? "scaleX(-1)" : undefined }}
+                                aria-hidden
+                              />
+                            </Group>
+                          </UnstyledButton>
+                          <UnstyledButton component={Link} href="/plans" className={styles.quickLink}>
+                            <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
+                              <Group gap="sm" wrap="nowrap">
+                                <ThemeIcon size={34} radius="md" variant="light" color="violet">
+                                  <IconExternalLink size={18} aria-hidden />
+                                </ThemeIcon>
+                                <Text size="sm" fw={600}>
+                                  {t("goToSubscriptions")}
+                                </Text>
+                              </Group>
+                              <IconChevronRight
+                                size={18}
+                                style={{ opacity: 0.5, transform: rtl ? "scaleX(-1)" : undefined }}
+                                aria-hidden
+                              />
+                            </Group>
+                          </UnstyledButton>
+                        </>
                       ) : null}
                       {adminAccount ? (
                         <UnstyledButton
@@ -567,7 +661,7 @@ const UI = () => {
             <Tabs
               value={activeTab}
               onChange={(value) => {
-                if (value === "profile" || value === "security" || value === "danger") {
+                if (isProfileTab(value)) {
                   setActiveTab(value);
                 }
               }}
@@ -579,6 +673,19 @@ const UI = () => {
                 <Tabs.Tab value="profile" leftSection={<IconSparkles size={16} aria-hidden />}>
                   {t("tabProfile")}
                 </Tabs.Tab>
+                {patientAccount ? (
+                  <>
+                    <Tabs.Tab value="testRequests" leftSection={<IconClipboardList size={16} aria-hidden />}>
+                      {t("tabTestRequests")}
+                    </Tabs.Tab>
+                    <Tabs.Tab value="testResults" leftSection={<IconClipboardCheck size={16} aria-hidden />}>
+                      {t("tabTestResults")}
+                    </Tabs.Tab>
+                    <Tabs.Tab value="insuranceApprovals" leftSection={<IconShieldLock size={16} aria-hidden />}>
+                      {t("tabInsuranceApprovals")}
+                    </Tabs.Tab>
+                  </>
+                ) : null}
                 <Tabs.Tab value="security" leftSection={<IconKey size={16} aria-hidden />}>
                   {t("tabSecurity")}
                 </Tabs.Tab>
@@ -676,6 +783,57 @@ const UI = () => {
                   </Paper>
                 </Stack>
               </Tabs.Panel>
+
+              {patientAccount ? (
+                <>
+                  <Tabs.Panel value="testRequests" pt="lg" className={styles.tabPanel}>
+                    <Stack gap="md">
+                      <Group justify="space-between" align="center" gap="md" wrap="wrap">
+                        <Stack gap={2}>
+                          <Text fw={700}>{t("tabTestRequests")}</Text>
+                          <Text size="sm" c="dimmed">
+                            {t("testRequestsDesc")}
+                          </Text>
+                        </Stack>
+                        <Button
+                          component={Link}
+                          href="/order-test-request"
+                          leftSection={<IconClipboardList size={16} />}
+                          variant="light"
+                          color="orange"
+                        >
+                          {t("orderTestRequest")}
+                        </Button>
+                      </Group>
+                      <TestRequestsTable />
+                    </Stack>
+                  </Tabs.Panel>
+
+                  <Tabs.Panel value="testResults" pt="lg" className={styles.tabPanel}>
+                    <Stack gap="md">
+                      <Stack gap={2}>
+                        <Text fw={700}>{t("tabTestResults")}</Text>
+                        <Text size="sm" c="dimmed">
+                          {t("testResultsDesc")}
+                        </Text>
+                      </Stack>
+                      <TestResultsTable />
+                    </Stack>
+                  </Tabs.Panel>
+
+                  <Tabs.Panel value="insuranceApprovals" pt="lg" className={styles.tabPanel}>
+                    <Stack gap="md">
+                      <Stack gap={2}>
+                        <Text fw={700}>{t("tabInsuranceApprovals")}</Text>
+                        <Text size="sm" c="dimmed">
+                          {t("insuranceApprovalsDesc")}
+                        </Text>
+                      </Stack>
+                      <MyInsuranceApprovalRequestsTable />
+                    </Stack>
+                  </Tabs.Panel>
+                </>
+              ) : null}
 
               <Tabs.Panel value="security" pt="lg" className={styles.tabPanel}>
                 <Stack gap="lg">

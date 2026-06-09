@@ -29,6 +29,11 @@ export function PageBanner({ banners }: PageBannerProps) {
   const banner = banners[activeIdx] as BannerItem;
   const href = banner.internalLink || banner.externalLink || "";
   const isExternal = !!banner.externalLink && !banner.internalLink;
+  const target =
+    banner.targetType === "_blank" || banner.targetType === "_self"
+      ? banner.targetType
+      : undefined;
+  const rel = target === "_blank" ? "noreferrer" : undefined;
   const mediaIsVideo = isVideoUrl(banner.mediaUrl);
 
   const ctaLabel = isExternal ? t("ctaExternal") : t("cta");
@@ -41,7 +46,7 @@ export function PageBanner({ banners }: PageBannerProps) {
       loop
       autoPlay
       playsInline
-      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
     />
   ) : (
     <Image
@@ -49,62 +54,37 @@ export function PageBanner({ banners }: PageBannerProps) {
       src={banner.mediaUrl}
       alt={banner.title}
       fill
-      sizes="(max-width: 768px) 100vw, 46vw"
-      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+      sizes="100vw"
+      priority
+      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
     />
   );
 
-  const imagePanel = (
-    <div className="absolute inset-0 overflow-hidden">
-      {media}
-
-      <div
-        className={`pointer-events-none absolute inset-y-0 w-24 bg-linear-to-r from-surface to-transparent ${isRtl ? "right-0 bg-linear-to-l" : "left-0"}`}
-      />
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-linear-to-t from-black/30 to-transparent md:hidden" />
-
-      {banners.length > 1 ? (
-        <div className="absolute bottom-0 inset-x-0 h-[3px] bg-white/15">
-          <div
-            className="clinical-gradient h-full transition-all duration-500 ease-linear"
-            style={{ width: `${((activeIdx + 1) / banners.length) * 100}%` }}
-            aria-hidden
-          />
-        </div>
-      ) : null}
-    </div>
-  );
+  const contentAlign = "items-start text-start";
 
   const textInner: ReactNode = (
-    <div className="relative flex flex-col gap-4">
-      <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/25 bg-primary-container/60 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-on-primary-container">
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" aria-hidden />
+    <div className={`relative flex w-full max-w-xl flex-col gap-4 md:max-w-[min(32rem,48%)] ${contentAlign}`}>
+      <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-white/30 bg-white/15 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur-sm">
+        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" aria-hidden />
         {banner.type || t("fallback")}
       </span>
 
-      <h2
-        className={`font-headline text-2xl font-extrabold leading-[1.15] tracking-tight text-on-surface md:text-3xl lg:text-[2.1rem] ${isRtl ? "text-right" : "text-left"}`}
-      >
+      <h2 className="font-headline text-2xl font-extrabold leading-[1.15] tracking-tight text-white drop-shadow-sm md:text-3xl lg:text-[2.1rem]">
         {banner.title}
       </h2>
 
-      <p
-        className={`text-sm leading-relaxed text-on-surface-variant md:text-base ${isRtl ? "text-right" : "text-left"}`}
-      >
-        {t("learnMore")}
-      </p>
+      <p className="text-sm leading-relaxed text-white/85 md:text-base">{t("learnMore")}</p>
 
       {href ? (
         <span
-          className={`clinical-gradient mt-1 inline-flex w-fit items-center gap-2.5 rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/30 transition-all duration-200 group-hover:shadow-primary/50 group-hover:brightness-105 ${isRtl ? "flex-row-reverse self-end" : "self-start"}`}
+          className={`clinical-gradient mt-1 inline-flex w-fit items-center gap-2.5 rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg shadow-black/25 transition-all duration-200 group-hover:shadow-primary/40 group-hover:brightness-105 ${isRtl ? "flex-row-reverse" : ""}`}
         >
           {ctaLabel}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            className={`h-4 w-4 transition-transform duration-200 shrink-0 ${isRtl ? "-scale-x-100 group-hover:-translate-x-1" : "group-hover:translate-x-1"}`}
+            className={`h-4 w-4 shrink-0 transition-transform duration-200 ${isRtl ? "-scale-x-100 group-hover:-translate-x-1" : "group-hover:translate-x-1"}`}
             aria-hidden="true"
           >
             <path
@@ -118,23 +98,30 @@ export function PageBanner({ banners }: PageBannerProps) {
     </div>
   );
 
-  const textPanelBody = href ? (
+  const contentPanel = href ? (
     isExternal ? (
       <a
         href={href}
-        target="_blank"
-        rel="noreferrer"
-        className="group flex flex-1 flex-col justify-center gap-5 px-7 py-8 no-underline md:px-10 md:py-10"
+        target={target ?? "_blank"}
+        rel={rel ?? "noreferrer"}
+        className={`group relative z-10 flex min-h-[280px] flex-1 flex-col justify-center px-7 py-10 no-underline md:min-h-[320px] md:px-12 md:py-12 ${contentAlign}`}
       >
         {textInner}
       </a>
     ) : (
-      <Link href={href} className="group flex flex-1 flex-col justify-center gap-5 px-7 py-8 no-underline md:px-10 md:py-10">
+      <Link
+        href={href}
+        target={target}
+        rel={rel}
+        className={`group relative z-10 flex min-h-[280px] flex-1 flex-col justify-center px-7 py-10 no-underline md:min-h-[320px] md:px-12 md:py-12 ${contentAlign}`}
+      >
         {textInner}
       </Link>
     )
   ) : (
-    <div className="group flex flex-1 flex-col justify-center gap-5 px-7 py-8 md:px-10 md:py-10">
+    <div
+      className={`group relative z-10 flex min-h-[280px] flex-1 flex-col justify-center px-7 py-10 md:min-h-[320px] md:px-12 md:py-12 ${contentAlign}`}
+    >
       {textInner}
     </div>
   );
@@ -142,7 +129,7 @@ export function PageBanner({ banners }: PageBannerProps) {
   const carouselDots =
     banners.length > 1 ? (
       <div
-        className={`flex items-center gap-2 border-t border-outline-variant/10 bg-surface px-7 py-4 md:px-10 ${isRtl ? "flex-row-reverse" : ""}`}
+        className={`relative z-10 flex items-center gap-2 border-t border-white/15 bg-black/25 px-7 py-4 backdrop-blur-sm md:px-12 ${isRtl ? "flex-row-reverse" : ""}`}
       >
         {banners.map((item, idx) => (
           <button
@@ -155,82 +142,51 @@ export function PageBanner({ banners }: PageBannerProps) {
             aria-label={`${slideLabelPrefix} ${idx + 1}: ${item.title}`}
             aria-current={idx === activeIdx}
             className={[
-              "rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
-              idx === activeIdx ? "h-2 w-7 bg-primary" : "h-2 w-2 bg-outline-variant hover:bg-primary/50",
+              "rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2",
+              idx === activeIdx ? "h-2 w-7 bg-white" : "h-2 w-2 bg-white/40 hover:bg-white/70",
             ].join(" ")}
           />
         ))}
         <span
           dir="ltr"
-          className="ms-auto text-[11px] font-semibold tabular-nums text-on-surface-variant/70"
+          className="ms-auto text-[11px] font-semibold tabular-nums text-white/70"
         >
           {activeIdx + 1}&thinsp;/&thinsp;{banners.length}
         </span>
       </div>
     ) : null;
 
-  const imageColumn = href ? (
-    isExternal ? (
-      <a
-        href={href}
-        target="_blank"
-        rel="noreferrer"
-        tabIndex={-1}
-        aria-hidden
-        className="group relative block h-full min-h-52 overflow-hidden md:min-h-0 no-underline"
-      >
-        {imagePanel}
-      </a>
-    ) : (
-      <Link
-        href={href}
-        tabIndex={-1}
-        aria-hidden
-        className="group relative block h-full min-h-52 overflow-hidden md:min-h-0 no-underline"
-      >
-        {imagePanel}
-      </Link>
-    )
-  ) : (
-    <div className="group relative block h-full min-h-52 overflow-hidden md:min-h-0">
-      {imagePanel}
-    </div>
-  );
-
   return (
-    <section
-      aria-label={t("regionAria")}
-      className="content-container my-6"
-    >
+    <section aria-label={t("regionAria")} className="content-container my-6">
       <div className="relative overflow-hidden rounded-3xl shadow-2xl ring-1 ring-outline-variant/30">
-        <div
-          className="pointer-events-none absolute inset-0 z-0 opacity-[0.04]"
-          aria-hidden
-          style={{
-            backgroundImage: `linear-gradient(var(--on-surface) 1px, transparent 1px),
-                              linear-gradient(90deg, var(--on-surface) 1px, transparent 1px)`,
-            backgroundSize: "48px 48px",
-          }}
-        />
+        <div className="group relative flex min-h-[280px] flex-col md:min-h-[320px]">
+          <div className="absolute inset-0 overflow-hidden" aria-hidden>
+            {media}
 
-        <div
-          className={`relative z-10 grid min-h-[260px] grid-cols-1 md:min-h-[280px] ${isRtl ? "md:grid-cols-[46%_1fr] lg:grid-cols-[44%_1fr]" : "md:grid-cols-[1fr_46%] lg:grid-cols-[1fr_44%]"}`}
-        >
-          <div
-            className={`relative flex min-w-0 flex-col bg-surface ${isRtl ? "md:col-start-2" : ""}`}
-          >
-            <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-black/35" />
+
             <div
-              className={`clinical-gradient pointer-events-none absolute top-0 z-1 h-[3px] w-24 rounded-full ${isRtl ? "right-7 md:right-10" : "left-7 md:left-10"}`}
+              className={
+                isRtl
+                  ? "absolute inset-0 bg-linear-to-l from-black/80 via-black/55 to-black/15"
+                  : "absolute inset-0 bg-linear-to-r from-black/80 via-black/55 to-black/15"
+              }
             />
-            <div className="relative z-1 flex min-h-0 flex-1 flex-col">{textPanelBody}</div>
-            {carouselDots}
+
+            {banners.length > 1 ? (
+              <div className="absolute bottom-0 inset-x-0 z-1 h-[3px] bg-white/15">
+                <div
+                  className="clinical-gradient h-full transition-all duration-500 ease-linear"
+                  style={{ width: `${((activeIdx + 1) / banners.length) * 100}%` }}
+                  aria-hidden
+                />
+              </div>
+            ) : null}
           </div>
 
-          <div
-            className={`min-h-52 md:min-h-0 md:h-full ${isRtl ? "md:col-start-1 md:row-start-1" : ""}`}
-          >
-            {imageColumn}
+          <div className="relative flex min-h-0 flex-1 flex-col">
+            {contentPanel}
+            {carouselDots}
           </div>
         </div>
       </div>

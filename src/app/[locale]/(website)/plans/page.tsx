@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { mapSubscriptionPackagesToPlans } from "@/lib/api/map-subscription-packages-to-plans";
 import { getRequestOrigin } from "@/lib/api/request-origin";
+import { BANNER_PLACEMENT } from "@/lib/banners/locations";
+import { PageBannerOverflowServer, PageBannerSlotServer } from "@/components/layout/page-banner-slots-server";
 
 async function fetchPublicPackages(): Promise<SubscriptionPackageItem[]> {
   const origin = await getRequestOrigin();
@@ -126,6 +128,7 @@ export default async function PlansPage() {
           </div>
         </div>
       </section>
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.PLANS} order={1} />
 
       <section className="pt-16 md:pt-20">
         <div className="content-container">
@@ -233,6 +236,7 @@ export default async function PlansPage() {
           )}
         </div>
       </section>
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.PLANS} order={2} />
 
       <section className="pt-16 md:pt-20">
         <div className="content-container rounded-[2rem] border border-outline-variant/20 bg-linear-to-br from-surface-container-lowest via-surface-container-lowest to-primary/5 p-6 shadow-sm md:p-8">
@@ -283,6 +287,8 @@ export default async function PlansPage() {
           </div>
         </div>
       </section>
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.PLANS} order={3} />
+      <PageBannerOverflowServer placement={BANNER_PLACEMENT.PLANS} />
     </main>
   );
 }

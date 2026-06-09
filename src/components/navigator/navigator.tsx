@@ -17,15 +17,22 @@ const resolveDashboardRoute = (role: string) => {
   return `/dashboard/${normalizedRole}`;
 };
 
+const resolveCallbackUrl = () => {
+  const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");
+  if (!callbackUrl?.startsWith("/")) return null;
+  if (callbackUrl.startsWith("//")) return null;
+  return callbackUrl;
+};
+
 const Navigator = () => {
   const locale = useLocale();
 
   useEventObserver("LoginSucceeded", (payload) => {
     const primaryRole = payload.roles[0] ?? "";
-    const route = primaryRole ? resolveDashboardRoute(primaryRole) : "/dashboard";
+    const route = resolveCallbackUrl() ?? (primaryRole ? resolveDashboardRoute(primaryRole) : "/dashboard");
     console.log("route", route);
     console.log("locale", locale);
-    window.location.href = `/${locale}${route}`;
+    window.location.href = route.startsWith(`/${locale}`) ? route : `/${locale}${route}`;
   });
 
   return <div />;

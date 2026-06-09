@@ -9,10 +9,14 @@ import { State } from "./state";
 import { Utils } from "./utils";
 import { UI } from "./ui";
 
-const Factory = () => {
+type TestRequestsTableProps = {
+  initialActiveModal?: "create" | null;
+};
+
+const Factory = ({ initialActiveModal = null }: TestRequestsTableProps) => {
   return (
     <Init>
-      <State>
+      <State initialActiveModal={initialActiveModal}>
         <Observer>
           <Api>
             <Modals />

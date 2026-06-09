@@ -5,14 +5,21 @@ import { useState } from "react";
 import { useMirrorRegistry } from "./store";
 import { TestRequestItem } from "./types";
 
-const State = ({ children }: { children: React.ReactNode }) => {
+type StateProps = {
+  children: React.ReactNode;
+  initialActiveModal?: "create" | null;
+};
+
+const State = ({ children, initialActiveModal = null }: StateProps) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [searchValue, setSearchValue] = useState("");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortDesc, setSortDesc] = useState(true);
   const [selectedTestRequest, setSelectedTestRequest] = useState<TestRequestItem | null>(null);
-  const [activeModal, setActiveModal] = useState<null | "create" | "edit" | "delete">(null);
+  const [activeModal, setActiveModal] = useState<null | "create" | "edit" | "delete">(
+    initialActiveModal,
+  );
   const [debouncedValue] = useDebouncedValue(searchValue, 500);
 
   useMirrorRegistry("pageNumber", pageNumber);

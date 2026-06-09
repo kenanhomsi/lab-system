@@ -11,6 +11,7 @@
     "dashboard": "Dashboard",
     "blog": "Blog",
     "careers": "Careers",
+    "orderTestRequest": "Order test",
     "joinAsClient": "Join Our Clients"
   },
   "header": {
@@ -916,13 +917,15 @@
         "totalRevenue": "Revenue"
       },
       "recentCols": {
+        "patient": "Patient / lab ID",
         "test": "Test",
         "date": "Date",
+        "time": "Time",
         "status": "Status",
+        "title": "Title",
         "amount": "Amount",
         "requestId": "Request #",
-        "title": "Title",
-        "id": "ID"
+        "action": "Action"
       },
       "flowTitle": "Lab order pipeline",
       "liveMonitoringChip": "LIVE MONITORING",
@@ -988,17 +991,6 @@
       "qaFooterSecondary": "Validated release chain",
       "recentTitle": "Recent lab activity",
       "recentViewAll": "View all records",
-      "recentCols": {
-        "patient": "Patient / lab ID",
-        "test": "Test",
-        "date": "Date",
-        "time": "Time",
-        "status": "Status",
-        "title": "Title",
-        "amount": "Amount",
-        "requestId": "Request #",
-        "action": "Action"
-      },
       "recent": {
         "row1": {
           "patientSub": "Walk-in — internal reference",
@@ -1444,7 +1436,37 @@
         "titleLabel": "Title",
         "typeLabel": "Type",
         "locationLabel": "Location",
-        "displayOrderLabel": "Display Order",
+        "displayOrderLabel": "Page position",
+        "positionPlaceholder": "Select a page position",
+        "positionDescription": "Banners in the same position rotate together every 30 seconds.",
+        "slotLabels": {
+          "afterHero": "After hero",
+          "afterEditorial": "After editorial",
+          "afterServices": "After services",
+          "afterSlideCards": "After slide cards",
+          "afterMedicalAdvice": "After medical advice",
+          "afterQuality": "After quality",
+          "afterDepartments": "After departments",
+          "afterEquipment": "After equipment",
+          "afterBranches": "After branches",
+          "afterPartners": "After partners",
+          "afterClients": "After clients",
+          "afterTimeline": "After timeline",
+          "afterMethodology": "After methodology",
+          "afterLeadership": "After leadership",
+          "afterAccreditation": "After accreditation",
+          "afterCta": "After call to action",
+          "afterContent": "After page content",
+          "afterInfo": "After contact information",
+          "afterForm": "After form",
+          "afterCategories": "After categories",
+          "afterTestsOverview": "After tests overview",
+          "afterIntroduction": "After introduction",
+          "afterVacancies": "After vacancies",
+          "afterApplication": "After application form",
+          "afterPlans": "After plans",
+          "afterVouchers": "After vouchers"
+        },
         "internalLinkLabel": "Internal Link",
         "externalLinkLabel": "External Link",
         "targetTypeLabel": "Target Type",
@@ -1455,6 +1477,10 @@
         "mediaLabel": "Media (Image/Video)",
         "isActiveLabel": "Active",
         "errorMediaRequired": "Media is required for new banners",
+        "errorRequiredFields": "Complete all required banner fields before creating it.",
+        "errorSingleLink": "Use either an internal link or an external link, not both.",
+        "errorDateOrder": "End date must be later than start date.",
+        "errorInvalidMedia": "Media must be an image or video no larger than 50MB.",
         "stepDetails": "Details",
         "stepDetailsDesc": "Title & location",
         "stepLinks": "Links",
@@ -1488,8 +1514,17 @@
           "admin_dashboard": "Admin dashboard",
           "doctor_dashboard": "Doctor dashboard",
           "patient_dashboard": "Patient dashboard",
-          "lab_dashboard": "Lab dashboard"
+          "lab_dashboard": "Lab dashboard",
+          "ad": "Global ad bar",
+          "medical_advice": "Medical advice cards",
+          "equipment": "Equipment cards",
+          "clients": "Client cards",
+          "partners": "Partner cards",
+          "departments": "Department cards",
+          "welcome": "Welcome section"
         },
+        "specializedOrderLabel": "Display order",
+        "specializedOrderDescription": "Controls sorting inside this specialized banner section.",
         "visibilityRulesDescription": "Enter JSON format visibility rules.",
         "mediaPlaceholder": "Choose image or video",
         "mediaDescription": "Max size: 50MB",
@@ -1979,148 +2014,6 @@
       "active": "Active",
       "created": "Created"
     },
-    "testRequests": {
-      "title": "Test Requests",
-      "description": "Manage lab test requests",
-      "createLabel": "Create Test Request",
-      "searchPlaceholder": "Search by medical test id",
-      "sortPlaceholder": "Sort by",
-      "sortCreatedAt": "Created At",
-      "sortRequestDate": "Request Date",
-      "sortTotalAmount": "Total Amount",
-      "resetFiltersTooltip": "Reset filters",
-      "colId": "ID",
-      "colMedicalTest": "Medical Test",
-      "colRequestDate": "Request Date",
-      "colDoctorId": "Doctor",
-      "colLabClientId": "Lab Partner",
-      "colDirectPatientId": "Patient",
-      "colTotalAmount": "Total Amount",
-      "tableStatus": "Status",
-      "colNotes": "Notes",
-      "colMetadata": "Metadata",
-      "colCreatedAt": "Created At",
-      "createModalTitle": "Create Test Request",
-      "createModalSubtitle": "Add a new lab test request with billing details.",
-      "editModalTitle": "Edit Test Request",
-      "editModalSubtitle": "Update request information and billing details.",
-      "step1Label": "Step 1",
-      "step2Label": "Step 2",
-      "step1RequestDetails": "Request details",
-      "step2NotesMeta": "Notes and metadata",
-      "requestDetailsTitle": "Request Details",
-      "additionalInfoTitle": "Additional Information",
-      "requiredFieldsHint": "Required fields are marked with *",
-      "alertNotSignedInTitle": "Not signed in",
-      "alertNotSignedInCreate": "Sign in to create a request. Your account is loaded from the session store after login.",
-      "alertNotSignedInEdit": "Sign in to update a request. Your account is loaded from the session store after login.",
-      "alertSessionTitle": "Session user not synced",
-      "alertSessionBody": "Reload the page so your account info from login can attach to this form.",
-      "alertMedicalTestsTitle": "Could not load medical tests",
-      "alertMedicalTestsBody": "Check your session and try again. If the problem persists, the list API may have returned an unexpected shape.",
-      "noMedicalTestsCreate": "No medical tests are available yet. Add tests under Medical tests before creating a request.",
-      "noMedicalTestsEdit": "No medical tests are available yet. Add tests under Medical tests before editing requests.",
-      "fieldMedicalTest": "Medical test",
-      "fieldMedicalTestDesc": "Select the medical test reference.",
-      "placeholderLoadingTests": "Loading tests…",
-      "placeholderChooseTest": "Choose medical test",
-      "fieldRequestDate": "Request Date",
-      "fieldRequestDateDescCreate": "Date when this request is created.",
-      "fieldRequestDateDescEdit": "Date associated with this request.",
-      "datePlaceholder": "YYYY-MM-DD",
-      "fieldTotalAmount": "Total Amount",
-      "fieldTotalAmountDescCreate": "Set automatically from the selected medical test price. Admins can change status and amounts when editing the request.",
-      "fieldTotalAmountDescEdit": "Billing amount for this request.",
-      "fieldExternalPatient": "External patient",
-      "fieldExternalPatientDesc": "Linked external patient profile.",
-      "placeholderLoadingPatients": "Loading patients…",
-      "placeholderExternalPatient": "Choose external patient (optional)",
-      "fieldDoctorId": "Doctor ID",
-      "fieldLabClientId": "Lab Client ID",
-      "fieldDirectPatientId": "Direct Patient ID",
-      "placeholderDoctorId": "e.g. DR-001",
-      "placeholderLabClientId": "e.g. LAB-458",
-      "placeholderDirectPatientId": "e.g. PAT-983",
-      "fieldStatus": "Status",
-      "fieldStatusDesc": "Current workflow state of the request.",
-      "statusPending": "Pending",
-      "statusInProgress": "In Progress",
-      "statusCompleted": "Completed",
-      "statusCancelled": "Cancelled",
-      "fieldNotes": "Notes",
-      "notesPlaceholder": "Add any clinical or billing notes...",
-      "fieldMetadata": "Sample Drop-off Location",
-      "metadataPlaceholder": "Choose drop-off location",
-      "metadataDesc": "Specify where the sample will be collected.",
-      "dropOffHome": "Home Collection",
-      "dropOffLab": "Lab Visit"
-    },
-    "testResults": {
-      "title": "Test Results",
-      "description": "Manage lab test results",
-      "createLabel": "Create Test Result",
-      "searchPlaceholder": "Search by test request id",
-      "sortPlaceholder": "Sort by",
-      "sortCreatedAt": "Created At",
-      "sortResultDate": "Result Date",
-      "sortTestRequestId": "Test Request ID",
-      "resetFiltersTooltip": "Reset filters",
-      "colId": "ID",
-      "colTestRequestId": "Test Request ID",
-      "colRequestCreatedBy": "Request created by",
-      "colResultDate": "Result Date",
-      "colResultData": "Result Data",
-      "colPdfUrl": "PDF URL",
-      "tableStatus": "Status",
-      "colCreatedAt": "Created At",
-      "rowDateContextResult": "Report time",
-      "rowDateContextCreated": "Record created",
-      "resultDataMoreCount": "+{count} more",
-      "resultDataArrayPreview": "Array ({count} items)",
-      "resultDataStructuredPreview": "Structured value",
-      "resultDataRawPreview": "Plain text",
-      "createModalTitle": "Create test result",
-      "createModalSubtitle": "Link a lab result to an existing request. Values follow the linked test schema.",
-      "requiredFieldsHint": "Required fields are marked with *",
-      "sectionRequestReport": "Request & report",
-      "sectionResultValues": "Result values",
-      "schemaFrom": "Schema from: {name}",
-      "testsInRequest": "{count} tests in this request",
-      "testSectionTitle": "Test: {name}",
-      "testRequestIdLabel": "Request #{id}",
-      "loadingRequestDetail": "Loading request details and tests…",
-      "createMultipleLabel": "Create {count} results",
-      "selectRequestFirst": "Select a test request to load parameter fields.",
-      "fieldTestRequest": "Test request",
-      "fieldTestRequestDesc": "Patient and test appear in each option; the stored id is the request record.",
-      "placeholderLoadingRequests": "Loading requests…",
-      "placeholderChooseRequest": "Choose test request",
-      "fieldResultDateTime": "Result date & time",
-      "fieldResultDateTimeDesc": "Captured as ISO 8601 when you submit.",
-      "fieldPdfUrl": "PDF URL",
-      "fieldPdfUrlDesc": "Optional link to generated report PDF.",
-      "pdfPlaceholder": "https://...",
-      "fieldStatus": "Status",
-      "statusPending": "Pending",
-      "statusInProgress": "In progress",
-      "statusCompleted": "Completed",
-      "statusCancelled": "Cancelled",
-      "statusRejected": "Rejected",
-      "alertLoadRequestsTitle": "Could not load test requests",
-      "alertLoadRequestsBody": "Check your session and connection, then reopen this dialog.",
-      "toastMissingRequestTitle": "Missing request",
-      "toastMissingRequestBody": "Choose a test request.",
-      "toastInvalidSelectionTitle": "Invalid selection",
-      "toastInvalidSelectionBody": "The selected row has no linked medical test.",
-      "toastSchemaUnavailableTitle": "Schema unavailable",
-      "toastSchemaUnavailableBody": "Load the linked medical test before saving.",
-      "toastCheckFieldsTitle": "Check result fields",
-      "toastCreateFailedTitle": "Create failed",
-      "toastGenericError": "Something went wrong while creating.",
-      "deleteModalTitle": "Delete test result",
-      "deleteConfirmMessage": "Are you sure you want to delete this test result (test request {id})?",
-      "deleteConfirmMessageNoId": "Are you sure you want to delete this test result?"
-    },
     "store": {
       "title": "Store Management",
       "description": "Manage store settings, catalog, promotions, and orders.",
@@ -2223,15 +2116,6 @@
       "healthNextReminder": "Next reminder",
       "recentResultsTitle": "Recent lab results",
       "recentViewAll": "Open my results",
-      "recentCols": {
-        "test": "Test",
-        "date": "Date",
-        "status": "Status",
-        "amount": "Amount",
-        "requestId": "Request #",
-        "title": "Title",
-        "id": "ID"
-      },
       "resultStatus": {
         "ready": "Ready",
         "processing": "Processing",
@@ -2284,7 +2168,7 @@
       },
       "liveChip": "Live data",
       "emptyCharts": "No data for this period",
-      "chartSubtitle": "Last 6 months",
+      "chartSubtitle": "Completed visits per weekday (mock)",
       "distributionSubtitle": "Breakdown by status, category, and network",
       "recentSubtitle": "Latest requests, results, and complaints",
       "recentEmpty": "No records in this section yet",
@@ -2319,13 +2203,9 @@
         "totalRevenue": "Revenue"
       },
       "recentCols": {
-        "test": "Test",
-        "date": "Date",
-        "status": "Status",
-        "amount": "Amount",
-        "requestId": "Request #",
-        "title": "Title",
-        "id": "ID"
+        "patient": "Patient",
+        "lastVisit": "Last visit",
+        "notes": "Clinical notes"
       },
       "stats": {
         "todayPatients": "Patients scheduled today",
@@ -2368,7 +2248,6 @@
         }
       },
       "chartTitle": "Weekly patient volume",
-      "chartSubtitle": "Completed visits per weekday (mock)",
       "chartDays": {
         "mon": "Mon",
         "tue": "Tue",
@@ -2378,11 +2257,6 @@
       },
       "recentTitle": "Recently seen",
       "recentViewAll": "Patient list",
-      "recentCols": {
-        "patient": "Patient",
-        "lastVisit": "Last visit",
-        "notes": "Clinical notes"
-      },
       "recentPatients": {
         "p1": {
           "notes": "Hypertension — medication review"
@@ -2562,8 +2436,14 @@
       "lockoutDisabled": "Disabled",
       "lockoutActive": "Enabled",
       "tabProfile": "Profile",
+      "tabTestRequests": "Test requests",
+      "tabTestResults": "Test results",
+      "tabInsuranceApprovals": "Insurance approvals",
       "tabSecurity": "Security",
       "tabDanger": "Danger zone",
+      "testRequestsDesc": "Order and follow up on your lab test requests from the website.",
+      "testResultsDesc": "Review your released test results without entering a dashboard.",
+      "insuranceApprovalsDesc": "Submit and track your insurance approval requests.",
       "profileDetails": "Profile details",
       "profileDetailsDesc": "Keep your name and contact details up to date.",
       "fullNamePlaceholder": "Your full name",
@@ -2593,10 +2473,11 @@
       "noSubscriptionsHint": "Browse plans and pick what fits you.",
       "manageSubscription": "Manage subscription & plans",
       "subscriptionsPatientOnly": "Subscription management is available for patient accounts on the subscriptions page.",
-      "changePassword": "Change password",
       "changePasswordHint": "Use your email or mobile to receive a reset link.",
       "signOut": "Sign out",
       "backToDashboard": "Back to dashboard",
+      "backToWebsite": "Back to website",
+      "orderTestRequest": "Order a test request",
       "goToSubscriptions": "Subscriptions",
       "goToResults": "My results",
       "goToBook": "Contact us"
@@ -2869,6 +2750,154 @@
       "subtitle": "Many ways to reach us — we welcome questions and want to hear about your experience in every way.",
       "book": "Book an appointment",
       "about": "About us"
+    },
+    "detailedCategories": {
+      "sectionTitle": "Service categories",
+      "sectionDesc": "End-to-end services that meet the needs of everyone in the healthcare ecosystem.",
+      "patient": {
+        "title": "Patient Services",
+        "desc": "Our patient services are distinguished by considering the patient's condition and need for care, attention, and speed in providing medical testing services with precision and perfection...",
+        "labTitle": "Laboratory Services:",
+        "labItems": [
+          "Performing all routine and specific medical laboratory tests.",
+          "Interpreting test results for patients and explaining their symbols.",
+          "Providing medical lab information and test-specific advice.",
+          "Home blood draws for patients and workplace draws for company employees.",
+          "Receiving government referral patients and insurance company patients.",
+          "Providing various periodic monitoring programs for diabetes, pregnancy, and more.",
+          "Special subscriptions for patients requiring periodic tests."
+        ],
+        "elecTitle": "Electronic Services:",
+        "elecDesc": "We offer our patients a wide range of electronic services via our website:",
+        "elecItems": [
+          "Booking appointments for home or workplace blood draws.",
+          "A special page on our website for each patient to access results.",
+          "Viewing and printing previous test results at any time.",
+          "Knowing the conditions, information, and prices of tests.",
+          "Registering a test request by the doctor or patient and knowing the cost.",
+          "A directory to search for doctors, medical centers, and hospitals.",
+          "An electronic blog containing the latest in general and laboratory medicine."
+        ]
+      },
+      "doctor": {
+        "title": "Doctor Services",
+        "desc1": "The comfort of our doctors is a top priority at Al-Mutawali Medical Laboratory...",
+        "desc2": "With years of experience in medical testing and laboratory services, we have successfully won the satisfaction of both patients and doctors through three important pillars:",
+        "axes": [
+          "Complete professionalism and commitment to quality standards.",
+          "Attention to the accuracy and speed of performing tests.",
+          "Attention to the comfort and service of both the patient and the doctor."
+        ],
+        "whyTitle": "Why Al-Mutawali Medical Laboratory?",
+        "whyItems": [
+          {
+            "title": "Accuracy in laboratory tests:",
+            "desc": "Al-Mutawali Medical Laboratory has succeeded in combining the latest scientific techniques..."
+          },
+          {
+            "title": "Best doctor service:",
+            "desc": "We are distinguished by the permanent presence of the doctor/lab manager to serve doctors..."
+          },
+          {
+            "title": "Keeping patients' medical records:",
+            "desc": "Patients' test results are available on the treating doctor's account on our website..."
+          },
+          {
+            "title": "Online test ordering:",
+            "desc": "A new and modern service we offer to fellow doctors in Syria and the Arab world..."
+          },
+          {
+            "title": "Special online account:",
+            "desc": "Through our website, every doctor has a special page for themselves and their patients..."
+          },
+          {
+            "title": "Large list of tests:",
+            "desc": "Al-Mutawali Medical Laboratory has a large list of medical tests available..."
+          },
+          {
+            "title": "Commitment to quality standards:",
+            "desc": "We strive to adhere to global quality standards according to (ISO15189)..."
+          },
+          {
+            "title": "Call Center:",
+            "desc": "Any inquiry from doctors is answered through our number 0991828342"
+          }
+        ]
+      },
+      "lab": {
+        "title": "Laboratory Services",
+        "desc": "We are proud of the trust of the laboratories that deal with us across several governorates...",
+        "servicesTitle": "Services provided to referring laboratories:",
+        "servicesItems": [
+          "Performing all qualitative analyses and tests.",
+          "Collecting samples from referring laboratories daily.",
+          "Answering inquiries related to sample collection conditions.",
+          "Possibility of making a special system for sample collection and result delivery.",
+          "90% of results are delivered on the same day.",
+          "Performing some tests on an emergency basis if needed.",
+          "Providing the referring laboratory with a booklet containing test names, prices, and conditions."
+        ],
+        "elecTitle": "Electronic Services:",
+        "elecItems": [
+          {
+            "title": "Special webpage:",
+            "desc": "A new and unique service we offer to dealing laboratories through a special account..."
+          },
+          {
+            "title": "Registering test requests online:",
+            "desc": "The official in the referring lab can register samples and requested tests online..."
+          },
+          {
+            "title": "Getting sample results online:",
+            "desc": "We provide a new service where getting results of referred tests is easy..."
+          },
+          {
+            "title": "Getting monthly account statements online:",
+            "desc": "One of our new electronic services is the monthly account statement..."
+          },
+          {
+            "title": "Reviewing previous results:",
+            "desc": "All results of referred samples are kept on our website for a long time..."
+          },
+          {
+            "title": "Information about tests:",
+            "desc": "Through our website, the referring lab can get comprehensive information about medical tests..."
+          }
+        ]
+      },
+      "company": {
+        "title": "Company Services",
+        "desc1": "At Al-Mutawali Medical Laboratory, we always strive to win the trust of more clients...",
+        "desc2": "Our focus is to win the trust of companies, institutions, and commercial groups operating in Syria...",
+        "blocks": [
+          {
+            "title": "Call and we arrive:",
+            "desc": "For your convenience, all laboratory services reach you at your workplace..."
+          },
+          {
+            "title": "Custom designed services:",
+            "desc": "Based on the specific needs of your organization, we can design customized programs..."
+          },
+          {
+            "title": "Health programs:",
+            "desc": "We provide our clients with a set of medical test programs suitable for every age..."
+          },
+          {
+            "title": "Special discounts:",
+            "desc": "We offer special discounts for employees and their families on all tests..."
+          }
+        ],
+        "elecTitle": "Electronic Services:",
+        "elecDesc": "We offer our valued clients a wide range of electronic services via our website:",
+        "elecItems": [
+          "Booking appointments for home or workplace blood draws.",
+          "Getting patient test results and printing them or sending them to the doctor.",
+          "Viewing and printing previous test results for the patient at any time.",
+          "Knowing the conditions for conducting tests, information about them, and their prices.",
+          "Registering a test request by the doctor or patient and knowing the cost.",
+          "Monthly account statement for the company, and tests conducted by its employees."
+        ]
+      }
     }
   },
   "contactPage": {
@@ -2975,7 +3004,11 @@
     "title": "Career Opportunities",
     "subtitle": "Join the Al Mutawali Medical Laboratory team",
     "availablePositions": "Available Positions",
-    "applyNow": "Apply Now",
+    "positionsSubtitle": "Explore roles that match your skills and apply in a few minutes.",
+    "positionsCount": "{count, plural, one {# open role} other {# open roles}}",
+    "applyNow": "Apply for this role",
+    "readMore": "Read more",
+    "readLess": "Show less",
     "fullName": "Full Name",
     "city": "City",
     "mobile": "Mobile",
@@ -2986,16 +3019,18 @@
     "skills": "Skills",
     "additionalCertifications": "Additional Certifications",
     "position": "Position Applied For",
-    "uploadCV": "Upload CV (PDF only)",
+    "uploadCV": "Choose PDF file",
     "submit": "Submit Application",
     "submitting": "Submitting...",
     "successMessage": "Your application has been received. We will contact you soon. Thank you for your interest.",
-    "noVacancies": "No vacancies available at this time",
+    "noVacancies": "We are not hiring for specific roles right now, but you can still send your CV for future opportunities.",
+    "noVacanciesTitle": "No open roles at the moment",
+    "noVacanciesHint": "Check back soon or submit a general application when positions are posted.",
     "badge": "Job Openings",
     "description": "Find your career opportunity and join our distinguished team",
     "openPositions": "Open Positions",
     "applyTitle": "Submit Application",
-    "applyDescription": "Complete the form below and attach your CV",
+    "applyDescription": "Complete the form below and attach your CV. Fields marked in each section help us review your profile faster.",
     "successTitle": "Application Received",
     "fullNamePlaceholder": "Enter your full name",
     "cityPlaceholder": "Enter your city",
@@ -3008,7 +3043,43 @@
     "additionalCertificationsPlaceholder": "Any additional certifications...",
     "selectPosition": "Select position",
     "cv": "CV / Resume",
-    "cvHint": "PDF only — max 5 MB"
+    "cvHint": "PDF only — max 5 MB",
+    "hero": {
+      "badge": "Careers",
+      "titleLine1": "Build your career at",
+      "titleAccent": "Al Mutawali Lab",
+      "description": "Join a certified medical laboratory team where quality, learning, and patient care come first.",
+      "primaryCta": "View open roles",
+      "secondaryCta": "Apply directly",
+      "highlight1": "ISO 9001:2015 certified workplace",
+      "highlight2": "Collaborative clinical team",
+      "highlight3": "Room to grow your expertise"
+    },
+    "benefits": {
+      "eyebrow": "Why join us",
+      "title": "More than a job",
+      "description": "We invest in our people with standards, training, and a culture built around accurate diagnostics.",
+      "item1Title": "Quality standards",
+      "item1Body": "Work in Syria’s first ISO 9001:2015 certified medical laboratory environment.",
+      "item2Title": "Continuous learning",
+      "item2Body": "Develop lab and clinical skills with experienced colleagues and modern equipment.",
+      "item3Title": "Supportive team",
+      "item3Body": "Collaborate across departments in a respectful, patient-focused culture.",
+      "item4Title": "Safe workplace",
+      "item4Body": "Follow clear safety and quality procedures designed for laboratory professionals."
+    },
+    "form": {
+      "eyebrow": "Application form",
+      "check1": "Share accurate contact details so we can reach you quickly.",
+      "check2": "Describe your lab or clinical experience clearly.",
+      "check3": "Attach a PDF CV under 5 MB for faster review.",
+      "sectionPersonal": "Personal information",
+      "sectionProfessional": "Professional background",
+      "sectionDocuments": "Documents",
+      "errorMessage": "We could not submit your application. Please check your connection and try again.",
+      "submitAnother": "Submit another application",
+      "noPositionsHint": "Applications open when positions are listed above."
+    }
   },
   "joinClient": {
     "title": "Join Our Clients",
@@ -3302,7 +3373,7 @@
     "admin": {
       "badge": "Administration",
       "title": "Store Management",
-      "description": "Manage products, categories, promotions, and orders.",
+      "description": "Description",
       "settings": "Settings",
       "categories": "Categories",
       "products": "Products",
@@ -3313,7 +3384,6 @@
       "settingsLabel": "Store Settings",
       "nameAr": "Name (Arabic)",
       "nameEn": "Name (English)",
-      "description": "Description",
       "imageUrl": "Image URL",
       "active": "Active",
       "price": "Price",
@@ -3544,14 +3614,62 @@
     "address": "Address",
     "addressPlaceholder": "Enter address",
     "additionalInfo": "Additional Information",
-    "additionalInfoPlaceholder": "Any additional information you'd like to share",
+    "additionalInfoPlaceholder": "Services you offer, capacity, or partnership goals…",
     "submit": "Submit Application",
     "submitting": "Submitting...",
     "successTitle": "Application Received",
     "successMessage": "Your application has been received. Thank you for your trust in Al Mutawali Lab.",
     "errorGeneric": "Something went wrong. Please try again.",
-    "crossLinkPrefix": "Are you a laboratory looking to partner with us?",
-    "crossLinkContractService": "Request a contractual service instead"
+    "crossLinkPrefix": "Need a contractual service for individuals or organizations instead?",
+    "crossLinkContractService": "Request a contractual service",
+    "hero": {
+      "badge": "Lab Partnership",
+      "titleLine1": "Partner with",
+      "titleAccent": "Al Mutawali Lab",
+      "description": "Laboratories across Syria trust us for quality diagnostics, reliable support, and long-term collaboration.",
+      "primaryCta": "Start your application",
+      "secondaryCta": "How it works",
+      "highlight1": "ISO-certified reference laboratory",
+      "highlight2": "Full diagnostic support for partner labs",
+      "highlight3": "Transparent, professional onboarding"
+    },
+    "benefits": {
+      "eyebrow": "Partnership value",
+      "title": "Why labs choose us",
+      "description": "We help partner laboratories deliver accurate results with standards, logistics, and dedicated support.",
+      "item1Title": "Quality you can trust",
+      "item1Body": "Work with Syria’s first ISO 9001:2015 certified medical laboratory network.",
+      "item2Title": "Operational support",
+      "item2Body": "Access referral workflows, logistics coordination, and clinical guidance when needed.",
+      "item3Title": "Fair partnership terms",
+      "item3Body": "Clear commercial terms designed for sustainable long-term collaboration.",
+      "item4Title": "Dedicated follow-up",
+      "item4Body": "Our team reviews applications promptly and stays in touch through onboarding."
+    },
+    "steps": {
+      "eyebrow": "Process",
+      "title": "How partnership works",
+      "description": "Three simple steps from application to becoming a partner client.",
+      "step1Title": "Submit your details",
+      "step1Body": "Tell us about your lab, location, and the services you provide.",
+      "step2Title": "We review your request",
+      "step2Body": "Our team evaluates fit, capacity, and alignment with our quality standards.",
+      "step3Title": "Start collaborating",
+      "step3Body": "Once approved, we onboard your lab and coordinate ongoing partnership services."
+    },
+    "form": {
+      "eyebrow": "Partnership application",
+      "title": "Apply to join",
+      "description": "Complete the form and our team will contact you to discuss next steps.",
+      "check1": "Provide accurate lab and manager information.",
+      "check2": "Use a reachable phone number and email for follow-up.",
+      "check3": "Share capacity or services in additional notes to speed up review.",
+      "sectionLab": "Lab details",
+      "sectionContact": "Contact information",
+      "sectionAdditional": "Additional notes",
+      "additionalHint": "Optional — helps us understand your lab better.",
+      "submitAnother": "Submit another application"
+    }
   },
   "contractServiceRequest": {
     "badge": "Contractual Service",
@@ -3578,14 +3696,62 @@
     "durationSixMonths": "6 months",
     "durationOneYear": "1 year",
     "additionalInfo": "Additional Information",
-    "additionalInfoPlaceholder": "Any additional information you'd like to share",
+    "additionalInfoPlaceholder": "Scope of services, preferred start date, or special requirements…",
     "submit": "Submit Request",
     "submitting": "Submitting...",
     "successTitle": "Request Received",
     "successMessage": "Your request has been received. Thank you for your trust in Al Mutawali Lab.",
     "errorGeneric": "Something went wrong. Please try again.",
-    "crossLinkPrefix": "Are you a laboratory looking to join as a client?",
-    "crossLinkJoinAsClient": "Submit a lab partnership application instead"
+    "crossLinkPrefix": "Are you a laboratory seeking a partnership instead?",
+    "crossLinkJoinAsClient": "Submit a lab partnership application",
+    "hero": {
+      "badge": "Contractual Service",
+      "titleLine1": "Tailored lab services for",
+      "titleAccent": "your group",
+      "description": "Companies, institutions, and individuals can request ongoing diagnostic services with clear terms and dedicated support.",
+      "primaryCta": "Submit your request",
+      "secondaryCta": "How it works",
+      "highlight1": "Plans for teams and subscriber groups",
+      "highlight2": "Flexible contract durations",
+      "highlight3": "ISO-certified quality standards"
+    },
+    "benefits": {
+      "eyebrow": "Contract value",
+      "title": "Why choose a contract",
+      "description": "Structured agreements help organizations manage costs, coverage, and reliable lab access.",
+      "item1Title": "Group coverage",
+      "item1Body": "Serve employees, members, or patients under one coordinated agreement.",
+      "item2Title": "Predictable terms",
+      "item2Body": "Choose duration and scope that match your organization’s needs.",
+      "item3Title": "Dedicated support",
+      "item3Body": "Our team follows up on requests and coordinates service delivery.",
+      "item4Title": "Trusted quality",
+      "item4Body": "Benefit from Syria’s first ISO 9001:2015 certified medical laboratory."
+    },
+    "steps": {
+      "eyebrow": "Process",
+      "title": "From request to agreement",
+      "description": "A straightforward path to starting contractual diagnostic services.",
+      "step1Title": "Tell us your needs",
+      "step1Body": "Select contract type, duration, and share organization details.",
+      "step2Title": "We review the request",
+      "step2Body": "Our team evaluates scope, subscriber count, and service fit.",
+      "step3Title": "Finalize & begin",
+      "step3Body": "After approval we align terms and start coordinated services."
+    },
+    "form": {
+      "eyebrow": "Service request",
+      "title": "Request a contract",
+      "description": "Fill in the details below and we will contact you to discuss terms and next steps.",
+      "check1": "Choose individual or organization contract type.",
+      "check2": "Provide accurate contact details and expected subscriber count.",
+      "check3": "Add notes about scope or timing to speed up our review.",
+      "sectionContract": "Contract details",
+      "sectionOrganization": "Organization & contact",
+      "sectionAdditional": "Additional notes",
+      "additionalHint": "Optional — helps us prepare a tailored proposal.",
+      "submitAnother": "Submit another request"
+    }
   },
   "complaint": {
     "badge": "Complaints & Feedback",
@@ -3620,6 +3786,13 @@
     "bookNow": "Book Now",
     "newCalculation": "New Calculation",
     "noTests": "No tests selected yet"
+  },
+  "patientWebsite": {
+    "orderTestRequest": {
+      "eyebrow": "Patient services",
+      "title": "Order a lab test request",
+      "description": "Create a new request from your patient account and keep tracking the request from your website profile."
+    }
   },
   "errors": {
     "fetchErrorTitle": "Failed to load data",

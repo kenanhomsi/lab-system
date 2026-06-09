@@ -4,6 +4,7 @@ import { Badge, Text } from "@mantine/core";
 import { DataTableColumn } from "./types";
 import { BannerItem } from "../types";
 import { ActionsRender } from "./columns-rendering";
+import { getBannerSlots } from "@/lib/banners/slots";
 
 type Translate = (key: string) => string;
 
@@ -32,7 +33,17 @@ const getBannerColumns = (t: Translate): DataTableColumn<BannerItem>[] => {
             accessor: "location",
             title: t("columnLocation"),
             width: "15%",
-            render: (row) => <Text size="sm">{row.location}</Text>,
+            render: (row) => {
+                const slot = getBannerSlots(row.location).find(
+                    (item) => item.order === row.displayOrder,
+                );
+                return (
+                    <Text size="sm">
+                        {t(`locationOptions.${row.location}`)}
+                        {slot ? ` · ${row.displayOrder} - ${t(`slotLabels.${slot.labelKey}`)}` : ""}
+                    </Text>
+                );
+            },
         },
         {
             accessor: "isActive",

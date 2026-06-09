@@ -31,6 +31,10 @@ import {
 import { useTranslations } from "next-intl";
 import { ReactNode, useCallback, useMemo, useState } from "react";
 import {
+    getBannerSlots,
+    isBannerSlotLocation,
+} from "@/lib/banners/slots";
+import {
     BANNER_PLACEMENT,
     BANNER_PLACEMENT_VALUES,
     type BannerPlacement,
@@ -87,8 +91,16 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
             })),
         [t],
     );
+    const positionSelectData = useMemo(
+        () =>
+            getBannerSlots(location).map(({ order, labelKey }) => ({
+                value: String(order),
+                label: `${order} - ${t(`slotLabels.${labelKey}`)}`,
+            })),
+        [location, t],
+    );
     const [isActive, setIsActive] = useState(true);
-    const [displayOrder, setDisplayOrder] = useState("0");
+    const [displayOrder, setDisplayOrder] = useState("1");
     const [internalLink, setInternalLink] = useState("");
     const [externalLink, setExternalLink] = useState("");
     const [targetType, setTargetType] = useState("");
@@ -104,7 +116,7 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
         setType("");
         setLocation(BANNER_PLACEMENT.HOME_PAGE);
         setIsActive(true);
-        setDisplayOrder("0");
+        setDisplayOrder("1");
         setInternalLink("");
         setExternalLink("");
         setTargetType("");
@@ -116,8 +128,30 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
     }, [onClose]);
 
     const handleSubmit = async () => {
-        if (!mediaFile) {
-            alert(t("errorMediaRequired"));
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (
+            !title.trim() ||
+            !type.trim() ||
+            !targetType.trim() ||
+            !displayOrder ||
+            !startDate ||
+            !endDate ||
+            !mediaFile
+        ) {
+            alert(t("errorRequiredFields"));
+            return;
+        }
+        if (internalLink.trim() && externalLink.trim()) {
+            alert(t("errorSingleLink"));
+            return;
+        }
+        if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
+            alert(t("errorDateOrder"));
+            return;
+        }
+        if (!mediaFile.type.match(/^(image|video)\//) || mediaFile.size > 50 * 1024 * 1024) {
+            alert(t("errorInvalidMedia"));
             return;
         }
 
@@ -213,26 +247,43 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
                             placeholder={t("typePlaceholder")}
                             value={type}
                             onChange={(e) => setType(e.currentTarget.value)}
+                            required
                         />
                         <Select
                             label={t("locationLabel")}
                             placeholder={t("locationPlaceholder")}
                             data={locationSelectData}
                             value={location}
-                            onChange={(value) =>
-                                setLocation((value as BannerPlacement) ?? BANNER_PLACEMENT.HOME_PAGE)
-                            }
+                            onChange={(value) => {
+                                const next = (value as BannerPlacement) ?? BANNER_PLACEMENT.HOME_PAGE;
+                                setLocation(next);
+                                setDisplayOrder(String(getBannerSlots(next)[0]?.order ?? 1));
+                            }}
                             searchable
                             required
                             allowDeselect={false}
                         />
-                        <NumberInput
-                            label={t("displayOrderLabel")}
-                            placeholder="0"
-                            min={0}
-                            value={Number(displayOrder) || 0}
-                            onChange={(value) => setDisplayOrder(String(value ?? 0))}
-                        />
+                        {isBannerSlotLocation(location) ? (
+                            <Select
+                                label={t("displayOrderLabel")}
+                                placeholder={t("positionPlaceholder")}
+                                data={positionSelectData}
+                                value={displayOrder}
+                                onChange={(value) => setDisplayOrder(value ?? "")}
+                                description={t("positionDescription")}
+                                required
+                                allowDeselect={false}
+                            />
+                        ) : (
+                            <NumberInput
+                                label={t("specializedOrderLabel")}
+                                min={1}
+                                value={Number(displayOrder) || 1}
+                                onChange={(value) => setDisplayOrder(String(value ?? 1))}
+                                description={t("specializedOrderDescription")}
+                                required
+                            />
+                        )}
                         </SimpleGrid>
                     </Stack>
                 </Paper>
@@ -264,6 +315,7 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
                             placeholder="e.g. _blank, _self"
                             value={targetType}
                             onChange={(e) => setTargetType(e.currentTarget.value)}
+                            required
                         />
                         </SimpleGrid>
                     </Stack>
@@ -286,6 +338,7 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
                                 onChange={(value) => setStartDate(value ?? "")}
                                 valueFormat="MM/DD/YYYY hh:mm A"
                                 clearable
+                                required
                             />
                             <DateTimePicker
                                 label={t("endDateLabel")}
@@ -294,6 +347,7 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
                                 onChange={(value) => setEndDate(value ?? "")}
                                 valueFormat="MM/DD/YYYY hh:mm A"
                                 clearable
+                                required
                             />
                             <Group align="flex-end" pb={4}>
                                 <Checkbox
@@ -363,7 +417,17 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
                             <Button
                                 onClick={handleSubmit}
                                 loading={isSubmitting}
-                                disabled={isSubmitting || !title || !location || !mediaFile}
+                                disabled={
+                                    isSubmitting ||
+                                    !title.trim() ||
+                                    !type.trim() ||
+                                    !targetType.trim() ||
+                                    !location ||
+                                    !displayOrder ||
+                                    !startDate ||
+                                    !endDate ||
+                                    !mediaFile
+                                }
                                 radius="md"
                             >
                                 {tc("create")}

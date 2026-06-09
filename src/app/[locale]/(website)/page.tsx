@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
-import { PageBannerServer } from "@/components/layout/page-banner-server";
+import {
+  PageBannerOverflowServer,
+  PageBannerSlotServer,
+} from "@/components/layout/page-banner-slots-server";
 import { BANNER_PLACEMENT } from "@/lib/banners/locations";
 import { ServicesGrid } from "./ui/landing/services-grid";
 import { BannerCardSliderSection } from "./ui/landing/banner-card-slider-section";
@@ -44,17 +47,14 @@ export default function LandingPage() {
   return (
     <main>
       <HeroSection />
-
-      <Suspense fallback={null}>
-        <PageBannerServer
-          placement={BANNER_PLACEMENT.HOME_PAGE}
-          fallbackToHomepage={false}
-        />
-      </Suspense>
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={1} />
 
       <EditorialSection />
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={2} />
       <ServicesGrid />
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={3} />
       <SlideCardsSection />
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={4} />
 
       <Suspense fallback={null}>
         <BannerCardSliderSection
@@ -67,9 +67,12 @@ export default function LandingPage() {
           surface="muted"
         />
       </Suspense>
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={5} />
 
       <QualitySection />
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={6} />
       <DepartmentsSection />
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={7} />
 
       <Suspense fallback={null}>
         <BannerCardSliderSection
@@ -81,8 +84,10 @@ export default function LandingPage() {
           viewAllHref="/services"
         />
       </Suspense>
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={8} />
 
       <BranchesMapSection />
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={9} />
       <PartnersStrip />
 
       <Suspense fallback={null}>
@@ -97,6 +102,7 @@ export default function LandingPage() {
           surface="muted"
         />
       </Suspense>
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={10} />
 
       <Suspense fallback={null}>
         <BannerCardSliderSection
@@ -109,6 +115,8 @@ export default function LandingPage() {
           displayMode="logos"
         />
       </Suspense>
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={11} />
+      <PageBannerOverflowServer placement={BANNER_PLACEMENT.HOME_PAGE} />
     </main>
   );
 }

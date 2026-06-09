@@ -365,7 +365,7 @@ export const roleStrategy = {
     canAccess: (route: string) => route.startsWith("/doctor"),
   },
   patient: {
-    getDashboardRoute: () => "/patient/dashboard",
+    getDashboardRoute: () => "/",
     getSiderBarItems: (): sideBarItem[] => [
       {
         label: "dashboard",

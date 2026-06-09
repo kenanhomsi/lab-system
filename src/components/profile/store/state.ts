@@ -1,5 +1,13 @@
+type ProfileTab =
+  | "profile"
+  | "security"
+  | "danger"
+  | "testRequests"
+  | "testResults"
+  | "insuranceApprovals";
+
 type Params = {
-  activeTab: "profile" | "security" | "danger";
+  activeTab: ProfileTab;
   setActiveTab: (tab: Params["activeTab"]) => void;
 };
 
@@ -10,4 +18,4 @@ const stateStore = (): Params => ({
 
 export { stateStore };
 export type { Params as stateParams };
-
+export type { ProfileTab };

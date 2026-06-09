@@ -2,7 +2,7 @@ import { getLocale } from "next-intl/server";
 import type { AppLocale } from "@/i18n/routing";
 import { BlogHeroSection } from "../ui/blog/hero-section";
 import { BlogPostGrid } from "../ui/blog/post-grid";
-import { PageBannerServer } from "@/components/layout/page-banner-server";
+import { PageBannerOverflowServer, PageBannerSlotServer } from "@/components/layout/page-banner-slots-server";
 import { BANNER_PLACEMENT } from "@/lib/banners/locations";
 import { getRequestOrigin } from "@/lib/api/request-origin";
 import type { FetchMetwaliBlogResult } from "@/types/metwali-blog";
@@ -29,8 +29,10 @@ export default async function BlogPage() {
   return (
     <main>
       <BlogHeroSection />
-      <PageBannerServer placement={BANNER_PLACEMENT.BLOG} />
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.BLOG} order={1} />
       <BlogPostGrid result={result} />
+      <PageBannerSlotServer placement={BANNER_PLACEMENT.BLOG} order={2} />
+      <PageBannerOverflowServer placement={BANNER_PLACEMENT.BLOG} />
     </main>
   );
 }

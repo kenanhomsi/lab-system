@@ -7,6 +7,8 @@ import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useOffersFeatureStore } from "../store-context";
+import { BANNER_PLACEMENT } from "@/lib/banners/locations";
+import { PageBannerOverflowClient, PageBannerSlotClient } from "@/components/layout/page-banner-slot-client";
 
 export function OffersPage() {
   const t = useTranslations("offers");
@@ -28,6 +30,7 @@ export function OffersPage() {
             {t("description")}
           </p>
         </div>
+        <PageBannerSlotClient placement={BANNER_PLACEMENT.OFFERS} order={1} />
 
         {offers.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -110,6 +113,8 @@ export function OffersPage() {
             ))}
           </div>
         )}
+        <PageBannerSlotClient placement={BANNER_PLACEMENT.OFFERS} order={2} />
+        <PageBannerOverflowClient placement={BANNER_PLACEMENT.OFFERS} />
       </div>
     </main>
   );

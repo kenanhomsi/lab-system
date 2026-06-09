@@ -10,6 +10,7 @@ import { frontendContainer } from "@/container";
 import { validationModuleNames, Validator } from "@/modules/validation";
 import { signIn } from "next-auth/react";
 import { roleRedirects } from "./utils/constants";
+import { useSearchParams } from "next/navigation";
 
 const validationService = frontendContainer.get<Validator>(
   validationModuleNames.validator,
@@ -46,11 +47,17 @@ const Utils = (props: PropsWithChildren) => {
   const _onSubmit = useMirror("onSubmit");
   const locale = useLocale();
   const selectedRole = useMirror("selectedRole");
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+  const safeCallbackUrl =
+    callbackUrl?.startsWith("/") && !callbackUrl.startsWith("//")
+      ? callbackUrl
+      : null;
   const handleGoogleSignIn = useCallback(() => {
     void signIn("google", {
-      callbackUrl: `/${locale}${roleRedirects[selectedRole]}`,
+      callbackUrl: safeCallbackUrl ?? `/${locale}${roleRedirects[selectedRole]}`,
     });
-  }, [locale, selectedRole]);
+  }, [locale, safeCallbackUrl, selectedRole]);
 
   useMirrorRegistry("handleGoogleSignIn", handleGoogleSignIn);
   useMirrorRegistry(

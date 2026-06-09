@@ -2,8 +2,6 @@ import { getLocale } from "next-intl/server";
 import { OffersFeatureFactory } from "./factory";
 import type { Offer } from "./store/api";
 import { getRequestOrigin } from "@/lib/api/request-origin";
-import { PageBannerServer } from "@/components/layout/page-banner-server";
-import { BANNER_PLACEMENT } from "@/lib/banners/locations";
 
 export const revalidate = 3600;
 
@@ -24,9 +22,6 @@ export default async function Page() {
   const locale = await getLocale();
   const offers = await fetchOffers(locale);
   return (
-    <>
-      <PageBannerServer placement={BANNER_PLACEMENT.OFFERS} />
-      <OffersFeatureFactory offers={offers} locale={locale} />
-    </>
+    <OffersFeatureFactory offers={offers} locale={locale} />
   );
 }

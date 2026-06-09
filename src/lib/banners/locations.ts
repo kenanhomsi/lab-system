@@ -1,7 +1,7 @@
 import type { BannerItem } from "@/types/banner";
 
 /** Auto-advance interval for banner carousels (ms). */
-export const BANNER_ROTATE_MS = 15_000;
+export const BANNER_ROTATE_MS = 30_000;
 
 export const WEBSITE_BANNERS_QUERY_KEY = ["website-banners-public"] as const;
 
