@@ -5,6 +5,7 @@ import {
   DeleteTestRequestModal,
   EditTestRequestModal,
 } from "@/components/modals/test-requests";
+import { BookBloodDrawModal } from "@/components/features/appointments";
 import { useMirror } from "../store";
 
 const Modals = () => {
@@ -24,6 +25,11 @@ const Modals = () => {
       />
       <DeleteTestRequestModal
         opened={activeModal === "delete"}
+        onClose={closeModal}
+        testRequest={selectedTestRequest}
+      />
+      <BookBloodDrawModal
+        opened={activeModal === "appointment"}
         onClose={closeModal}
         testRequest={selectedTestRequest}
       />

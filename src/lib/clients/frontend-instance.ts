@@ -9,28 +9,25 @@ type RetriableRequestConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
 };
 
-type SessionPayload = {
-  user?: {
-    accessToken?: string | null;
-  } | null;
-};
+const axiosInstanceFront = axios.create({
+  baseURL: "/api",
+  withCredentials: true,
+});
 
-const axiosInstanceFront = axios.create({ baseURL: "/api" });
-
-let sessionFetchDeduped: Promise<SessionPayload | null> | undefined;
+let sessionTouchDeduped: Promise<boolean> | undefined;
+let sessionForceRefreshDeduped: Promise<boolean> | undefined;
 
 /**
- * Dedupes concurrent reads of /api/auth/session so parallel API calls hit the
- * session endpoint once; that prevents duplicate JWT refresh work and avoids
- * refresh-token rotation races.
+ * Touches GET /api/auth/session so NextAuth runs the jwt callback (proactive refresh
+ * when the access token is near expiry). Deduped for parallel API calls.
  */
-async function fetchSessionPayload(): Promise<SessionPayload | null> {
+async function touchSession(): Promise<boolean> {
   if (typeof window === "undefined") {
-    return null;
+    return false;
   }
 
-  if (!sessionFetchDeduped) {
-    sessionFetchDeduped = (async () => {
+  if (!sessionTouchDeduped) {
+    sessionTouchDeduped = (async () => {
       try {
         const res = await fetch(`${window.location.origin}/api/auth/session`, {
           method: "GET",
@@ -38,96 +35,71 @@ async function fetchSessionPayload(): Promise<SessionPayload | null> {
           cache: "no-store",
           headers: { Accept: "application/json" },
         });
-        if (!res.ok) {
-          return null;
-        }
-        return (await res.json()) as SessionPayload;
+        return res.ok;
       } catch {
-        return null;
+        return false;
       }
     })().finally(() => {
-      sessionFetchDeduped = undefined;
+      sessionTouchDeduped = undefined;
     });
   }
 
-  return sessionFetchDeduped;
+  return sessionTouchDeduped;
 }
 
-async function sessionAccessTokenFromFetch(): Promise<string | undefined> {
-  const payload = await fetchSessionPayload();
-  const access = payload?.user?.accessToken;
-  return typeof access === "string" && access.trim() ? access : undefined;
-}
-
-async function forceRefreshAccessToken(): Promise<string | undefined> {
+/**
+ * Forces access-token renewal via NextAuth session update. Renewed tokens stay in the
+ * httpOnly JWT cookie and are not exposed in the session JSON (BFF pattern).
+ */
+async function forceRefreshSession(): Promise<boolean> {
   if (typeof window === "undefined") {
-    return undefined;
+    return false;
   }
-  try {
-    const csrfToken = await getCsrfToken();
-    if (!csrfToken) {
-      return undefined;
-    }
-    const res = await fetch(`${window.location.origin}/api/auth/session`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        csrfToken,
-        data: { forceRefresh: true },
-      }),
+
+  if (!sessionForceRefreshDeduped) {
+    sessionForceRefreshDeduped = (async () => {
+      try {
+        const csrfToken = await getCsrfToken();
+        if (!csrfToken) {
+          return false;
+        }
+        const res = await fetch(`${window.location.origin}/api/auth/session`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            csrfToken,
+            data: { forceRefresh: true },
+          }),
+        });
+        if (res.ok) {
+          void getSession();
+        }
+        return res.ok;
+      } catch {
+        return false;
+      }
+    })().finally(() => {
+      sessionForceRefreshDeduped = undefined;
     });
-    if (!res.ok) {
-      return undefined;
-    }
-    const data = (await res.json()) as SessionPayload;
-    const access = data.user?.accessToken;
-    const token =
-      typeof access === "string" && access.trim() ? access : undefined;
-    if (token) {
-      void getSession();
-    }
-    return token;
-  } catch {
-    return undefined;
   }
+
+  return sessionForceRefreshDeduped;
 }
 
-const applyAccessToken = (
+/** Ensures BFF routes read the access token from the session cookie, not a stale header. */
+const stripAuthorizationHeader = (
   config: InternalAxiosRequestConfig,
-  token?: string,
 ): InternalAxiosRequestConfig => {
-  if (!token) {
-    return config;
-  }
-
   const headers = AxiosHeaders.from(config.headers ?? {});
-  headers.set("Authorization", `Bearer ${token}`);
+  headers.delete("Authorization");
   config.headers = headers;
   return config;
 };
 
-const syncAccessToken = async (force = false): Promise<string | undefined> => {
-  if (typeof window === "undefined") {
-    return undefined;
-  }
-
-  if (force) {
-    const rotated = await forceRefreshAccessToken();
-    if (rotated) {
-      return rotated;
-    }
-    const fallback = await sessionAccessTokenFromFetch();
-    void getSession();
-    return fallback;
-  }
-
-  return sessionAccessTokenFromFetch();
-};
-
 axiosInstanceFront.interceptors.request.use(async (config) => {
-  const accessToken = await syncAccessToken();
-  return applyAccessToken(config, accessToken);
+  await touchSession();
+  return stripAuthorizationHeader(config);
 });
 
 axiosInstanceFront.interceptors.response.use(
@@ -138,20 +110,20 @@ axiosInstanceFront.interceptors.response.use(
       error.response?.status === 401 &&
       originalRequest &&
       !originalRequest._retry &&
-      !originalRequest.url?.includes("/auth/refresh-token");
+      !originalRequest.url?.includes("/auth/");
 
     if (!shouldRetry || !originalRequest) {
       return Promise.reject(error);
     }
 
     originalRequest._retry = true;
-    const accessToken = await syncAccessToken(true);
+    const refreshed = await forceRefreshSession();
 
-    if (!accessToken) {
+    if (!refreshed) {
       return Promise.reject(error);
     }
 
-    return axiosInstanceFront(applyAccessToken(originalRequest, accessToken));
+    return axiosInstanceFront(stripAuthorizationHeader(originalRequest));
   },
 );
 

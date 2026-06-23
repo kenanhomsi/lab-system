@@ -16,6 +16,8 @@ type Params = {
   setActiveModal: (value: "create" | "edit" | "delete" | "view" | null) => void;
   selectedTestResult: TestResultItem | null;
   setSelectedTestResult: (value: TestResultItem | null) => void;
+  selectedTestResultIds: number[];
+  setSelectedTestResultIds: (value: number[]) => void;
 };
 
 const store = (): Params => ({
@@ -34,6 +36,8 @@ const store = (): Params => ({
   setActiveModal: () => {},
   selectedTestResult: null,
   setSelectedTestResult: () => {},
+  selectedTestResultIds: [],
+  setSelectedTestResultIds: () => {},
 });
 
 export { store as stateStore };

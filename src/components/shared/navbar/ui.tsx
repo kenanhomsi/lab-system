@@ -21,6 +21,7 @@ import {
   FiCheckCircle,
   FiClipboard,
   FiCreditCard,
+  FiFilePlus,
   FiHelpCircle,
   FiMenu,
   FiLogOut,
@@ -62,6 +63,7 @@ const quickActionIconMap: Record<navbarQuickActionIcon, IconType> = {
   creditCard: FiCreditCard,
   alertCircle: FiAlertCircle,
   shield: FiShield,
+  filePlus: FiFilePlus,
 };
 
 const mobileViewportQuery = "(max-width: 992px)";

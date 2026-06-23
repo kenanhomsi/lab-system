@@ -1,4 +1,5 @@
 import { axiosInstanceFront } from "@/lib/clients/frontend-instance";
+import type { MedicalTestsResponse } from "@/components/tables/medical-tests-table/types";
 import type { Vacancy } from "@/types/career";
 
 /** Public website helpers (browser) — all requests use axios `baseURL` `/api`. */
@@ -101,11 +102,51 @@ export async function postContractServiceRequestPublic(
   return data?.data?.message ?? data?.message ?? "";
 }
 
+export async function getMedicalTestsPublic(params?: {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+}): Promise<MedicalTestsResponse> {
+  const { data, status } = await axiosInstanceFront.get<MedicalTestsResponse>(
+    "/website/medical-tests",
+    {
+      params: {
+        Page: String(params?.page ?? 1),
+        PageSize: String(params?.pageSize ?? 24),
+        ...(params?.search?.trim() ? { Search: params.search.trim() } : {}),
+      },
+      validateStatus: () => true,
+    },
+  );
+
+  if (status >= 400) {
+    const errorCode =
+      data && typeof data === "object" && "error" in data
+        ? String((data as { error?: unknown }).error ?? "")
+        : "";
+    throw new Error(errorCode || `Medical tests request failed (${status})`);
+  }
+
+  return (
+    data ?? {
+      items: [],
+      page: 1,
+      pageSize: params?.pageSize ?? 24,
+      totalCount: 0,
+      totalPages: 0,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    }
+  );
+}
+
 export async function getTestsCatalogPublic(
   params?: Record<string, string>,
 ): Promise<unknown> {
-  const { data } = await axiosInstanceFront.get("/tests", {
-    params: params ?? undefined,
+  const list = await getMedicalTestsPublic({
+    page: Number(params?.Page ?? params?.page ?? 1),
+    pageSize: Number(params?.PageSize ?? params?.pageSize ?? 500),
+    search: params?.Search ?? params?.search,
   });
-  return data;
+  return list.items;
 }

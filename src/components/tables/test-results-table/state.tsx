@@ -12,6 +12,7 @@ const State = ({ children }: { children: React.ReactNode }) => {
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortDesc, setSortDesc] = useState(true);
   const [selectedTestResult, setSelectedTestResult] = useState<TestResultItem | null>(null);
+  const [selectedTestResultIds, setSelectedTestResultIds] = useState<number[]>([]);
   const [activeModal, setActiveModal] = useState<null | "create" | "edit" | "delete" | "view">(null);
   const [debouncedValue] = useDebouncedValue(searchValue, 500);
 
@@ -28,6 +29,8 @@ const State = ({ children }: { children: React.ReactNode }) => {
   useMirrorRegistry("setSortDesc", setSortDesc);
   useMirrorRegistry("selectedTestResult", selectedTestResult);
   useMirrorRegistry("setSelectedTestResult", setSelectedTestResult);
+  useMirrorRegistry("selectedTestResultIds", selectedTestResultIds);
+  useMirrorRegistry("setSelectedTestResultIds", setSelectedTestResultIds);
   useMirrorRegistry("activeModal", activeModal);
   useMirrorRegistry("setActiveModal", setActiveModal);
 

@@ -29,7 +29,7 @@ import {
     IconUpload,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
-import { ReactNode, useCallback, useMemo, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import {
     getBannerSlots,
     isBannerSlotLocation,
@@ -37,16 +37,19 @@ import {
 import {
     BANNER_PLACEMENT,
     BANNER_PLACEMENT_VALUES,
+    normalizeBannerPlacement,
     type BannerPlacement,
 } from "@/lib/banners/locations";
 import { toIso8601Utc } from "@/lib/dates/to-iso-8601";
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import { useMirror } from "../store";
-import { CreateBannerRequest } from "../types";
+import { BannerItem, CreateBannerRequest } from "../types";
 
 type Props = {
+    mode: "create" | "edit";
     isOpen: boolean;
     onClose: () => void;
+    banner?: BannerItem | null;
 };
 
 const SectionHeader = ({
@@ -73,10 +76,12 @@ const SectionHeader = ({
 
 const TOTAL_STEPS = 4;
 
-const BannerFormModal = ({ isOpen, onClose }: Props) => {
+const BannerFormModal = ({ mode, isOpen, onClose, banner }: Props) => {
     const t = useTranslations("admin.settings.banners");
     const tc = useTranslations("admin.common");
     const createBanner = useMirror("createBanner");
+    const updateBanner = useMirror("updateBanner");
+    const isEdit = mode === "edit";
 
     const [step, setStep] = useState(0);
     const [title, setTitle] = useState("");
@@ -110,6 +115,39 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    useEffect(() => {
+        if (!isOpen) return;
+        if (isEdit && banner) {
+            setStep(0);
+            setTitle(banner.title);
+            setType(banner.type);
+            setLocation(normalizeBannerPlacement(banner.location) ?? BANNER_PLACEMENT.HOME_PAGE);
+            setIsActive(banner.isActive);
+            setDisplayOrder(String(banner.displayOrder));
+            setInternalLink(banner.internalLink ?? "");
+            setExternalLink(banner.externalLink ?? "");
+            setTargetType(banner.targetType ?? "");
+            setVisibilityRulesJson(banner.visibilityRules ?? "");
+            setStartDate(banner.startDate ?? "");
+            setEndDate(banner.endDate ?? "");
+            setMediaFile(null);
+            return;
+        }
+        setStep(0);
+        setTitle("");
+        setType("");
+        setLocation(BANNER_PLACEMENT.HOME_PAGE);
+        setIsActive(true);
+        setDisplayOrder("1");
+        setInternalLink("");
+        setExternalLink("");
+        setTargetType("");
+        setVisibilityRulesJson("");
+        setStartDate("");
+        setEndDate("");
+        setMediaFile(null);
+    }, [banner, isEdit, isOpen]);
+
     const handleClose = useCallback(() => {
         setStep(0);
         setTitle("");
@@ -137,7 +175,7 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
             !displayOrder ||
             !startDate ||
             !endDate ||
-            !mediaFile
+            (!isEdit && !mediaFile)
         ) {
             alert(t("errorRequiredFields"));
             return;
@@ -150,14 +188,20 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
             alert(t("errorDateOrder"));
             return;
         }
-        if (!mediaFile.type.match(/^(image|video)\//) || mediaFile.size > 50 * 1024 * 1024) {
+        if (
+            mediaFile &&
+            (!mediaFile.type.match(/^(image|video)\//) || mediaFile.size > 50 * 1024 * 1024)
+        ) {
             alert(t("errorInvalidMedia"));
+            return;
+        }
+        if (isEdit && !banner) {
             return;
         }
 
         setIsSubmitting(true);
         try {
-            const payload: CreateBannerRequest = {
+            const sharedPayload = {
                 title,
                 type,
                 location,
@@ -169,14 +213,37 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
                 visibilityRulesJson,
                 startDate: toIso8601Utc(startDate),
                 endDate: toIso8601Utc(endDate),
-                media: mediaFile,
             };
-            await createBanner(payload);
+            if (isEdit && banner) {
+                await updateBanner({
+                    id: banner.id,
+                    ...sharedPayload,
+                    media: mediaFile ?? undefined,
+                });
+            } else if (mediaFile) {
+                const payload: CreateBannerRequest = {
+                    ...sharedPayload,
+                    media: mediaFile,
+                };
+                await createBanner(payload);
+            }
             handleClose();
         } finally {
             setIsSubmitting(false);
         }
     };
+
+    const canSubmit =
+        Boolean(
+            title.trim() &&
+            type.trim() &&
+            targetType.trim() &&
+            location &&
+            displayOrder &&
+            startDate &&
+            endDate &&
+            (isEdit || mediaFile),
+        ) && !isSubmitting;
 
     return (
         <Modal
@@ -189,10 +256,10 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
                     </ThemeIcon>
                     <Stack gap={0}>
                         <Title order={4}>
-                            {t("modalCreateTitle")}
+                            {isEdit ? t("modalEditTitle") : t("modalCreateTitle")}
                         </Title>
                         <Text size="sm" c="dimmed">
-                            {t("modalCreateDescription")}
+                            {isEdit ? t("modalEditDescription") : t("modalCreateDescription")}
                         </Text>
                     </Stack>
                 </Group>
@@ -379,14 +446,23 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
                         />
                         <FileInput
                             label={t("mediaLabel")}
-                            placeholder={t("mediaPlaceholder")}
+                            placeholder={isEdit ? t("mediaPlaceholder") : t("mediaPlaceholder")}
                             leftSection={<IconUpload size={14} />}
                             accept="image/*,video/*"
                             value={mediaFile}
                             onChange={setMediaFile}
-                            required
+                            required={!isEdit}
                             clearable
-                            description={mediaFile ? t("mediaSelected", { name: mediaFile.name, size: (mediaFile.size / 1024 / 1024).toFixed(2) }) : t("mediaDescription")}
+                            description={
+                                mediaFile
+                                    ? t("mediaSelected", {
+                                          name: mediaFile.name,
+                                          size: (mediaFile.size / 1024 / 1024).toFixed(2),
+                                      })
+                                    : isEdit && banner?.mediaUrl
+                                      ? `${t("optional")}: ${banner.mediaUrl}`
+                                      : t("mediaDescription")
+                            }
                         />
                     </Stack>
                 </Paper>
@@ -417,20 +493,10 @@ const BannerFormModal = ({ isOpen, onClose }: Props) => {
                             <Button
                                 onClick={handleSubmit}
                                 loading={isSubmitting}
-                                disabled={
-                                    isSubmitting ||
-                                    !title.trim() ||
-                                    !type.trim() ||
-                                    !targetType.trim() ||
-                                    !location ||
-                                    !displayOrder ||
-                                    !startDate ||
-                                    !endDate ||
-                                    !mediaFile
-                                }
+                                disabled={!canSubmit}
                                 radius="md"
                             >
-                                {tc("create")}
+                                {isEdit ? t("save") : tc("create")}
                             </Button>
                         )}
                     </Group>

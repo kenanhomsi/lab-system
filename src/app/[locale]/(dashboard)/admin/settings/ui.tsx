@@ -11,7 +11,10 @@ import { clearPendingQuickAction } from "@/lib/quick-actions/storage";
 import { AccessPoliciesTable } from "@/components/tables/access-policies-table";
 import { RolesTable } from "@/components/tables/roles-table";
 import { BannersTable } from "@/components/tables/banners-table";
+import { AdsTable } from "@/components/tables/ads-table";
 import { SlideCardsTable } from "@/components/tables/slide-cards-table";
+import { WelcomePagesTable } from "@/components/tables/welcome-pages-table";
+import { WebsitePagesTable } from "@/components/tables/website-pages-table";
 import { AccountingSettingsForm } from "@/components/forms/accounting-settings-form/AccountingSettingsForm";
 
 const AdminSettingsUI = () => {
@@ -50,8 +53,11 @@ const AdminSettingsUI = () => {
         <Tabs.List>
           <Tabs.Tab value="roles">{t("tabRoles")}</Tabs.Tab>
           <Tabs.Tab value="accessPolicies">{t("tabAccessPolicies")}</Tabs.Tab>
+          <Tabs.Tab value="ads">{t("tabAds")}</Tabs.Tab>
           <Tabs.Tab value="banners">{t("tabBanners")}</Tabs.Tab>
           <Tabs.Tab value="slideCards">{t("tabSlideCards")}</Tabs.Tab>
+          <Tabs.Tab value="welcomePages">{t("tabWelcomePages")}</Tabs.Tab>
+          <Tabs.Tab value="websitePages">{t("tabWebsitePages")}</Tabs.Tab>
           <Tabs.Tab value="accounting">{t("tabAccounting")}</Tabs.Tab>
         </Tabs.List>
 
@@ -62,11 +68,20 @@ const AdminSettingsUI = () => {
           <AccessPoliciesTable />
         </Tabs.Panel>
 
+        <Tabs.Panel value="ads" pt="md">
+          <AdsTable />
+        </Tabs.Panel>
         <Tabs.Panel value="banners" pt="md">
           <BannersTable />
         </Tabs.Panel>
         <Tabs.Panel value="slideCards" pt="md">
           <SlideCardsTable />
+        </Tabs.Panel>
+        <Tabs.Panel value="welcomePages" pt="md">
+          <WelcomePagesTable />
+        </Tabs.Panel>
+        <Tabs.Panel value="websitePages" pt="md">
+          <WebsitePagesTable />
         </Tabs.Panel>
         <Tabs.Panel value="accounting" pt="md">
           <AccountingSettingsForm />

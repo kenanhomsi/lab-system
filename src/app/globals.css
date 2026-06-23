@@ -350,8 +350,8 @@ body[data-locale-ar="true"] {
 
 /* Fluid layout container (website sections, shared wrappers) */
 .content-container {
-  width: var(--layout-content-width);
-  max-width: 100%;
+  width: 100%;
+  max-width: min(var(--layout-content-max), calc(100% - 2 * var(--layout-inline-gutter)));
   margin-inline: auto;
   padding-inline: var(--layout-inline-gutter);
   box-sizing: border-box;
@@ -471,6 +471,17 @@ html[dir="rtl"] .font-headline {
   }
 }
 
+@keyframes modal-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 @keyframes hero-zoom {
   from {
     transform: scale(1.06);
@@ -554,6 +565,14 @@ html[dir="rtl"] .font-headline {
     glow-pulse 10s ease-in-out infinite;
 }
 
+.ad-modal-overlay {
+  animation: fade-in 220ms ease forwards;
+}
+
+.ad-modal-panel {
+  animation: modal-pop 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal-up,
   .reveal-up.is-visible,
@@ -561,7 +580,9 @@ html[dir="rtl"] .font-headline {
   .reveal-in.is-visible,
   .hero-image-enter,
   .bg-orb,
-  .bg-orb-reverse {
+  .bg-orb-reverse,
+  .ad-modal-overlay,
+  .ad-modal-panel {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

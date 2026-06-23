@@ -16,7 +16,15 @@ type FindAllUserParams = AuthParams & {
   query?: FindAllQueryParams;
 };
 
+type FindAllPublicUserParams = {
+  query?: FindAllQueryParams;
+};
+
 type FindUserParams = AuthParams & {
+  id: string;
+};
+
+type FindOnePublicUserParams = {
   id: string;
 };
 
@@ -48,7 +56,9 @@ type DeleteUserParams = AuthParams & {
 export type {
   CreateUserParams,
   DeleteUserParams,
+  FindAllPublicUserParams,
   FindAllUserParams,
+  FindOnePublicUserParams,
   FindUserParams,
   UpdateUserParams,
 };

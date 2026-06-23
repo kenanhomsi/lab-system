@@ -3,6 +3,7 @@
 import { IconRectangle } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { TablePageHeader } from "@/components/table-page-header";
+import { useMirror } from "../store";
 
 type Props = {
     totalBanners: number;
@@ -12,6 +13,7 @@ type Props = {
 
 const Header = ({ totalBanners, onOpenCreate }: Props) => {
     const t = useTranslations("admin.settings.banners");
+    const setSelectedBanner = useMirror("setSelectedBanner");
 
     return (
         <TablePageHeader
@@ -21,7 +23,10 @@ const Header = ({ totalBanners, onOpenCreate }: Props) => {
             iconColor="blue"
             totalCount={totalBanners}
             createLabel={t("create")}
-            onOpenCreate={onOpenCreate}
+            onOpenCreate={() => {
+                setSelectedBanner(null);
+                onOpenCreate();
+            }}
         />
     );
 };

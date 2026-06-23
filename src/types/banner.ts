@@ -36,8 +36,20 @@ export type CreateBannerRequest = {
   media: File;
 };
 
-/**
- * BannerModalType - Modal state for banners table.
- * Only supports 'create' since the API doesn't support edit/delete operations.
- */
-export type BannerModalType = "create" | null;
+export type BannerModalType = "create" | "edit" | "delete" | null;
+
+export type UpdateBannerRequest = {
+  id: string;
+  title: string;
+  type: string;
+  internalLink: string;
+  externalLink: string;
+  targetType: string;
+  location: BannerPlacement;
+  displayOrder: number;
+  isActive: boolean;
+  visibilityRulesJson: string;
+  startDate: string;
+  endDate: string;
+  media?: File;
+};

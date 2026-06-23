@@ -23,7 +23,6 @@ const validationService = frontendContainer.get<Validator>(
 const Utils = (props: PropsWithChildren) => {
   const { children } = props;
 
-  const selectedRole = useMirror("selectedRole");
   const setLoading = useMirror("setLoading");
   const setError = useMirror("setError");
   const setSuccess = useMirror("setSuccess");
@@ -40,22 +39,14 @@ const Utils = (props: PropsWithChildren) => {
 
       const formData = new FormData(e.currentTarget);
       const payload = {
-        role: selectedRole,
+        role: "patient" as const,
         email: formData.get("email") as string,
         mobile: formData.get("mobile") as string,
         fullName: formData.get("fullName") as string,
         city: formData.get("city") as string,
         password: formData.get("password") as string,
-        ...(selectedRole === "patient" && {
-          age: Number(formData.get("age")),
-          gender: formData.get("gender") as string,
-        }),
-        ...(selectedRole === "doctor" && {
-          specialty: formData.get("specialty") as string,
-        }),
-        ...(selectedRole === "LabPartner" && {
-          labName: formData.get("labName") as string,
-        }),
+        age: Number(formData.get("age")),
+        gender: formData.get("gender") as string,
       };
 
       const confirmPassword = formData.get("confirmPassword") as string;
@@ -98,16 +89,7 @@ const Utils = (props: PropsWithChildren) => {
         setLoading(false);
       }
     },
-    [
-      locale,
-      router,
-      selectedRole,
-      setError,
-      setLoading,
-      setSuccess,
-      setSuccessMessage,
-      t,
-    ],
+    [locale, router, setError, setLoading, setSuccess, setSuccessMessage, t],
   );
 
   useMirrorRegistry("submitRegisterForm", submitRegisterForm);

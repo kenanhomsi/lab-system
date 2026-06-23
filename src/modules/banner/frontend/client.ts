@@ -10,6 +10,7 @@ import {
   DeleteBannerParams,
   FindAllBannerParams,
   FindAllPublicBannerParams,
+  UpdateBannerParams,
 } from "./types";
 
 type PublicBannerResponse = BannerItem[] | Record<string, unknown>;
@@ -76,6 +77,34 @@ class Client extends BannerClient<AxiosState> {
     const res = await super
       .sharedCreate({
         endpoint: endpoint.create,
+        formData,
+      })
+      .perform<BannerItem>();
+    return res.data;
+  }
+
+  async update(params: UpdateBannerParams) {
+    const formData = new FormData();
+    formData.append("Title", params.title);
+    formData.append("Type", params.type);
+    formData.append("InternalLink", params.InternalLink);
+    formData.append("ExternalLink", params.ExternalLink);
+    formData.append("TargetType", params.TargetType);
+    formData.append("Location", params.Location);
+    formData.append("DisplayOrder", params.DisplayOrder.toString());
+    formData.append("StartDate", toIso8601Utc(params.startDate));
+    formData.append("EndDate", toIso8601Utc(params.endDate));
+    formData.append("IsActive", String(params.isActive));
+    if (params.VisibilityRulesJson) {
+      formData.append("VisibilityRulesJson", params.VisibilityRulesJson);
+    }
+    if (params.Media) {
+      formData.append("Media", params.Media);
+    }
+
+    const res = await super
+      .sharedPutFormData({
+        endpoint: endpoint.update(params.id),
         formData,
       })
       .perform<BannerItem>();

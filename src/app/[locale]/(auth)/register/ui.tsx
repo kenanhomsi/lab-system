@@ -5,12 +5,9 @@ import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
 import { AuthPasswordField } from "@/components/ui/auth-password-field";
 import { BrandLogo } from "@/components/shared/brand-logo";
-import { RoleSelector } from "../login/ui/role-selector";
 import { useMirror } from "./store";
 
 const UI = () => {
-  const selectedRole = useMirror("selectedRole");
-  const setSelectedRole = useMirror("setSelectedRole");
   const loading = useMirror("loading");
   const error = useMirror("error");
   const success = useMirror("success");
@@ -50,16 +47,7 @@ const UI = () => {
             />
           </Link>
           <h2 className="mt-4 font-headline text-3xl font-bold text-on-surface">{t("createNewAccount")}</h2>
-          <p className="mt-2 text-sm text-secondary">{t("selectAccountType")}</p>
         </div>
-
-        <RoleSelector
-          variant="register"
-          value={selectedRole}
-          onChange={(role) => {
-            if (role !== "special") setSelectedRole(role);
-          }}
-        />
 
         {error && (
           <div
@@ -129,68 +117,36 @@ const UI = () => {
             />
           </div>
 
-          {selectedRole === "patient" && (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="age" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
-                  {t("age")}
-                </label>
-                <input
-                  id="age"
-                  name="age"
-                  type="number"
-                  min={0}
-                  max={150}
-                  required
-                  className={inputClassName}
-                />
-              </div>
-              <div>
-                <label htmlFor="gender" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
-                  {t("gender")}
-                </label>
-                <select
-                  id="gender"
-                  name="gender"
-                  required
-                  className={inputClassName}
-                >
-                  <option value="male">{t("male")}</option>
-                  <option value="female">{t("female")}</option>
-                </select>
-              </div>
-            </div>
-          )}
-
-          {selectedRole === "doctor" && (
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="specialty" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
-                {t("specialty")}
+              <label htmlFor="age" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
+                {t("age")}
               </label>
               <input
-                id="specialty"
-                name="specialty"
-                type="text"
+                id="age"
+                name="age"
+                type="number"
+                min={0}
+                max={150}
                 required
                 className={inputClassName}
               />
             </div>
-          )}
-
-          {selectedRole === "LabPartner" && (
             <div>
-              <label htmlFor="labName" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
-                {t("labName")}
+              <label htmlFor="gender" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
+                {t("gender")}
               </label>
-              <input
-                id="labName"
-                name="labName"
-                type="text"
+              <select
+                id="gender"
+                name="gender"
                 required
                 className={inputClassName}
-              />
+              >
+                <option value="male">{t("male")}</option>
+                <option value="female">{t("female")}</option>
+              </select>
             </div>
-          )}
+          </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <AuthPasswordField

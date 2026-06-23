@@ -3,6 +3,7 @@ import {
   BannersResponse,
   CreateBannerRequest,
   BannerModalType,
+  UpdateBannerRequest,
 } from "@/types/banner";
 
 export type {
@@ -10,4 +11,5 @@ export type {
   BannersResponse,
   CreateBannerRequest,
   BannerModalType,
+  UpdateBannerRequest,
 };

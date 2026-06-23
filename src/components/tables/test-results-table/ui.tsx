@@ -4,10 +4,16 @@ import { isClinicalPatientUser } from "@/components/modals/test-requests/party-i
 import { Table } from "@/components/table";
 import { TablePageHeader } from "@/components/table-page-header";
 import { useSessionUserStore } from "@/stores/session-user-store";
-import { ActionIcon, CloseButton, Select, TextInput, Tooltip } from "@mantine/core";
-import { IconArrowsSort, IconClipboardList, IconPlus, IconRefresh, IconSearch } from "@tabler/icons-react";
+import { ActionIcon, Button, CloseButton, Select, TextInput, Tooltip } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { IconArrowsSort, IconClipboardList, IconDownload, IconPlus, IconRefresh, IconSearch } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  createBulkTestResultsPdfBlob,
+  downloadBlob,
+  getBulkResultsFileName,
+} from "./pdf-export";
 import { useMirror } from "./store";
 
 const UI = () => {
@@ -27,8 +33,11 @@ const UI = () => {
   const setSortDesc = useMirror("setSortDesc");
   const setActiveModal = useMirror("setActiveModal");
   const setSelectedTestResult = useMirror("setSelectedTestResult");
+  const selectedTestResultIds = useMirror("selectedTestResultIds");
+  const setSelectedTestResultIds = useMirror("setSelectedTestResultIds");
   const roles = useSessionUserStore((s) => s.user?.roles);
   const canManageTestResults = !isClinicalPatientUser(roles);
+  const [isExportingSelected, setIsExportingSelected] = useState(false);
 
   const hasActiveFilters = Boolean(searchValue.trim()) || sortBy !== "createdAt" || !sortDesc;
 
@@ -58,6 +67,35 @@ const UI = () => {
       },
     }));
   }, [testResultsData?.items, setSelectedTestResult, setActiveModal]);
+
+  const selectedRows = useMemo(() => {
+    const selectedIds = new Set(selectedTestResultIds);
+    return (testResultsData?.items || []).filter((item) => selectedIds.has(item.id));
+  }, [selectedTestResultIds, testResultsData?.items]);
+
+  useEffect(() => {
+    const visibleIds = new Set((testResultsData?.items || []).map((item) => item.id));
+    const nextSelectedIds = selectedTestResultIds.filter((id) => visibleIds.has(id));
+    if (nextSelectedIds.length !== selectedTestResultIds.length) {
+      setSelectedTestResultIds(nextSelectedIds);
+    }
+  }, [selectedTestResultIds, setSelectedTestResultIds, testResultsData?.items]);
+
+  const handleExportSelectedPdf = async () => {
+    if (selectedRows.length === 0) return;
+    setIsExportingSelected(true);
+    try {
+      const blob = await createBulkTestResultsPdfBlob(selectedRows);
+      downloadBlob(blob, getBulkResultsFileName(selectedRows));
+    } catch {
+      notifications.show({
+        color: "red",
+        message: t("downloadPdfFailed"),
+      });
+    } finally {
+      setIsExportingSelected(false);
+    }
+  };
 
   return (
     <Table
@@ -95,8 +133,21 @@ const UI = () => {
             setSortBy("createdAt");
             setSortDesc(true);
             setPageNumber(1);
+            setSelectedTestResultIds([]);
           }}
         >
+          <Button
+            leftSection={<IconDownload size={14} />}
+            variant="light"
+            color="teal"
+            radius="xl"
+            size="xs"
+            disabled={selectedRows.length === 0}
+            loading={isExportingSelected}
+            onClick={() => void handleExportSelectedPdf()}
+          >
+            {t("exportSelectedPdf", { count: selectedRows.length })}
+          </Button>
           <TextInput
             placeholder={t("searchPlaceholder")}
             value={searchValue}

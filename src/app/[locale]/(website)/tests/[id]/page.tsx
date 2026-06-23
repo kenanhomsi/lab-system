@@ -4,19 +4,20 @@ import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import type { MedicalTestItem } from "@/components/tables/medical-tests-table/types";
 import { getRequestOrigin } from "@/lib/api/request-origin";
 
 type PageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
 
-async function fetchTest(id: string) {
+async function fetchTest(id: string): Promise<MedicalTestItem | null> {
   try {
     const origin = await getRequestOrigin();
-    const url = new URL(`/api/tests/${encodeURIComponent(id)}`, origin);
+    const url = new URL(`/api/website/medical-tests/${encodeURIComponent(id)}`, origin);
     const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
     if (!res.ok) return null;
-    return res.json();
+    return (await res.json()) as MedicalTestItem;
   } catch {
     return null;
   }
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }: PageProps) {
   const name = locale === "ar" ? test.nameAr : test.nameEn;
   return {
     title: `${name} | Al Mutawali Lab`,
-    description: test.description?.slice(0, 160),
+    description: `${test.category} — ${test.sampleType}`,
   };
 }
 
@@ -40,16 +41,14 @@ export default async function TestDetailsPage({ params }: PageProps) {
 
   const t = await getTranslations("testDetails");
   const currentLocale = await getLocale();
+  const numberFormatter = new Intl.NumberFormat(currentLocale);
   const name = currentLocale === "ar" ? test.nameAr : test.nameEn;
 
   return (
-    <main className="bg-background py-12 md:py-20">
+    <main className="bg-linear-to-b from-surface via-surface to-surface-container-low py-12 md:py-20">
       <div className="content-container">
         <nav className="mb-8 flex items-center gap-2 text-sm text-on-surface-variant">
-          <Link
-            href="/tests"
-            className="transition-colors hover:text-primary"
-          >
+          <Link href="/tests" className="transition-colors hover:text-primary">
             {t("breadcrumbTests")}
           </Link>
           <Icon name="chevron_right" size="sm" />
@@ -57,138 +56,83 @@ export default async function TestDetailsPage({ params }: PageProps) {
         </nav>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-8">
-            <div>
-              <h1 className="font-headline text-3xl font-black tracking-tight text-on-surface md:text-4xl">
-                {name}
-              </h1>
-              {test.category && (
-                <Badge tone="default" className="mt-3">
-                  {test.category}
-                </Badge>
-              )}
+          <div className="space-y-8 lg:col-span-2">
+            <div className="rounded-[2rem] border border-outline-variant/20 bg-surface-container-lowest p-6 shadow-sm md:p-8">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h1 className="font-headline text-3xl font-black tracking-tight text-on-surface md:text-4xl">
+                    {name}
+                  </h1>
+                  {test.category ? (
+                    <Badge tone="default" className="mt-4">
+                      {test.category}
+                    </Badge>
+                  ) : null}
+                </div>
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <Icon name="biotech" size="lg" className="text-primary" />
+                </div>
+              </div>
             </div>
 
-            {test.description && (
-              <Card>
-                <div className="flex items-start gap-3">
-                  <Icon
-                    name="description"
-                    filled
-                    className="mt-0.5 text-primary"
-                  />
-                  <div>
-                    <h2 className="mb-2 font-headline text-lg font-bold text-on-surface">
-                      {t("descriptionTitle")}
-                    </h2>
-                    <p className="leading-relaxed text-on-surface-variant">
-                      {test.description}
-                    </p>
-                  </div>
+            <Card>
+              <div className="flex items-start gap-3">
+                <Icon name="info" filled className="mt-0.5 text-primary" />
+                <div>
+                  <h2 className="mb-2 font-headline text-lg font-bold text-on-surface">
+                    {t("overviewTitle")}
+                  </h2>
+                  <p className="leading-relaxed text-on-surface-variant">
+                    {t("overviewBody", {
+                      category: test.category || t("uncategorized"),
+                      sample: test.sampleType || t("sampleUnavailable"),
+                    })}
+                  </p>
                 </div>
-              </Card>
-            )}
-
-            {test.normalRanges && (
-              <Card>
-                <div className="flex items-start gap-3">
-                  <Icon
-                    name="vital_signs"
-                    filled
-                    className="mt-0.5 text-emerald-600"
-                  />
-                  <div>
-                    <h2 className="mb-2 font-headline text-lg font-bold text-on-surface">
-                      {t("normalRanges")}
-                    </h2>
-                    <p className="leading-relaxed text-on-surface-variant">
-                      {test.normalRanges}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            )}
-
-            {test.preparation && (
-              <Card>
-                <div className="flex items-start gap-3">
-                  <Icon
-                    name="checklist"
-                    filled
-                    className="mt-0.5 text-amber-600"
-                  />
-                  <div>
-                    <h2 className="mb-2 font-headline text-lg font-bold text-on-surface">
-                      {t("preparation")}
-                    </h2>
-                    <p className="leading-relaxed text-on-surface-variant">
-                      {test.preparation}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            )}
+              </div>
+            </Card>
           </div>
 
           <aside className="space-y-6">
-            {test.price != null && (
-              <Card className="text-center">
-                <Icon
-                  name="payments"
-                  filled
-                  className="mx-auto mb-2 text-primary"
-                  size="lg"
-                />
-                <p className="text-sm text-on-surface-variant">
-                  {t("price")}
-                </p>
-                <p className="mt-1 font-headline text-3xl font-black text-primary">
-                  {test.price}{" "}
-                  <span className="text-base font-normal text-on-surface-variant">
-                    {t("currency")}
-                  </span>
-                </p>
-              </Card>
-            )}
+            <Card className="text-center">
+              <Icon name="payments" filled className="mx-auto mb-2 text-primary" size="lg" />
+              <p className="text-sm text-on-surface-variant">{t("price")}</p>
+              <p className="mt-1 font-headline text-3xl font-black text-primary">
+                {numberFormatter.format(test.price)}{" "}
+                <span className="text-base font-normal text-on-surface-variant">
+                  {t("currency")}
+                </span>
+              </p>
+            </Card>
 
-            {test.requiredSample && (
+            {test.sampleType ? (
               <Card>
                 <div className="flex items-center gap-3">
                   <Icon name="science" filled className="text-primary" />
                   <div>
-                    <p className="text-xs text-on-surface-variant">
-                      {t("requiredSample")}
-                    </p>
-                    <p className="font-bold text-on-surface">
-                      {test.requiredSample}
-                    </p>
+                    <p className="text-xs text-on-surface-variant">{t("requiredSample")}</p>
+                    <p className="font-bold text-on-surface">{test.sampleType}</p>
                   </div>
                 </div>
               </Card>
-            )}
+            ) : null}
 
-            {test.relatedTests?.length > 0 && (
-              <Card>
-                <h3 className="mb-4 flex items-center gap-2 font-headline text-base font-bold text-on-surface">
-                  <Icon name="link" className="text-primary" size="sm" />
-                  {t("relatedTests")}
+            <Card>
+              <div className="space-y-4">
+                <h3 className="font-headline text-base font-bold text-on-surface">
+                  {t("nextStepsTitle")}
                 </h3>
-                <div className="space-y-2">
-                  {test.relatedTests.map(
-                    (rt: { id: string; nameEn: string; nameAr: string }) => (
-                      <Link
-                        key={rt.id}
-                        href={`/tests/${rt.id}`}
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-primary"
-                      >
-                        <Icon name="arrow_forward" size="sm" />
-                        {currentLocale === "ar" ? rt.nameAr : rt.nameEn}
-                      </Link>
-                    ),
-                  )}
-                </div>
-              </Card>
-            )}
+                <p className="text-sm leading-7 text-on-surface-variant">
+                  {t("nextStepsBody")}
+                </p>
+                <Link
+                  href="/order-test-request"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl clinical-gradient px-6 py-2.5 font-headline text-sm font-semibold text-on-primary-container shadow-lg shadow-primary/20 transition-all hover:opacity-95"
+                >
+                  {t("orderCta")}
+                </Link>
+              </div>
+            </Card>
           </aside>
         </div>
       </div>

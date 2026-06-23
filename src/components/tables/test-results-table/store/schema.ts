@@ -1,6 +1,6 @@
 type DataTableColumn<T> = {
   accessor: keyof T | string;
-  title: string;
+  title: React.ReactNode;
   width?: string;
   render?: (row: T) => React.ReactNode;
 };

@@ -15,6 +15,27 @@ type WebsiteHeaderProps = {
   variant?: "light" | "dark";
   showCta?: boolean;
   ctaHref?: string;
+  cmsNavigationLinks?: WebsiteHeaderNavigationLink[];
+};
+
+export type WebsiteHeaderNavigationLink = {
+  href: string;
+  label: string;
+};
+
+const mergeNavigationLinks = (
+  links: WebsiteHeaderNavigationLink[],
+): WebsiteHeaderNavigationLink[] => {
+  const seen = new Set<string>();
+  const merged: WebsiteHeaderNavigationLink[] = [];
+  for (const link of links) {
+    const href = link.href.trim();
+    const label = link.label.trim();
+    if (!href || !label || seen.has(href)) continue;
+    seen.add(href);
+    merged.push({ href, label });
+  }
+  return merged;
 };
 
 /**
@@ -24,6 +45,7 @@ export function WebsiteHeader({
   variant = "light",
   showCta = true,
   ctaHref = "/login",
+  cmsNavigationLinks = [],
 }: WebsiteHeaderProps) {
   const t = useTranslations();
   const locale = useLocale();
@@ -55,10 +77,11 @@ export function WebsiteHeader({
     setMounted(true);
   }, []);
 
-  const links = [
+  const fixedLinks = [
     { href: "/", label: t("nav.home") },
     { href: "/about", label: t("nav.about") },
     { href: "/services", label: t("nav.services") },
+    { href: "/tests", label: t("nav.tests") },
     { href: "/order-test-request", label: t("nav.orderTestRequest") },
     { href: "/#quality-control", label: t("footer.quality") },
     { href: "/careers", label: t("nav.careers") },
@@ -66,6 +89,7 @@ export function WebsiteHeader({
     { href: "/blog", label: t("nav.blog") },
     { href: "/contact", label: t("nav.contact") },
   ];
+  const links = mergeNavigationLinks([...cmsNavigationLinks, ...fixedLinks]);
   const isLinkActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
@@ -83,8 +107,34 @@ export function WebsiteHeader({
     window.location.href = `/${locale}`;
   };
 
+  useEffect(() => {
+    if (!profileMenuOpen) return;
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setProfileMenuOpen(false);
+    };
+
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [profileMenuOpen]);
+
+  useEffect(() => {
+    if (!drawerOpen && !profileMenuOpen) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [drawerOpen, profileMenuOpen]);
+
   const accountMenu = (
-    <div className="absolute end-0 top-full z-[80] mt-2 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-800 shadow-xl shadow-slate-900/10">
+    <div
+      role="menu"
+      aria-label={t("navbar.profile")}
+      className="absolute end-0 top-full z-[80] mt-2 w-56 max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-800 shadow-xl shadow-slate-900/10"
+    >
       <div className="border-b border-slate-100 px-4 py-3">
         <p className="truncate text-sm font-bold">{accountLabel}</p>
         <p className="truncate text-xs text-slate-500">{session?.user?.email}</p>
@@ -129,16 +179,11 @@ export function WebsiteHeader({
 
   useEffect(() => {
     if (!drawerOpen) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setDrawerOpen(false);
     };
     document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      document.removeEventListener("keydown", onKey);
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [drawerOpen]);
 
   return (
@@ -206,6 +251,7 @@ export function WebsiteHeader({
                 )}
                 aria-label={t("navbar.profile")}
                 aria-expanded={profileMenuOpen}
+                aria-haspopup="menu"
                 onClick={() => setProfileMenuOpen((open) => !open)}
               >
                 <span className="material-symbols-outlined text-2xl" aria-hidden>
@@ -220,7 +266,7 @@ export function WebsiteHeader({
                 href="/login"
                 className="rounded border border-primary/20 px-3 py-2 text-xs font-bold uppercase tracking-widest text-primary transition-all hover:bg-primary/5 sm:px-4"
               >
-                  {t("about.loginRegister")}
+                {t("about.loginRegister")}
               </Link>
               <Link
                 href={dashboardHref}
@@ -245,6 +291,18 @@ export function WebsiteHeader({
           isDark ? "bg-white/5" : "bg-slate-200/50",
         )}
       />
+
+      {profileMenuOpen && mounted
+        ? createPortal(
+          <button
+            type="button"
+            className="fixed inset-0 z-40 hidden md:block"
+            aria-label={t("header.closeMenu")}
+            onClick={() => setProfileMenuOpen(false)}
+          />,
+          document.body,
+        )
+        : null}
 
       {drawerOpen && mounted ? createPortal(
         <>

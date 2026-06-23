@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { AnimatedNumber } from "./animated-number";
 
@@ -57,18 +58,27 @@ export async function TestsOverview() {
           className="reveal-up mt-16 text-center"
           style={{ animationDelay: "520ms" }}
         >
-          <div className="inline-flex items-center gap-4 rounded-3xl border border-outline-variant/30 bg-surface-container-lowest px-8 py-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10">
-              <Icon name="experiment" className="text-2xl text-primary" />
+          <div className="inline-flex flex-col items-center gap-6">
+            <div className="inline-flex items-center gap-4 rounded-3xl border border-outline-variant/30 bg-surface-container-lowest px-8 py-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10">
+                <Icon name="experiment" className="text-2xl text-primary" />
+              </div>
+              <div className="text-start">
+                <p className="text-xs font-bold tracking-widest text-on-surface-variant">
+                  {t("programsLabel")}
+                </p>
+                <p className="mt-1 text-sm text-on-surface-variant">
+                  {t("programsBody")}
+                </p>
+              </div>
             </div>
-            <div className="text-start">
-              <p className="text-xs font-bold tracking-widest text-on-surface-variant">
-                {t("programsLabel")}
-              </p>
-              <p className="mt-1 text-sm text-on-surface-variant">
-                {t("programsBody")}
-              </p>
-            </div>
+            <Link
+              href="/tests"
+              className="inline-flex items-center gap-2 rounded-xl clinical-gradient px-6 py-3 font-headline text-sm font-semibold text-on-primary-container shadow-lg shadow-primary/20 transition-all hover:opacity-95"
+            >
+              {t("browseCatalog")}
+              <Icon name="arrow_forward" size="sm" />
+            </Link>
           </div>
         </div>
       </div>

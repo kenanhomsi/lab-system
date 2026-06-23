@@ -122,9 +122,10 @@ export function filterBannersByPlacement(
     .sort((a, b) => a.displayOrder - b.displayOrder);
 }
 
-export function getPageLocationFromPath(pathname: string): BannerPlacement {
-  const path = pathname.toLowerCase();
+export function getPageLocationFromPath(pathname: string): BannerPlacement | null {
+  const path = pathname.toLowerCase().replace(/\/+$/, "") || "/";
 
+  if (path === "/" || path.endsWith("/home")) return BANNER_PLACEMENT.HOME_PAGE;
   if (path.includes("/about")) return BANNER_PLACEMENT.ABOUT;
   if (path.includes("/blog")) return BANNER_PLACEMENT.BLOG;
   if (path.includes("/contact")) return BANNER_PLACEMENT.CONTACT;
@@ -133,7 +134,17 @@ export function getPageLocationFromPath(pathname: string): BannerPlacement {
   if (path.includes("/offers")) return BANNER_PLACEMENT.OFFERS;
   if (path.includes("/plans")) return BANNER_PLACEMENT.PLANS;
   if (path.includes("/tests")) return BANNER_PLACEMENT.TESTS;
-  if (path === "/" || path.includes("/home")) return BANNER_PLACEMENT.HOME_PAGE;
 
-  return BANNER_PLACEMENT.HOME_PAGE;
+  return null;
+}
+
+export function filterAdsByPlacement<T extends { addressName?: string }>(
+  items: T[],
+  wanted: string,
+): T[] {
+  return items.filter(
+    (item) =>
+      Boolean(item.addressName) &&
+      bannerMatchesPlacement(item.addressName!, wanted),
+  );
 }

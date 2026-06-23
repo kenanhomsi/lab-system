@@ -8,7 +8,8 @@ type navbarQuickActionIcon =
   | "clipboardCheck"
   | "creditCard"
   | "alertCircle"
-  | "shield";
+  | "shield"
+  | "filePlus";
 
 type navbarQuickAction = {
   id: string;

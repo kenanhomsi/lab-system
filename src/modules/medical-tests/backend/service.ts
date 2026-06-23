@@ -3,7 +3,9 @@ import { medicalTestModuleNames } from "../names";
 import {
   CreateUserParams,
   DeleteUserParams,
+  FindAllPublicUserParams,
   FindAllUserParams,
+  FindOnePublicUserParams,
   FindUserParams,
   UpdateUserParams,
 } from "./types";
@@ -17,6 +19,14 @@ class Service {
   async findAll(params: FindAllUserParams) {
     const res = await this.Client.findAll(params);
     return res;
+  }
+
+  async findAllPublic(params: FindAllPublicUserParams) {
+    return this.Client.findAllPublic(params);
+  }
+
+  async findOnePublic(params: FindOnePublicUserParams) {
+    return this.Client.findOnePublic(params);
   }
 
   async create(params: CreateUserParams) {

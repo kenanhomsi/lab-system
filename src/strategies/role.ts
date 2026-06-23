@@ -88,6 +88,16 @@ const adminQuickActions: navbarQuickAction[] = [
     modal: "create",
     tab: "roles",
   },
+  {
+    id: "create-website-page",
+    label: "createWebsitePage.label",
+    description: "createWebsitePage.description",
+    icon: "filePlus",
+    href: "/admin/settings",
+    color: "cyan",
+    modal: "create",
+    tab: "websitePages",
+  },
 ];
 
 const doctorQuickActions: navbarQuickAction[] = [
@@ -236,6 +246,18 @@ export const roleStrategy = {
         label: "adminTestRequests",
         href: "/admin/test-requests",
         icon: "clipboardList",
+        group: "navGroupClinical",
+      },
+      {
+        label: "adminAppointments",
+        href: "/admin/appointments",
+        icon: "calendar",
+        group: "navGroupClinical",
+      },
+      {
+        label: "availabilities",
+        href: "/admin/availabilities",
+        icon: "calendar",
         group: "navGroupClinical",
       },
       {
@@ -514,6 +536,11 @@ export const roleStrategy = {
         label: "adminTestRequests",
         href: "/secretary/test-requests",
         icon: "clipboardList",
+      },
+      {
+        label: "availabilities",
+        href: "/secretary/availabilities",
+        icon: "calendar",
       },
       {
         label: "adminTestResults",

@@ -4,10 +4,10 @@ import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import {
   Alert,
   Button,
+  Checkbox,
   Divider,
   Group,
   Box,
-  Checkbox,
   Modal,
   NumberInput,
   Paper,
@@ -26,8 +26,8 @@ import dayjs from "dayjs";
 import {
   IconCalendarEvent,
   IconCurrencyDollar,
-  IconFileDescription,
   IconFlask2,
+  IconMapPin,
   IconPlus,
   IconUsers,
 } from "@tabler/icons-react";
@@ -42,6 +42,15 @@ import {
 } from "../use-test-request-lookups";
 import { toRequestDateIso } from "@/modules/TestRequests/abstraction/request-date-iso";
 import { useSyncedSessionUser } from "@/stores/use-synced-session-user";
+import {
+  appointmentsClient,
+  appointmentSlotKey,
+  findAppointmentSlotByKey,
+  formatAppointmentSlotLabel,
+} from "@/modules/appointments";
+import { useQuery } from "@tanstack/react-query";
+import { notifications } from "@mantine/notifications";
+import { OsmLocationPickerDynamic } from "@/components/maps/osm-location-picker-dynamic";
 
 const INITIAL_FORM = {
   medicalTestIds: [] as number[],
@@ -55,6 +64,28 @@ const INITIAL_FORM = {
   directPatientId: "",
   externalPatientId: 0,
 };
+
+function extractCreatedTestRequestId(payload: unknown): number | null {
+  const visit = (value: unknown): number | null => {
+    if (!value || typeof value !== "object") return null;
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        const id = visit(item);
+        if (id) return id;
+      }
+      return null;
+    }
+    const record = value as Record<string, unknown>;
+    const rawId = record.id;
+    if (typeof rawId === "number" && Number.isFinite(rawId)) return rawId;
+    if (typeof rawId === "string" && rawId.trim() && Number.isFinite(Number(rawId))) {
+      return Number(rawId);
+    }
+    return visit(record.data) ?? visit(record.items) ?? visit(record.results);
+  };
+
+  return visit(payload);
+}
 
 function medicalTestLabel(item: MedicalTestItem, locale: string): string {
   if (locale.startsWith("ar")) {
@@ -76,6 +107,7 @@ function totalPriceForMedicalTestIds(ids: number[], items: MedicalTestItem[]): n
 const CreateTestRequestForm = () => {
   const t = useTranslations("admin.testRequests");
   const tc = useTranslations("admin.common");
+  const ta = useTranslations("appointmentsFeature");
   const props = useMirror("props") as { opened?: boolean; onClose?: () => void };
   const locale = useLocale();
 
@@ -95,6 +127,13 @@ const CreateTestRequestForm = () => {
   const opened = Boolean(props.opened);
 
   const [form, setForm] = useState(INITIAL_FORM);
+  const [appointmentDate, setAppointmentDate] = useState("");
+  const [selectedSlotKey, setSelectedSlotKey] = useState<string | null>(null);
+  const [locationType, setLocationType] = useState("lab");
+  const [latitude, setLatitude] = useState<number | "">("");
+  const [longitude, setLongitude] = useState<number | "">("");
+  const [appointmentNotes, setAppointmentNotes] = useState("");
+  const [createdTestRequestId, setCreatedTestRequestId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const onClose = props.onClose || (() => undefined);
@@ -103,11 +142,26 @@ const CreateTestRequestForm = () => {
   const externalPatientsQuery = useExternalPatientsForSelectQuery(opened);
   const { user: sessionUser, isSessionLoading, isUnauthenticated, status } =
     useSyncedSessionUser();
+  const slotsQuery = useQuery({
+    queryKey: ["appointment-day-availability", appointmentDate],
+    queryFn: () =>
+      appointmentsClient.getDayAvailability({
+        date: appointmentDate,
+      }),
+    enabled: opened && Boolean(appointmentDate),
+  });
 
   useEffect(() => {
     if (!opened) {
       setActiveStep(0);
       setForm({ ...INITIAL_FORM });
+      setAppointmentDate("");
+      setSelectedSlotKey(null);
+      setLocationType("lab");
+      setLatitude("");
+      setLongitude("");
+      setAppointmentNotes("");
+      setCreatedTestRequestId(null);
     }
   }, [opened]);
 
@@ -148,11 +202,24 @@ const CreateTestRequestForm = () => {
     hasUserId && (partyKind === "lab" || isStaffPartyUser(sessionUser?.roles)),
   );
 
-  /** Step 1: only form fields — profile is required on submit, not to move to step 2. */
-  const isStepOneValid =
+  const isRequestDetailsValid =
     Boolean(form.requestDate.trim()) && form.medicalTestIds.length > 0;
 
-  const canSubmitCreate = isStepOneValid && hasUserId;
+  const selectedSlot = findAppointmentSlotByKey(slotsQuery.data ?? [], selectedSlotKey);
+  const isHomeCollection = locationType === "home";
+  const selectedLocation = useMemo(
+    () =>
+      latitude !== "" && longitude !== ""
+        ? { lat: Number(latitude), lng: Number(longitude) }
+        : null,
+    [latitude, longitude],
+  );
+  const isAppointmentStepValid =
+    Boolean(appointmentDate.trim()) &&
+    Boolean(selectedSlot && sessionUser?.id?.trim()) &&
+    (!isHomeCollection || Boolean(selectedLocation));
+  const canSubmitCreate =
+    isAppointmentStepValid && hasUserId && (Boolean(createdTestRequestId) || isRequestDetailsValid);
 
   const isLastStep = activeStep === 1;
 
@@ -189,7 +256,7 @@ const CreateTestRequestForm = () => {
       status: "pending",
       totalAmount: form.totalAmount,
       notes: form.notes,
-      metadata: form.metadata,
+      metadata: locationType,
       externalPatientId: form.externalPatientId > 0 ? form.externalPatientId : null,
       ...party,
     };
@@ -244,7 +311,7 @@ const CreateTestRequestForm = () => {
               <Stack gap="md">
                 <MutationErrorAlert />
                 <Group justify="space-between" wrap="nowrap">
-                  <Title order={5}>{t("requestDetailsTitle")}</Title>
+                  <Title order={5}>{ta("collectionDetails")}</Title>
                   <Text size="xs" c="dimmed">
                     {t("requiredFieldsHint")}
                   </Text>
@@ -260,6 +327,132 @@ const CreateTestRequestForm = () => {
                     {t("alertSessionBody")}
                   </Alert>
                 ) : null}
+                <DatePickerInput
+                  label={ta("appointmentDate")}
+                  withAsterisk
+                  placeholder={ta("selectAppointmentDate")}
+                  description={ta("appointmentDateDesc")}
+                  value={appointmentDate ? dayjs(appointmentDate).toDate() : null}
+                  minDate={new Date()}
+                  leftSection={<IconCalendarEvent size={16} />}
+                  onChange={(date) => {
+                    setAppointmentDate(date ? dayjs(date).format("YYYY-MM-DD") : "");
+                    setSelectedSlotKey(null);
+                  }}
+                />
+                <Select
+                  label={ta("availableSlot")}
+                  placeholder={
+                    !appointmentDate
+                      ? ta("selectAppointmentDate")
+                      : slotsQuery.isPending
+                        ? ta("loadingSlots")
+                        : ta("selectSlot")
+                  }
+                  data={(slotsQuery.data ?? []).map((slot) => ({
+                    value: appointmentSlotKey(slot),
+                    label: formatAppointmentSlotLabel(slot, ta),
+                  }))}
+                  value={selectedSlotKey}
+                  onChange={setSelectedSlotKey}
+                  disabled={!appointmentDate || slotsQuery.isPending || slotsQuery.isError}
+                  searchable
+                  withAsterisk
+                  leftSection={<IconCalendarEvent size={16} />}
+                />
+                {slotsQuery.isError ? (
+                  <Alert color="red">{ta("slotsLoadError")}</Alert>
+                ) : null}
+                {appointmentDate &&
+                !slotsQuery.isPending &&
+                !slotsQuery.isError &&
+                (slotsQuery.data ?? []).length === 0 ? (
+                  <Text size="sm" c="dimmed">
+                    {ta("noSlots")}
+                  </Text>
+                ) : null}
+                <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
+                  <Select
+                    label={ta("locationType")}
+                    data={[
+                      { value: "lab", label: ta("locationLab") },
+                      { value: "home", label: ta("locationHome") },
+                      { value: "work", label: ta("locationWork") },
+                    ]}
+                    value={locationType}
+                    onChange={(value) => {
+                      const nextValue = value || "lab";
+                      setLocationType(nextValue);
+                      if (nextValue !== "home") {
+                        setLatitude("");
+                        setLongitude("");
+                      }
+                    }}
+                    withAsterisk
+                    leftSection={<IconMapPin size={16} />}
+                  />
+                  <Textarea
+                    label={ta("notes")}
+                    autosize
+                    minRows={2}
+                    placeholder={ta("collectionNotesPlaceholder")}
+                    value={appointmentNotes}
+                    onChange={(event) => setAppointmentNotes(event.currentTarget.value)}
+                  />
+                </SimpleGrid>
+                {isHomeCollection ? (
+                  <Stack gap="sm">
+                    <Stack gap={2}>
+                      <Text size="sm" fw={600}>
+                        {ta("collectionMapLabel")}
+                        <Text span c="red">
+                          {" "}
+                          *
+                        </Text>
+                      </Text>
+                      <Text size="xs" c="dimmed">
+                        {ta("collectionMapDescription")}
+                      </Text>
+                    </Stack>
+                    <OsmLocationPickerDynamic
+                      value={selectedLocation}
+                      onChange={(next) => {
+                        setLatitude(next.lat);
+                        setLongitude(next.lng);
+                      }}
+                    />
+                    {selectedLocation ? (
+                      <Text size="xs" c="dimmed">
+                        {ta("selectedCoordinates", {
+                          lat: selectedLocation.lat.toFixed(5),
+                          lng: selectedLocation.lng.toFixed(5),
+                        })}
+                      </Text>
+                    ) : (
+                      <Text size="xs" c="red">
+                        {ta("mapRequired")}
+                      </Text>
+                    )}
+                  </Stack>
+                ) : null}
+                {createdTestRequestId ? (
+                  <Alert color="yellow">{ta("retryAppointmentHint")}</Alert>
+                ) : null}
+              </Stack>
+            </Paper>
+          </Stepper.Step>
+
+          <Stepper.Step label={t("step2Label")} description={t("step2NotesMeta")}>
+            <Paper withBorder radius="lg" p="md">
+              <Stack gap="md">
+                <MutationErrorAlert />
+                <Group justify="space-between" wrap="nowrap">
+                  <Title order={5}>{t("requestDetailsTitle")}</Title>
+                  <Text size="xs" c="dimmed">
+                    {t("requiredFieldsHint")}
+                  </Text>
+                </Group>
+                <Divider />
                 {medicalTestsQuery.isError ? (
                   <Alert color="red" title={t("alertMedicalTestsTitle")}>
                     {t("alertMedicalTestsBody")}
@@ -400,16 +593,6 @@ const CreateTestRequestForm = () => {
                     </>
                   )}
                 </SimpleGrid>
-              </Stack>
-            </Paper>
-          </Stepper.Step>
-
-          <Stepper.Step label={t("step2Label")} description={t("step2NotesMeta")}>
-            <Paper withBorder radius="lg" p="md">
-              <Stack gap="md">
-                <MutationErrorAlert />
-                <Title order={5}>{t("additionalInfoTitle")}</Title>
-                <Divider />
                 <Textarea
                   label={t("fieldNotes")}
                   autosize
@@ -418,21 +601,6 @@ const CreateTestRequestForm = () => {
                   placeholder={t("notesPlaceholder")}
                   value={form.notes}
                   onChange={(e) => setForm({ ...form, notes: e.currentTarget.value })}
-                />
-                <Select
-                  label={t("fieldMetadata")}
-                  leftSection={<IconFileDescription size={16} />}
-                  placeholder={t("metadataPlaceholder")}
-                  description={t("metadataDesc")}
-                  data={[
-                    { value: "home", label: t("dropOffHome") },
-                    { value: "lab", label: t("dropOffLab") }
-                  ]}
-                  value={form.metadata}
-                  onChange={(v) =>
-                    setForm({ ...form, metadata: v || "" })
-                  }
-                  clearable
                 />
               </Stack>
             </Paper>
@@ -462,7 +630,7 @@ const CreateTestRequestForm = () => {
               <Button
                 radius="md"
                 onClick={() => setActiveStep(1)}
-                disabled={!isStepOneValid || isSubmitting}
+                disabled={!isAppointmentStepValid || isSubmitting}
               >
                 {tc("next")}
               </Button>
@@ -472,12 +640,48 @@ const CreateTestRequestForm = () => {
                 loading={isSubmitting}
                 disabled={!canSubmitCreate}
                 onClick={async () => {
-                  const payload = buildPayload();
-                  if (!payload) return;
+                  const payload = createdTestRequestId ? null : buildPayload();
+                  if (!createdTestRequestId && !payload) return;
+                  if (!selectedSlot || !sessionUser?.id) return;
+                  let savedRequestIdForRetry = createdTestRequestId;
                   setIsSubmitting(true);
                   try {
-                    await submitAction(payload);
+                    let testRequestId = createdTestRequestId;
+                    if (!testRequestId && payload) {
+                      const result = await submitAction(payload);
+                      testRequestId = extractCreatedTestRequestId(result);
+                      if (!testRequestId) {
+                        throw new Error(ta("missingBookingData"));
+                      }
+                      savedRequestIdForRetry = testRequestId;
+                      setCreatedTestRequestId(testRequestId);
+                    }
+                    if (!testRequestId) {
+                      throw new Error(ta("missingBookingData"));
+                    }
+                    await appointmentsClient.create({
+                      availabilityId: selectedSlot.availabilityId,
+                      testRequestId,
+                      userId: sessionUser.id,
+                      patientLocationType: locationType,
+                      patientLatitude: isHomeCollection && selectedLocation ? selectedLocation.lat : null,
+                      patientLongitude: isHomeCollection && selectedLocation ? selectedLocation.lng : null,
+                      notes: appointmentNotes,
+                      startTime: selectedSlot.startTime,
+                      endTime: selectedSlot.endTime,
+                    });
                     handleClose();
+                  } catch (error) {
+                    notifications.show({
+                      color: "red",
+                      title: ta("bookingFailed"),
+                      message:
+                        savedRequestIdForRetry
+                          ? ta("retryAppointmentHint")
+                          : error instanceof Error
+                            ? error.message
+                            : ta("bookingFailed"),
+                    });
                   } finally {
                     setIsSubmitting(false);
                   }

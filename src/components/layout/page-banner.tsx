@@ -13,6 +13,10 @@ type PageBannerProps = {
   banners: BannerItem[];
 };
 
+/**
+ * Full-width promotional banner using theme scrims (background / primary tints)
+ * so light and dark modes stay consistent with the rest of the app.
+ */
 export function PageBanner({ banners }: PageBannerProps) {
   const t = useTranslations("landing.banners");
   const locale = useLocale();
@@ -38,6 +42,9 @@ export function PageBanner({ banners }: PageBannerProps) {
 
   const ctaLabel = isExternal ? t("ctaExternal") : t("cta");
 
+  const mediaClassName =
+    "absolute inset-0 h-full w-full scale-[1.06] object-cover opacity-90 transition-transform duration-700 ease-out group-hover:scale-[1.1]";
+
   const media = mediaIsVideo ? (
     <video
       key={banner.id}
@@ -46,7 +53,7 @@ export function PageBanner({ banners }: PageBannerProps) {
       loop
       autoPlay
       playsInline
-      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+      className={mediaClassName}
     />
   ) : (
     <Image
@@ -54,30 +61,37 @@ export function PageBanner({ banners }: PageBannerProps) {
       src={banner.mediaUrl}
       alt={banner.title}
       fill
-      sizes="100vw"
+      sizes="(max-width: 768px) 100vw, min(1200px, 92vw)"
+      quality={90}
       priority
-      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+      className={mediaClassName}
     />
   );
+
+  const textScrimClass = isRtl
+    ? "absolute inset-0 bg-linear-to-l from-background/85 via-background/35 to-transparent"
+    : "absolute inset-0 bg-linear-to-r from-background/85 via-background/35 to-transparent";
 
   const contentAlign = "items-start text-start";
 
   const textInner: ReactNode = (
-    <div className={`relative flex w-full max-w-xl flex-col gap-4 md:max-w-[min(32rem,48%)] ${contentAlign}`}>
-      <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-white/30 bg-white/15 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur-sm">
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" aria-hidden />
+    <div
+      className={`relative flex w-full max-w-lg flex-col gap-3.5 rounded-2xl bg-transparent p-5 md:max-w-[min(34rem,52%)] md:gap-4 md:p-7 ${contentAlign}`}
+    >
+      <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-[11px] font-bold tracking-wide text-primary dark:bg-primary-container/50 dark:text-primary-fixed">
+        <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_color-mix(in_srgb,var(--primary)_70%,transparent)]" aria-hidden />
         {banner.type || t("fallback")}
       </span>
 
-      <h2 className="font-headline text-2xl font-extrabold leading-[1.15] tracking-tight text-white drop-shadow-sm md:text-3xl lg:text-[2.1rem]">
+      <h2 className="font-headline text-2xl font-extrabold leading-[1.15] tracking-tight text-on-surface md:text-3xl lg:text-[2rem]">
         {banner.title}
       </h2>
 
-      <p className="text-sm leading-relaxed text-white/85 md:text-base">{t("learnMore")}</p>
+      <p className="text-sm leading-relaxed text-on-surface-variant md:text-[15px]">{t("learnMore")}</p>
 
       {href ? (
         <span
-          className={`clinical-gradient mt-1 inline-flex w-fit items-center gap-2.5 rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg shadow-black/25 transition-all duration-200 group-hover:shadow-primary/40 group-hover:brightness-105 ${isRtl ? "flex-row-reverse" : ""}`}
+          className={`clinical-gradient mt-0.5 inline-flex w-fit items-center gap-2.5 rounded-xl px-5 py-2.5 text-sm font-bold text-on-primary shadow-sm shadow-primary/15 ring-1 ring-primary/15 transition-all duration-200 group-hover:shadow-primary/25 group-hover:brightness-105 ${isRtl ? "flex-row-reverse" : ""}`}
         >
           {ctaLabel}
           <svg
@@ -98,38 +112,31 @@ export function PageBanner({ banners }: PageBannerProps) {
     </div>
   );
 
+  const panelClassName = `group relative z-10 flex min-h-[240px] flex-1 flex-col justify-center px-5 py-8 md:min-h-[280px] md:px-10 md:py-10 ${contentAlign}`;
+
   const contentPanel = href ? (
     isExternal ? (
       <a
         href={href}
         target={target ?? "_blank"}
         rel={rel ?? "noreferrer"}
-        className={`group relative z-10 flex min-h-[280px] flex-1 flex-col justify-center px-7 py-10 no-underline md:min-h-[320px] md:px-12 md:py-12 ${contentAlign}`}
+        className={`${panelClassName} no-underline`}
       >
         {textInner}
       </a>
     ) : (
-      <Link
-        href={href}
-        target={target}
-        rel={rel}
-        className={`group relative z-10 flex min-h-[280px] flex-1 flex-col justify-center px-7 py-10 no-underline md:min-h-[320px] md:px-12 md:py-12 ${contentAlign}`}
-      >
+      <Link href={href} target={target} rel={rel} className={`${panelClassName} no-underline`}>
         {textInner}
       </Link>
     )
   ) : (
-    <div
-      className={`group relative z-10 flex min-h-[280px] flex-1 flex-col justify-center px-7 py-10 md:min-h-[320px] md:px-12 md:py-12 ${contentAlign}`}
-    >
-      {textInner}
-    </div>
+    <div className={panelClassName}>{textInner}</div>
   );
 
   const carouselDots =
     banners.length > 1 ? (
       <div
-        className={`relative z-10 flex items-center gap-2 border-t border-white/15 bg-black/25 px-7 py-4 backdrop-blur-sm md:px-12 ${isRtl ? "flex-row-reverse" : ""}`}
+        className={`relative z-10 flex items-center gap-2 border-t border-outline-variant/15 bg-transparent px-5 py-3.5 md:px-10 ${isRtl ? "flex-row-reverse" : ""}`}
       >
         {banners.map((item, idx) => (
           <button
@@ -142,14 +149,16 @@ export function PageBanner({ banners }: PageBannerProps) {
             aria-label={`${slideLabelPrefix} ${idx + 1}: ${item.title}`}
             aria-current={idx === activeIdx}
             className={[
-              "rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2",
-              idx === activeIdx ? "h-2 w-7 bg-white" : "h-2 w-2 bg-white/40 hover:bg-white/70",
+              "rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
+              idx === activeIdx
+                ? "h-2 w-7 bg-primary shadow-[0_0_10px_color-mix(in_srgb,var(--primary)_55%,transparent)]"
+                : "h-2 w-2 bg-outline-variant/70 hover:bg-primary/50",
             ].join(" ")}
           />
         ))}
         <span
           dir="ltr"
-          className="ms-auto text-[11px] font-semibold tabular-nums text-white/70"
+          className="ms-auto text-[11px] font-semibold tabular-nums text-on-surface-variant"
         >
           {activeIdx + 1}&thinsp;/&thinsp;{banners.length}
         </span>
@@ -158,23 +167,25 @@ export function PageBanner({ banners }: PageBannerProps) {
 
   return (
     <section aria-label={t("regionAria")} className="content-container my-6">
-      <div className="relative overflow-hidden rounded-3xl shadow-2xl ring-1 ring-outline-variant/30">
-        <div className="group relative flex min-h-[280px] flex-col md:min-h-[320px]">
+      <div className="relative overflow-hidden rounded-3xl shadow-md shadow-primary/8 ring-1 ring-outline-variant/25">
+        <div className="group relative flex min-h-[240px] flex-col bg-surface-container-low md:min-h-[280px]">
           <div className="absolute inset-0 overflow-hidden" aria-hidden>
             {media}
 
-            <div className="absolute inset-0 bg-black/35" />
+            <div className={textScrimClass} />
 
             <div
-              className={
-                isRtl
-                  ? "absolute inset-0 bg-linear-to-l from-black/80 via-black/55 to-black/15"
-                  : "absolute inset-0 bg-linear-to-r from-black/80 via-black/55 to-black/15"
-              }
+              className={`pointer-events-none absolute inset-y-0 w-[min(55%,28rem)] ${isRtl ? "inset-e-0 bg-linear-to-l from-primary/12 to-transparent" : "inset-s-0 bg-linear-to-r from-primary/12 to-transparent"}`}
+              aria-hidden
+            />
+
+            <div
+              className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-outline-variant/15"
+              aria-hidden
             />
 
             {banners.length > 1 ? (
-              <div className="absolute bottom-0 inset-x-0 z-1 h-[3px] bg-white/15">
+              <div className="absolute inset-x-0 bottom-0 z-1 h-[3px] bg-outline-variant/25">
                 <div
                   className="clinical-gradient h-full transition-all duration-500 ease-linear"
                   style={{ width: `${((activeIdx + 1) / banners.length) * 100}%` }}

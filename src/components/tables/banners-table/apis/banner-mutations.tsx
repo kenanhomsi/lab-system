@@ -5,7 +5,7 @@ import { MutationErrorProvider } from "@/hooks/mutation-error-context";
 import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import { PropsWithChildren } from "react";
 import { useMirrorRegistry } from "../store";
-import { CreateBannerRequest } from "../types";
+import { CreateBannerRequest, UpdateBannerRequest } from "../types";
 import { frontendContainer } from "@/container";
 import { bannerModuleNames, BannerFrontendService } from "@/modules/banner";
 
@@ -37,6 +37,33 @@ const BannerMutations = ({ children }: PropsWithChildren) => {
 
     useMirrorRegistry("createBanner", async (payload: CreateBannerRequest) =>
         createBannerMutation.mutateAsync(payload),
+    );
+
+    const updateBannerMutation = useManagedMutation({
+        mutationFn: async (payload: UpdateBannerRequest) => {
+            return bannerService.update({
+                id: payload.id,
+                title: payload.title,
+                type: payload.type,
+                InternalLink: payload.internalLink,
+                ExternalLink: payload.externalLink,
+                TargetType: payload.targetType,
+                Location: payload.location,
+                DisplayOrder: payload.displayOrder,
+                startDate: payload.startDate,
+                endDate: payload.endDate,
+                isActive: payload.isActive,
+                VisibilityRulesJson: payload.visibilityRulesJson,
+                Media: payload.media,
+            });
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["admin-banners"] });
+        },
+    });
+
+    useMirrorRegistry("updateBanner", async (payload: UpdateBannerRequest) =>
+        updateBannerMutation.mutateAsync(payload),
     );
 
     const deleteBannerMutation = useManagedMutation({

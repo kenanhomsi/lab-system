@@ -8,7 +8,9 @@ import { MedicalTestClient } from "../abstraction";
 import {
   CreateUserParams,
   DeleteUserParams,
+  FindAllPublicUserParams,
   FindAllUserParams,
+  FindOnePublicUserParams,
   FindUserParams,
   UpdateUserParams,
 } from "./types";
@@ -38,7 +40,20 @@ class Client extends MedicalTestClient<BackendState> {
       .sharedFindAll({ endpoint: appendQueryParams(endpoint.findAll, query) })
       .withAuth(token)
       .perform<{ data: MedicalTestItem[] }>();
-    console.log("res backend", res.data);
+    return res.data;
+  }
+
+  async findAllPublic(params: FindAllPublicUserParams) {
+    const res = await super
+      .sharedFindAll({ endpoint: appendQueryParams(endpoint.findAll, params.query) })
+      .perform<unknown>();
+    return res.data;
+  }
+
+  async findOnePublic(params: FindOnePublicUserParams) {
+    const res = await super
+      .sharedFindOne({ endpoint: endpoint.findOne(params.id) })
+      .perform<unknown>();
     return res.data;
   }
 

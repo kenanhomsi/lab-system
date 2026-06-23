@@ -48,7 +48,16 @@ type ConditionType = "all" | "any";
 type ConditionRuleDraft = { field: string; operator: string; valueText: string };
 
 const ACTION_VALUES: ActionValue[] = ["*", "read", "write", "delete", "approve", "assign"];
+const SUBJECT_TYPE_VALUES = ["User", "Role", "Authenticated", "All"] as const;
+type SubjectTypeValue = (typeof SUBJECT_TYPE_VALUES)[number];
+const WILDCARD_SUBJECT_KEY = "*";
 const RESOURCE_PATTERN = /^[a-z]+(?:_[a-z]+)*$/;
+
+const isSubjectTypeValue = (value: string): value is SubjectTypeValue =>
+  SUBJECT_TYPE_VALUES.includes(value as SubjectTypeValue);
+
+const needsSubjectKeyPicker = (subjectType: string): boolean =>
+  subjectType === "User" || subjectType === "Role";
 const CURRENT_USER_ID_TOKEN = "@CurrentUserId";
 const OPERATOR_OPTIONS = [
   { value: "eq", labelKey: "operatorEq" },
@@ -294,8 +303,7 @@ function emptyPayload(): CreateAccessPolicyRequest {
 
 function fromRow(row: AccessPolicyTableItem): CreateAccessPolicyRequest {
   const effect = row.effect === "Allow" || row.effect === "Deny" ? row.effect : "Deny";
-  const subjectType =
-    row.subjectType === "Role" || row.subjectType === "User" ? row.subjectType : "User";
+  const subjectType = isSubjectTypeValue(row.subjectType ?? "") ? row.subjectType : "User";
   const action = row.action?.trim().toLowerCase() ?? "";
 
   let conditionStr = "";
@@ -347,6 +355,8 @@ const Modals = () => {
   const isEdit = activeModal === "edit";
   const formOpen = activeModal === "create" || isEdit;
   const isRoleSubject = form.subjectType === "Role";
+  const isUserSubject = form.subjectType === "User";
+  const showSubjectKeyPicker = needsSubjectKeyPicker(form.subjectType);
 
   const { data: roleOptions = [], isFetching: isLoadingRoles } = useQuery({
     queryKey: ["access-policy-role-options"],
@@ -364,7 +374,7 @@ const Modals = () => {
       const payload = await userService.findAll({ query: { Page: "1", PageSize: "100" } });
       return toUserOptions(payload);
     },
-    enabled: formOpen && !isRoleSubject,
+    enabled: formOpen && isUserSubject,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -484,7 +494,7 @@ const Modals = () => {
     !resourceError &&
     !actionError &&
     !conditionError &&
-    subjectKeyValue.length > 0;
+    (showSubjectKeyPicker ? subjectKeyValue.length > 0 : true);
 
   const actionOptions: SelectOption[] = ACTION_VALUES.map((value) => ({
     value,
@@ -573,7 +583,9 @@ const Modals = () => {
       ...form,
       resource: resourceValue,
       action: actionValue,
-      subjectKey: normalizedSubjectKeyValue,
+      subjectKey: showSubjectKeyPicker
+        ? normalizedSubjectKeyValue
+        : subjectKeyValue || WILDCARD_SUBJECT_KEY,
     };
     if (parsedCondition) {
       normalizedForm.condition = parsedCondition;
@@ -621,7 +633,9 @@ const Modals = () => {
       ...form,
       resource: resourceValue,
       action: actionValue,
-      subjectKey: normalizedSubjectKeyValue,
+      subjectKey: showSubjectKeyPicker
+        ? normalizedSubjectKeyValue
+        : subjectKeyValue || WILDCARD_SUBJECT_KEY,
     };
     if (parsedCondition) {
       normalizedForm.condition = parsedCondition;
@@ -753,33 +767,34 @@ const Modals = () => {
             />
             <Select
               label={t("subjectTypeLabel")}
-              data={[
-                { value: "User", label: "User" },
-                { value: "Role", label: "Role" },
-              ]}
+              data={SUBJECT_TYPE_VALUES.map((value) => ({
+                value,
+                label: t(`subjectType${value}`),
+              }))}
               value={form.subjectType || null}
-              onChange={(v) =>
-                setForm((f) => ({
-                  ...f,
-                  subjectType: v === "Role" ? "Role" : "User",
-                  subjectKey: "",
-                }))
-              }
+              onChange={(v) => {
+                const resolved = v ?? "User";
+                const subjectType = isSubjectTypeValue(resolved) ? resolved : "User";
+                const subjectKey = needsSubjectKeyPicker(subjectType) ? "" : WILDCARD_SUBJECT_KEY;
+                setForm((f) => ({ ...f, subjectType, subjectKey }));
+              }}
               radius="md"
             />
           </Group>
-          <Select
-            label={t("subjectKeyLabel")}
-            placeholder={t("subjectKeyPlaceholder")}
-            data={subjectOptionsWithCurrent}
-            value={form.subjectKey || null}
-            onChange={(value) => setForm((f) => ({ ...f, subjectKey: value ?? "" }))}
-            searchable
-            nothingFoundMessage="No options"
-            disabled={isRoleSubject ? isLoadingRoles : isLoadingUsers}
-            required
-            radius="md"
-          />
+          {showSubjectKeyPicker ? (
+            <Select
+              label={t("subjectKeyLabel")}
+              placeholder={t("subjectKeyPlaceholder")}
+              data={subjectOptionsWithCurrent}
+              value={form.subjectKey || null}
+              onChange={(value) => setForm((f) => ({ ...f, subjectKey: value ?? "" }))}
+              searchable
+              nothingFoundMessage="No options"
+              disabled={isRoleSubject ? isLoadingRoles : isLoadingUsers}
+              required
+              radius="md"
+            />
+          ) : null}
           <Box>
             <Group justify="space-between" align="center" mb={6}>
               <Group gap="xs">

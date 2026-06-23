@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export type DataTableColumn<T> = {
   accessor: keyof T | string;
-  title: string;
+  title: ReactNode;
   width?: string;
   render?: (row: T) => ReactNode;
 };

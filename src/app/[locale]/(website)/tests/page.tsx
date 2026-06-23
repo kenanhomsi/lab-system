@@ -1,5 +1,5 @@
-import { TestsFeatureFactory } from "./factory";
+import { TestsPage } from "./ui/tests-page";
 
 export default function Page() {
-  return <TestsFeatureFactory />;
+  return <TestsPage />;
 }

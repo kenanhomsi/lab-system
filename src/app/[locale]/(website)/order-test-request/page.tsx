@@ -1,6 +1,6 @@
-import { TestRequestsTable } from "@/components/tables/test-requests-table";
 import { guardByRole } from "@/lib/auth/role-guard";
 import { getTranslations } from "next-intl/server";
+import { OrderTestRequestContent } from "./ui/order-test-request-content";
 
 type OrderTestRequestPageProps = {
   params: Promise<{ locale: string }>;
@@ -29,7 +29,7 @@ export default async function OrderTestRequestPage({
           {t("description")}
         </p>
       </section>
-      <TestRequestsTable initialActiveModal="create" />
+      <OrderTestRequestContent />
     </main>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { isClinicalPatientUser } from "@/components/modals/test-requests/party-ids";
-import { Anchor, Badge, Group, Text } from "@mantine/core";
+import { Anchor, Badge, Checkbox, Group, Text } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
 import { getTestRequestCreatorLabel } from "../get-test-request-creator-label";
 import { TestResultItem } from "../types";
@@ -14,6 +14,9 @@ type TFunction = (key: string) => string;
 
 type GetTestResultsColumnsOptions = {
   roles?: string[] | undefined;
+  selectedIds?: number[] | undefined;
+  visibleRows?: TestResultItem[] | undefined;
+  onSelectedIdsChange?: ((ids: number[]) => void) | undefined;
 };
 
 const numStyle = { fontVariantNumeric: "tabular-nums" as const };
@@ -70,8 +73,57 @@ const getTestResultsColumns = (
   options?: GetTestResultsColumnsOptions,
 ): DataTableColumn<TestResultItem>[] => {
   const readOnly = isClinicalPatientUser(options?.roles);
+  const selectedIds = options?.selectedIds ?? [];
+  const visibleRows = options?.visibleRows ?? [];
+  const visibleIds = visibleRows.map((row) => row.id);
+  const selectedVisibleIds = visibleIds.filter((id) => selectedIds.includes(id));
+  const allVisibleSelected = visibleIds.length > 0 && selectedVisibleIds.length === visibleIds.length;
+  const someVisibleSelected = selectedVisibleIds.length > 0 && !allVisibleSelected;
+  const onSelectedIdsChange = options?.onSelectedIdsChange;
+
+  const toggleRowSelection = (rowId: number, checked: boolean) => {
+    if (!onSelectedIdsChange) return;
+    if (checked) {
+      onSelectedIdsChange(Array.from(new Set([...selectedIds, rowId])));
+      return;
+    }
+    onSelectedIdsChange(selectedIds.filter((id) => id !== rowId));
+  };
+
+  const toggleVisibleSelection = (checked: boolean) => {
+    if (!onSelectedIdsChange) return;
+    if (checked) {
+      onSelectedIdsChange(Array.from(new Set([...selectedIds, ...visibleIds])));
+      return;
+    }
+    onSelectedIdsChange(selectedIds.filter((id) => !visibleIds.includes(id)));
+  };
 
   const columns: DataTableColumn<TestResultItem>[] = [
+    {
+      accessor: "select",
+      title: (
+        <Checkbox
+          size="xs"
+          aria-label={t("selectAllRows")}
+          checked={allVisibleSelected}
+          indeterminate={someVisibleSelected}
+          disabled={visibleIds.length === 0}
+          onChange={(event) => toggleVisibleSelection(event.currentTarget.checked)}
+          onClick={(event) => event.stopPropagation()}
+        />
+      ),
+      width: "4%",
+      render: (row) => (
+        <Checkbox
+          size="xs"
+          aria-label={t("selectRow")}
+          checked={selectedIds.includes(row.id)}
+          onChange={(event) => toggleRowSelection(row.id, event.currentTarget.checked)}
+          onClick={(event) => event.stopPropagation()}
+        />
+      ),
+    },
     {
       accessor: "id",
       title: t("colId"),
@@ -164,14 +216,12 @@ const getTestResultsColumns = (
     },
   ];
 
-  if (!readOnly) {
-    columns.push({
-      accessor: "actions",
-      title: "",
-      width: "6%",
-      render: (row) => <ActionsRender row={row} />,
-    });
-  }
+  columns.push({
+    accessor: "actions",
+    title: "",
+    width: readOnly ? "6%" : "9%",
+    render: (row) => <ActionsRender row={row} canManage={!readOnly} />,
+  });
 
   return columns;
 };

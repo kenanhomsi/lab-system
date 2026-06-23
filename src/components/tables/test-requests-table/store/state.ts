@@ -12,8 +12,8 @@ type Params = {
   setSortBy: (value: string) => void;
   sortDesc: boolean;
   setSortDesc: (value: boolean) => void;
-  activeModal: "create" | "edit" | "delete" | null;
-  setActiveModal: (value: "create" | "edit" | "delete" | null) => void;
+  activeModal: "create" | "edit" | "delete" | "appointment" | null;
+  setActiveModal: (value: "create" | "edit" | "delete" | "appointment" | null) => void;
   selectedTestRequest: TestRequestItem | null;
   setSelectedTestRequest: (value: TestRequestItem | null) => void;
 };

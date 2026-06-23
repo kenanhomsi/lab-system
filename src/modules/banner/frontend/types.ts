@@ -28,9 +28,26 @@ type CreateBannerParams = {
   Media: File;
 };
 
+type UpdateBannerParams = {
+  id: string;
+  title: string;
+  type: string;
+  InternalLink: string;
+  ExternalLink: string;
+  TargetType: string;
+  Location: string;
+  DisplayOrder: number;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  VisibilityRulesJson: string;
+  Media?: File;
+};
+
 export type {
   CreateBannerParams,
   DeleteBannerParams,
   FindAllBannerParams,
   FindAllPublicBannerParams,
+  UpdateBannerParams,
 };

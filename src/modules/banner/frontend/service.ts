@@ -6,6 +6,7 @@ import {
   DeleteBannerParams,
   FindAllBannerParams,
   FindAllPublicBannerParams,
+  UpdateBannerParams,
 } from "./types";
 
 @injectable()
@@ -23,6 +24,10 @@ class Service {
 
   async create(params: CreateBannerParams) {
     return this.Client.create(params);
+  }
+
+  async update(params: UpdateBannerParams) {
+    return this.Client.update(params);
   }
 
   async delete(params: DeleteBannerParams) {

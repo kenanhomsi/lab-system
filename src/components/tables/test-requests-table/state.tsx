@@ -17,7 +17,7 @@ const State = ({ children, initialActiveModal = null }: StateProps) => {
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortDesc, setSortDesc] = useState(true);
   const [selectedTestRequest, setSelectedTestRequest] = useState<TestRequestItem | null>(null);
-  const [activeModal, setActiveModal] = useState<null | "create" | "edit" | "delete">(
+  const [activeModal, setActiveModal] = useState<null | "create" | "edit" | "delete" | "appointment">(
     initialActiveModal,
   );
   const [debouncedValue] = useDebouncedValue(searchValue, 500);

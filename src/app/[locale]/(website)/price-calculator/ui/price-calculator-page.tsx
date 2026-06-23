@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { getTestsCatalogPublic } from "@/lib/clients/website-public-client";
 
 type Test = {
-  id: string;
+  id: number | string;
   nameEn: string;
   nameAr: string;
   price: number;
@@ -52,21 +52,21 @@ export function PriceCalculatorPage({ variant = "page" }: PriceCalculatorPagePro
 
   const suggestions = allTests.filter((test) => {
     if (!search) return false;
-    const alreadySelected = selectedTests.some((s) => s.id === test.id);
+    const alreadySelected = selectedTests.some((s) => String(s.id) === String(test.id));
     if (alreadySelected) return false;
     return testName(test).toLowerCase().includes(search.toLowerCase());
   });
 
   function addTest(test: Test) {
-    if (!selectedTests.some((s) => s.id === test.id)) {
+    if (!selectedTests.some((s) => String(s.id) === String(test.id))) {
       setSelectedTests((prev) => [...prev, test]);
     }
     setSearch("");
     setShowSuggestions(false);
   }
 
-  function removeTest(id: string) {
-    setSelectedTests((prev) => prev.filter((t) => t.id !== id));
+  function removeTest(id: number | string) {
+    setSelectedTests((prev) => prev.filter((t) => String(t.id) !== String(id)));
   }
 
   function resetCalculation() {

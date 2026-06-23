@@ -1,10 +1,11 @@
-import { CreateBannerRequest, BannersResponse } from "../types";
+import { CreateBannerRequest, BannersResponse, UpdateBannerRequest } from "../types";
 
 type Params = {
   bannersData: BannersResponse;
   isPending: boolean;
   refetchBanners: () => void;
   createBanner: (payload: CreateBannerRequest) => Promise<unknown>;
+  updateBanner: (payload: UpdateBannerRequest) => Promise<unknown>;
   deleteBanner: (id: string) => Promise<unknown>;
 };
 
@@ -13,6 +14,7 @@ const store = (): Params => ({
   isPending: false,
   refetchBanners: () => {},
   createBanner: async () => null,
+  updateBanner: async () => null,
   deleteBanner: async () => null,
 });
 
