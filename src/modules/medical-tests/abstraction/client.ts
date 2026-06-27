@@ -17,7 +17,7 @@ type sharedCreateAndUpdateParams = {
   nameAr: string;
   nameEn: string;
   price: number;
-  category: string;
+  categoryMedicalId: number;
   sampleType: string;
   parameterSchema: ParameterSchemaInput;
   status: string;

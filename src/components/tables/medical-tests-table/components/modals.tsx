@@ -27,8 +27,14 @@ import {
 } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
+import { frontendContainer } from "@/container";
 import { useMirror } from "../store";
 import { CreateMedicalTestParams } from "@/modules/medical-tests/frontend/types";
+import {
+  MedicalTestCategoryFrontendService,
+  medicalTestCategoryModuleNames,
+} from "@/modules/medical-test-categories";
 import { MedicalTestItem } from "../types";
 import {
   ParameterSchemaInput,
@@ -36,6 +42,10 @@ import {
   stringifyParameterSchema,
 } from "@/modules/medical-tests/abstraction";
 import { JsonbKeyValueEditor } from "@/components/ui/jsonb-key-value-editor";
+
+const categoryService = frontendContainer.get<MedicalTestCategoryFrontendService>(
+  medicalTestCategoryModuleNames.service,
+);
 
 type ParameterPair = {
   id: string;
@@ -115,7 +125,9 @@ const Modals = () => {
     const [nameAr, setNameAr] = useState(props.selected?.nameAr ?? "");
     const [nameEn, setNameEn] = useState(props.selected?.nameEn ?? "");
     const [price, setPrice] = useState<number>(props.selected?.price ?? 0);
-    const [category, setCategory] = useState(props.selected?.category ?? "");
+    const [categoryMedicalId, setCategoryMedicalId] = useState<string>(
+      props.selected?.categoryMedicalId ? String(props.selected.categoryMedicalId) : "",
+    );
     const [sampleType, setSampleType] = useState(props.selected?.sampleType ?? "");
     const [parameterPairs, setParameterPairs] = useState<ParameterPair[]>(
       parseParameterPairs(props.selected?.parameterSchema ?? ""),
@@ -126,6 +138,22 @@ const Modals = () => {
       return lower === "inactive" ? "inactive" : "active";
     });
     const [step, setStep] = useState(0);
+    const { data: categories = [], isPending: isCategoriesPending } = useQuery({
+      queryKey: ["medical-test-categories", "all"],
+      queryFn: () => categoryService.listAll(),
+      staleTime: 1000 * 60,
+    });
+    const categoryOptions = useMemo(
+      () =>
+        categories
+          .filter((category) => category.isActive || String(category.id) === categoryMedicalId)
+          .sort((a, b) => a.displayOrder - b.displayOrder || a.nameEn.localeCompare(b.nameEn))
+          .map((category) => ({
+            value: String(category.id),
+            label: `${category.nameAr} / ${category.nameEn}`,
+          })),
+      [categories, categoryMedicalId],
+    );
 
     const parameterSchemaModel = useMemo(
       () => buildParameterSchemaModel(parameterPairs),
@@ -145,11 +173,12 @@ const Modals = () => {
         nameEn.trim().length > 0 &&
         Number.isFinite(price) &&
         price >= 0 &&
-        category.trim().length > 0 &&
+        Number.isFinite(Number(categoryMedicalId)) &&
+        Number(categoryMedicalId) > 0 &&
         sampleType.trim().length > 0 &&
         status.trim().length > 0
       );
-    }, [nameAr, nameEn, price, category, sampleType, status]);
+    }, [nameAr, nameEn, price, categoryMedicalId, sampleType, status]);
 
     const canSubmit = useMemo(() => {
       return hasValidDetails && hasValidParameterSchema;
@@ -167,7 +196,7 @@ const Modals = () => {
           nameAr: nameAr.trim(),
           nameEn: nameEn.trim(),
           price,
-          category: category.trim(),
+          categoryMedicalId: Number(categoryMedicalId),
           sampleType: sampleType.trim(),
           parameterSchema: parameterSchemaModel,
           status: status.trim(),
@@ -184,7 +213,7 @@ const Modals = () => {
           nameAr: nameAr.trim(),
           nameEn: nameEn.trim(),
           price,
-          category: category.trim(),
+          categoryMedicalId: Number(categoryMedicalId),
           sampleType: sampleType.trim(),
           parameterSchema: parameterSchemaModel,
           status: status.trim(),
@@ -268,16 +297,25 @@ const Modals = () => {
                 radius="md"
                 required
               />
-              <TextInput
+              <Select
                 label={tm("categoryLabel")}
-                placeholder={tm("categoryPlaceholder")}
+                placeholder={tm("categorySelectPlaceholder")}
                 leftSection={<IconCategory size={16} />}
-                value={category}
-                onChange={(e) => setCategory(e.currentTarget.value)}
+                value={categoryMedicalId}
+                onChange={(value) => setCategoryMedicalId(value ?? "")}
+                data={categoryOptions}
+                searchable
+                nothingFoundMessage={tm("categoryNothingFound")}
+                disabled={isCategoriesPending}
                 size="md"
                 radius="md"
                 required
               />
+              {props.selected?.category && !props.selected?.categoryMedicalId ? (
+                <Text size="xs" c="dimmed">
+                  {tm("legacyCategoryHint", { category: props.selected.category })}
+                </Text>
+              ) : null}
               <TextInput
                 label={tm("sampleTypeLabel")}
                 placeholder={tm("sampleTypePlaceholder")}

@@ -11,7 +11,6 @@ const intlMiddleware = createIntlMiddleware(routing);
 const protectedRoutes: Record<string, string[]> = {
   "/my-results": ["patient", "doctor", "LabPartner"],
   "/patient/insurance-approval-requests": ["patient"],
-  "/order-test-request": ["patient"],
   "/subscriptions": ["patient"],
   "/profile": ["patient", "doctor", "LabPartner", "admin", "special"],
   "/admin": ["admin"],
@@ -65,7 +64,7 @@ export default async function middleware(request: NextRequest) {
     if (!token) {
       const locale = pathname.match(/^\/(en|ar)/)?.[1] || "ar";
       const loginUrl = new URL(`/${locale}/login`, request.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
+      loginUrl.searchParams.set("callbackUrl", `${pathname}${request.nextUrl.search}`);
       return NextResponse.redirect(loginUrl);
     }
 

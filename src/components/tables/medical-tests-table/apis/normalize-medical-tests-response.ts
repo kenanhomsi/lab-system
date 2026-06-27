@@ -13,6 +13,11 @@ const coerceNumericId = (value: unknown): number => {
   return -1;
 };
 
+const coerceNullableNumericId = (value: unknown): number | null => {
+  const id = coerceNumericId(value);
+  return id >= 0 ? id : null;
+};
+
 const coercePrice = (value: unknown): number => {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value === "string") {
@@ -30,16 +35,63 @@ const coerceParameterSchema = (value: unknown): ParameterSchemaInput => {
   return "{}";
 };
 
+const pickString = (...values: unknown[]): string => {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim()) return value;
+    if (value !== undefined && value !== null) {
+      const text = String(value).trim();
+      if (text) return text;
+    }
+  }
+  return "";
+};
+
+const normalizeCategoryFields = (r: Record<string, unknown>) => {
+  const categoryObject =
+    asRecord(r.categoryMedical) ??
+    asRecord(r.categoryMedicalDto) ??
+    asRecord(r.categoryMedicalCategory) ??
+    asRecord(r.category);
+
+  const categoryNameAr = pickString(
+    r.categoryNameAr,
+    r.categoryMedicalNameAr,
+    categoryObject?.nameAr,
+  );
+  const categoryNameEn = pickString(
+    r.categoryNameEn,
+    r.categoryMedicalNameEn,
+    categoryObject?.nameEn,
+  );
+  const categoryDisplay = pickString(
+    categoryNameEn,
+    categoryNameAr,
+    typeof r.category === "string" ? r.category : undefined,
+    r.categoryName,
+    r.categoryMedicalName,
+  );
+
+  return {
+    categoryMedicalId: coerceNullableNumericId(
+      r.categoryMedicalId ?? r.categoryId ?? categoryObject?.id,
+    ),
+    categoryNameAr,
+    categoryNameEn,
+    category: categoryDisplay,
+  };
+};
+
 const normalizeMedicalTestItem = (raw: unknown): MedicalTestItem => {
   const r = asRecord(raw) ?? {};
   /* Some backends serialize primary keys as `Id` instead of camelCase `id`. */
   const rawId = r.id ?? r["Id"];
+  const categoryFields = normalizeCategoryFields(r);
   return {
     id: coerceNumericId(rawId),
     nameAr: typeof r.nameAr === "string" ? r.nameAr : String(r.nameAr ?? ""),
     nameEn: typeof r.nameEn === "string" ? r.nameEn : String(r.nameEn ?? ""),
     price: coercePrice(r.price),
-    category: typeof r.category === "string" ? r.category : String(r.category ?? ""),
+    ...categoryFields,
     sampleType: typeof r.sampleType === "string" ? r.sampleType : String(r.sampleType ?? ""),
     parameterSchema: coerceParameterSchema(r.parameterSchema),
     status: typeof r.status === "string" ? r.status : String(r.status ?? ""),

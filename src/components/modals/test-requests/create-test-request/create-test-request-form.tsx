@@ -65,6 +65,15 @@ const INITIAL_FORM = {
   externalPatientId: 0,
 };
 
+function normalizeInitialMedicalTestIds(value: number[] | undefined): number[] {
+  if (!value?.length) return [];
+  return Array.from(
+    new Set(
+      value.filter((id) => Number.isInteger(id) && id > 0),
+    ),
+  );
+}
+
 function extractCreatedTestRequestId(payload: unknown): number | null {
   const visit = (value: unknown): number | null => {
     if (!value || typeof value !== "object") return null;
@@ -108,8 +117,16 @@ const CreateTestRequestForm = () => {
   const t = useTranslations("admin.testRequests");
   const tc = useTranslations("admin.common");
   const ta = useTranslations("appointmentsFeature");
-  const props = useMirror("props") as { opened?: boolean; onClose?: () => void };
+  const props = useMirror("props") as {
+    opened?: boolean;
+    onClose?: () => void;
+    initialMedicalTestIds?: number[];
+  };
   const locale = useLocale();
+  const initialMedicalTestIds = useMemo(
+    () => normalizeInitialMedicalTestIds(props.initialMedicalTestIds),
+    [props.initialMedicalTestIds],
+  );
 
   const submitAction = useMirror("submitAction") as (p: {
     medicalTestIds: number[];
@@ -162,8 +179,27 @@ const CreateTestRequestForm = () => {
       setLongitude("");
       setAppointmentNotes("");
       setCreatedTestRequestId(null);
+      return;
     }
-  }, [opened]);
+
+    setActiveStep(0);
+    setForm((prev) => ({
+      ...INITIAL_FORM,
+      medicalTestIds: initialMedicalTestIds,
+      totalAmount:
+        prev.medicalTestIds.length === initialMedicalTestIds.length &&
+        prev.medicalTestIds.every((id, index) => id === initialMedicalTestIds[index])
+          ? prev.totalAmount
+          : 0,
+    }));
+    setAppointmentDate("");
+    setSelectedSlotKey(null);
+    setLocationType("lab");
+    setLatitude("");
+    setLongitude("");
+    setAppointmentNotes("");
+    setCreatedTestRequestId(null);
+  }, [initialMedicalTestIds, opened]);
 
   useEffect(() => {
     const items = medicalTestsQuery.data;

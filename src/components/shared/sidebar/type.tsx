@@ -6,6 +6,7 @@ type SidebarIconKey =
   | "messageSquare"
   | "settings"
   | "flask"
+  | "category"
   | "clipboardList"
   | "clipboardCheck"
   | "userPlus"

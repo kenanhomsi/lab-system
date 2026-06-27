@@ -53,9 +53,11 @@ import { showSuccessNotification } from "@/lib/error";
 import { useTranslations, useLocale } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
-import { MyInsuranceApprovalRequestsTable } from "@/components/tables/my-insurance-approval-requests-table";
-import { TestRequestsTable } from "@/components/tables/test-requests-table";
-import { TestResultsTable } from "@/components/tables/test-results-table";
+import {
+  PatientInsuranceApprovalsFeed,
+  PatientTestRequestsFeed,
+  PatientTestResultsFeed,
+} from "./patient-activity-feeds";
 
 import { useMirror } from "./store";
 import { hasAdminRole, hasPatientRole, resolveDashboardBaseFromRoles } from "./role-path";
@@ -572,7 +574,7 @@ const UI = () => {
                               />
                             </Group>
                           </UnstyledButton>
-                          <UnstyledButton component={Link} href="/order-test-request" className={styles.quickLink}>
+                          <UnstyledButton component={Link} href="/tests" className={styles.quickLink}>
                             <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
                               <Group gap="sm" wrap="nowrap">
                                 <ThemeIcon size={34} radius="md" variant="light" color="orange">
@@ -797,7 +799,7 @@ const UI = () => {
                         </Stack>
                         <Button
                           component={Link}
-                          href="/order-test-request"
+                          href="/tests"
                           leftSection={<IconClipboardList size={16} />}
                           variant="light"
                           color="orange"
@@ -805,7 +807,7 @@ const UI = () => {
                           {t("orderTestRequest")}
                         </Button>
                       </Group>
-                      <TestRequestsTable />
+                      <PatientTestRequestsFeed />
                     </Stack>
                   </Tabs.Panel>
 
@@ -817,7 +819,7 @@ const UI = () => {
                           {t("testResultsDesc")}
                         </Text>
                       </Stack>
-                      <TestResultsTable />
+                      <PatientTestResultsFeed />
                     </Stack>
                   </Tabs.Panel>
 
@@ -829,7 +831,7 @@ const UI = () => {
                           {t("insuranceApprovalsDesc")}
                         </Text>
                       </Stack>
-                      <MyInsuranceApprovalRequestsTable />
+                      <PatientInsuranceApprovalsFeed />
                     </Stack>
                   </Tabs.Panel>
                 </>

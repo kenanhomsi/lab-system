@@ -41,7 +41,7 @@ export async function WebsiteFooter({
       links: [
         { href: "#", label: t("footer.privacy") },
         { href: "#", label: t("footer.terms") },
-        { href: "#", label: t("footer.quality") },
+        { href: "/quality-control", label: t("footer.quality") },
       ],
     },
     {

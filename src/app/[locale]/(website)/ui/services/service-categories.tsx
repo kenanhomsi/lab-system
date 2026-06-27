@@ -1,204 +1,48 @@
-import { getTranslations } from "next-intl/server";
+import Image from "next/image";
+import { getLocale, getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { SectionHeader } from "@/components/ui/section-header";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
+import {
+  type ServiceCatalogItem,
+  type ServiceMetricKey,
+  getServicesCatalog,
+} from "./service-catalog";
 
-function ListItem({ children, index }: { children: React.ReactNode; index?: number }) {
-  return (
-    <li className="flex items-start gap-3 rounded-2xl bg-surface-container-low px-4 py-4 text-on-surface-variant shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] ring-1 ring-outline-variant/15 transition-all duration-300 hover:bg-surface hover:text-on-surface">
-      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/15">
-        <Icon name="check" filled className="text-sm!" size="sm" />
-      </div>
-      <div className="flex min-w-0 items-start gap-3">
-        {index !== undefined && (
-          <span className="pt-0.5 text-[11px] font-black tracking-[0.2em] text-primary/60">
-            {index}
-          </span>
-        )}
-        <span className="text-sm leading-7">{children}</span>
-      </div>
-    </li>
-  );
+function getMetricLabel(
+  t: Awaited<ReturnType<typeof getTranslations>>,
+  key: ServiceMetricKey,
+): string {
+  switch (key) {
+    case "labServices":
+      return t("stats.labServices");
+    case "digitalServices":
+      return t("stats.digitalServices");
+    case "carePillars":
+      return t("stats.carePillars");
+    case "doctorReasons":
+      return t("stats.doctorReasons");
+    case "partnerServices":
+      return t("stats.partnerServices");
+    case "featureBlocks":
+      return t("stats.featureBlocks");
+  }
 }
 
-function DetailBlock({ title, desc }: { title: string; desc: string }) {
-  return (
-    <li className="flex flex-col gap-2 rounded-2xl bg-surface-container-low px-5 py-4 text-on-surface-variant shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] ring-1 ring-outline-variant/15 transition-all duration-300 hover:bg-surface hover:text-on-surface">
-      <div className="flex items-center gap-2 text-primary">
-        <Icon name="info" filled className="text-lg!" />
-        <h4 className="font-bold">{title}</h4>
-      </div>
-      <p className="text-sm leading-7">{desc}</p>
-    </li>
-  );
-}
-
+/**
+ * Displays the compact service-family cards on the services index page.
+ */
 export async function ServiceCategories() {
-  const t = await getTranslations("servicesPage.detailedCategories");
+  const locale = await getLocale();
+  const [tCatalog, tDetailed, services] = await Promise.all([
+    getTranslations("servicesPage.catalog"),
+    getTranslations("servicesPage.detailedCategories"),
+    getServicesCatalog(locale),
+  ]);
 
-  const patient = t.raw("patient");
-  const doctor = t.raw("doctor");
-  const lab = t.raw("lab");
-  const company = t.raw("company");
-
-  const sections = [
-    {
-      id: "patient",
-      title: patient.title,
-      image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=1200",
-      content: (
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 via-primary/10 to-primary/5 text-primary shadow-sm ring-1 ring-primary/10">
-              <Icon name="personal_injury" className="text-3xl" />
-            </div>
-            <h3 className="text-2xl font-black tracking-tight text-on-surface md:text-[2rem]">
-              {patient.title}
-            </h3>
-          </div>
-          <p className="text-on-surface-variant leading-relaxed">
-            {patient.desc}
-          </p>
-
-          <div className="mt-4">
-            <h4 className="text-lg font-bold text-on-surface mb-4">{patient.labTitle}</h4>
-            <ul className="grid gap-3">
-              {patient.labItems.map((item: string, i: number) => (
-                <ListItem key={i} index={i + 1}>{item}</ListItem>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-4">
-            <h4 className="text-lg font-bold text-on-surface mb-2">{patient.elecTitle}</h4>
-            <p className="text-on-surface-variant mb-4 leading-relaxed">{patient.elecDesc}</p>
-            <ul className="grid gap-3">
-              {patient.elecItems.map((item: string, i: number) => (
-                <ListItem key={i} index={i + 1}>{item}</ListItem>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "doctor",
-      title: doctor.title,
-      image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=1200",
-      content: (
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 via-primary/10 to-primary/5 text-primary shadow-sm ring-1 ring-primary/10">
-              <Icon name="stethoscope" className="text-3xl" />
-            </div>
-            <h3 className="text-2xl font-black tracking-tight text-on-surface md:text-[2rem]">
-              {doctor.title}
-            </h3>
-          </div>
-          <p className="text-on-surface-variant leading-relaxed">
-            {doctor.desc1}
-          </p>
-          <p className="text-on-surface-variant leading-relaxed">
-            {doctor.desc2}
-          </p>
-          <ul className="grid gap-3 mb-4">
-            {doctor.axes.map((item: string, i: number) => (
-              <ListItem key={i} index={i + 1}>{item}</ListItem>
-            ))}
-          </ul>
-
-          <div className="mt-4">
-            <h4 className="text-lg font-bold text-on-surface mb-4">{doctor.whyTitle}</h4>
-            <ul className="grid gap-4 md:grid-cols-2">
-              {doctor.whyItems.map((item: { title: string; desc: string }, i: number) => (
-                <DetailBlock key={i} title={item.title} desc={item.desc} />
-              ))}
-            </ul>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "lab",
-      title: lab.title,
-      image: "https://images.unsplash.com/photo-1532187863486-abf9db0c2858?auto=format&fit=crop&q=80&w=1200",
-      content: (
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 via-primary/10 to-primary/5 text-primary shadow-sm ring-1 ring-primary/10">
-              <Icon name="science" className="text-3xl" />
-            </div>
-            <h3 className="text-2xl font-black tracking-tight text-on-surface md:text-[2rem]">
-              {lab.title}
-            </h3>
-          </div>
-          <p className="text-on-surface-variant leading-relaxed">
-            {lab.desc}
-          </p>
-
-          <div className="mt-4">
-            <h4 className="text-lg font-bold text-on-surface mb-4">{lab.servicesTitle}</h4>
-            <ul className="grid gap-3">
-              {lab.servicesItems.map((item: string, i: number) => (
-                <ListItem key={i} index={i + 1}>{item}</ListItem>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-4">
-            <h4 className="text-lg font-bold text-on-surface mb-4">{lab.elecTitle}</h4>
-            <ul className="grid gap-4 md:grid-cols-2">
-              {lab.elecItems.map((item: { title: string; desc: string }, i: number) => (
-                <DetailBlock key={i} title={item.title} desc={item.desc} />
-              ))}
-            </ul>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "company",
-      title: company.title,
-      image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1200",
-      content: (
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 via-primary/10 to-primary/5 text-primary shadow-sm ring-1 ring-primary/10">
-              <Icon name="business" className="text-3xl" />
-            </div>
-            <h3 className="text-2xl font-black tracking-tight text-on-surface md:text-[2rem]">
-              {company.title}
-            </h3>
-          </div>
-          <p className="text-on-surface-variant leading-relaxed">
-            {company.desc1}
-          </p>
-          <p className="text-on-surface-variant leading-relaxed">
-            {company.desc2}
-          </p>
-
-          <div className="mt-4">
-            <ul className="grid gap-4 md:grid-cols-2 mb-8">
-              {company.blocks.map((item: { title: string; desc: string }, i: number) => (
-                <DetailBlock key={i} title={item.title} desc={item.desc} />
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-4">
-            <h4 className="text-lg font-bold text-on-surface mb-2">{company.elecTitle}</h4>
-            <p className="text-on-surface-variant mb-4 leading-relaxed">{company.elecDesc}</p>
-            <ul className="grid gap-3">
-              {company.elecItems.map((item: string, i: number) => (
-                <ListItem key={i} index={i + 1}>{item}</ListItem>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ),
-    },
-  ];
+  const ctaArrow = locale === "ar" ? "arrow_back" : "arrow_forward";
 
   return (
     <section className="relative overflow-hidden bg-surface-container-low py-16 md:py-24">
@@ -208,50 +52,127 @@ export async function ServiceCategories() {
       </div>
 
       <div className="relative content-container">
-        <div className="reveal-up mb-12" style={{ animationDelay: "80ms" }}>
+        <div className="reveal-up" style={{ animationDelay: "80ms" }}>
           <SectionHeader
-            title={t("sectionTitle")}
-            description={t("sectionDesc")}
+            eyebrow={tCatalog("eyebrow")}
+            title={tDetailed("sectionTitle")}
+            description={tDetailed("sectionDesc")}
             align="center"
             className="mx-auto max-w-3xl"
           />
         </div>
 
-        <div className="mt-16 flex flex-col gap-20 xl:gap-28">
-          {sections.map((section, index) => {
-            const isReversed = index % 2 !== 0;
-            return (
-              <div
-                key={section.id}
-                className={cn(
-                  "flex flex-col gap-8 lg:gap-12 reveal-up",
-                  isReversed ? "lg:flex-row-reverse" : "lg:flex-row"
-                )}
-                style={{ animationDelay: `${160 + index * 100}ms` }}
-              >
-                {/* Image Side */}
-                <div className="w-full lg:w-5/12 shrink-0">
-                  <div className="sticky top-24 aspect-[4/3] w-full overflow-hidden rounded-3xl ring-1 ring-outline-variant/20 shadow-lg md:aspect-auto md:h-[600px]">
-                    <Image
-                      src={section.image}
-                      alt={section.title}
-                      fill
-                      className="object-cover transition-transform duration-700 hover:scale-105"
-                      sizes="(max-width: 1024px) 100vw, 40vw"
-                    />
-                    <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent pointer-events-none" />
-                  </div>
-                </div>
-
-                {/* Content Side */}
-                <div className="w-full lg:w-7/12 py-4">
-                  {section.content}
-                </div>
-              </div>
-            );
-          })}
+        <div className="grid gap-6 md:grid-cols-2">
+          {services.map((service, index) => (
+            <ServiceCard
+              key={service.id}
+              service={service}
+              previewLabel={tCatalog("previewLabel")}
+              detailsLabel={tCatalog("viewDetails")}
+              metricLabel={(key) => getMetricLabel(tCatalog, key)}
+              ctaArrow={ctaArrow}
+              animationDelay={`${140 + index * 80}ms`}
+            />
+          ))}
         </div>
       </div>
     </section>
+  );
+}
+
+type ServiceCardProps = {
+  service: ServiceCatalogItem;
+  previewLabel: string;
+  detailsLabel: string;
+  metricLabel: (key: ServiceMetricKey) => string;
+  ctaArrow: string;
+  animationDelay: string;
+};
+
+/**
+ * Renders a preview card that links to a dedicated service detail page.
+ */
+function ServiceCard({
+  service,
+  previewLabel,
+  detailsLabel,
+  metricLabel,
+  ctaArrow,
+  animationDelay,
+}: ServiceCardProps) {
+  return (
+    <Card
+      padding="none"
+      className="group reveal-up overflow-hidden rounded-[2rem] border border-outline-variant/20 bg-surface-container-lowest shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl"
+      style={{ animationDelay }}
+    >
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <Image
+          src={service.image}
+          alt={service.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-black/65 via-black/10 to-transparent" />
+        <div className="absolute inset-x-6 bottom-6 flex items-end justify-between gap-4">
+          <div className="space-y-3">
+            <Badge tone="default" className="bg-white/90 text-slate-900">
+              {service.title}
+            </Badge>
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-white ring-1 ring-white/20 backdrop-blur-sm">
+              <Icon name={service.icon} className="text-3xl" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-6 p-6 md:p-7">
+        <div className="space-y-3">
+          <h3 className="font-headline text-2xl font-black tracking-tight text-on-surface">
+            {service.title}
+          </h3>
+          <p className="line-clamp-3 leading-7 text-on-surface-variant">
+            {service.summary}
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <p className="text-xs font-black tracking-[0.28em] text-primary/80">
+            {previewLabel}
+          </p>
+          <ul className="grid gap-3">
+            {service.previewItems.map((item) => (
+              <li
+                key={item}
+                className="flex items-start gap-3 rounded-2xl bg-surface-container-low px-4 py-3 text-sm leading-7 text-on-surface-variant ring-1 ring-outline-variant/10"
+              >
+                <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Icon name="check" filled size="sm" className="text-sm!" />
+                </span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {service.metrics.map((metric) => (
+            <Badge key={`${service.id}-${metric.key}`} tone="muted" className="px-3 py-1.5">
+              <span className="font-black text-on-surface">{metric.value}</span>
+              <span>{metricLabel(metric.key)}</span>
+            </Badge>
+          ))}
+        </div>
+
+        <Link
+          href={`/services/${service.id}`}
+          className="inline-flex items-center text-white justify-center gap-2 rounded-2xl clinical-gradient px-5 py-3 text-sm font-bold  shadow-lg shadow-primary/15 transition-all hover:opacity-95"
+        >
+          {detailsLabel}
+          <Icon name={ctaArrow} size="sm" />
+        </Link>
+      </div>
+    </Card>
   );
 }

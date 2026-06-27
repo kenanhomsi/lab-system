@@ -11,6 +11,7 @@ export * from "./insurance-approval-request-dependencies";
 export * from "./banner-dependencies";
 export * from "./ad-dependencies";
 export * from "./medical-tests-dependencies";
+export * from "./medical-test-categories-dependencies";
 export * from "./vacant-jobs-dependencies";
 export * from "./test-requests-dependencies";
 export * from "./test-results-dependencies";

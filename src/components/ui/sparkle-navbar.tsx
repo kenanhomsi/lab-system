@@ -1,13 +1,19 @@
 "use client";
 
-import { useCallback, useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 
-export type SparkleNavItem = {
+export type SparkleNavChildItem = {
   label: string;
   href: string;
+};
+
+export type SparkleNavItem = {
+  label: string;
+  href?: string;
+  children?: SparkleNavChildItem[];
 };
 
 export type SparkleNavbarProps = {
@@ -62,10 +68,11 @@ export function SparkleNavbar({
 
   const navRef = useRef<HTMLDivElement>(null);
   const activeElementRef = useRef<HTMLDivElement>(null);
-  const buttonRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const buttonRefs = useRef<(HTMLElement | null)[]>([]);
   const isAnimatingRef = useRef(false);
+  const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
 
-  const getOffsetLeft = (element: HTMLAnchorElement) => {
+  const getOffsetLeft = (element: HTMLElement) => {
     if (!navRef.current || !activeElementRef.current) return 0;
     const elementRect = element.getBoundingClientRect();
     const navRect = navRef.current.getBoundingClientRect();
@@ -99,6 +106,30 @@ export function SparkleNavbar({
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, [resolvedIndex, positionBeam]);
+
+  useEffect(() => {
+    if (openDropdownIndex === null) return;
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (!navRef.current?.contains(event.target as Node)) {
+        setOpenDropdownIndex(null);
+      }
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpenDropdownIndex(null);
+      }
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [openDropdownIndex]);
 
   const handleClick = (
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -202,6 +233,10 @@ export function SparkleNavbar({
           gap: 40px;
         }
 
+        .sparkle-navbar .navigation-menu ul li {
+          position: relative;
+        }
+
         .sparkle-navbar .navigation-menu ul li a {
           -webkit-appearance: none;
           -moz-appearance: none;
@@ -290,30 +325,100 @@ export function SparkleNavbar({
 
       <nav className="navigation-menu" ref={navRef} aria-label="Main">
         <ul>
-          {items.map((item, index) => (
-            <li
-              key={item.href}
-              className={index === resolvedIndex ? "active" : ""}
-            >
-              <Link
-                ref={(el) => {
-                  buttonRefs.current[index] = el;
+          {items.map((item, index) => {
+            const isActive = index === resolvedIndex;
+            const isDropdown = Boolean(item.children?.length);
+            const isOpen = openDropdownIndex === index;
+            const triggerClassName = cn(
+              "inline-flex items-center gap-1.5 text-sm font-semibold tracking-tight transition-colors",
+              !isActive &&
+              (isDark
+                ? "text-secondary hover:text-primary"
+                : "text-slate-500 hover:text-primary"),
+              isOpen && !isActive && "text-primary",
+            );
+
+            return (
+              <li
+                key={item.href ?? item.label}
+                className={isActive ? "active" : ""}
+                onMouseEnter={() => {
+                  if (isDropdown) setOpenDropdownIndex(index);
                 }}
-                href={item.href}
-                onClick={(e) => handleClick(e, index, item.href)}
-                className={cn(
-                  "text-sm font-semibold tracking-tight transition-colors",
-                  index !== resolvedIndex &&
-                    (isDark
-                      ? "text-secondary hover:text-primary"
-                      : "text-slate-500 hover:text-primary"),
-                )}
-                style={index === resolvedIndex ? { color } : undefined}
+                onMouseLeave={() => {
+                  if (isDropdown) setOpenDropdownIndex(null);
+                }}
               >
-                {item.label}
-              </Link>
-            </li>
-          ))}
+                {isDropdown ? (
+                  <>
+                    <button
+                      ref={(el) => {
+                        buttonRefs.current[index] = el;
+                      }}
+                      type="button"
+                      aria-expanded={isOpen}
+                      aria-haspopup="menu"
+                      className={cn(
+                        "m-0 inline-flex appearance-none border-0 bg-transparent p-0",
+                        triggerClassName,
+                      )}
+                      style={isActive ? { color } : undefined}
+                      onClick={() => setOpenDropdownIndex(index)}
+                    >
+                      <span>{item.label}</span>
+                      <span
+                        className={cn(
+                          "material-symbols-outlined text-base transition-transform",
+                          isOpen && "rotate-180",
+                        )}
+                        aria-hidden
+                      >
+                        keyboard_arrow_down
+                      </span>
+                    </button>
+
+                    <div
+                      role="menu"
+                      aria-label={item.label}
+                      className={cn(
+                        "absolute left-1/2 top-full z-30 min-w-[12rem] -translate-x-1/2 pt-2 transition-all duration-200",
+                        isOpen
+                          ? "pointer-events-auto visible translate-y-0 opacity-100"
+                          : "pointer-events-none invisible -translate-y-2 opacity-0",
+                      )}
+                    >
+                      <div className="absolute left-1/2 top-0 h-4 w-4 -translate-x-1/2 rotate-45 border-s border-t border-white/30 bg-[#4ea3cb]" />
+                      <div className="relative flex flex-col gap-1 rounded-[1.25rem] border border-white/30 bg-[#4ea3cb] p-3 text-white shadow-2xl shadow-[#009cc2]/20 backdrop-blur-md">
+                        {item.children?.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            role="menuitem"
+                            className="rounded-2xl px-4 py-3 text-center text-base font-semibold transition-colors hover:bg-white/12 focus-visible:bg-white/12"
+                            onClick={() => setOpenDropdownIndex(null)}
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                ) : item.href ? (
+                  <Link
+                    ref={(el) => {
+                      buttonRefs.current[index] = el;
+                    }}
+                    href={item.href}
+                    onClick={(e) => handleClick(e, index, item.href!)}
+                    className={triggerClassName}
+                    style={isActive ? { color } : undefined}
+                  >
+                    {item.label}
+                  </Link>
+                ) : null}
+              </li>
+            );
+          })}
         </ul>
         <div className="active-element" ref={activeElementRef} />
       </nav>

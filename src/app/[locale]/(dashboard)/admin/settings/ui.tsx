@@ -15,6 +15,7 @@ import { AdsTable } from "@/components/tables/ads-table";
 import { SlideCardsTable } from "@/components/tables/slide-cards-table";
 import { WelcomePagesTable } from "@/components/tables/welcome-pages-table";
 import { WebsitePagesTable } from "@/components/tables/website-pages-table";
+import { MedicalTestCategoriesTable } from "@/components/tables/medical-test-categories-table";
 import { AccountingSettingsForm } from "@/components/forms/accounting-settings-form/AccountingSettingsForm";
 
 const AdminSettingsUI = () => {
@@ -58,6 +59,7 @@ const AdminSettingsUI = () => {
           <Tabs.Tab value="slideCards">{t("tabSlideCards")}</Tabs.Tab>
           <Tabs.Tab value="welcomePages">{t("tabWelcomePages")}</Tabs.Tab>
           <Tabs.Tab value="websitePages">{t("tabWebsitePages")}</Tabs.Tab>
+          <Tabs.Tab value="medicalTestCategories">{t("tabMedicalTestCategories")}</Tabs.Tab>
           <Tabs.Tab value="accounting">{t("tabAccounting")}</Tabs.Tab>
         </Tabs.List>
 
@@ -82,6 +84,9 @@ const AdminSettingsUI = () => {
         </Tabs.Panel>
         <Tabs.Panel value="websitePages" pt="md">
           <WebsitePagesTable />
+        </Tabs.Panel>
+        <Tabs.Panel value="medicalTestCategories" pt="md">
+          <MedicalTestCategoriesTable />
         </Tabs.Panel>
         <Tabs.Panel value="accounting" pt="md">
           <AccountingSettingsForm />

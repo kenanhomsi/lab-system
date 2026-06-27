@@ -18,7 +18,7 @@ const Api = ({ children }: PropsWithChildren) => {
         nameAr: data.nameAr,
         nameEn: data.nameEn,
         price: 0,
-        category: "general",
+        categoryMedicalId: 0,
         sampleType: "unspecified",
         parameterSchema: data.description.trim() || "[]",
         status: "draft",

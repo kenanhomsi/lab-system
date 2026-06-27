@@ -8,7 +8,12 @@ import { DateRender } from "./columns-rendering/date-render";
 
 type TFunction = (key: string) => string;
 
-const getMedicalTestsColumns = (t: TFunction): DataTableColumn<MedicalTestItem>[] => {
+const getCategoryLabel = (row: MedicalTestItem, locale: string): string => {
+  if (locale === "ar") return row.categoryNameAr || row.categoryNameEn || row.category;
+  return row.categoryNameEn || row.categoryNameAr || row.category;
+};
+
+const getMedicalTestsColumns = (t: TFunction, locale: string): DataTableColumn<MedicalTestItem>[] => {
   return [
     {
       accessor: "nameAr",
@@ -26,11 +31,14 @@ const getMedicalTestsColumns = (t: TFunction): DataTableColumn<MedicalTestItem>[
       accessor: "category",
       title: t("colCategory"),
       width: "13%",
-      render: (row) => (
-        <Text size="sm" c={row.category ? undefined : "dimmed"}>
-          {row.category || "—"}
-        </Text>
-      ),
+      render: (row) => {
+        const category = getCategoryLabel(row, locale);
+        return (
+          <Text size="sm" c={category ? undefined : "dimmed"}>
+            {category || "-"}
+          </Text>
+        );
+      },
     },
     {
       accessor: "sampleType",
@@ -38,7 +46,7 @@ const getMedicalTestsColumns = (t: TFunction): DataTableColumn<MedicalTestItem>[
       width: "13%",
       render: (row) => (
         <Text size="sm" c={row.sampleType ? undefined : "dimmed"}>
-          {row.sampleType || "—"}
+          {row.sampleType || "-"}
         </Text>
       ),
     },

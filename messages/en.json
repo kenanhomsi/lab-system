@@ -4,6 +4,7 @@
   },
   "nav": {
     "home": "Home",
+    "labGroup": "Our Lab",
     "about": "About Us",
     "services": "Services",
     "tests": "Medical Tests",
@@ -412,6 +413,7 @@
     "adminVacantJobs": "Vacant jobs",
     "adminAppointmentTypes": "Appointment Types",
     "adminMedicalTests": "Medical tests",
+    "adminMedicalTestCategories": "Medical categories",
     "adminSettings": "Settings",
     "adminAccounting": "Accounting",
     "adminStore": "Store management",
@@ -1310,6 +1312,7 @@
       "tabSlideCards": "Slide cards",
       "tabWelcomePages": "Welcome pages",
       "tabWebsitePages": "Website pages",
+      "tabMedicalTestCategories": "Medical categories",
       "tabAccounting": "Accounting settings",
       "accounting": {
         "title": "Accounting page settings",
@@ -2008,6 +2011,9 @@
       "pricePlaceholder": "0",
       "categoryLabel": "Category",
       "categoryPlaceholder": "e.g. Hematology",
+      "categorySelectPlaceholder": "Select category",
+      "categoryNothingFound": "No categories found",
+      "legacyCategoryHint": "Previous category: {category}. Select a medical category before saving.",
       "sampleTypeLabel": "Sample type",
       "sampleTypePlaceholder": "e.g. Blood",
       "statusLabel": "Status",
@@ -2030,6 +2036,30 @@
       "deleteModalTitle": "Delete Medical Test",
       "deleteConfirmMessage": "Are you sure you want to delete {name}?",
       "deleteFallbackTest": "this medical test"
+    },
+    "medicalTestCategories": {
+      "pageTitle": "Medical Categories",
+      "pageDescription": "Manage categories used by medical tests.",
+      "createLabel": "Create Category",
+      "colId": "ID",
+      "colNameAr": "Name (Arabic)",
+      "colNameEn": "Name (English)",
+      "colDescription": "Description",
+      "colDisplayOrder": "Order",
+      "colActive": "Active",
+      "colUpdatedAt": "Updated",
+      "yes": "Yes",
+      "no": "No",
+      "createModalTitle": "Create Medical Category",
+      "editModalTitle": "Edit Medical Category",
+      "deleteModalTitle": "Delete Medical Category",
+      "nameArLabel": "Name (Arabic)",
+      "nameEnLabel": "Name (English)",
+      "descriptionLabel": "Description",
+      "displayOrderLabel": "Display order",
+      "isActiveLabel": "Active",
+      "deleteConfirmMessage": "Are you sure you want to delete {name}?",
+      "deleteFallback": "this category"
     },
     "medicalTestsCatalog": {
       "pageTitle": "Medical tests",
@@ -2999,6 +3029,24 @@
       "description": "Explore the wide range of options we offer for patients, physicians, laboratories, and companies.",
       "browseTests": "Browse tests"
     },
+    "catalog": {
+      "eyebrow": "Service guide",
+      "previewLabel": "Quick preview",
+      "viewDetails": "More info",
+      "stats": {
+        "labServices": "Lab services",
+        "digitalServices": "Digital services",
+        "carePillars": "Care pillars",
+        "doctorReasons": "Doctor advantages",
+        "partnerServices": "Partner services",
+        "featureBlocks": "Feature blocks"
+      }
+    },
+    "detail": {
+      "breadcrumbServices": "Services",
+      "backToServices": "Back to services",
+      "overviewTitle": "More context"
+    },
     "categories": {
       "sectionTitle": "Service categories",
       "sectionDesc": "End-to-end services that meet the needs of everyone in the healthcare ecosystem.",
@@ -3257,6 +3305,74 @@
       "mapTitle": "View our labs",
       "mapAttribution": "Map data © OpenStreetMap contributors.",
       "openInOsm": "Open in OpenStreetMap"
+    }
+  },
+  "qualityPage": {
+    "hero": {
+      "badge": "Quality control",
+      "titleLine1": "Accredited quality",
+      "titleAccent": "at every laboratory step",
+      "description": "Al Metwali Clinical Laboratory is the first and only laboratory in Syria to obtain international accreditation through ISO 9001:2015 certification issued by URS in the United Kingdom, accredited by UKAS and affiliated with IAF.",
+      "accreditationLabel": "International accreditation",
+      "accreditationValue": "ISO 9001:2015",
+      "accreditationBody": "An internationally recognized quality-management certificate that reflects disciplined laboratory procedures, documented operations, and continuous improvement.",
+      "primaryCta": "Contact the lab",
+      "secondaryCta": "Browse medical tests",
+      "imageAlt": "Front entrance of Al Metwali Clinical Laboratory",
+      "imageCaptionLabel": "Al Metwali Lab",
+      "imageCaptionBody": "A laboratory environment prepared for reliable diagnostics, calibrated workflows, and documented quality practices."
+    },
+    "story": {
+      "eyebrow": "Our quality commitment",
+      "title": "Why quality control is central to our work",
+      "intro": "Our quality system combines advanced equipment, documented procedures, and routine monitoring so every result is produced with consistency and confidence.",
+      "paragraph1": "Al Metwali Clinical Laboratory is the first and only laboratory in Syria to obtain international accreditation through ISO 9001:2015 certification from URS in the United Kingdom, accredited by the British quality body UKAS, a member of the International Accreditation Forum IAF.",
+      "paragraph2": "The laboratory is equipped with some of the most advanced laboratory technologies available in Syria from leading approved international companies, and it operates a quality-control system for medical testing and all laboratory processes according to international and local standards to ensure result accuracy.",
+      "paragraph3": "The laboratory relies on periodic monitoring of all operations by applying internal and external control systems and instrument calibration for devices and medical tests on daily, weekly, and monthly schedules to ensure precision in every process and obtain correct, controlled laboratory results.",
+      "paragraph4": "The laboratory serves patients, laboratories, medical centers, hospitals, charities, institutions, and public and private companies by performing routine, specialized, and research analyses while supplying the information related to tests, execution requirements, and sample types.",
+      "paragraph5": "It also participates in research and studies, supports researchers, and contributes to medical and laboratory conferences to strengthen scientific collaboration and knowledge exchange."
+    },
+    "system": {
+      "eyebrow": "How the system works",
+      "title": "A monitored workflow from sample to result",
+      "description": "Quality control is not a single checkpoint. It is a full operating system that connects equipment readiness, control measurements, calibration routines, and compliance with recognized standards.",
+      "card1Title": "Internationally aligned procedures",
+      "card1Body": "All laboratory operations are organized according to documented international and local quality standards so testing steps remain stable, traceable, and repeatable.",
+      "card2Title": "Modern equipment and calibration",
+      "card2Body": "The laboratory uses advanced approved equipment and maintains it through structured calibration routines that help preserve analytical reliability.",
+      "card3Title": "Internal and external controls",
+      "card3Body": "Control programs are applied internally and externally to review performance continuously and detect variation before it affects patient results.",
+      "card4Title": "Accuracy-focused reporting",
+      "card4Body": "Every monitoring and verification step is designed to protect result accuracy and support trustworthy diagnostic decisions for physicians and patients.",
+      "dailyLabel": "Daily control",
+      "dailyBody": "Daily checks track ongoing analytical performance and confirm that instruments and processes remain ready for routine operation.",
+      "weeklyLabel": "Weekly review",
+      "weeklyBody": "Weekly quality review compares trends, verifies stability, and reinforces consistency across recurrent laboratory workflows.",
+      "monthlyLabel": "Monthly verification",
+      "monthlyBody": "Monthly calibration and follow-up provide a broader quality picture and help confirm sustained compliance and accuracy over time."
+    },
+    "services": {
+      "eyebrow": "Who we serve",
+      "title": "Services for patients, labs, and institutions",
+      "description": "The laboratory provides quality-focused services across a wide healthcare network, combining diagnostic execution with practical guidance and scientific collaboration.",
+      "audience1": "Patients",
+      "audience2": "Laboratories",
+      "audience3": "Medical centers",
+      "audience4": "Hospitals",
+      "audience5": "Charities and institutions",
+      "audience6": "Public and private companies",
+      "card1Title": "Routine, specialized, and research testing",
+      "card1Body": "The laboratory offers a broad menu of routine, specialized, and research analyses and provides guidance about test requirements, execution conditions, and the appropriate sample types.",
+      "card2Title": "Clinical collaboration and knowledge support",
+      "card2Body": "We support physicians, researchers, and partner organizations through information sharing, participation in studies, and engagement in medical and laboratory conferences.",
+      "closing": "The laboratory provides a wide range of medical analyses with strong diagnostic value, giving physicians broad options that support diagnosis, treatment, and follow-up while helping deliver good healthcare based on scientific principles and practical experience through collaboration between the laboratory, the physician, and the patient."
+    },
+    "cta": {
+      "eyebrow": "Need more details?",
+      "title": "We can help with test requirements and service coordination",
+      "body": "Reach out if you need information about test conditions, sample requirements, or coordination with your clinic, laboratory, hospital, or organization.",
+      "primary": "Contact us",
+      "secondary": "View tests"
     }
   },
   "tests": {

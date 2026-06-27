@@ -32,6 +32,11 @@ const categoryIcon = (category: string): string => {
   return "biotech";
 };
 
+const categoryName = (test: MedicalTestItem, locale: string): string =>
+  locale === "ar"
+    ? test.categoryNameAr || test.categoryNameEn || test.category
+    : test.categoryNameEn || test.categoryNameAr || test.category;
+
 export function TestsPage() {
   const t = useTranslations("tests");
   const locale = useLocale();
@@ -94,7 +99,7 @@ export function TestsPage() {
   const categories = useMemo(() => {
     const unique = new Set<string>();
     for (const item of items) {
-      const category = item.category.trim();
+      const category = categoryName(item, locale).trim();
       if (category) unique.add(category);
     }
     return Array.from(unique).sort((a, b) => a.localeCompare(b, locale));
@@ -102,8 +107,8 @@ export function TestsPage() {
 
   const visibleItems = useMemo(() => {
     if (!activeCategory) return items;
-    return items.filter((item) => item.category === activeCategory);
-  }, [activeCategory, items]);
+    return items.filter((item) => categoryName(item, locale) === activeCategory);
+  }, [activeCategory, items, locale]);
 
   const pageNumbers = useMemo(() => {
     const maxButtons = 5;
@@ -180,7 +185,7 @@ export function TestsPage() {
       <section className="pt-10 md:pt-14">
         <div className="content-container">
           <div className="rounded-[2rem] border border-outline-variant/20 bg-surface-container-lowest p-5 shadow-sm md:p-8">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-4">
               <div className="relative flex-1">
                 <Icon
                   name="search"
@@ -195,13 +200,6 @@ export function TestsPage() {
                   className="w-full rounded-xl border border-outline-variant/30 bg-surface py-3.5 pe-4 ps-12 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               </div>
-              <Link
-                href="/order-test-request"
-                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl clinical-gradient px-6 py-3 font-headline text-sm font-bold text-on-primary shadow-lg shadow-primary/35 ring-2 ring-primary/20 transition-all hover:brightness-105 hover:shadow-primary/45 active:scale-[0.98]"
-              >
-                <Icon name="add_circle" size="sm" className="text-on-primary" />
-                {t("orderCta")}
-              </Link>
             </div>
 
             {categories.length > 0 ? (
@@ -271,13 +269,13 @@ export function TestsPage() {
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
-                          <Icon name={categoryIcon(test.category)} className="text-primary" />
+                          <Icon name={categoryIcon(categoryName(test, locale))} className="text-primary" />
                         </div>
                         <Badge
                           tone="default"
                           className="border border-primary/15 bg-primary-container/80 text-primary"
                         >
-                          {test.category || t("uncategorized")}
+                          {categoryName(test, locale) || t("uncategorized")}
                         </Badge>
                       </div>
 

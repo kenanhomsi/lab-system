@@ -5,6 +5,9 @@ export type MedicalTestItem = {
   nameAr: string;
   nameEn: string;
   price: number;
+  categoryMedicalId: number | null;
+  categoryNameAr?: string;
+  categoryNameEn?: string;
   category: string;
   sampleType: string;
   parameterSchema: ParameterSchemaInput;

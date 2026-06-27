@@ -4,7 +4,7 @@ import type { MedicalTestItem } from "./types";
 import { Code, Group, Modal, ScrollArea, Stack, Table, Text } from "@mantine/core";
 import { IconListDetails } from "@tabler/icons-react";
 import { parseParameterSchema } from "@/modules/medical-tests/abstraction";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 function formatDate(value: string): string {
   const parsed = new Date(value);
@@ -34,11 +34,16 @@ type Props = {
 
 const ViewMedicalTestModal = ({ opened, onClose, test }: Props) => {
   const t = useTranslations("admin.medicalTestsCatalog");
+  const locale = useLocale();
   if (!test) return null;
 
   const schema = parseParameterSchema(test.parameterSchema);
   const schemaEntries = Array.isArray(schema) ? schema.map((s) => [s.key, s.value]) : Object.entries(schema);
   const statusActive = test.status.trim().toLowerCase() === "active";
+  const localizedCategory =
+    locale === "ar"
+      ? test.categoryNameAr || test.categoryNameEn || test.category
+      : test.categoryNameEn || test.categoryNameAr || test.category;
 
   return (
     <Modal
@@ -71,7 +76,7 @@ const ViewMedicalTestModal = ({ opened, onClose, test }: Props) => {
           <Text size="sm" fw={600} c="dimmed">
             {t("categoryLabel")}
           </Text>
-          <Text size="sm">{test.category || "—"}</Text>
+          <Text size="sm">{localizedCategory || "—"}</Text>
         </Stack>
         <Stack gap={4}>
           <Text size="sm" fw={600} c="dimmed">

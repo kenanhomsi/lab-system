@@ -26,11 +26,15 @@ const parameterSchemaSchema = z.union([
 ]);
 
 export const MedicalTestItemSchema = z.object({
-  id: z.string(),
+  id: z.union([z.string(), z.number()]),
   nameAr: z.string(),
   nameEn: z.string(),
   price: z.number(),
-  category: z.string(),
+  category: z.string().optional(),
+  categoryMedicalId: z.union([z.number(), z.string()]).nullable().optional(),
+  categoryMedical: z.unknown().optional(),
+  categoryNameAr: z.string().nullable().optional(),
+  categoryNameEn: z.string().nullable().optional(),
   sampleType: z.string(),
   parameterSchema: parameterSchemaSchema,
   status: z.string(),

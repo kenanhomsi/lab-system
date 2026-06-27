@@ -8,6 +8,7 @@ export const WEBSITE_MESSAGE_NAMESPACES = [
   "landing",
   "about",
   "aboutPage",
+  "qualityPage",
   "servicesPage",
   "contactPage",
   "contactUs",

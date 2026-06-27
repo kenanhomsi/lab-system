@@ -3,11 +3,16 @@
 import { Api } from "./apis";
 import { State } from "./state";
 import { UI } from "./ui";
+import type { ProfileTab } from "./store/state";
 import { Utils } from "./utils";
 
-const Factory = () => {
+type ProfilePageProps = {
+  initialTab?: ProfileTab;
+};
+
+const Factory = ({ initialTab }: ProfilePageProps) => {
   return (
-    <State>
+    <State initialTab={initialTab}>
       <Api>
         <Utils>
           <UI />
@@ -18,4 +23,3 @@ const Factory = () => {
 };
 
 export { Factory as ProfilePage };
-

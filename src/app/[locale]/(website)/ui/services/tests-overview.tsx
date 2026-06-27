@@ -74,7 +74,7 @@ export async function TestsOverview() {
             </div>
             <Link
               href="/tests"
-              className="inline-flex items-center gap-2 rounded-xl clinical-gradient px-6 py-3 font-headline text-sm font-semibold text-on-primary-container shadow-lg shadow-primary/20 transition-all hover:opacity-95"
+              className="inline-flex items-center gap-2 text-white rounded-xl clinical-gradient px-6 py-3 font-headline text-sm font-semibold  shadow-lg shadow-primary/20 transition-all hover:opacity-95"
             >
               {t("browseCatalog")}
               <Icon name="arrow_forward" size="sm" />

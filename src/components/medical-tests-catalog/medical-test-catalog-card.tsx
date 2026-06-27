@@ -14,6 +14,10 @@ const MedicalTestCatalogCard = ({ item, onClick }: Props) => {
   const locale = useLocale();
 
   const localizedName = locale === "ar" ? item.nameAr || item.nameEn : item.nameEn || item.nameAr;
+  const localizedCategory =
+    locale === "ar"
+      ? item.categoryNameAr || item.categoryNameEn || item.category
+      : item.categoryNameEn || item.categoryNameAr || item.category;
   const isActive = item.status.trim().toLowerCase() === "active";
 
   return (
@@ -41,7 +45,7 @@ const MedicalTestCatalogCard = ({ item, onClick }: Props) => {
 
           <Group gap={8} wrap="wrap">
             <Badge variant="light" color="blue">
-              {item.category || t("unknownValue")}
+              {localizedCategory || t("unknownValue")}
             </Badge>
             <Badge variant="light" color="violet">
               {item.sampleType || t("unknownValue")}

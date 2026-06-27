@@ -9,7 +9,10 @@ import { LocaleSwitcher } from "@/components/locale-switcher";
 import { cn } from "@/lib/cn";
 
 import { BrandLogo } from "@/components/shared/brand-logo";
-import { SparkleNavbar } from "@/components/ui/sparkle-navbar";
+import {
+  SparkleNavbar,
+  type SparkleNavItem,
+} from "@/components/ui/sparkle-navbar";
 
 type WebsiteHeaderProps = {
   variant?: "light" | "dark";
@@ -38,6 +41,19 @@ const mergeNavigationLinks = (
   return merged;
 };
 
+const collectReservedHrefs = (items: SparkleNavItem[]) => {
+  const hrefs = new Set<string>();
+
+  for (const item of items) {
+    if (item.href) hrefs.add(item.href);
+    for (const child of item.children ?? []) {
+      hrefs.add(child.href);
+    }
+  }
+
+  return hrefs;
+};
+
 /**
  * Renders the public website navigation header.
  */
@@ -53,6 +69,7 @@ export function WebsiteHeader({
   const { data: session, status } = useSession();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [mobileOpenGroup, setMobileOpenGroup] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const isDark = variant === "dark";
   const roles = session?.user?.roles ?? [];
@@ -77,29 +94,47 @@ export function WebsiteHeader({
     setMounted(true);
   }, []);
 
-  const fixedLinks = [
+  const fixedLinks: SparkleNavItem[] = [
     { href: "/", label: t("nav.home") },
-    { href: "/about", label: t("nav.about") },
+    {
+      label: t("nav.labGroup"),
+      children: [
+        { href: "/about", label: t("nav.about") },
+        { href: "/quality-control", label: t("footer.quality") },
+      ],
+    },
     { href: "/services", label: t("nav.services") },
     { href: "/tests", label: t("nav.tests") },
-    { href: "/order-test-request", label: t("nav.orderTestRequest") },
-    { href: "/#quality-control", label: t("footer.quality") },
+    // { href: "/order-test-request", label: t("nav.orderTestRequest") },
     { href: "/careers", label: t("nav.careers") },
     { href: "/join-as-client", label: t("nav.joinAsClient") },
     { href: "/blog", label: t("nav.blog") },
     { href: "/contact", label: t("nav.contact") },
   ];
-  const links = mergeNavigationLinks([...cmsNavigationLinks, ...fixedLinks]);
+  const reservedHrefs = collectReservedHrefs(fixedLinks);
+  const cmsTopLevelLinks: SparkleNavItem[] = mergeNavigationLinks(cmsNavigationLinks)
+    .filter((link) => !reservedHrefs.has(link.href))
+    .map((link) => ({
+      href: link.href,
+      label: link.label,
+    }));
+  const links = [...cmsTopLevelLinks, ...fixedLinks];
+
   const isLinkActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
-  const activeNavIndex = links.findIndex((l) => isLinkActive(l.href));
+  const isNavItemActive = (item: SparkleNavItem) =>
+    item.children?.some((child) => isLinkActive(child.href)) ??
+    (item.href ? isLinkActive(item.href) : false);
+
+  const activeNavIndex = links.findIndex((item) => isNavItemActive(item));
   const navAccentColor = isDark ? "#5bd3f5" : "#009cc2";
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setDrawerOpen(false);
     setProfileMenuOpen(false);
+    setMobileOpenGroup(null);
   }, [pathname]);
 
   const handleSignOut = async () => {
@@ -226,6 +261,7 @@ export function WebsiteHeader({
         </div>
         <div className="hidden md:flex">
           <SparkleNavbar
+            key={pathname}
             items={links}
             activeIndex={activeNavIndex}
             color={navAccentColor}
@@ -354,25 +390,98 @@ export function WebsiteHeader({
             >
               <ul className="space-y-1">
                 {links.map((l) => {
-                  const active = isLinkActive(l.href);
+                  const active = isNavItemActive(l);
+                  const isGroup = Boolean(l.children?.length);
+                  const isExpanded =
+                    mobileOpenGroup === l.label ||
+                    (mobileOpenGroup === null && active && isGroup);
+
                   return (
-                    <li key={l.href}>
-                      <Link
-                        href={l.href}
-                        className={cn(
-                          "block rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors",
-                          active
-                            ? isDark
-                              ? "bg-[#009cc2]/15 text-[#009cc2]"
-                              : "bg-[#009cc2]/10 text-[#009cc2]"
-                            : isDark
-                              ? "text-on-surface hover:bg-white/10"
-                              : "text-slate-700 hover:bg-slate-100",
-                        )}
-                        onClick={() => setDrawerOpen(false)}
-                      >
-                        {l.label}
-                      </Link>
+                    <li key={l.href ?? l.label}>
+                      {isGroup ? (
+                        <div className="space-y-1">
+                          <button
+                            type="button"
+                            className={cn(
+                              "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors",
+                              active
+                                ? isDark
+                                  ? "bg-[#009cc2]/15 text-[#009cc2]"
+                                  : "bg-[#009cc2]/10 text-[#009cc2]"
+                                : isDark
+                                  ? "text-on-surface hover:bg-white/10"
+                                  : "text-slate-700 hover:bg-slate-100",
+                            )}
+                            aria-expanded={isExpanded}
+                            onClick={() =>
+                              setMobileOpenGroup((current) =>
+                                current === l.label ? null : l.label,
+                              )
+                            }
+                          >
+                            <span>{l.label}</span>
+                            <span
+                              className={cn(
+                                "material-symbols-outlined text-base transition-transform",
+                                isExpanded && "rotate-180",
+                              )}
+                              aria-hidden
+                            >
+                              keyboard_arrow_down
+                            </span>
+                          </button>
+
+                          <div
+                            className={cn(
+                              "overflow-hidden ps-3 transition-all",
+                              isExpanded ? "max-h-40 opacity-100" : "max-h-0 opacity-0",
+                            )}
+                          >
+                            <div className="space-y-1 border-s border-primary/15 py-1 ps-3">
+                              {l.children?.map((child) => {
+                                const childActive = isLinkActive(child.href);
+
+                                return (
+                                  <Link
+                                    key={child.href}
+                                    href={child.href}
+                                    className={cn(
+                                      "block rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                      childActive
+                                        ? isDark
+                                          ? "bg-[#009cc2]/15 text-[#009cc2]"
+                                          : "bg-[#009cc2]/10 text-[#009cc2]"
+                                        : isDark
+                                          ? "text-on-surface hover:bg-white/10"
+                                          : "text-slate-600 hover:bg-slate-100 hover:text-slate-800",
+                                    )}
+                                    onClick={() => setDrawerOpen(false)}
+                                  >
+                                    {child.label}
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      ) : l.href ? (
+                        <Link
+                          href={l.href}
+                          className={cn(
+                            "block rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors",
+                            active
+                              ? isDark
+                                ? "bg-[#009cc2]/15 text-[#009cc2]"
+                                : "bg-[#009cc2]/10 text-[#009cc2]"
+                              : isDark
+                                ? "text-on-surface hover:bg-white/10"
+                                : "text-slate-700 hover:bg-slate-100",
+                          )}
+                          onClick={() => setDrawerOpen(false)}
+                        >
+                          {l.label}
+                        </Link>
+                      ) : null}
                     </li>
                   );
                 })}

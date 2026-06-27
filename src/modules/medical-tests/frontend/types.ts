@@ -22,7 +22,7 @@ type CreateMedicalTestParams = {
   nameAr: string;
   nameEn: string;
   price: number;
-  category: string;
+  categoryMedicalId: number;
   sampleType: string;
   parameterSchema: ParameterSchemaInput;
   status: string;
@@ -33,7 +33,7 @@ type UpdateMedicalTestParams = {
   nameAr: string;
   nameEn: string;
   price: number;
-  category: string;
+  categoryMedicalId: number;
   sampleType: string;
   parameterSchema: ParameterSchemaInput;
   status: string;

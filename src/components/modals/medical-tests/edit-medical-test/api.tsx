@@ -22,7 +22,7 @@ const Api = ({ children }: PropsWithChildren) => {
                 nameAr: params.data.nameAr,
                 nameEn: params.data.nameEn,
                 price: 0,
-                category: "general",
+                categoryMedicalId: 0,
                 sampleType: "unspecified",
                 parameterSchema: params.data.description.trim() || "[]",
                 status: "draft",

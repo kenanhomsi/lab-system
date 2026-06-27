@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { MedicalTestItem } from "@/components/tables/medical-tests-table/types";
 import { getRequestOrigin } from "@/lib/api/request-origin";
+import { OrderTestRequestButton } from "./order-test-request-button";
 
 type PageProps = {
   params: Promise<{ locale: string; id: string }>;
@@ -23,14 +24,20 @@ async function fetchTest(id: string): Promise<MedicalTestItem | null> {
   }
 }
 
+const categoryName = (test: MedicalTestItem, locale: string): string =>
+  locale === "ar"
+    ? test.categoryNameAr || test.categoryNameEn || test.category
+    : test.categoryNameEn || test.categoryNameAr || test.category;
+
 export async function generateMetadata({ params }: PageProps) {
   const { id, locale } = await params;
   const test = await fetchTest(id);
   if (!test) return {};
   const name = locale === "ar" ? test.nameAr : test.nameEn;
+  const category = categoryName(test, locale);
   return {
     title: `${name} | Al Mutawali Lab`,
-    description: `${test.category} — ${test.sampleType}`,
+    description: `${category} - ${test.sampleType}`,
   };
 }
 
@@ -43,6 +50,7 @@ export default async function TestDetailsPage({ params }: PageProps) {
   const currentLocale = await getLocale();
   const numberFormatter = new Intl.NumberFormat(currentLocale);
   const name = currentLocale === "ar" ? test.nameAr : test.nameEn;
+  const category = categoryName(test, currentLocale);
 
   return (
     <main className="bg-linear-to-b from-surface via-surface to-surface-container-low py-12 md:py-20">
@@ -63,9 +71,9 @@ export default async function TestDetailsPage({ params }: PageProps) {
                   <h1 className="font-headline text-3xl font-black tracking-tight text-on-surface md:text-4xl">
                     {name}
                   </h1>
-                  {test.category ? (
+                  {category ? (
                     <Badge tone="default" className="mt-4">
-                      {test.category}
+                      {category}
                     </Badge>
                   ) : null}
                 </div>
@@ -84,7 +92,7 @@ export default async function TestDetailsPage({ params }: PageProps) {
                   </h2>
                   <p className="leading-relaxed text-on-surface-variant">
                     {t("overviewBody", {
-                      category: test.category || t("uncategorized"),
+                      category: category || t("uncategorized"),
                       sample: test.sampleType || t("sampleUnavailable"),
                     })}
                   </p>
@@ -125,12 +133,12 @@ export default async function TestDetailsPage({ params }: PageProps) {
                 <p className="text-sm leading-7 text-on-surface-variant">
                   {t("nextStepsBody")}
                 </p>
-                <Link
-                  href="/order-test-request"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl clinical-gradient px-6 py-2.5 font-headline text-sm font-semibold text-on-primary-container shadow-lg shadow-primary/20 transition-all hover:opacity-95"
-                >
-                  {t("orderCta")}
-                </Link>
+                <OrderTestRequestButton
+                  locale={currentLocale}
+                  testId={test.id}
+                  label={t("orderCta")}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl clinical-gradient px-6 py-2.5 font-headline text-sm font-semibold text-on-primary-container shadow-lg shadow-primary/20 transition-all hover:opacity-95 disabled:cursor-wait disabled:opacity-70"
+                />
               </div>
             </Card>
           </aside>
