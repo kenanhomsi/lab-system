@@ -53,6 +53,16 @@ const locationLabelKey = (location: string): string => {
   return map[normalized] ?? "locationUnknown";
 };
 
+const genderLabelKey = (gender: string): string => {
+  const normalized = gender.trim().toLowerCase();
+  const map: Record<string, string> = {
+    male: "genderMale",
+    female: "genderFemale",
+    other: "genderOther",
+  };
+  return map[normalized] ?? gender;
+};
+
 /**
  * Creates blood draw appointments table column definitions.
  */
@@ -113,6 +123,38 @@ const getAppointmentColumns = (t: Translate): DataTableColumn<AppointmentRow>[] 
       }
       const key = locationLabelKey(raw);
       const label = key === "locationUnknown" ? raw : t(key);
+      return (
+        <Badge variant="light" color="gray" radius="md">
+          {label}
+        </Badge>
+      );
+    },
+  },
+  {
+    accessor: "age",
+    title: t("columnAge"),
+    width: "8%",
+    render: (row) => (
+      <Text size="sm" py={4} style={numStyle}>
+        {row.age != null && Number.isFinite(row.age) ? row.age : "—"}
+      </Text>
+    ),
+  },
+  {
+    accessor: "gender",
+    title: t("columnGender"),
+    width: "10%",
+    render: (row) => {
+      const raw = row.gender?.trim();
+      if (!raw) {
+        return (
+          <Text size="sm" c="dimmed" py={4}>
+            —
+          </Text>
+        );
+      }
+      const key = genderLabelKey(raw);
+      const label = ["genderMale", "genderFemale", "genderOther"].includes(key) ? t(key) : raw;
       return (
         <Badge variant="light" color="gray" radius="md">
           {label}

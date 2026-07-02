@@ -7,9 +7,19 @@ import { getBannerColumns } from "./columns";
 
 const SchemaForBanners = (props: PropsWithChildren) => {
     const t = useTranslations("admin.settings.banners");
-    const schema = useMemo(() => getBannerColumns(t as (key: string) => string), [t]);
+    const tPageTarget = useTranslations("admin.settings.pageTarget");
+    const schema = useMemo(
+        () =>
+            getBannerColumns(
+                t as Translate,
+                tPageTarget as Translate,
+            ),
+        [t, tPageTarget],
+    );
     useMirrorRegistry("schema", schema);
     return <>{props.children}</>;
 };
+
+type Translate = (key: string, params?: Record<string, string>) => string;
 
 export { SchemaForBanners };

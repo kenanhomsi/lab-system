@@ -5,18 +5,22 @@ import { jsonError } from "@/lib/api/bff-errors";
 import { resolveAccessToken } from "@/lib/api/resolve-access-token";
 import { adModuleNames } from "@/modules/ad";
 import { AdBackendService } from "@/modules/ad/backend";
+import { pageTargetSchema } from "@/lib/banners/page-target";
+import { DISPLAY_MODE_VALUES } from "@/lib/banners/display-mode";
 
 const adService = backendContainer.get<AdBackendService>(adModuleNames.service);
 
 const mediaTypeSchema = z.enum(["Image", "Video"]);
+const displayModeSchema = z.enum(DISPLAY_MODE_VALUES);
 
 const createAdSchema = z
   .object({
     name: z.string().trim().min(1),
     description: z.string().trim().min(1),
+    displayMode: displayModeSchema,
     mediaType: mediaTypeSchema,
     media: z.instanceof(File),
-    addressName: z.string().trim().min(1),
+    addressName: pageTargetSchema,
   })
   .superRefine((value, context) => {
     const expectedPrefix = value.mediaType === "Image" ? "image/" : "video/";
@@ -64,6 +68,7 @@ export async function POST(req: NextRequest) {
     const input = createAdSchema.parse({
       name: String(body.get("Name") ?? ""),
       description: String(body.get("Description") ?? ""),
+      displayMode: String(body.get("DisplayMode") ?? ""),
       mediaType: String(body.get("MediaType") ?? ""),
       addressName: String(body.get("AddressName") ?? ""),
       media,

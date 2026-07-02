@@ -21,7 +21,8 @@ type SidebarIconKey =
   | "filePlus"
   | "minusCircle"
   | "barChart"
-  | "checkSquare";
+  | "checkSquare"
+  | "bell";
 
 type sideBarItem = {
   label: string;

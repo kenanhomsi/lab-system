@@ -30,6 +30,7 @@ const toAdFormData = (params: CreateAdParams | UpdateAdParams) => {
   const formData = new FormData();
   formData.append("Name", params.name);
   formData.append("Description", params.description);
+  formData.append("DisplayMode", params.displayMode);
   formData.append("MediaType", params.mediaType);
   formData.append("AddressName", params.addressName);
   if (params.media) {

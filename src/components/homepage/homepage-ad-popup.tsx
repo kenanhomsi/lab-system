@@ -5,13 +5,19 @@ import { IconExternalLink, IconSparkles, IconX } from "@tabler/icons-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import {
+  getDisplayModePopupLayout,
+  normalizeDisplayMode,
+} from "@/lib/banners/display-mode";
+import {
+  filterAdsByPath,
   filterAdsByPlacement,
   getPageLocationFromPath,
+  normalizeTargetPath,
 } from "@/lib/banners/locations";
 import type { AdItem } from "@/types/ad";
 
 const OFFER_PATTERN =
-  /(\d+\s*%|خصم|عرض|مجان|free|save|off|bundle|باقة|checkup|فحص)/i;
+  /(\d+\s*%|Ø®ØµÙ…|Ø¹Ø±Ø¶|Ù…Ø¬Ø§Ù†|free|save|off|bundle|Ø¨Ø§Ù‚Ø©|checkup|ÙØ­Øµ)/i;
 
 const normalizeAd = (value: unknown): AdItem | null => {
   if (typeof value !== "object" || value === null) return null;
@@ -31,6 +37,7 @@ const normalizeAd = (value: unknown): AdItem | null => {
     id: item.id,
     name: item.name,
     description: item.description,
+    displayMode: normalizeDisplayMode(item.displayMode as string | undefined),
     mediaType: item.mediaType,
     mediaUrl: item.mediaUrl,
     websiteUrl: typeof item.websiteUrl === "string" ? item.websiteUrl : undefined,
@@ -121,12 +128,21 @@ export function HomepageAdPopup() {
     };
   }, [pathname]);
 
-  const pagePlacement = useMemo(() => getPageLocationFromPath(pathname), [pathname]);
+  const currentPath = useMemo(() => normalizeTargetPath(pathname), [pathname]);
+  const pagePlacement = useMemo(
+    () => getPageLocationFromPath(pathname),
+    [pathname],
+  );
 
   const ad = useMemo(() => {
+    const pathMatches = filterAdsByPath(ads, currentPath);
+    if (pathMatches.length > 0) return pathMatches[0] ?? null;
     if (!pagePlacement) return null;
     return filterAdsByPlacement(ads, pagePlacement)[0] ?? null;
-  }, [ads, pagePlacement]);
+  }, [ads, currentPath, pagePlacement]);
+
+  const displayMode = normalizeDisplayMode(ad?.displayMode);
+  const popupLayout = getDisplayModePopupLayout(displayMode);
 
   const offerHighlight = useMemo(
     () => (ad ? extractOfferHighlight(ad.description) : null),
@@ -137,7 +153,10 @@ export function HomepageAdPopup() {
     if (!ad?.description.trim()) return "";
     const trimmed = ad.description.trim();
     if (offerHighlight && trimmed.startsWith(offerHighlight)) {
-      return trimmed.slice(offerHighlight.length).replace(/^[\s.\-–—]+/, "").trim();
+      return trimmed
+        .slice(offerHighlight.length)
+        .replace(/^[\s.\-–—]+/u, "")
+        .trim();
     }
     return trimmed;
   }, [ad, offerHighlight]);
@@ -172,7 +191,7 @@ export function HomepageAdPopup() {
         loop
         playsInline
         preload="metadata"
-        className="h-full min-h-64 w-full object-cover md:min-h-full"
+        className="absolute inset-0 h-full w-full object-cover"
       />
     ) : (
       // eslint-disable-next-line @next/next/no-img-element
@@ -181,7 +200,7 @@ export function HomepageAdPopup() {
         alt={ad.name}
         loading="eager"
         decoding="async"
-        className="h-full min-h-64 w-full object-cover md:min-h-full"
+        className="absolute inset-0 h-full w-full object-cover"
       />
     );
 
@@ -197,7 +216,10 @@ export function HomepageAdPopup() {
 
   return (
     <div
-      className="ad-modal-overlay fixed inset-0 z-80 flex items-center justify-center bg-slate-950/75 px-4 py-8 backdrop-blur-md"
+      className={[
+        "ad-modal-overlay fixed inset-0 z-80 flex bg-slate-950/80 backdrop-blur-md",
+        popupLayout.shellClassName,
+      ].join(" ")}
       role="dialog"
       aria-modal="true"
       aria-labelledby="homepage-ad-title"
@@ -205,56 +227,54 @@ export function HomepageAdPopup() {
       onClick={handleClose}
     >
       <div
-        className="ad-modal-panel relative flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-[0_32px_80px_-24px_rgba(15,23,42,0.55)] ring-1 ring-white/20 md:max-h-[90vh] md:flex-row"
+        className={[
+          "ad-modal-panel relative grid overflow-hidden bg-white text-slate-900 shadow-[0_32px_80px_-24px_rgba(15,23,42,0.55)] ring-1 ring-white/20",
+          popupLayout.panelClassName,
+        ].join(" ")}
         onClick={(event) => event.stopPropagation()}
       >
         <button
           type="button"
           onClick={handleClose}
-          className="absolute end-4 top-4 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-slate-500 shadow-md ring-1 ring-slate-200/80 backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-800"
+          className="absolute end-4 top-4 z-20 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-slate-500 shadow-md ring-1 ring-slate-200/80 backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-800"
           aria-label={t("dismissAria")}
         >
           <IconX size={18} stroke={2} />
         </button>
 
-        <div className="relative min-h-64 shrink-0 overflow-hidden bg-slate-900 md:min-h-0 md:w-[54%]">
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/15 to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-slate-950/20" />
-          <div
-            className="pointer-events-none absolute -start-16 top-8 h-40 w-40 rounded-full bg-[#009cc2]/30 blur-3xl"
-            aria-hidden
-          />
-          <div
-            className="pointer-events-none absolute -end-10 bottom-0 h-48 w-48 rounded-full bg-cyan-300/20 blur-3xl"
-            aria-hidden
-          />
+        <div
+          className={[
+            "relative overflow-hidden bg-slate-950",
+            popupLayout.mediaPaneClassName,
+          ].join(" ")}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent lg:bg-gradient-to-r lg:from-slate-950/55 lg:via-transparent lg:to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,156,194,0.18),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(14,165,233,0.14),transparent_35%)]" />
           {ad.websiteUrl ? (
             <a
               href={ad.websiteUrl}
               target="_blank"
               rel="noreferrer"
-              className="group relative block h-full min-h-64 md:min-h-[420px]"
+              className="group relative block h-full w-full"
             >
               {media}
               <span className="pointer-events-none absolute inset-0 bg-slate-900/0 transition-colors group-hover:bg-slate-900/10" />
             </a>
           ) : (
-            <div className="relative h-full min-h-64 md:min-h-[420px]">{media}</div>
+            <div className="relative h-full w-full">{media}</div>
           )}
-
-          {offerHighlight ? (
-            <div className="absolute bottom-4 start-4 end-4 z-10 md:bottom-6 md:start-6 md:end-auto md:max-w-[85%]">
-              <span className="inline-flex items-center gap-2 rounded-2xl bg-white/95 px-4 py-2.5 text-sm font-bold text-[#009cc2] shadow-lg ring-1 ring-white/60 backdrop-blur-sm">
-                <IconSparkles size={16} stroke={2} />
-                {offerHighlight}
-              </span>
-            </div>
-          ) : null}
         </div>
 
-        <div className="relative flex flex-1 flex-col justify-between gap-6 bg-gradient-to-b from-white to-slate-50 p-6 pt-14 sm:p-8 sm:pt-16">
-          <div className="absolute inset-y-0 start-0 hidden w-1 bg-gradient-to-b from-[#009cc2] via-cyan-400 to-[#009cc2]/40 md:block" />
-
-          <div className="space-y-5">
+        <div
+          className={[
+            "relative flex min-h-0 flex-1 flex-col justify-between bg-gradient-to-b from-white via-white to-slate-50 text-start",
+            popupLayout.infoPaneClassName,
+            popupLayout.stacked
+              ? "border-t border-slate-200/80"
+              : "lg:border-s lg:border-slate-200/70",
+          ].join(" ")}
+        >
+          <div className="space-y-6">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-[#009cc2]/20 bg-[#009cc2]/8 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[#007a99]">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#009cc2]" aria-hidden />
@@ -265,22 +285,38 @@ export function HomepageAdPopup() {
               </span>
             </div>
 
-            <div className="space-y-3">
-              <h2
-                id="homepage-ad-title"
-                className="text-balance text-2xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-[1.75rem]"
-              >
-                {ad.name}
-              </h2>
-              {bodyCopy ? (
-                <p className="max-w-prose text-sm leading-7 text-slate-600 sm:text-[15px]">
-                  {bodyCopy}
-                </p>
-              ) : null}
+            <div className="space-y-4">
+              <div className="space-y-3">
+                <h2
+                  id="homepage-ad-title"
+                  className={[
+                    "text-balance font-black leading-tight tracking-tight text-slate-900",
+                    popupLayout.titleClassName,
+                  ].join(" ")}
+                >
+                  {ad.name}
+                </h2>
+                {offerHighlight ? (
+                  <div className="inline-flex w-fit items-center gap-2 rounded-2xl bg-[#009cc2]/8 px-4 py-2.5 text-sm font-bold text-[#007a99] ring-1 ring-[#009cc2]/15">
+                    <IconSparkles size={16} stroke={2} />
+                    {offerHighlight}
+                  </div>
+                ) : null}
+                {bodyCopy ? (
+                  <p
+                    className={[
+                      "max-w-prose text-sm leading-7 text-slate-600 sm:text-[15px]",
+                      popupLayout.stacked ? "lg:max-w-[42ch]" : "",
+                    ].join(" ")}
+                  >
+                    {bodyCopy}
+                  </p>
+                ) : null}
+              </div>
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 border-t border-slate-200/80 pt-5">
             <div className="flex flex-wrap items-center gap-3">
               {ad.websiteUrl ? (
                 <a href={ad.websiteUrl} target="_blank" rel="noreferrer" className={ctaClassName}>

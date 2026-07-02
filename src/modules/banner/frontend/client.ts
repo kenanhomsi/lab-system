@@ -61,6 +61,7 @@ class Client extends BannerClient<AxiosState> {
     const formData = new FormData();
     formData.append("title", params.title);
     formData.append("type", params.type);
+    formData.append("displayMode", params.displayMode);
     formData.append("InternalLink", params.InternalLink);
     formData.append("ExternalLink", params.ExternalLink);
     formData.append("TargetType", params.TargetType);
@@ -87,6 +88,7 @@ class Client extends BannerClient<AxiosState> {
     const formData = new FormData();
     formData.append("Title", params.title);
     formData.append("Type", params.type);
+    formData.append("DisplayMode", params.displayMode);
     formData.append("InternalLink", params.InternalLink);
     formData.append("ExternalLink", params.ExternalLink);
     formData.append("TargetType", params.TargetType);
@@ -103,7 +105,7 @@ class Client extends BannerClient<AxiosState> {
     }
 
     const res = await super
-      .sharedPutFormData({
+      .sharedPatchFormData({
         endpoint: endpoint.update(params.id),
         formData,
       })

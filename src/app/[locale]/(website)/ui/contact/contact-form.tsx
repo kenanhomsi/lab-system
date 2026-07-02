@@ -35,14 +35,14 @@ export function ContactForm() {
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
       <div className="absolute -right-20 top-1/2 -translate-y-1/2">
-        <div className="h-[500px] w-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
+        <div className="h-[min(500px,80vw)] w-[min(500px,80vw)] rounded-full bg-primary/[0.04] blur-[100px]" />
       </div>
       <div className="absolute -left-20 bottom-0">
-        <div className="h-[400px] w-[400px] rounded-full bg-tertiary/[0.04] blur-[100px]" />
+        <div className="h-[min(400px,76vw)] w-[min(400px,76vw)] rounded-full bg-tertiary/[0.04] blur-[100px]" />
       </div>
 
       <div className="relative content-container">
-        <div className="grid grid-cols-1 items-start gap-14 lg:grid-cols-[1fr_520px] lg:gap-16">
+        <div className="grid min-w-0 grid-cols-1 items-start gap-10 md:gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,520px)] lg:gap-16">
           <div
             className="reveal-up lg:sticky lg:top-28"
             style={{ animationDelay: "80ms" }}
@@ -52,7 +52,7 @@ export function ContactForm() {
               {t("eyebrow")}
             </span>
 
-            <h2 className="mt-5 max-w-xl font-headline text-5xl font-black tracking-tight text-on-surface md:text-6xl lg:text-[4rem]">
+            <h2 className="mt-5 max-w-xl font-headline text-4xl font-black tracking-normal text-on-surface md:text-5xl">
               {t("title")}
             </h2>
 
@@ -87,7 +87,7 @@ export function ContactForm() {
               ))}
             </div>
 
-            <div className="mt-10 grid gap-3 sm:grid-cols-3">
+            <div className="mt-10 grid gap-3 md:grid-cols-3">
               {reassuranceItems.map((item) => (
                 <div
                   key={item.label}
@@ -111,12 +111,12 @@ export function ContactForm() {
             className="reveal-up relative"
             style={{ animationDelay: "200ms" }}
           >
-            <div className="relative rounded-[2rem] border border-outline-variant/15 bg-white shadow-2xl shadow-slate-950/6 overflow-hidden">
+            <div className="relative overflow-hidden rounded-[1.5rem] border border-outline-variant/15 bg-white shadow-2xl shadow-slate-950/6 md:rounded-[2rem]">
               <div className="absolute inset-x-0 top-0 z-10 h-1 bg-gradient-to-r from-primary via-secondary to-tertiary" />
 
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(59,130,246,0.04),transparent)]" />
 
-              <div className="relative p-8 md:p-10">
+              <div className="relative p-5 sm:p-8 md:p-10">
                 <div className="mb-8 flex items-center gap-4 rounded-2xl border border-outline-variant/15 bg-surface-container-low/60 p-4">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm">
                     <Icon name="support_agent" size="sm" />
@@ -132,7 +132,7 @@ export function ContactForm() {
                 </div>
 
                 <form className="mt-4 space-y-6">
-                  <div className="grid gap-6 md:grid-cols-2">
+                  <div className="grid gap-5 md:grid-cols-2 md:gap-6">
                     <div>
                       <label
                         htmlFor="name"

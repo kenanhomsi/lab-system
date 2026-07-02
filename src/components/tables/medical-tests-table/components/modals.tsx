@@ -99,6 +99,8 @@ const buildParameterSchemaModel = (pairs: ParameterPair[]): Record<string, strin
   }, {});
 };
 
+const DEFAULT_CREATE_STATUS = "2";
+
 const Modals = () => {
   const t = useTranslations("admin.medicalTests");
   const tc = useTranslations("admin.common");
@@ -133,7 +135,8 @@ const Modals = () => {
       parseParameterPairs(props.selected?.parameterSchema ?? ""),
     );
     const [status, setStatus] = useState<string>(() => {
-      const raw = (props.selected?.status ?? "active").trim();
+      if (!props.selected) return DEFAULT_CREATE_STATUS;
+      const raw = props.selected.status.trim();
       const lower = raw.toLowerCase();
       return lower === "inactive" ? "inactive" : "active";
     });
@@ -168,17 +171,17 @@ const Modals = () => {
       [parameterPairs],
     );
     const hasValidDetails = useMemo(() => {
-      return (
+      const baseValid =
         nameAr.trim().length > 0 &&
         nameEn.trim().length > 0 &&
         Number.isFinite(price) &&
         price >= 0 &&
         Number.isFinite(Number(categoryMedicalId)) &&
         Number(categoryMedicalId) > 0 &&
-        sampleType.trim().length > 0 &&
-        status.trim().length > 0
-      );
-    }, [nameAr, nameEn, price, categoryMedicalId, sampleType, status]);
+        sampleType.trim().length > 0;
+      if (props.mode === "create") return baseValid;
+      return baseValid && status.trim().length > 0;
+    }, [nameAr, nameEn, price, categoryMedicalId, sampleType, status, props.mode]);
 
     const canSubmit = useMemo(() => {
       return hasValidDetails && hasValidParameterSchema;
@@ -199,7 +202,7 @@ const Modals = () => {
           categoryMedicalId: Number(categoryMedicalId),
           sampleType: sampleType.trim(),
           parameterSchema: parameterSchemaModel,
-          status: status.trim(),
+          status: DEFAULT_CREATE_STATUS,
         });
         closeModal();
         return;

@@ -51,6 +51,8 @@ export function BookBloodDrawModal({
   const [locationType, setLocationType] = useState("lab");
   const [latitude, setLatitude] = useState<number | "">("");
   const [longitude, setLongitude] = useState<number | "">("");
+  const [patientAge, setPatientAge] = useState<number | "">("");
+  const [gender, setGender] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
 
   const slotsQuery = useQuery({
@@ -82,6 +84,14 @@ export function BookBloodDrawModal({
 
   const selectedSlot = findAppointmentSlotByKey(slotsQuery.data ?? [], selectedSlotKey);
 
+  const genderLabel = (value: string) => {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "male") return t("genderMale");
+    if (normalized === "female") return t("genderFemale");
+    if (normalized === "other") return t("genderOther");
+    return value;
+  };
+
   const createMutation = useMutation({
     mutationFn: async () => {
       if (!testRequest || !user?.id || !selectedSlot) {
@@ -94,6 +104,8 @@ export function BookBloodDrawModal({
         patientLocationType: locationType,
         patientLatitude: latitude === "" ? null : Number(latitude),
         patientLongitude: longitude === "" ? null : Number(longitude),
+        ...(patientAge !== "" ? { age: Number(patientAge) } : {}),
+        ...(gender ? { gender } : {}),
         notes,
         startTime: selectedSlot.startTime,
         endTime: selectedSlot.endTime,
@@ -105,6 +117,8 @@ export function BookBloodDrawModal({
       setSelectedSlotKey(null);
       setLatitude("");
       setLongitude("");
+      setPatientAge("");
+      setGender(null);
       setNotes("");
       await queryClient.invalidateQueries({ queryKey: ["appointments"] });
       onClose();
@@ -150,7 +164,7 @@ export function BookBloodDrawModal({
               placeholder={t("selectAppointmentDate")}
               description={t("appointmentDateDesc")}
               value={appointmentDate ? dayjs(appointmentDate).toDate() : null}
-              minDate={new Date()}
+              minDate={dayjs().startOf("day").toDate()}
               leftSection={<IconCalendarEvent size={16} />}
               onChange={(date) => {
                 setAppointmentDate(date ? dayjs(date).format("YYYY-MM-DD") : "");
@@ -207,6 +221,28 @@ export function BookBloodDrawModal({
                 decimalScale={6}
               />
             </SimpleGrid>
+            <SimpleGrid cols={{ base: 1, sm: 2 }}>
+              <NumberInput
+                label={t("patientAge")}
+                value={patientAge}
+                onChange={(value) => setPatientAge(typeof value === "number" ? value : "")}
+                min={0}
+                max={150}
+                allowDecimal={false}
+              />
+              <Select
+                label={t("patientGender")}
+                placeholder={t("selectGender")}
+                clearable
+                data={[
+                  { value: "Male", label: t("genderMale") },
+                  { value: "Female", label: t("genderFemale") },
+                  { value: "Other", label: t("genderOther") },
+                ]}
+                value={gender}
+                onChange={setGender}
+              />
+            </SimpleGrid>
             <Textarea
               label={t("notes")}
               minRows={3}
@@ -247,6 +283,16 @@ export function BookBloodDrawModal({
                   <Text size="xs" c="dimmed">
                     {appointment.createdAt ? dayjs(appointment.createdAt).format("YYYY-MM-DD HH:mm") : "-"}
                   </Text>
+                  {appointment.age != null || appointment.gender ? (
+                    <Text size="xs" c="dimmed">
+                      {[
+                        appointment.age != null ? `${t("patientAge")}: ${appointment.age}` : null,
+                        appointment.gender ? `${t("patientGender")}: ${genderLabel(appointment.gender)}` : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </Text>
+                  ) : null}
                 </Stack>
                 <Group gap="xs" wrap="nowrap">
                   <Badge variant="light">{appointment.status}</Badge>

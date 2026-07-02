@@ -3,9 +3,11 @@ import { slideCardModuleNames } from "../names";
 import { SlideCardFrontendClient } from "./client";
 import {
   CreateSlideCardParams,
+  DeleteSlideCardParams,
   FindAllPublicSlideCardParams,
   FindAllSlideCardParams,
   FindOneSlideCardParams,
+  UpdateSlideCardParams,
 } from "./types";
 
 @injectable()
@@ -27,6 +29,14 @@ class Service {
 
   async create(params: CreateSlideCardParams) {
     return this.Client.create(params);
+  }
+
+  async update(params: UpdateSlideCardParams) {
+    return this.Client.update(params);
+  }
+
+  async delete(params: DeleteSlideCardParams) {
+    return this.Client.delete(params);
   }
 }
 

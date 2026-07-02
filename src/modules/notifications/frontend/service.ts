@@ -1,8 +1,11 @@
 import { inject, injectable } from "inversify";
 import { notificationsModuleNames } from "../names";
 import { NotificationsFrontendClient } from "./client";
-import {
+import type {
+  GetNotificationsParams,
+  MarkNotificationReadParams,
   RegisterDeviceTokenParams,
+  SendNotificationParams,
   UnregisterDeviceTokenParams,
 } from "./types";
 
@@ -17,6 +20,18 @@ class Service {
 
   async unregisterDeviceToken(params: UnregisterDeviceTokenParams) {
     return this.Client.unregisterDeviceToken(params);
+  }
+
+  async getNotifications(params?: GetNotificationsParams) {
+    return this.Client.getNotifications(params);
+  }
+
+  async sendNotification(params: SendNotificationParams) {
+    return this.Client.sendNotification(params);
+  }
+
+  async markNotificationRead(params: MarkNotificationReadParams) {
+    return this.Client.markNotificationRead(params);
   }
 }
 

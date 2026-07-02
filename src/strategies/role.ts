@@ -279,6 +279,12 @@ export const roleStrategy = {
         group: "navGroupCommunication",
       },
       {
+        label: "adminNotifications",
+        href: "/admin/notifications",
+        icon: "bell",
+        group: "navGroupCommunication",
+      },
+      {
         label: "adminSubscriptions",
         href: "/admin/subscription-packages",
         icon: "layers",

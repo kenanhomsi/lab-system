@@ -30,6 +30,7 @@ const toUpstreamBannerFormData = (params: CreateBannerParams) => {
   const formData = new FormData();
   formData.append("Title", params.title);
   formData.append("Type", params.type);
+  formData.append("DisplayMode", params.displayMode);
   formData.append("InternalLink", params.InternalLink);
   formData.append("ExternalLink", params.ExternalLink);
   formData.append("TargetType", params.TargetType);
@@ -141,13 +142,13 @@ class Client extends BannerClient<BackendState> {
     const ep = endpoint.update(id);
     if (body instanceof FormData) {
       const res = await super
-        .sharedPutFormData({ endpoint: ep, formData: body })
+        .sharedPatchFormData({ endpoint: ep, formData: body })
         .withAuth(token)
         .perform<unknown>();
       return unwrapBannerPayload(res.data) as BannerItem;
     }
     const res = await super
-      .sharedPutJson({ endpoint: ep, body })
+      .sharedPatchJson({ endpoint: ep, body })
       .withAuth(token)
       .perform<unknown>();
     return unwrapBannerPayload(res.data) as BannerItem;

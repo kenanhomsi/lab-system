@@ -49,6 +49,7 @@ const pageUpsertSchema = z.object({
   publishedAt: optionalDateText,
   isVisibleInNav: z.boolean(),
   isActive: z.boolean(),
+  visibleToRoles: z.array(z.string().trim().min(1)).optional().default([]),
   translations: z.array(pageTranslationSchema).min(1),
   contentBlocks: z.array(contentBlockSchema),
   changeNotes: optionalText,

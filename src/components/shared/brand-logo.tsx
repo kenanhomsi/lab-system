@@ -43,7 +43,7 @@ export function BrandLogo({
 }: BrandLogoProps) {
   if (variant === "full") {
     return (
-      <div className={cn("relative shrink-0", fullLogoClassNames[size], className)}>
+      <div className={cn("relative max-w-full shrink-0", fullLogoClassNames[size], className)}>
         <Image
           src="/LOGO/logo metwali app.png"
           alt={label ?? "Al Metwali Clinical Laboratory"}
@@ -57,7 +57,7 @@ export function BrandLogo({
   }
 
   return (
-    <div className={cn("flex items-center gap-3", className)}>
+    <div className={cn("flex min-w-0 max-w-full items-center gap-3", className)}>
       <div className={cn("relative shrink-0", iconSizeClassNames[size])}>
         <Image
           src="/LOGO/logo metwali acon.png"
@@ -71,7 +71,7 @@ export function BrandLogo({
       {variant === "iconWithText" && label ? (
         <span
           className={cn(
-            "truncate font-headline font-extrabold tracking-tighter",
+            "min-w-0 truncate font-headline font-extrabold tracking-normal",
             labelClassNames[size],
             labelClassName,
           )}

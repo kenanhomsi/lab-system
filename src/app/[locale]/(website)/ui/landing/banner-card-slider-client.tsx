@@ -6,6 +6,11 @@ import { useLocale } from "next-intl";
 import { useMemo, useRef, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { SectionHeader } from "@/components/ui/section-header";
+import {
+  getDisplayModeAspectRatio,
+  getDisplayModeCardWidth,
+  normalizeDisplayMode,
+} from "@/lib/banners/display-mode";
 import type { BannerItem } from "@/types/banner";
 
 type BannerCardSliderClientProps = {
@@ -148,6 +153,8 @@ export function BannerCardSliderClient({
             const isExternal = isExternalHref(banner);
             const isVideo = isVideoUrl(banner.mediaUrl);
             const isFavorite = favoriteIds.has(banner.id);
+            const bannerMode = normalizeDisplayMode(banner.displayMode);
+            const bannerWidth = getDisplayModeCardWidth(bannerMode);
             const endDate = banner.endDate
               ? new Date(banner.endDate).toLocaleDateString(locale, {
                   year: "numeric",
@@ -188,8 +195,8 @@ export function BannerCardSliderClient({
                 <div
                   className={[
                     "relative w-full overflow-hidden bg-surface-container",
-                    displayMode === "logos" ? "aspect-[4/3]" : "aspect-[16/10]",
                   ].join(" ")}
+                  style={{ aspectRatio: getDisplayModeAspectRatio(bannerMode) }}
                 >
                   {media}
                   {displayMode === "cards" ? (
@@ -246,9 +253,6 @@ export function BannerCardSliderClient({
 
             const className = [
               "group flex snap-start shrink-0 flex-col overflow-hidden rounded-lg border border-outline-variant/15 bg-surface-container-lowest shadow-sm transition-shadow hover:shadow-md",
-              displayMode === "logos"
-                ? "w-[min(240px,70vw)]"
-                : "w-[min(360px,82vw)]",
             ].join(" ");
 
             if (!href) {
@@ -259,6 +263,7 @@ export function BannerCardSliderClient({
                     itemRefs.current[idx] = el;
                   }}
                   className={className}
+                  style={{ width: `min(${bannerWidth}px, ${displayMode === "logos" ? "70vw" : "82vw"})` }}
                 >
                   {inner}
                 </article>
@@ -276,6 +281,7 @@ export function BannerCardSliderClient({
                   target="_blank"
                   rel="noreferrer"
                   className={className}
+                  style={{ width: `min(${bannerWidth}px, ${displayMode === "logos" ? "70vw" : "82vw"})` }}
                 >
                   {inner}
                 </a>
@@ -290,6 +296,7 @@ export function BannerCardSliderClient({
                 }}
                 href={href}
                 className={className}
+                style={{ width: `min(${bannerWidth}px, ${displayMode === "logos" ? "70vw" : "82vw"})` }}
               >
                 {inner}
               </Link>

@@ -7,7 +7,7 @@ export function SuccessView() {
   const t = useTranslations("auth");
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-surface p-6">
+    <main className="flex min-h-dvh items-center justify-center bg-surface px-4 py-8 sm:p-6">
       <div className="w-full max-w-md text-center">
         <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
           <Icon name="check_circle" className="text-5xl text-green-600" />

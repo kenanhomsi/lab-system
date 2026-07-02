@@ -33,8 +33,8 @@ export async function CareersHeroSection() {
         <div className="absolute inset-0 bg-[linear-gradient(165deg,rgba(248,249,252,0.9)_0%,rgba(219,234,254,0.65)_45%,rgba(248,249,252,0.95)_100%)]" />
       </div>
       <div className="absolute inset-0 z-0">
-        <div className="absolute -end-32 top-0 h-[480px] w-[480px] rounded-full bg-primary/[0.08] blur-[80px]" />
-        <div className="absolute -start-24 bottom-0 h-[360px] w-[360px] rounded-full bg-tertiary/[0.06] blur-[80px]" />
+        <div className="absolute -end-32 top-0 h-[min(480px,82vw)] w-[min(480px,82vw)] rounded-full bg-primary/[0.08] blur-[80px]" />
+        <div className="absolute -start-24 bottom-0 h-[min(360px,74vw)] w-[min(360px,74vw)] rounded-full bg-tertiary/[0.06] blur-[80px]" />
       </div>
 
       <div className="relative z-10 content-container w-full py-16 md:py-24 lg:py-28">
@@ -50,7 +50,7 @@ export async function CareersHeroSection() {
           </div>
 
           <h1
-            className="reveal-up mt-8 font-headline text-5xl font-black leading-[1.05] tracking-tight text-on-surface md:text-6xl lg:text-7xl"
+            className="reveal-up mt-8 font-headline text-4xl font-black leading-[1.05] tracking-normal text-on-surface sm:text-5xl md:text-6xl"
             style={{ animationDelay: "160ms" }}
           >
             {t("titleLine1")}{" "}
@@ -67,12 +67,12 @@ export async function CareersHeroSection() {
           </p>
 
           <div
-            className="reveal-up mt-10 flex flex-wrap items-center gap-4"
+            className="reveal-up mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:flex-wrap sm:items-center"
             style={{ animationDelay: "320ms" }}
           >
             <a
               href="#open-positions"
-              className="group inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-primary to-primary/90 px-7 py-4 text-sm font-bold text-white shadow-xl shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/30"
+              className="group inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-primary to-primary/90 px-7 py-4 text-sm font-bold text-white shadow-xl shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/30"
             >
               <Icon name="work_history" size="sm" />
               {t("primaryCta")}
@@ -84,7 +84,7 @@ export async function CareersHeroSection() {
             </a>
             <a
               href="#apply-form"
-              className="inline-flex items-center gap-3 rounded-2xl border border-outline-variant/40 bg-white/80 px-7 py-4 text-sm font-bold text-on-surface shadow-lg shadow-slate-950/5 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary"
+              className="inline-flex items-center justify-center gap-3 rounded-2xl border border-outline-variant/40 bg-white/80 px-7 py-4 text-sm font-bold text-on-surface shadow-lg shadow-slate-950/5 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary"
             >
               <Icon name="description" size="sm" />
               {t("secondaryCta")}
@@ -92,7 +92,7 @@ export async function CareersHeroSection() {
           </div>
 
           <div
-            className="reveal-up mt-12 grid gap-4 sm:grid-cols-3"
+            className="reveal-up mt-12 grid gap-4 md:grid-cols-3"
             style={{ animationDelay: "400ms" }}
           >
             {highlights.map((item) => (

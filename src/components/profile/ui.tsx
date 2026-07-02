@@ -27,6 +27,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import {
+  IconAlertCircle,
   IconAlertTriangle,
   IconCheck,
   IconChevronRight,
@@ -51,9 +52,9 @@ import { modals } from "@mantine/modals";
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import { showSuccessNotification } from "@/lib/error";
 import { useTranslations, useLocale } from "next-intl";
-
 import { Link } from "@/i18n/navigation";
 import {
+  PatientComplaintsFeed,
   PatientInsuranceApprovalsFeed,
   PatientTestRequestsFeed,
   PatientTestResultsFeed,
@@ -78,7 +79,8 @@ const isProfileTab = (value: string | null): value is ProfileTab =>
   value === "danger" ||
   value === "testRequests" ||
   value === "testResults" ||
-  value === "insuranceApprovals";
+  value === "insuranceApprovals" ||
+  value === "complaints";
 
 /**
  * Dashboard profile surface: identity summary, account metadata, and editable tabs.
@@ -608,6 +610,23 @@ const UI = () => {
                               />
                             </Group>
                           </UnstyledButton>
+                          <UnstyledButton className={styles.quickLink} onClick={() => setActiveTab("complaints")}>
+                            <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
+                              <Group gap="sm" wrap="nowrap">
+                                <ThemeIcon size={34} radius="md" variant="light" color="orange">
+                                  <IconAlertCircle size={18} aria-hidden />
+                                </ThemeIcon>
+                                <Text size="sm" fw={600}>
+                                  {t("tabComplaints")}
+                                </Text>
+                              </Group>
+                              <IconChevronRight
+                                size={18}
+                                style={{ opacity: 0.5, transform: rtl ? "scaleX(-1)" : undefined }}
+                                aria-hidden
+                              />
+                            </Group>
+                          </UnstyledButton>
                         </>
                       ) : null}
                       {adminAccount ? (
@@ -685,6 +704,9 @@ const UI = () => {
                     </Tabs.Tab>
                     <Tabs.Tab value="insuranceApprovals" leftSection={<IconShieldLock size={16} aria-hidden />}>
                       {t("tabInsuranceApprovals")}
+                    </Tabs.Tab>
+                    <Tabs.Tab value="complaints" leftSection={<IconAlertCircle size={16} aria-hidden />}>
+                      {t("tabComplaints")}
                     </Tabs.Tab>
                   </>
                 ) : null}
@@ -832,6 +854,18 @@ const UI = () => {
                         </Text>
                       </Stack>
                       <PatientInsuranceApprovalsFeed />
+                    </Stack>
+                  </Tabs.Panel>
+
+                  <Tabs.Panel value="complaints" pt="lg" className={styles.tabPanel}>
+                    <Stack gap="md">
+                      <Stack gap={2}>
+                        <Text fw={700}>{t("tabComplaints")}</Text>
+                        <Text size="sm" c="dimmed">
+                          {t("complaintsDesc")}
+                        </Text>
+                      </Stack>
+                      <PatientComplaintsFeed />
                     </Stack>
                   </Tabs.Panel>
                 </>

@@ -24,9 +24,20 @@ type CreateSlideCardParams = {
   image: File;
 };
 
+type UpdateSlideCardParams = Omit<CreateSlideCardParams, "image"> & {
+  id: number;
+  image?: File;
+};
+
+type DeleteSlideCardParams = {
+  id: number;
+};
+
 export type {
   CreateSlideCardParams,
+  DeleteSlideCardParams,
   FindAllPublicSlideCardParams,
   FindAllSlideCardParams,
   FindOneSlideCardParams,
+  UpdateSlideCardParams,
 };

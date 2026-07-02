@@ -5,8 +5,13 @@ import { DataTableColumn } from "./types";
 import { BannerItem } from "../types";
 import { ActionsRender } from "./columns-rendering";
 import { getBannerSlots } from "@/lib/banners/slots";
+import {
+  formatPageTargetLabel,
+  isPathTarget,
+  normalizeBannerPlacement,
+} from "@/lib/banners/locations";
 
-type Translate = (key: string) => string;
+type Translate = (key: string, params?: Record<string, string>) => string;
 
 const formatDateCell = (value: string) => {
     if (!value) return "-";
@@ -15,7 +20,10 @@ const formatDateCell = (value: string) => {
     return date.toLocaleDateString();
 };
 
-const getBannerColumns = (t: Translate): DataTableColumn<BannerItem>[] => {
+const getBannerColumns = (
+    t: Translate,
+    tPageTarget: Translate,
+): DataTableColumn<BannerItem>[] => {
     return [
         {
             accessor: "title",
@@ -34,12 +42,21 @@ const getBannerColumns = (t: Translate): DataTableColumn<BannerItem>[] => {
             title: t("columnLocation"),
             width: "15%",
             render: (row) => {
-                const slot = getBannerSlots(row.location).find(
-                    (item) => item.order === row.displayOrder,
+                const placement = normalizeBannerPlacement(row.location);
+                const slot =
+                    placement && !isPathTarget(row.location)
+                        ? getBannerSlots(placement).find(
+                              (item) => item.order === row.displayOrder,
+                          )
+                        : undefined;
+                const label = formatPageTargetLabel(
+                    row.location,
+                    (value) => t(`locationOptions.${value}`),
+                    tPageTarget,
                 );
                 return (
                     <Text size="sm">
-                        {t(`locationOptions.${row.location}`)}
+                        {label}
                         {slot ? ` · ${row.displayOrder} - ${t(`slotLabels.${slot.labelKey}`)}` : ""}
                     </Text>
                 );

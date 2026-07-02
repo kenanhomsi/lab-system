@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BANNER_ROTATE_MS } from "./locations";
+import { BANNER_ROTATE_MS } from "./placements";
 
 type UseBannerCarouselOptions = {
   count: number;

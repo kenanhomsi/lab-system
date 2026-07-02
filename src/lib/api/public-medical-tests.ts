@@ -8,8 +8,18 @@ import { getBackendBaseUrl, isUpstreamBackendReady } from "@/lib/api/bff-proxy";
 const asRecord = (value: unknown): Record<string, unknown> | null =>
   typeof value === "object" && value !== null ? (value as Record<string, unknown>) : null;
 
-const isActiveMedicalTest = (item: MedicalTestItem): boolean =>
-  item.status.trim().toLowerCase() === "active";
+const PUBLIC_MEDICAL_TEST_STATUSES = new Set([
+  "active",
+  "approved",
+  "confirm",
+  "confirmed",
+  "published",
+]);
+
+const isPublicMedicalTest = (item: MedicalTestItem): boolean => {
+  const status = item.status.trim().toLowerCase();
+  return PUBLIC_MEDICAL_TEST_STATUSES.has(status);
+};
 
 const unwrapMedicalTestsPayload = (payload: unknown): unknown => {
   let current = payload;
@@ -119,7 +129,7 @@ function parsePublicMedicalTestsList(
 
   try {
     const normalized = normalizeMedicalTestsResponse(inner, pagination);
-    const items = normalized.items.filter(isActiveMedicalTest);
+    const items = normalized.items.filter(isPublicMedicalTest);
     return { ...normalized, items };
   } catch {
     return emptyMedicalTestsResponse(pagination.pageSize);
@@ -131,7 +141,7 @@ function parsePublicMedicalTestDetail(payload: unknown): MedicalTestItem | null 
   if (!inner || typeof inner !== "object") return null;
 
   const item = normalizeMedicalTestItem(inner);
-  return isActiveMedicalTest(item) ? item : null;
+  return isPublicMedicalTest(item) ? item : null;
 }
 
 export {

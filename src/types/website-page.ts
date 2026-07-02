@@ -92,6 +92,7 @@ export type PageUpsertRequest = {
   publishedAt?: string | null;
   isVisibleInNav: boolean;
   isActive: boolean;
+  visibleToRoles?: string[] | null;
   translations: PageTranslationRequest[];
   contentBlocks: ContentBlockRequest[];
   changeNotes?: string | null;
@@ -105,10 +106,12 @@ export type PageListItemDto = {
   publishStatus?: string | null;
   isVisibleInNav: boolean;
   isActive: boolean;
+  visibleToRoles?: string[] | null;
   createdAt: string;
   updatedAt?: string | null;
   displayTitle?: string | null;
   displaySlug?: string | null;
+  openGraphImageUrl?: string | null;
 };
 
 export type PageDto = {
@@ -121,6 +124,7 @@ export type PageDto = {
   publishedAt?: string | null;
   isVisibleInNav: boolean;
   isActive: boolean;
+  visibleToRoles?: string[] | null;
   createdByUserId?: string | null;
   updatedByUserId?: string | null;
   createdAt: string;

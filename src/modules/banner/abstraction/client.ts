@@ -10,7 +10,7 @@ type SharedCreateParams = {
   formData: FormData;
 };
 
-type SharedPutJsonParams = {
+type SharedPatchJsonParams = {
   endpoint: string;
   body: object;
 };
@@ -36,14 +36,14 @@ abstract class Client<T extends AxiosState> {
     return this.axiosClient.post({ endpoint }).setBody(formData);
   }
 
-  protected sharedPutFormData(params: SharedCreateParams) {
+  protected sharedPatchFormData(params: SharedCreateParams) {
     const { endpoint, formData } = params;
-    return this.axiosClient.put({ endpoint }).setBody(formData);
+    return this.axiosClient.patch({ endpoint }).setBody(formData);
   }
 
-  protected sharedPutJson(params: SharedPutJsonParams) {
+  protected sharedPatchJson(params: SharedPatchJsonParams) {
     const { endpoint, body } = params;
-    return this.axiosClient.put({ endpoint }).setBody(body);
+    return this.axiosClient.patch({ endpoint }).setBody(body);
   }
 
   protected sharedDelete(params: SharedDeleteParams) {

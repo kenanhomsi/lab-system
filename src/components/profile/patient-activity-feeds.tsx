@@ -21,7 +21,13 @@ import {
 import type { TestResultItem, TestResultsResponse } from "@/components/tables/test-results-table/types";
 import { getMedicalTestNamesLabel } from "@/components/tables/test-requests-table/get-medical-test-names-label";
 import type { TestRequestItem, TestRequestsResponse } from "@/components/tables/test-requests-table/types";
+import { StatusBadge as ComplaintStatusBadge } from "@/components/tables/my-complaints-table/schema/columns-rendering/status-badge";
+import type { ComplaintItem, ComplaintsResponse } from "@/components/tables/my-complaints-table/types";
 import { Link } from "@/i18n/navigation";
+import {
+  ComplaintFrontendService,
+  complaintModuleNames,
+} from "@/modules/complaint";
 import {
   InsuranceApprovalRequestFrontendService,
   insuranceApprovalRequestModuleNames,
@@ -44,6 +50,7 @@ import {
   Skeleton,
   Stack,
   Text,
+  Textarea,
   TextInput,
   Tooltip,
 } from "@mantine/core";
@@ -55,6 +62,7 @@ import {
   IconDownload,
   IconEdit,
   IconEye,
+  IconPaperclip,
   IconPlus,
   IconTrash,
 } from "@tabler/icons-react";
@@ -72,6 +80,9 @@ const testResultService = frontendContainer.get<TestResultFrontendService>(
 );
 const insuranceApprovalService = frontendContainer.get<InsuranceApprovalRequestFrontendService>(
   insuranceApprovalRequestModuleNames.service,
+);
+const complaintService = frontendContainer.get<ComplaintFrontendService>(
+  complaintModuleNames.service,
 );
 
 const PAGE_SIZE = 6;
@@ -112,6 +123,25 @@ function extractTestResultsResponse(payload: unknown): TestResultsResponse {
   }
 
   throw new Error("Failed to fetch test results");
+}
+
+function extractComplaintsResponse(payload: unknown): ComplaintsResponse {
+  if (
+    payload !== null &&
+    typeof payload === "object" &&
+    "data" in payload &&
+    (payload as { data: unknown }).data !== null &&
+    typeof (payload as { data: unknown }).data === "object" &&
+    Array.isArray((payload as { data: { items?: unknown } }).data.items)
+  ) {
+    return (payload as { data: ComplaintsResponse }).data;
+  }
+
+  if (payload !== null && typeof payload === "object" && "items" in payload) {
+    return payload as ComplaintsResponse;
+  }
+
+  throw new Error("Failed to fetch complaints");
 }
 
 function normalizeStatus(value: string): string {
@@ -991,7 +1021,237 @@ function PatientInsuranceApprovalsFeed() {
   );
 }
 
+/** Collects a new complaint from the patient profile feed. */
+function ComplaintCreateModal({
+  opened,
+  onClose,
+}: {
+  opened: boolean;
+  onClose: () => void;
+}) {
+  const t = useTranslations("myComplaints");
+  const tInsurance = useTranslations("myInsuranceApproval");
+  const queryClient = useQueryClient();
+
+  const form = useForm<{
+    title: string;
+    description: string;
+    attachment: File | null;
+  }>({
+    initialValues: {
+      title: "",
+      description: "",
+      attachment: null,
+    },
+    validate: {
+      title: (value) => (value.trim() ? null : t("titleRequired")),
+      description: (value) => (value.trim() ? null : t("descriptionRequired")),
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async () => {
+      const values = form.values;
+      return complaintService.createMine({
+        title: values.title.trim(),
+        description: values.description.trim(),
+        attachment: values.attachment,
+      });
+    },
+    onSuccess: async () => {
+      notifications.show({
+        title: t("createSuccess"),
+        message: t("createSuccess"),
+        color: "green",
+      });
+      await queryClient.invalidateQueries({ queryKey: ["my-complaints"] });
+      form.reset();
+      onClose();
+    },
+    onError: () => {
+      notifications.show({
+        title: t("createError"),
+        message: t("createError"),
+        color: "red",
+      });
+    },
+  });
+
+  const handleClose = () => {
+    if (createMutation.isPending) return;
+    form.reset();
+    onClose();
+  };
+
+  return (
+    <Modal opened={opened} onClose={handleClose} title={t("modalTitle")} radius="lg" centered size="lg">
+      <form
+        onSubmit={form.onSubmit(async () => {
+          await createMutation.mutateAsync();
+        })}
+      >
+        <Stack gap="md">
+          <TextInput
+            label={t("titleLabel")}
+            placeholder={t("titleLabel")}
+            {...form.getInputProps("title")}
+          />
+          <Textarea
+            label={t("descriptionLabel")}
+            placeholder={t("descriptionLabel")}
+            minRows={4}
+            {...form.getInputProps("description")}
+          />
+          <FileInput
+            label={t("attachmentLabel")}
+            placeholder={t("attachmentPlaceholder")}
+            accept="image/*,.pdf,.doc,.docx"
+            clearable
+            {...form.getInputProps("attachment")}
+          />
+          <Group justify="flex-end">
+            <Button variant="default" onClick={handleClose}>
+              {tInsurance("cancel")}
+            </Button>
+            <Button type="submit" loading={createMutation.isPending}>
+              {t("submitButton")}
+            </Button>
+          </Group>
+        </Stack>
+      </form>
+    </Modal>
+  );
+}
+
+/** Shows patient complaints as cards with create and attachment actions. */
+function PatientComplaintsFeed() {
+  const tProfile = useTranslations("dashboard.profile");
+  const tTable = useTranslations("table");
+  const tComplaints = useTranslations("myComplaints");
+  const tInsurance = useTranslations("myInsuranceApproval");
+  const locale = useLocale();
+  const [page, setPage] = useState(1);
+  const [createOpen, setCreateOpen] = useState(false);
+
+  const { data, isPending, isError } = useQuery({
+    queryKey: ["my-complaints", "profile-feed", page],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: String(page),
+        pageSize: String(PAGE_SIZE),
+      });
+      const response = await fetch(`/api/me/complaints?${params.toString()}`);
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error("Failed to fetch complaints");
+      }
+      return extractComplaintsResponse(payload);
+    },
+  });
+
+  return (
+    <Stack gap="md">
+      <Group justify="space-between" align="center" wrap="wrap" gap="sm">
+        <Badge variant="light" color="teal" radius="xl">
+          {data?.totalCount ?? 0}
+        </Badge>
+        <Button
+          onClick={() => setCreateOpen(true)}
+          leftSection={<IconPlus size={16} />}
+          variant="light"
+          color="orange"
+          radius="xl"
+        >
+          {tComplaints("newComplaint")}
+        </Button>
+      </Group>
+
+      {isPending ? <ActivitySkeletonList /> : null}
+      {isError ? <Alert color="red">{tTable("emptyHint")}</Alert> : null}
+      {!isPending && !isError && !data?.items.length ? (
+        <EmptyFeedState title={tTable("emptyTitle")} description={tProfile("complaintsDesc")} />
+      ) : null}
+
+      {!isPending && !isError && data?.items.length ? (
+        <>
+          <SimpleGrid cols={{ base: 1, xl: 2 }} spacing="md">
+            {data.items.map((row: ComplaintItem) => (
+              <Paper key={row.id} withBorder radius="xl" p="lg" className={styles.activityCard}>
+                <Stack gap="md">
+                  <Group justify="space-between" align="flex-start" gap="sm" wrap="nowrap">
+                    <Stack gap={4}>
+                      <Text fw={700} size="lg">
+                        {row.title}
+                      </Text>
+                      <Text size="sm" c="dimmed">
+                        #{row.id} • {formatCompactDate(row.createdAt, locale)}
+                      </Text>
+                    </Stack>
+                    <ComplaintStatusBadge value={row.status} />
+                  </Group>
+
+                  <Paper withBorder radius="lg" p="md" className={styles.activityPreview}>
+                    <Stack gap="xs">
+                      <Text size="xs" tt="uppercase" c="dimmed">
+                        {tProfile("updated")}
+                      </Text>
+                      <Text size="sm">
+                        {formatDateTime(row.updatedAt || row.createdAt, locale)}
+                      </Text>
+                      <Text size="xs" tt="uppercase" c="dimmed" mt="xs">
+                        {tComplaints("colDescription")}
+                      </Text>
+                      <Text size="sm" lineClamp={3}>
+                        {row.description?.trim() || "—"}
+                      </Text>
+                      {row.note?.trim() ? (
+                        <>
+                          <Text size="xs" tt="uppercase" c="dimmed" mt="xs">
+                            {tInsurance("notes")}
+                          </Text>
+                          <Text size="sm" lineClamp={2}>
+                            {row.note.trim()}
+                          </Text>
+                        </>
+                      ) : null}
+                    </Stack>
+                  </Paper>
+
+                  <Group justify="flex-end" wrap="wrap" gap="xs">
+                    {row.attachmentUrl ? (
+                      <Button
+                        component="a"
+                        href={row.attachmentUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        variant="default"
+                        radius="xl"
+                        leftSection={<IconPaperclip size={16} />}
+                      >
+                        {tComplaints("openAttachment")}
+                      </Button>
+                    ) : null}
+                  </Group>
+                </Stack>
+              </Paper>
+            ))}
+          </SimpleGrid>
+
+          {data.totalPages > 1 ? (
+            <Group justify="center">
+              <Pagination value={page} onChange={setPage} total={data.totalPages} radius="xl" />
+            </Group>
+          ) : null}
+        </>
+      ) : null}
+
+      <ComplaintCreateModal opened={createOpen} onClose={() => setCreateOpen(false)} />
+    </Stack>
+  );
+}
+
 export {
+  PatientComplaintsFeed,
   PatientInsuranceApprovalsFeed,
   PatientTestRequestsFeed,
   PatientTestResultsFeed,

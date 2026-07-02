@@ -1,0 +1,12 @@
+Warning: Custom Cache-Control headers detected for the following routes:
+  - /_next/static/:path*
+
+Setting a custom Cache-Control header can break Next.js development behavior.
+⨯ Another next dev server is already running.
+
+- Local:        http://localhost:3000
+- PID:          5252
+- Dir:          C:\Users\ASUS\Desktop\نظام الطبيب\nextapp\doctor-system
+- Log:          .next\dev\logs\next-development.log
+
+Run taskkill /PID 5252 /F to stop it.

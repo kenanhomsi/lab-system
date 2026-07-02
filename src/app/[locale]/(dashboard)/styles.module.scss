@@ -1,5 +1,8 @@
 .dashboardRoot {
   min-height: 100vh;
+  width: 100%;
+  min-width: 0;
+  overflow-x: clip;
   --primary: #009cc2;
   --color-primary: #009cc2;
 }
@@ -12,6 +15,7 @@
 .sectionPadding {
   box-sizing: border-box;
   width: 100%;
+  min-width: 0;
   max-width: var(--layout-content-max);
   padding-block: 6rem 2.5rem;
   padding-inline-end: var(--layout-inline-gutter);
@@ -25,14 +29,14 @@
 
 @media (max-width: 62rem) {
   .sectionPadding {
-    padding-inline: 1.25rem;
+    padding-inline: clamp(0.875rem, 3vw, 1.25rem);
     padding-top: 5.5rem;
   }
 }
 
 @media (max-width: 48rem) {
   .sectionPadding {
-    padding-inline: 1rem;
+    padding-inline: clamp(0.75rem, 3vw, 1rem);
     padding-top: 5rem;
     padding-bottom: 1.25rem;
   }

@@ -1,4 +1,5 @@
 import type { BannerItem } from "@/types/banner";
+import { normalizeDisplayMode } from "./display-mode";
 
 function pick(obj: Record<string, unknown>, ...keys: string[]): unknown {
   for (const k of keys) {
@@ -42,6 +43,7 @@ export function coerceBannerRecord(raw: unknown): BannerItem | null {
     id: String(id),
     title: String(pick(r, "title", "Title") ?? ""),
     type: String(pick(r, "type", "Type") ?? ""),
+    displayMode: normalizeDisplayMode(pick(r, "displayMode", "DisplayMode") as string | undefined),
     mediaUrl: String(pick(r, "mediaUrl", "MediaUrl") ?? ""),
     internalLink: String(pick(r, "internalLink", "InternalLink") ?? ""),
     externalLink: String(pick(r, "externalLink", "ExternalLink") ?? ""),

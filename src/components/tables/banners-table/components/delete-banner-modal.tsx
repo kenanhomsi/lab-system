@@ -20,11 +20,13 @@ type Props = {
     isOpen: boolean;
     onClose: () => void;
     banner: BannerItem | null;
+    onDelete?: (id: string) => Promise<void>;
 };
 
-const DeleteBannerModal = ({ isOpen, onClose, banner }: Props) => {
+const DeleteBannerModal = ({ isOpen, onClose, banner, onDelete }: Props) => {
     const t = useTranslations("admin.settings.banners");
-    const deleteBanner = useMirror("deleteBanner");
+    const deleteBannerMirror = useMirror("deleteBanner");
+    const deleteBanner = onDelete ?? deleteBannerMirror;
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async () => {

@@ -6,6 +6,10 @@ import { BannerBackendService } from "@/modules/banner/backend";
 import { resolveAccessToken } from "@/lib/api/resolve-access-token";
 import { z } from "zod";
 import { isBannerSlotLocation, isValidBannerSlot } from "@/lib/banners/slots";
+import { isPathTarget, pageTargetSchema } from "@/lib/banners/page-target";
+import { DISPLAY_MODE_VALUES } from "@/lib/banners/display-mode";
+
+const displayModeSchema = z.enum(DISPLAY_MODE_VALUES);
 
 const bannerService = backendContainer.get<BannerBackendService>(
   bannerModuleNames.service,
@@ -15,10 +19,11 @@ const createBannerSchema = z
   .object({
     title: z.string().trim().min(1),
     type: z.string().trim().min(1),
+    displayMode: displayModeSchema,
     InternalLink: z.string().trim(),
     ExternalLink: z.string().trim(),
     TargetType: z.string().trim().min(1),
-    Location: z.string().trim().min(1),
+    Location: pageTargetSchema,
     DisplayOrder: z.number().int().positive(),
     startDate: z.iso.datetime(),
     endDate: z.iso.datetime(),
@@ -40,6 +45,7 @@ const createBannerSchema = z
       });
     }
     if (
+      !isPathTarget(value.Location) &&
       isBannerSlotLocation(value.Location) &&
       !isValidBannerSlot(value.Location, value.DisplayOrder)
     ) {
@@ -89,6 +95,7 @@ export async function POST(req: NextRequest) {
     const input = createBannerSchema.parse({
       title: String(body.get("title") ?? ""),
       type: String(body.get("type") ?? ""),
+      displayMode: String(body.get("displayMode") ?? ""),
       InternalLink: String(body.get("InternalLink") ?? ""),
       ExternalLink: String(body.get("ExternalLink") ?? ""),
       TargetType: String(body.get("TargetType") ?? ""),

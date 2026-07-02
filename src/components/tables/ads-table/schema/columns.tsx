@@ -4,6 +4,7 @@ import { Badge, Box, Text } from "@mantine/core";
 import type { AdItem } from "../types";
 import type { DataTableColumn } from "./types";
 import { ActionsRender } from "./columns-rendering";
+import { getDisplayModePreviewSize, normalizeDisplayMode } from "@/lib/banners/display-mode";
 
 type Translate = (key: string) => string;
 
@@ -48,27 +49,30 @@ const getAdColumns = (t: Translate): DataTableColumn<AdItem>[] => [
     accessor: "mediaUrl",
     title: t("columnPreview"),
     width: "14%",
-    render: (row) => (
-      <Box w={86} h={48} style={{ overflow: "hidden", borderRadius: 6 }}>
-        {row.mediaType === "Video" ? (
-          <video
-            src={row.mediaUrl}
-            muted
-            playsInline
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          />
-        ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={row.mediaUrl}
-            alt={row.name}
-            loading="lazy"
-            decoding="async"
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          />
-        )}
-      </Box>
-    ),
+    render: (row) => {
+      const size = getDisplayModePreviewSize(normalizeDisplayMode(row.displayMode));
+      return (
+        <Box w={size.width} h={size.height} style={{ overflow: "hidden", borderRadius: 6 }}>
+          {row.mediaType === "Video" ? (
+            <video
+              src={row.mediaUrl}
+              muted
+              playsInline
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={row.mediaUrl}
+              alt={row.name}
+              loading="lazy"
+              decoding="async"
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+          )}
+        </Box>
+      );
+    },
   },
   {
     accessor: "createdAt",

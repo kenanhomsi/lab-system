@@ -268,7 +268,7 @@ const UI = () => {
                         className={styles.quickActionsMenuItem}
                         onClick={() => navigateQuickAction(action)}
                       >
-                        <div className="W-full flex items-center justify-between">
+                        <div className="flex w-full min-w-0 items-center justify-between">
                           <span className={styles.quickActionsIconBadge}>
                             <Icon size={16} />
                           </span>

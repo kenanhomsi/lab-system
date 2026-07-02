@@ -1,4 +1,5 @@
 import type { AdMediaType } from "@/types/ad";
+import type { DisplayMode } from "@/lib/banners/display-mode";
 
 type WithToken = {
   token: string;
@@ -19,6 +20,7 @@ type DeleteAdParams = WithToken & {
 type CreateAdParams = WithToken & {
   name: string;
   description: string;
+  displayMode: DisplayMode;
   mediaType: AdMediaType;
   media: File;
   addressName: string;
@@ -28,6 +30,7 @@ type UpdateAdParams = WithToken & {
   id: number;
   name: string;
   description: string;
+  displayMode: DisplayMode;
   mediaType: AdMediaType;
   media?: File;
   addressName: string;

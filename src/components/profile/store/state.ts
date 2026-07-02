@@ -5,6 +5,7 @@ const profileTabs = [
   "testRequests",
   "testResults",
   "insuranceApprovals",
+  "complaints",
 ] as const;
 
 type ProfileTab = (typeof profileTabs)[number];

@@ -47,13 +47,13 @@ export async function ContactHeroSection() {
         <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(248,249,252,0.88)_0%,rgba(219,234,254,0.72)_50%,rgba(248,249,252,0.92)_100%)]" />
       </div>
       <div className="absolute inset-0 z-0">
-        <div className="absolute -right-32 top-0 h-[500px] w-[500px] rounded-full bg-primary/[0.07] blur-[80px]" />
-        <div className="absolute -left-24 bottom-0 h-[400px] w-[400px] rounded-full bg-tertiary/[0.06] blur-[80px]" />
+        <div className="absolute -right-32 top-0 h-[min(500px,80vw)] w-[min(500px,80vw)] rounded-full bg-primary/[0.07] blur-[80px]" />
+        <div className="absolute -left-24 bottom-0 h-[min(400px,78vw)] w-[min(400px,78vw)] rounded-full bg-tertiary/[0.06] blur-[80px]" />
         <div className="absolute right-1/4 top-1/3 h-[200px] w-[200px] rounded-full bg-secondary/[0.05] blur-[60px]" />
       </div>
 
       <div className="relative z-10 content-container w-full py-20 md:py-28 lg:py-32">
-        <div className="grid items-start gap-16 lg:grid-cols-[1fr_420px] lg:gap-20">
+        <div className="grid min-w-0 items-start gap-10 md:gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,420px)] lg:gap-20">
           <div className="max-w-[680px]">
             <div
               className="reveal-up inline-flex items-center gap-3 rounded-full border border-primary/20 bg-white/70 px-5 py-2.5 shadow-sm backdrop-blur-md"
@@ -69,7 +69,7 @@ export async function ContactHeroSection() {
             </div>
 
             <h1
-              className="reveal-up mt-8 font-headline text-6xl font-black leading-[0.9] tracking-tight text-on-surface md:text-7xl lg:text-8xl"
+              className="reveal-up text-fluid-hero mt-8 font-headline font-black tracking-normal text-on-surface"
               style={{ animationDelay: "160ms" }}
             >
               {t("titleLine1")}{" "}
@@ -86,12 +86,12 @@ export async function ContactHeroSection() {
             </p>
 
             <div
-              className="reveal-up mt-10 flex flex-wrap items-center gap-4"
+              className="reveal-up mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:flex-wrap sm:items-center"
               style={{ animationDelay: "320ms" }}
             >
               <a
                 href="#contact-request"
-                className="group relative inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-primary to-primary/90 px-7 py-4 text-sm font-bold text-white shadow-xl shadow-primary/25 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-0.5"
+                className="group relative inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-primary to-primary/90 px-7 py-4 text-sm font-bold text-white shadow-xl shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/30"
               >
                 <span className="absolute inset-0 rounded-2xl border border-white/10" />
                 <Icon name="calendar_month" size="sm" />
@@ -102,7 +102,7 @@ export async function ContactHeroSection() {
               </a>
               <a
                 href="#branch-locations"
-                className="group inline-flex items-center gap-3 rounded-2xl border border-outline-variant/40 bg-white/80 px-7 py-4 text-sm font-bold text-on-surface shadow-lg shadow-slate-950/5 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary"
+                className="group inline-flex items-center justify-center gap-3 rounded-2xl border border-outline-variant/40 bg-white/80 px-7 py-4 text-sm font-bold text-on-surface shadow-lg shadow-slate-950/5 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary"
               >
                 <Icon name="location_on" size="sm" />
                 {t("secondaryCta")}

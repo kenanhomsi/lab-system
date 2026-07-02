@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jsonError } from "@/lib/api/bff-errors";
+import { forwardMultipartToBackend } from "@/lib/api/forward-multipart";
 import { backendContainer } from "@/container";
 import { resolveAccessToken } from "@/lib/api/resolve-access-token";
 import {
@@ -31,11 +32,21 @@ export async function GET(req: NextRequest, context: RouteContext) {
 
 export async function PUT(req: NextRequest, context: RouteContext) {
   try {
+    const { id } = await context.params;
+    const contentType = req.headers.get("content-type") ?? "";
+
+    if (contentType.includes("multipart/form-data")) {
+      return forwardMultipartToBackend(
+        req,
+        `/api/test-results/${id}`,
+        "PUT",
+      );
+    }
+
     const token = await resolveAccessToken(req);
     if (!token) {
       throw new Error("Missing authorization token");
     }
-    const { id } = await context.params;
     const body = await req.json();
     const res = await testResultService.update({ token, id, ...body });
     if (res == null) {

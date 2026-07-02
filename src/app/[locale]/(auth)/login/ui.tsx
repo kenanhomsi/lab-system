@@ -18,9 +18,9 @@ const UI = () => {
     const particleColor = colorScheme === "dark" ? "#ffffff" : "#000000";
 
     return (
-        <main className="flex min-h-screen overflow-hidden bg-surface font-body text-on-surface antialiased">
+        <main className="flex min-h-dvh overflow-x-hidden bg-surface font-body text-on-surface antialiased">
             <LabPanel />
-            <section className="relative flex w-full flex-col overflow-hidden bg-surface lg:w-1/2">
+            <section className="relative flex min-h-dvh w-full min-w-0 flex-col overflow-hidden bg-surface lg:w-1/2">
                 <Particles
                     className="absolute inset-0 z-0"
                     variant="medical"
@@ -30,8 +30,8 @@ const UI = () => {
                     color={particleColor}
                     refresh
                 />
-                <div className="relative z-10 flex items-center justify-between p-6 lg:p-8">
-                    <Link href={`/${locale}`} className="flex items-center gap-3">
+                <div className="relative z-10 flex items-center justify-between gap-4 p-4 sm:p-6 lg:p-8">
+                    <Link href={`/${locale}`} className="flex min-w-0 max-w-full items-center gap-3">
                         <BrandLogo
                             label={t("brand")}
                             priority
@@ -60,9 +60,9 @@ const UI = () => {
                         />
                     </div>
                 </div>
-                <div className="relative z-10 flex flex-1 items-center justify-center p-6 lg:p-12">
+                <div className="relative z-10 flex flex-1 items-center justify-center px-4 py-8 sm:p-6 lg:p-12">
                     <div className="w-full max-w-md">
-                        <div className="mb-10">
+                        <div className="mb-8 sm:mb-10">
                             <h2 className="mb-2 font-headline text-3xl font-bold text-on-surface">
                                 {t("welcomeBack")}
                             </h2>

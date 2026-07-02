@@ -51,6 +51,9 @@ const ExpansionTable = () => {
               header: styles.expandedHeaderCell,
               root: styles.cell,
             }}
+            tableWrapper={({ children }) => (
+              <div className={styles.tableScrollWrapper}>{children}</div>
+            )}
             rowExpansion={{
               expanded: {
                 recordIds: expandedRowIds as string[],

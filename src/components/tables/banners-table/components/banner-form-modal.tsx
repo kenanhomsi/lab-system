@@ -35,21 +35,40 @@ import {
     isBannerSlotLocation,
 } from "@/lib/banners/slots";
 import {
+    DISPLAY_MODE,
+    DISPLAY_MODE_VALUES,
+    type DisplayMode,
+    normalizeDisplayMode,
+} from "@/lib/banners/display-mode";
+import {
     BANNER_PLACEMENT,
-    BANNER_PLACEMENT_VALUES,
+    isPathTarget,
     normalizeBannerPlacement,
     type BannerPlacement,
 } from "@/lib/banners/locations";
+import { PageTargetSelect } from "@/components/admin/page-target-select";
 import { toIso8601Utc } from "@/lib/dates/to-iso-8601";
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import { useMirror } from "../store";
-import { BannerItem, CreateBannerRequest } from "../types";
+import { BannerItem, CreateBannerRequest, UpdateBannerRequest } from "../types";
+
+export type BannerFormPreset = {
+  location?: string;
+  displayOrder?: number;
+};
+
+export type BannerMutationOverrides = {
+  onCreate?: (payload: CreateBannerRequest) => Promise<void>;
+  onUpdate?: (payload: UpdateBannerRequest) => Promise<void>;
+};
 
 type Props = {
-    mode: "create" | "edit";
-    isOpen: boolean;
-    onClose: () => void;
-    banner?: BannerItem | null;
+  mode: "create" | "edit";
+  isOpen: boolean;
+  onClose: () => void;
+  banner?: BannerItem | null;
+  preset?: BannerFormPreset;
+  mutations?: BannerMutationOverrides;
 };
 
 const SectionHeader = ({
@@ -76,33 +95,31 @@ const SectionHeader = ({
 
 const TOTAL_STEPS = 4;
 
-const BannerFormModal = ({ mode, isOpen, onClose, banner }: Props) => {
+const BannerFormModal = ({ mode, isOpen, onClose, banner, preset, mutations }: Props) => {
     const t = useTranslations("admin.settings.banners");
     const tc = useTranslations("admin.common");
-    const createBanner = useMirror("createBanner");
-    const updateBanner = useMirror("updateBanner");
+    const createBannerMirror = useMirror("createBanner");
+    const updateBannerMirror = useMirror("updateBanner");
+    const createBanner = mutations?.onCreate ?? createBannerMirror;
+    const updateBanner = mutations?.onUpdate ?? updateBannerMirror;
     const isEdit = mode === "edit";
 
     const [step, setStep] = useState(0);
     const [title, setTitle] = useState("");
     const [type, setType] = useState("");
-    const [location, setLocation] = useState<BannerPlacement>(BANNER_PLACEMENT.HOME_PAGE);
+    const [displayMode, setDisplayMode] = useState<DisplayMode>(DISPLAY_MODE.FULL);
+    const [location, setLocation] = useState<string>(BANNER_PLACEMENT.HOME_PAGE);
 
-    const locationSelectData = useMemo(
-        () =>
-            BANNER_PLACEMENT_VALUES.map((value) => ({
-                value,
-                label: t(`locationOptions.${value}`),
-            })),
-        [t],
-    );
+    const slotLocation = normalizeBannerPlacement(location) as BannerPlacement | null;
     const positionSelectData = useMemo(
         () =>
-            getBannerSlots(location).map(({ order, labelKey }) => ({
-                value: String(order),
-                label: `${order} - ${t(`slotLabels.${labelKey}`)}`,
-            })),
-        [location, t],
+            slotLocation && isBannerSlotLocation(slotLocation)
+                ? getBannerSlots(slotLocation).map(({ order, labelKey }) => ({
+                      value: String(order),
+                      label: `${order} - ${t(`slotLabels.${labelKey}`)}`,
+                  }))
+                : [],
+        [slotLocation, t],
     );
     const [isActive, setIsActive] = useState(true);
     const [displayOrder, setDisplayOrder] = useState("1");
@@ -121,7 +138,12 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner }: Props) => {
             setStep(0);
             setTitle(banner.title);
             setType(banner.type);
-            setLocation(normalizeBannerPlacement(banner.location) ?? BANNER_PLACEMENT.HOME_PAGE);
+            setDisplayMode(normalizeDisplayMode(banner.displayMode));
+            setLocation(
+                isPathTarget(banner.location)
+                    ? banner.location
+                    : normalizeBannerPlacement(banner.location) ?? BANNER_PLACEMENT.HOME_PAGE,
+            );
             setIsActive(banner.isActive);
             setDisplayOrder(String(banner.displayOrder));
             setInternalLink(banner.internalLink ?? "");
@@ -136,9 +158,19 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner }: Props) => {
         setStep(0);
         setTitle("");
         setType("");
-        setLocation(BANNER_PLACEMENT.HOME_PAGE);
+        setDisplayMode(DISPLAY_MODE.FULL);
+        setLocation(preset?.location ?? BANNER_PLACEMENT.HOME_PAGE);
         setIsActive(true);
-        setDisplayOrder("1");
+        const presetPlacement = normalizeBannerPlacement(preset?.location ?? "");
+        setDisplayOrder(
+            String(
+                preset?.displayOrder ??
+                    (presetPlacement && isBannerSlotLocation(presetPlacement)
+                        ? getBannerSlots(presetPlacement)[0]?.order
+                        : 1) ??
+                    1,
+            ),
+        );
         setInternalLink("");
         setExternalLink("");
         setTargetType("");
@@ -146,12 +178,13 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner }: Props) => {
         setStartDate("");
         setEndDate("");
         setMediaFile(null);
-    }, [banner, isEdit, isOpen]);
+    }, [banner, isEdit, isOpen, preset]);
 
     const handleClose = useCallback(() => {
         setStep(0);
         setTitle("");
         setType("");
+        setDisplayMode(DISPLAY_MODE.FULL);
         setLocation(BANNER_PLACEMENT.HOME_PAGE);
         setIsActive(true);
         setDisplayOrder("1");
@@ -204,6 +237,7 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner }: Props) => {
             const sharedPayload = {
                 title,
                 type,
+                displayMode,
                 location,
                 isActive,
                 displayOrder: parseInt(displayOrder, 10),
@@ -237,6 +271,7 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner }: Props) => {
         Boolean(
             title.trim() &&
             type.trim() &&
+            displayMode &&
             targetType.trim() &&
             location &&
             displayOrder &&
@@ -249,6 +284,7 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner }: Props) => {
         <Modal
             opened={isOpen}
             onClose={handleClose}
+            keepMounted={false}
             title={
                 <Group gap="sm" wrap="nowrap">
                     <ThemeIcon size={42} radius="md" variant="light" color="blue">
@@ -317,20 +353,35 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner }: Props) => {
                             required
                         />
                         <Select
-                            label={t("locationLabel")}
-                            placeholder={t("locationPlaceholder")}
-                            data={locationSelectData}
-                            value={location}
-                            onChange={(value) => {
-                                const next = (value as BannerPlacement) ?? BANNER_PLACEMENT.HOME_PAGE;
-                                setLocation(next);
-                                setDisplayOrder(String(getBannerSlots(next)[0]?.order ?? 1));
-                            }}
-                            searchable
-                            required
+                            label={t("displayModeLabel")}
+                            placeholder={t("displayModePlaceholder")}
+                            data={DISPLAY_MODE_VALUES.map((value) => ({
+                                value,
+                                label: t(`displayModeOptions.${value}`),
+                            }))}
+                            value={displayMode}
+                            onChange={(value) => setDisplayMode(normalizeDisplayMode(value))}
                             allowDeselect={false}
+                            required
                         />
-                        {isBannerSlotLocation(location) ? (
+                        <div style={{ gridColumn: "1 / -1" }}>
+                        <PageTargetSelect
+                            label={t("locationLabel")}
+                            description={t("locationDescription")}
+                            value={location}
+                            onChange={(next) => {
+                                setLocation(next);
+                                const nextPlacement = normalizeBannerPlacement(next);
+                                if (nextPlacement && isBannerSlotLocation(nextPlacement)) {
+                                    setDisplayOrder(
+                                        String(getBannerSlots(nextPlacement)[0]?.order ?? 1),
+                                    );
+                                }
+                            }}
+                            required
+                        />
+                        </div>
+                        {slotLocation && isBannerSlotLocation(slotLocation) && !isPathTarget(location) ? (
                             <Select
                                 label={t("displayOrderLabel")}
                                 placeholder={t("positionPlaceholder")}

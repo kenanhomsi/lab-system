@@ -1,9 +1,12 @@
+import type { DisplayMode } from "@/lib/banners/display-mode";
+
 export type AdMediaType = "Image" | "Video";
 
 export type AdItem = {
   id: number;
   name: string;
   description: string;
+  displayMode?: DisplayMode;
   mediaType: AdMediaType;
   mediaUrl: string;
   websiteUrl?: string;
@@ -19,6 +22,7 @@ export type AdsResponse = AdItem[];
 export type CreateAdRequest = {
   name: string;
   description: string;
+  displayMode: DisplayMode;
   mediaType: AdMediaType;
   media: File;
   addressName: string;
@@ -28,6 +32,7 @@ export type UpdateAdRequest = {
   id: number;
   name: string;
   description: string;
+  displayMode: DisplayMode;
   mediaType: AdMediaType;
   media?: File;
   addressName: string;

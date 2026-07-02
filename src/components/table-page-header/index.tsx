@@ -74,7 +74,7 @@ const TablePageHeader = ({
   const hasFilters = Boolean(children);
 
   return (
-    <Paper radius="lg" withBorder p={0} >
+    <Paper radius="lg" withBorder p={0} style={{ maxWidth: "100%", overflow: "hidden" }}>
       <Flex direction="column" gap={0}>
         <Flex
           justify="space-between"
@@ -84,14 +84,15 @@ const TablePageHeader = ({
           px="lg"
           pt="lg"
           pb={hasFilters ? "md" : "lg"}
+          style={{ minWidth: 0 }}
         >
-          <Group gap="sm" align="flex-start" wrap="nowrap">
-            <ThemeIcon size={42} radius="md" variant="light" color={iconColor}>
+          <Group gap="sm" align="flex-start" wrap="nowrap" style={{ flex: "1 1 18rem", minWidth: 0 }}>
+            <ThemeIcon size={42} radius="md" variant="light" color={iconColor} style={{ flexShrink: 0 }}>
               {icon}
             </ThemeIcon>
-            <div>
-              <Group gap={8} align="center" wrap="nowrap">
-                <Text fw={700} fz={22} lh={1.15}>
+            <div style={{ minWidth: 0 }}>
+              <Group gap={8} align="center" wrap="wrap">
+                <Text fw={700} fz={{ base: 18, sm: 22 }} lh={1.15} style={{ minWidth: 0 }}>
                   {title}
                 </Text>
                 <Badge size="md" variant="light" color={iconColor} radius="xl">
@@ -106,7 +107,7 @@ const TablePageHeader = ({
             </div>
           </Group>
 
-          <Group gap="xs">
+          <Group gap="xs" justify="flex-end" style={{ flex: "1 1 12rem", minWidth: 0 }}>
             {hasActiveFilters && onResetFilters && (
               <Tooltip label="Reset filters" withArrow>
                 <ActionIcon
@@ -128,6 +129,7 @@ const TablePageHeader = ({
                 variant="filled"
                 color={iconColor}
                 onClick={onOpenCreate}
+                style={{ minWidth: 0 }}
               >
                 {createLabel}
               </Button>
@@ -145,6 +147,7 @@ const TablePageHeader = ({
               px="lg"
               py="sm"
               style={{
+                minWidth: 0,
                 background: "light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7))",
                 borderRadius: "0 0 var(--mantine-radius-lg) var(--mantine-radius-lg)",
               }}

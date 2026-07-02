@@ -7,6 +7,8 @@ export type Appointment = {
   endTime: string;
   status: string;
   patientLocationType: string;
+  age?: number | null;
+  gender?: string | null;
   patientLatitude?: number | null;
   patientLongitude?: number | null;
   notes?: string | null;
@@ -34,6 +36,8 @@ export type CreateAppointmentInput = {
   testRequestId: number;
   userId: string;
   patientLocationType: string;
+  age?: number | null;
+  gender?: string | null;
   patientLatitude?: number | null;
   patientLongitude?: number | null;
   notes?: string;

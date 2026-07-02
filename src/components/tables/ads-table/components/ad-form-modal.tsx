@@ -17,20 +17,38 @@ import { IconAd2, IconPhoto, IconUpload } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
+import { PageTargetSelect } from "@/components/admin/page-target-select";
 import {
   BANNER_PLACEMENT,
-  BANNER_PLACEMENT_VALUES,
+  isPathTarget,
   normalizeBannerPlacement,
-  type BannerPlacement,
 } from "@/lib/banners/locations";
-import type { AdItem, AdMediaType } from "@/types/ad";
+import {
+  DISPLAY_MODE,
+  DISPLAY_MODE_VALUES,
+  getDisplayModeAspectRatio,
+  type DisplayMode,
+  normalizeDisplayMode,
+} from "@/lib/banners/display-mode";
+import type { AdItem, AdMediaType, CreateAdRequest, UpdateAdRequest } from "@/types/ad";
 import { useMirror } from "../store";
+
+export type AdFormPreset = {
+  addressName?: string;
+};
+
+export type AdMutationOverrides = {
+  onCreate?: (payload: CreateAdRequest) => Promise<void>;
+  onUpdate?: (payload: UpdateAdRequest) => Promise<void>;
+};
 
 type Props = {
   mode: "create" | "edit";
   isOpen: boolean;
   onClose: () => void;
   ad?: AdItem | null;
+  preset?: AdFormPreset;
+  mutations?: AdMutationOverrides;
 };
 
 const isValidFileForMediaType = (file: File, mediaType: AdMediaType) => {
@@ -38,45 +56,44 @@ const isValidFileForMediaType = (file: File, mediaType: AdMediaType) => {
   return file.type.startsWith(expectedPrefix) && file.size <= 50 * 1024 * 1024;
 };
 
-const resolvePagePlacement = (value?: string): BannerPlacement => {
+const resolvePageTarget = (value?: string): string => {
   if (!value) return BANNER_PLACEMENT.HOME_PAGE;
+  if (isPathTarget(value)) return value;
   return normalizeBannerPlacement(value) ?? BANNER_PLACEMENT.HOME_PAGE;
 };
 
 /**
  * Create/edit form modal for ads.
  */
-const AdFormModal = ({ mode, isOpen, onClose, ad }: Props) => {
+const AdFormModal = ({ mode, isOpen, onClose, ad, preset, mutations }: Props) => {
   const t = useTranslations("admin.settings.ads");
-  const tBanner = useTranslations("admin.settings.banners");
   const tc = useTranslations("admin.common");
-  const createAd = useMirror("createAd");
-  const updateAd = useMirror("updateAd");
+  const createAdMirror = useMirror("createAd");
+  const updateAdMirror = useMirror("updateAd");
+  const createAd = mutations?.onCreate ?? createAdMirror;
+  const updateAd = mutations?.onUpdate ?? updateAdMirror;
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [pageName, setPageName] = useState<BannerPlacement>(BANNER_PLACEMENT.HOME_PAGE);
+  const [displayMode, setDisplayMode] = useState<DisplayMode>(DISPLAY_MODE.FULL);
+  const [pageName, setPageName] = useState<string>(BANNER_PLACEMENT.HOME_PAGE);
   const [mediaType, setMediaType] = useState<AdMediaType>("Image");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const pageSelectData = useMemo(
-    () =>
-      BANNER_PLACEMENT_VALUES.map((value) => ({
-        value,
-        label: tBanner(`locationOptions.${value}`),
-      })),
-    [tBanner],
-  );
 
   useEffect(() => {
     if (!isOpen) return;
     setName(ad?.name ?? "");
     setDescription(ad?.description ?? "");
-    setPageName(resolvePagePlacement(ad?.addressName));
+    setDisplayMode(normalizeDisplayMode(ad?.displayMode));
+    setPageName(
+      mode === "create" && preset?.addressName
+        ? preset.addressName
+        : resolvePageTarget(ad?.addressName),
+    );
     setMediaType(ad?.mediaType ?? "Image");
     setMediaFile(null);
-  }, [ad, isOpen]);
+  }, [ad, isOpen, mode, preset]);
 
   const previewUrl = useMemo(() => {
     if (!mediaFile) return ad?.mediaUrl ?? "";
@@ -118,6 +135,7 @@ const AdFormModal = ({ mode, isOpen, onClose, ad }: Props) => {
         await createAd({
           name,
           description,
+          displayMode,
           mediaType,
           media: mediaFile,
           addressName: pageName,
@@ -127,6 +145,7 @@ const AdFormModal = ({ mode, isOpen, onClose, ad }: Props) => {
           id: ad.id,
           name,
           description,
+          displayMode,
           mediaType,
           media: mediaFile ?? undefined,
           addressName: pageName,
@@ -146,6 +165,7 @@ const AdFormModal = ({ mode, isOpen, onClose, ad }: Props) => {
   const canSubmit = Boolean(
     name.trim() &&
     description.trim() &&
+    displayMode &&
     pageName &&
     (mode === "edit" || mediaFile) &&
     !isSubmitting,
@@ -155,6 +175,7 @@ const AdFormModal = ({ mode, isOpen, onClose, ad }: Props) => {
     <Modal
       opened={isOpen}
       onClose={handleClose}
+      keepMounted={false}
       title={
         <Group gap="sm" wrap="nowrap">
           <ThemeIcon size={42} radius="md" variant="light" color="blue">
@@ -196,16 +217,21 @@ const AdFormModal = ({ mode, isOpen, onClose, ad }: Props) => {
           required
         />
         <Select
-          label={t("pageLabel")}
-          placeholder={t("pagePlaceholder")}
-          description={t("pageDescription")}
-          data={pageSelectData}
-          value={pageName}
-          onChange={(value) =>
-            setPageName((value as BannerPlacement) ?? BANNER_PLACEMENT.HOME_PAGE)
-          }
+          label={t("displayModeLabel")}
+          placeholder={t("displayModePlaceholder")}
+          data={DISPLAY_MODE_VALUES.map((value) => ({
+            value,
+            label: t(`displayModeOptions.${value}`),
+          }))}
+          value={displayMode}
+          onChange={(value) => setDisplayMode(normalizeDisplayMode(value))}
           allowDeselect={false}
-          searchable
+          required
+        />
+        <PageTargetSelect
+          description={t("pageDescription")}
+          value={pageName}
+          onChange={setPageName}
           required
         />
         <Select
@@ -240,7 +266,7 @@ const AdFormModal = ({ mode, isOpen, onClose, ad }: Props) => {
                 playsInline
                 style={{
                   width: "100%",
-                  maxHeight: 260,
+                  aspectRatio: getDisplayModeAspectRatio(displayMode),
                   objectFit: "cover",
                   borderRadius: 8,
                   background: "#0f172a",
@@ -253,7 +279,7 @@ const AdFormModal = ({ mode, isOpen, onClose, ad }: Props) => {
                 alt={name || t("preview")}
                 style={{
                   width: "100%",
-                  maxHeight: 260,
+                  aspectRatio: getDisplayModeAspectRatio(displayMode),
                   objectFit: "cover",
                   borderRadius: 8,
                   background: "#0f172a",

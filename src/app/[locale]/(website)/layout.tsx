@@ -6,6 +6,7 @@ import { DeferredScrollRevealObserver } from "@/components/layout/deferred-scrol
 import { WebsiteProviders } from "@/components/providers/website-providers";
 import { WebsiteWelcomePagesModal } from "@/components/welcome-pages";
 import { HomepageAdPopup } from "@/components/homepage/homepage-ad-popup";
+import { PathTargetedBanner } from "@/components/layout/path-targeted-banner";
 import { fetchWebsiteNavigation } from "@/lib/website-pages/server";
 
 const toNavigationHref = (slug?: string | null) => {
@@ -39,6 +40,7 @@ export default async function WebsiteLayout({
         <WebsiteWelcomePagesModal />
         <HomepageAdPopup />
         <WebsiteHeader cmsNavigationLinks={cmsNavigationLinks} />
+        <PathTargetedBanner />
         <div id="website-page-content" className="mx-auto w-full">
           {children}
         </div>

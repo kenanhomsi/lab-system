@@ -6,18 +6,10 @@ import { useMirror, useMirrorRegistry } from "../store";
 import { frontendContainer } from "@/container";
 import { bannerModuleNames, BannerFrontendService } from "@/modules/banner";
 import type { BannerItem } from "@/types/banner";
+import { normalizePublicBannerPayload } from "@/lib/banners/public-banner-payload";
 
 const asBannerRows = (payload: unknown): BannerItem[] => {
-  if (Array.isArray(payload)) return payload;
-  if (payload && typeof payload === "object" && "data" in payload) {
-    const inner = (payload as { data: unknown }).data;
-    if (Array.isArray(inner)) return inner;
-    if (inner && typeof inner === "object" && "data" in inner) {
-      const nested = (inner as { data: unknown }).data;
-      if (Array.isArray(nested)) return nested as BannerItem[];
-    }
-  }
-  return [];
+  return normalizePublicBannerPayload(payload);
 };
 
 const GetAllBanners = ({ children }: PropsWithChildren) => {

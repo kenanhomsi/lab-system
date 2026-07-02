@@ -37,6 +37,7 @@ import {
   FiMinusCircle,
   FiBarChart2,
   FiCheckSquare,
+  FiBell,
 } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
 import { useLocale, useTranslations } from "next-intl";
@@ -69,6 +70,7 @@ const SIDEBAR_ICONS: Record<SidebarIconKey, IconType> = {
   minusCircle: FiMinusCircle,
   barChart: FiBarChart2,
   checkSquare: FiCheckSquare,
+  bell: FiBell,
 };
 
 const RAIL_W = "72px";

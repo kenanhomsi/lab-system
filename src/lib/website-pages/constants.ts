@@ -18,3 +18,11 @@ export const WEBSITE_PAGE_BLOCK_TYPES: WebsitePageBlockType[] = [
 ];
 
 export const WEBSITE_PAGE_DEFAULT_TEMPLATE_KEY = "standard";
+
+export const WEBSITE_PAGE_VISIBLE_ROLES = [
+  "Admin",
+  "Doctor",
+  "Patient",
+  "LabPartner",
+  "Special",
+] as const;

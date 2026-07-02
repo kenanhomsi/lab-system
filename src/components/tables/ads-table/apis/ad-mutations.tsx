@@ -28,6 +28,7 @@ const AdMutations = ({ children }: PropsWithChildren) => {
         mediaType: payload.mediaType,
         media: payload.media,
         addressName: payload.addressName,
+        displayMode: payload.displayMode,
       }),
     onSuccess: invalidateAds,
   });
@@ -41,6 +42,7 @@ const AdMutations = ({ children }: PropsWithChildren) => {
         mediaType: payload.mediaType,
         media: payload.media,
         addressName: payload.addressName,
+        displayMode: payload.displayMode,
       }),
     onSuccess: invalidateAds,
   });

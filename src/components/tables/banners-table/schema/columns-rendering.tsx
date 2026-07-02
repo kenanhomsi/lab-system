@@ -1,7 +1,7 @@
 "use client";
 
 import { ActionIcon, Group, Tooltip } from "@mantine/core";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { BannerItem } from "../types";
 import { useMirror } from "../store";
@@ -17,6 +17,21 @@ const ActionsRender = ({ row }: Props) => {
 
     return (
         <Group gap={4} wrap="nowrap" justify="flex-end">
+            <Tooltip label={t("view")} withArrow position="top">
+                <ActionIcon
+                    variant="subtle"
+                    color="blue"
+                    radius="md"
+                    size="md"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedBanner(row);
+                        setActiveModal("view");
+                    }}
+                >
+                    <IconEye size={15} />
+                </ActionIcon>
+            </Tooltip>
             <Tooltip label={t("edit")} withArrow position="top">
                 <ActionIcon
                     variant="subtle"

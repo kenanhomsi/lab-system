@@ -1,13 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState, useCallback } from "react";
 import {
   ActionIcon,
   Alert,
+  Avatar,
   Badge,
   Button,
+  Divider,
   Group,
   Modal,
+  MultiSelect,
   NumberInput,
   Paper,
   Select,
@@ -23,13 +26,13 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import { DateTimePicker } from "@mantine/dates";
 import {
   IconAlertTriangle,
+  IconArrowDown,
+  IconArrowUp,
   IconArrowUpRight,
   IconCards,
   IconDeviceFloppy,
-  IconEye,
   IconFileDescription,
   IconLanguage,
   IconLayout,
@@ -48,24 +51,38 @@ import { MutationErrorProvider } from "@/hooks/mutation-error-context";
 import { useManagedMutation } from "@/hooks/use-managed-mutation";
 import {
   WEBSITE_PAGE_BLOCK_TYPES,
-  WEBSITE_PAGE_DEFAULT_TEMPLATE_KEY,
   WEBSITE_PAGE_PUBLISH_STATUSES,
+  WEBSITE_PAGE_VISIBLE_ROLES,
 } from "@/lib/website-pages/constants";
 import {
   WEBSITE_PAGE_LANGUAGE_LABELS,
   WEBSITE_PAGE_LANGUAGES,
 } from "@/lib/website-pages/language";
-import { toIso8601Utc } from "@/lib/dates/to-iso-8601";
+import {
+  createBlock,
+  emptyCard,
+  formToPayload,
+  hasRequiredTranslations,
+  initialFormState,
+  pageToForm,
+  reorderBlocks,
+  type BlockLocalizationForm,
+  type CardItemForm,
+  type ContentBlockForm,
+  type PageFormState,
+  type TranslationForm,
+} from "@/lib/website-pages/form-state";
+import { uploadPendingImages } from "@/lib/website-pages/upload-pending-images";
+import { ImagePickerInput } from "./image-picker-input";
+import { ParentPageSelect } from "./parent-page-select";
+import {
+  PublishStepFields,
+  type PublishStepFieldsHandle,
+} from "./publish-step-fields";
 import { PageFrontendService, pageModuleNames } from "@/modules/pages";
 import type { DataTableColumn } from "@/components/table/store/init";
 import type {
-  BlockLocalizationDto,
-  ContentBlockDto,
-  ContentBlockRequest,
-  PageDto,
   PageListItemDto,
-  PageTranslationDto,
-  PageUpsertRequest,
   WebsitePageBlockType,
   WebsitePageLanguage,
   WebsitePagePublishStatus,
@@ -73,126 +90,15 @@ import type {
 
 type ModalType = "create" | "edit" | "delete" | null;
 
-type TranslationForm = {
-  title: string;
-  slug: string;
-  metaTitle: string;
-  metaDescription: string;
-  metaKeywords: string;
-  openGraphImageUrl: string;
-  canonicalUrl: string;
-  breadcrumbTitle: string;
-};
-
-type BlockLocalizationForm = {
-  heading: string;
-  subheading: string;
-  description: string;
-  mediaUrl: string;
-  mediaAltText: string;
-  buttonText: string;
-  buttonLink: string;
-  buttonStyle: string;
-};
-
-type CardItemForm = {
-  title: string;
-  description: string;
-  imageUrl: string;
-  link: string;
-};
-
-type ContentBlockForm = {
-  blockType: WebsitePageBlockType;
-  order: number;
-  customCssClass: string;
-  animation: string;
-  isActive: boolean;
-  localizations: Record<WebsitePageLanguage, BlockLocalizationForm>;
-  cards: CardItemForm[];
-};
-
-type PageFormState = {
-  templateKey: string;
-  parentId: string;
-  order: number;
-  publishStatus: WebsitePagePublishStatus;
-  publishScheduledAt: string;
-  publishedAt: string;
-  isVisibleInNav: boolean;
-  isActive: boolean;
-  translations: Record<WebsitePageLanguage, TranslationForm>;
-  contentBlocks: ContentBlockForm[];
-  changeNotes: string;
-};
-
 const TOTAL_STEPS = 4;
 
-const emptyTranslation = (): TranslationForm => ({
-  title: "",
-  slug: "",
-  metaTitle: "",
-  metaDescription: "",
-  metaKeywords: "",
-  openGraphImageUrl: "",
-  canonicalUrl: "",
-  breadcrumbTitle: "",
-});
-
-const emptyBlockLocalization = (): BlockLocalizationForm => ({
-  heading: "",
-  subheading: "",
-  description: "",
-  mediaUrl: "",
-  mediaAltText: "",
-  buttonText: "",
-  buttonLink: "",
-  buttonStyle: "",
-});
-
-const emptyTranslations = (): Record<WebsitePageLanguage, TranslationForm> => ({
-  "en-US": emptyTranslation(),
-  ar: emptyTranslation(),
-});
-
-const emptyBlockLocalizations = (): Record<
-  WebsitePageLanguage,
-  BlockLocalizationForm
-> => ({
-  "en-US": emptyBlockLocalization(),
-  ar: emptyBlockLocalization(),
-});
-
-const initialFormState = (): PageFormState => ({
-  templateKey: WEBSITE_PAGE_DEFAULT_TEMPLATE_KEY,
-  parentId: "",
-  order: 0,
-  publishStatus: "Draft",
-  publishScheduledAt: "",
-  publishedAt: "",
-  isVisibleInNav: true,
-  isActive: true,
-  translations: emptyTranslations(),
-  contentBlocks: [],
-  changeNotes: "",
-});
-
-const emptyCard = (): CardItemForm => ({
-  title: "",
-  description: "",
-  imageUrl: "",
-  link: "",
-});
-
-const createBlock = (order: number): ContentBlockForm => ({
-  blockType: "hero",
-  order,
-  customCssClass: "",
-  animation: "",
-  isActive: true,
-  localizations: emptyBlockLocalizations(),
-  cards: [],
-});
+const BLOCK_TYPE_COLORS: Record<WebsitePageBlockType, string> = {
+  hero: "blue",
+  "rich-text": "gray",
+  "media-text": "violet",
+  cta: "orange",
+  cards: "cyan",
+};
 
 const formatDateCell = (value?: string | null) => {
   if (!value) return "-";
@@ -200,192 +106,6 @@ const formatDateCell = (value?: string | null) => {
   if (Number.isNaN(date.getTime())) return "-";
   return date.toLocaleDateString();
 };
-
-const normalizeDateInput = (value?: string | null) => {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  return date.toISOString();
-};
-
-const toOptionalText = (value: string) => value.trim() || null;
-
-const getTranslation = (
-  translations: PageTranslationDto[] | null | undefined,
-  language: WebsitePageLanguage,
-): TranslationForm => {
-  const row = translations?.find((item) => item.language === language);
-  return {
-    title: row?.title ?? "",
-    slug: row?.slug ?? "",
-    metaTitle: row?.metaTitle ?? "",
-    metaDescription: row?.metaDescription ?? "",
-    metaKeywords: row?.metaKeywords ?? "",
-    openGraphImageUrl: row?.openGraphImageUrl ?? "",
-    canonicalUrl: row?.canonicalUrl ?? "",
-    breadcrumbTitle: row?.breadcrumbTitle ?? "",
-  };
-};
-
-const getBlockLocalization = (
-  localizations: BlockLocalizationDto[] | null | undefined,
-  language: WebsitePageLanguage,
-): BlockLocalizationForm => {
-  const row = localizations?.find((item) => item.language === language);
-  return {
-    heading: row?.heading ?? "",
-    subheading: row?.subheading ?? "",
-    description: row?.description ?? "",
-    mediaUrl: row?.mediaUrl ?? "",
-    mediaAltText: row?.mediaAltText ?? "",
-    buttonText: row?.buttonText ?? "",
-    buttonLink: row?.buttonLink ?? "",
-    buttonStyle: row?.buttonStyle ?? "",
-  };
-};
-
-const isSupportedBlockType = (value: string | null | undefined): value is WebsitePageBlockType =>
-  WEBSITE_PAGE_BLOCK_TYPES.some((type) => type === value);
-
-const extractCards = (block: ContentBlockDto): CardItemForm[] => {
-  const data = block.localizations?.[0]?.contentData;
-  if (!data || typeof data !== "object" || Array.isArray(data)) {
-    return [];
-  }
-  const cards = (data as { cards?: unknown }).cards;
-  if (!Array.isArray(cards)) {
-    return [];
-  }
-  return cards.map((card) => {
-    if (!card || typeof card !== "object" || Array.isArray(card)) {
-      return emptyCard();
-    }
-    const item = card as Record<string, unknown>;
-    return {
-      title: typeof item.title === "string" ? item.title : "",
-      description: typeof item.description === "string" ? item.description : "",
-      imageUrl: typeof item.imageUrl === "string" ? item.imageUrl : "",
-      link: typeof item.link === "string" ? item.link : "",
-    };
-  });
-};
-
-const pageToForm = (page: PageDto): PageFormState => ({
-  templateKey: page.templateKey ?? WEBSITE_PAGE_DEFAULT_TEMPLATE_KEY,
-  parentId: page.parentId ? String(page.parentId) : "",
-  order: page.order,
-  publishStatus: WEBSITE_PAGE_PUBLISH_STATUSES.includes(
-    page.publishStatus as WebsitePagePublishStatus,
-  )
-    ? (page.publishStatus as WebsitePagePublishStatus)
-    : "Draft",
-  publishScheduledAt: normalizeDateInput(page.publishScheduledAt),
-  publishedAt: normalizeDateInput(page.publishedAt),
-  isVisibleInNav: page.isVisibleInNav,
-  isActive: page.isActive,
-  translations: {
-    "en-US": getTranslation(page.translations, "en-US"),
-    ar: getTranslation(page.translations, "ar"),
-  },
-  contentBlocks: (page.contentBlocks ?? [])
-    .slice()
-    .sort((a, b) => a.order - b.order)
-    .map((block) => ({
-      blockType: isSupportedBlockType(block.blockType) ? block.blockType : "rich-text",
-      order: block.order,
-      customCssClass: block.customCssClass ?? "",
-      animation: block.animation ?? "",
-      isActive: block.isActive,
-      localizations: {
-        "en-US": getBlockLocalization(block.localizations, "en-US"),
-        ar: getBlockLocalization(block.localizations, "ar"),
-      },
-      cards: extractCards(block),
-    })),
-  changeNotes: "",
-});
-
-const formToPayload = (form: PageFormState): PageUpsertRequest => {
-  const parentId = form.parentId.trim() ? Number(form.parentId) : null;
-  return {
-    templateKey: form.templateKey.trim(),
-    parentId: Number.isFinite(parentId) ? parentId : null,
-    order: form.order,
-    publishStatus: form.publishStatus,
-    publishScheduledAt: form.publishScheduledAt
-      ? toIso8601Utc(form.publishScheduledAt)
-      : null,
-    publishedAt: form.publishedAt ? toIso8601Utc(form.publishedAt) : null,
-    isVisibleInNav: form.isVisibleInNav,
-    isActive: form.isActive,
-    translations: WEBSITE_PAGE_LANGUAGES.map((language) => {
-      const translation = form.translations[language];
-      return {
-        language,
-        title: translation.title.trim(),
-        slug: translation.slug.trim(),
-        metaTitle: toOptionalText(translation.metaTitle),
-        metaDescription: toOptionalText(translation.metaDescription),
-        metaKeywords: toOptionalText(translation.metaKeywords),
-        openGraphImageUrl: toOptionalText(translation.openGraphImageUrl),
-        canonicalUrl: toOptionalText(translation.canonicalUrl),
-        breadcrumbTitle: toOptionalText(translation.breadcrumbTitle),
-      };
-    }),
-    contentBlocks: form.contentBlocks
-      .slice()
-      .sort((a, b) => a.order - b.order)
-      .map<ContentBlockRequest>((block) => ({
-        blockType: block.blockType,
-        order: block.order,
-        customCssClass: toOptionalText(block.customCssClass),
-        customStyles: null,
-        animation: toOptionalText(block.animation),
-        visibilityRules: null,
-        isActive: block.isActive,
-        localizations: WEBSITE_PAGE_LANGUAGES.map((language) => {
-          const localization = block.localizations[language];
-          return {
-            language,
-            heading: toOptionalText(localization.heading),
-            subheading: toOptionalText(localization.subheading),
-            description: toOptionalText(localization.description),
-            contentData:
-              block.blockType === "cards"
-                ? {
-                    cards: block.cards
-                      .filter(
-                        (card) =>
-                          card.title.trim() ||
-                          card.description.trim() ||
-                          card.imageUrl.trim() ||
-                          card.link.trim(),
-                      )
-                      .map((card) => ({
-                        title: card.title.trim(),
-                        description: card.description.trim(),
-                        imageUrl: card.imageUrl.trim(),
-                        link: card.link.trim(),
-                      })),
-                  }
-                : null,
-            mediaUrl: toOptionalText(localization.mediaUrl),
-            mediaAltText: toOptionalText(localization.mediaAltText),
-            buttonText: toOptionalText(localization.buttonText),
-            buttonLink: toOptionalText(localization.buttonLink),
-            buttonStyle: toOptionalText(localization.buttonStyle),
-          };
-        }),
-      })),
-    changeNotes: toOptionalText(form.changeNotes),
-  };
-};
-
-const hasRequiredTranslations = (form: PageFormState) =>
-  WEBSITE_PAGE_LANGUAGES.every((language) => {
-    const translation = form.translations[language];
-    return translation.title.trim() && translation.slug.trim();
-  });
 
 /**
  * Admin table and structured editor for website CMS pages.
@@ -406,6 +126,7 @@ export function WebsitePagesTable() {
   const [form, setForm] = useState<PageFormState>(() => initialFormState());
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [detailLoadError, setDetailLoadError] = useState("");
+  const publishStepRef = useRef<PublishStepFieldsHandle>(null);
 
   const { data, isPending } = useQuery({
     queryKey: ["admin-website-pages"],
@@ -413,6 +134,20 @@ export function WebsitePagesTable() {
   });
 
   const rows = useMemo(() => (Array.isArray(data) ? data : []), [data]);
+
+  const parentPageOptions = useMemo(
+    () =>
+      rows
+        .filter((row) => row.id !== selected?.id)
+        .map((row) => ({
+          value: String(row.id),
+          label: row.displayTitle
+            ? `${row.displayTitle} (#${row.id})`
+            : `#${row.id}`,
+          imageUrl: row.openGraphImageUrl ?? null,
+        })),
+    [rows, selected],
+  );
 
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: ["admin-website-pages"] });
@@ -424,6 +159,7 @@ export function WebsitePagesTable() {
     setStep(0);
     setActiveLanguage("en-US");
     setForm(initialFormState());
+    publishStepRef.current?.resetChangeNotes();
     setIsLoadingDetail(false);
     setDetailLoadError("");
   };
@@ -433,6 +169,7 @@ export function WebsitePagesTable() {
     setStep(0);
     setActiveLanguage("en-US");
     setForm(initialFormState());
+    publishStepRef.current?.resetChangeNotes();
     setDetailLoadError("");
     setActiveModal("create");
   };
@@ -442,6 +179,7 @@ export function WebsitePagesTable() {
     setStep(0);
     setActiveLanguage("en-US");
     setForm(initialFormState());
+    publishStepRef.current?.resetChangeNotes();
     setDetailLoadError("");
     setActiveModal("edit");
     setIsLoadingDetail(true);
@@ -461,7 +199,13 @@ export function WebsitePagesTable() {
   };
 
   const createMutation = useManagedMutation({
-    mutationFn: async () => pageService.create(formToPayload(form)),
+    mutationFn: async () => {
+      const preparedForm = await uploadPendingImages({
+        ...form,
+        changeNotes: publishStepRef.current?.getChangeNotes() ?? "",
+      });
+      return pageService.create(formToPayload(preparedForm));
+    },
     onSuccess: async () => {
       await invalidate();
       closeModal();
@@ -471,7 +215,11 @@ export function WebsitePagesTable() {
   const updateMutation = useManagedMutation({
     mutationFn: async () => {
       if (!selected) throw new Error(t("errorMissingSelection"));
-      return pageService.update({ id: selected.id, ...formToPayload(form) });
+      const preparedForm = await uploadPendingImages({
+        ...form,
+        changeNotes: publishStepRef.current?.getChangeNotes() ?? "",
+      });
+      return pageService.update({ id: selected.id, ...formToPayload(preparedForm) });
     },
     onSuccess: async () => {
       await invalidate();
@@ -539,6 +287,25 @@ export function WebsitePagesTable() {
             {row.isVisibleInNav ? t("visible") : t("hidden")}
           </Badge>
         ),
+      },
+      {
+        accessor: "visibleToRoles",
+        title: t("columnVisibleToRoles"),
+        width: "14%",
+        render: (row) =>
+          row.visibleToRoles?.length ? (
+            <Group gap={4} wrap="wrap">
+              {row.visibleToRoles.map((role) => (
+                <Badge key={role} size="xs" variant="light">
+                  {role}
+                </Badge>
+              ))}
+            </Group>
+          ) : (
+            <Badge variant="light" color="gray">
+              {t("allRoles")}
+            </Badge>
+          ),
       },
       {
         accessor: "isActive",
@@ -665,6 +432,20 @@ export function WebsitePagesTable() {
     }));
   };
 
+  const handlePublishScheduledAtChange = useCallback((value: string) => {
+    setForm((current) => ({
+      ...current,
+      publishScheduledAt: value,
+    }));
+  }, []);
+
+  const handlePublishedAtChange = useCallback((value: string) => {
+    setForm((current) => ({
+      ...current,
+      publishedAt: value,
+    }));
+  }, []);
+
   return (
     <MutationErrorProvider>
       <Stack gap="md">
@@ -735,11 +516,23 @@ export function WebsitePagesTable() {
                 {detailLoadError}
               </Alert>
             ) : null}
-            <Stepper active={step} size="sm" color="cyan">
-              <Stepper.Step label={t("stepSettings")} />
-              <Stepper.Step label={t("stepTranslations")} />
-              <Stepper.Step label={t("stepBlocks")} />
-              <Stepper.Step label={t("stepPublish")} />
+            <Stepper active={step} size="md" color="cyan" iconSize={32}>
+              <Stepper.Step
+                label={t("stepSettings")}
+                description={t("stepSettingsDesc")}
+              />
+              <Stepper.Step
+                label={t("stepTranslations")}
+                description={t("stepTranslationsDesc")}
+              />
+              <Stepper.Step
+                label={t("stepBlocks")}
+                description={t("stepBlocksDesc")}
+              />
+              <Stepper.Step
+                label={t("stepPublish")}
+                description={t("stepPublishDesc")}
+              />
             </Stepper>
 
             {step === 0 ? (
@@ -763,13 +556,15 @@ export function WebsitePagesTable() {
                       }
                       required
                     />
-                    <TextInput
+                    <ParentPageSelect
                       label={t("parentIdLabel")}
+                      placeholder={t("parentIdPlaceholder")}
                       value={form.parentId}
-                      onChange={(event) =>
+                      options={parentPageOptions}
+                      onChange={(parentId) =>
                         setForm((current) => ({
                           ...current,
-                          parentId: event.currentTarget.value.replace(/[^\d]/g, ""),
+                          parentId,
                         }))
                       }
                     />
@@ -801,6 +596,7 @@ export function WebsitePagesTable() {
                       allowDeselect={false}
                     />
                   </SimpleGrid>
+                  <Divider />
                   <Group gap="xl">
                     <Switch
                       label={t("isVisibleInNavLabel")}
@@ -823,6 +619,21 @@ export function WebsitePagesTable() {
                       }
                     />
                   </Group>
+                  <Divider />
+                  <MultiSelect
+                    label={t("visibleToRolesLabel")}
+                    description={t("visibleToRolesDescription")}
+                    data={[...WEBSITE_PAGE_VISIBLE_ROLES]}
+                    value={form.visibleToRoles}
+                    onChange={(value) =>
+                      setForm((current) => ({
+                        ...current,
+                        visibleToRoles: value,
+                      }))
+                    }
+                    clearable
+                    searchable
+                  />
                 </Stack>
               </Paper>
             ) : null}
@@ -896,6 +707,7 @@ export function WebsitePagesTable() {
                                 }
                               />
                             </SimpleGrid>
+                            <Divider />
                             <Textarea
                               label={t("metaDescriptionLabel")}
                               value={translation.metaDescription}
@@ -917,15 +729,6 @@ export function WebsitePagesTable() {
                                 }
                               />
                               <TextInput
-                                label={t("openGraphImageUrlLabel")}
-                                value={translation.openGraphImageUrl}
-                                onChange={(event) =>
-                                  updateTranslation(language, {
-                                    openGraphImageUrl: event.currentTarget.value,
-                                  })
-                                }
-                              />
-                              <TextInput
                                 label={t("canonicalUrlLabel")}
                                 value={translation.canonicalUrl}
                                 onChange={(event) =>
@@ -935,6 +738,21 @@ export function WebsitePagesTable() {
                                 }
                               />
                             </SimpleGrid>
+                            <ImagePickerInput
+                              label={t("openGraphImageUrlLabel")}
+                              uploadLabel={t("openGraphImageUploadLabel")}
+                              urlLabel={t("openGraphImageUrlLabel")}
+                              urlPlaceholder={t("imageUrlPlaceholder")}
+                              value={translation.openGraphImageUrl}
+                              file={translation.openGraphImageFile}
+                              previewAlt={translation.title}
+                              onChange={(url, file) =>
+                                updateTranslation(language, {
+                                  openGraphImageUrl: url,
+                                  openGraphImageFile: file,
+                                })
+                              }
+                            />
                           </Stack>
                         </Tabs.Panel>
                       );
@@ -978,21 +796,69 @@ export function WebsitePagesTable() {
                   <Paper key={`${blockIndex}-${block.order}`} withBorder radius="lg" p="md">
                     <Stack gap="md">
                       <Group justify="space-between" align="flex-start">
-                        <Text fw={600}>{t("blockTitle", { index: blockIndex + 1 })}</Text>
-                        <ActionIcon
-                          variant="subtle"
-                          color="red"
-                          onClick={() =>
-                            setForm((current) => ({
-                              ...current,
-                              contentBlocks: current.contentBlocks.filter(
-                                (_block, index) => index !== blockIndex,
-                              ),
-                            }))
-                          }
-                        >
-                          <IconTrash size={16} />
-                        </ActionIcon>
+                        <Group gap="sm">
+                          <Text fw={600}>{t("blockTitle", { index: blockIndex + 1 })}</Text>
+                          <Badge
+                            variant="light"
+                            color={BLOCK_TYPE_COLORS[block.blockType]}
+                          >
+                            {t(`blockTypes.${block.blockType}`)}
+                          </Badge>
+                        </Group>
+                        <Group gap={4}>
+                          <Tooltip label={t("moveUp")}>
+                            <ActionIcon
+                              variant="subtle"
+                              color="gray"
+                              disabled={blockIndex === 0}
+                              onClick={() =>
+                                setForm((current) => ({
+                                  ...current,
+                                  contentBlocks: reorderBlocks(
+                                    current.contentBlocks,
+                                    blockIndex,
+                                    "up",
+                                  ),
+                                }))
+                              }
+                            >
+                              <IconArrowUp size={16} />
+                            </ActionIcon>
+                          </Tooltip>
+                          <Tooltip label={t("moveDown")}>
+                            <ActionIcon
+                              variant="subtle"
+                              color="gray"
+                              disabled={blockIndex === form.contentBlocks.length - 1}
+                              onClick={() =>
+                                setForm((current) => ({
+                                  ...current,
+                                  contentBlocks: reorderBlocks(
+                                    current.contentBlocks,
+                                    blockIndex,
+                                    "down",
+                                  ),
+                                }))
+                              }
+                            >
+                              <IconArrowDown size={16} />
+                            </ActionIcon>
+                          </Tooltip>
+                          <ActionIcon
+                            variant="subtle"
+                            color="red"
+                            onClick={() =>
+                              setForm((current) => ({
+                                ...current,
+                                contentBlocks: current.contentBlocks.filter(
+                                  (_block, index) => index !== blockIndex,
+                                ),
+                              }))
+                            }
+                          >
+                            <IconTrash size={16} />
+                          </ActionIcon>
+                        </Group>
                       </Group>
                       <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
                         <Select
@@ -1088,13 +954,20 @@ export function WebsitePagesTable() {
                                   }
                                   minRows={3}
                                 />
+                                <Divider />
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-                                  <TextInput
+                                  <ImagePickerInput
                                     label={t("mediaUrlLabel")}
+                                    uploadLabel={t("mediaUploadLabel")}
+                                    urlLabel={t("mediaUrlLabel")}
+                                    urlPlaceholder={t("imageUrlPlaceholder")}
                                     value={localization.mediaUrl}
-                                    onChange={(event) =>
+                                    file={localization.mediaFile}
+                                    previewAlt={localization.heading}
+                                    onChange={(url, file) =>
                                       updateBlockLocalization(blockIndex, language, {
-                                        mediaUrl: event.currentTarget.value,
+                                        mediaUrl: url,
+                                        mediaFile: file,
                                       })
                                     }
                                   />
@@ -1163,9 +1036,18 @@ export function WebsitePagesTable() {
                             <Paper key={cardIndex} withBorder radius="md" p="sm">
                               <Stack gap="sm">
                                 <Group justify="space-between">
-                                  <Text size="sm" fw={600}>
-                                    {t("cardTitle", { index: cardIndex + 1 })}
-                                  </Text>
+                                  <Group gap="sm">
+                                    {card.imageUrl ? (
+                                      <Avatar src={card.imageUrl} size={40} radius="sm" />
+                                    ) : (
+                                      <Avatar size={40} radius="sm" color="gray">
+                                        <IconCards size={18} />
+                                      </Avatar>
+                                    )}
+                                    <Text size="sm" fw={600}>
+                                      {t("cardTitle", { index: cardIndex + 1 })}
+                                    </Text>
+                                  </Group>
                                   <ActionIcon
                                     variant="subtle"
                                     color="red"
@@ -1191,15 +1073,6 @@ export function WebsitePagesTable() {
                                     }
                                   />
                                   <TextInput
-                                    label={t("cardItemImageUrlLabel")}
-                                    value={card.imageUrl}
-                                    onChange={(event) =>
-                                      updateCard(blockIndex, cardIndex, {
-                                        imageUrl: event.currentTarget.value,
-                                      })
-                                    }
-                                  />
-                                  <TextInput
                                     label={t("cardItemLinkLabel")}
                                     value={card.link}
                                     onChange={(event) =>
@@ -1209,6 +1082,21 @@ export function WebsitePagesTable() {
                                     }
                                   />
                                 </SimpleGrid>
+                                <ImagePickerInput
+                                  label={t("cardItemImageUrlLabel")}
+                                  uploadLabel={t("cardImageUploadLabel")}
+                                  urlLabel={t("cardItemImageUrlLabel")}
+                                  urlPlaceholder={t("imageUrlPlaceholder")}
+                                  value={card.imageUrl}
+                                  file={card.imageFile}
+                                  previewAlt={card.title}
+                                  onChange={(url, file) =>
+                                    updateCard(blockIndex, cardIndex, {
+                                      imageUrl: url,
+                                      imageFile: file,
+                                    })
+                                  }
+                                />
                                 <Textarea
                                   label={t("cardItemDescriptionLabel")}
                                   value={card.description}
@@ -1231,53 +1119,21 @@ export function WebsitePagesTable() {
             ) : null}
 
             {step === 3 ? (
-              <Paper withBorder radius="lg" p="md">
-                <Stack gap="md">
-                  <Group gap="sm" wrap="nowrap">
-                    <ThemeIcon variant="light" color="cyan" radius="md">
-                      <IconEye size={18} />
-                    </ThemeIcon>
-                    <Text fw={600}>{t("publishSection")}</Text>
-                  </Group>
-                  <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-                    <DateTimePicker
-                      label={t("publishScheduledAtLabel")}
-                      value={form.publishScheduledAt || null}
-                      onChange={(value) =>
-                        setForm((current) => ({
-                          ...current,
-                          publishScheduledAt: value ?? "",
-                        }))
-                      }
-                      valueFormat="MM/DD/YYYY hh:mm A"
-                      clearable
-                    />
-                    <DateTimePicker
-                      label={t("publishedAtLabel")}
-                      value={form.publishedAt || null}
-                      onChange={(value) =>
-                        setForm((current) => ({
-                          ...current,
-                          publishedAt: value ?? "",
-                        }))
-                      }
-                      valueFormat="MM/DD/YYYY hh:mm A"
-                      clearable
-                    />
-                  </SimpleGrid>
-                  <Textarea
-                    label={t("changeNotesLabel")}
-                    value={form.changeNotes}
-                    onChange={(event) =>
-                      setForm((current) => ({
-                        ...current,
-                        changeNotes: event.currentTarget.value,
-                      }))
-                    }
-                    minRows={3}
-                  />
-                </Stack>
-              </Paper>
+              <PublishStepFields
+                ref={publishStepRef}
+                form={form}
+                onPublishScheduledAtChange={handlePublishScheduledAtChange}
+                onPublishedAtChange={handlePublishedAtChange}
+                publishSectionLabel={t("publishSection")}
+                publishSummaryTitle={t("publishSummaryTitle")}
+                publishSummaryBlocksLabel={t("publishSummaryBlocks", {
+                  count: form.contentBlocks.length,
+                })}
+                publishStatusLabel={(status) => t(`publishStatuses.${status}`)}
+                publishScheduledAtLabel={t("publishScheduledAtLabel")}
+                publishedAtLabel={t("publishedAtLabel")}
+                changeNotesLabel={t("changeNotesLabel")}
+              />
             ) : null}
 
             <Group justify="space-between">

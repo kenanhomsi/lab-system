@@ -1,3 +1,5 @@
+import type { DisplayMode } from "@/lib/banners/display-mode";
+
 type FindAllBannerParams = {
   query?: {
     Page?: string;
@@ -14,6 +16,7 @@ type CreateBannerParams = {
   token: string;
   title: string;
   type: string;
+  displayMode: DisplayMode;
   InternalLink: string;
   ExternalLink: string;
   TargetType: string;

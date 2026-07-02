@@ -29,3 +29,8 @@ export type CreateSlideCardRequest = {
   isActive: boolean;
   image: File;
 };
+
+export type UpdateSlideCardRequest = Omit<CreateSlideCardRequest, "image"> & {
+  id: number;
+  image?: File;
+};

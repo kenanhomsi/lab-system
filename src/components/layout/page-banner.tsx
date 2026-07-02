@@ -5,6 +5,11 @@ import { type ReactNode } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useBannerCarousel } from "@/lib/banners";
+import {
+  getDisplayModeAspectRatio,
+  getDisplayModeDetailSize,
+  normalizeDisplayMode,
+} from "@/lib/banners/display-mode";
 import type { BannerItem } from "@/types/banner";
 
 const isVideoUrl = (url: string) => /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
@@ -31,6 +36,8 @@ export function PageBanner({ banners }: PageBannerProps) {
   if (banners.length === 0) return null;
 
   const banner = banners[activeIdx] as BannerItem;
+  const displayMode = normalizeDisplayMode(banner.displayMode);
+  const displaySize = getDisplayModeDetailSize(displayMode);
   const href = banner.internalLink || banner.externalLink || "";
   const isExternal = !!banner.externalLink && !banner.internalLink;
   const target =
@@ -168,7 +175,13 @@ export function PageBanner({ banners }: PageBannerProps) {
   return (
     <section aria-label={t("regionAria")} className="content-container my-6">
       <div className="relative overflow-hidden rounded-3xl shadow-md shadow-primary/8 ring-1 ring-outline-variant/25">
-        <div className="group relative flex min-h-[240px] flex-col bg-surface-container-low md:min-h-[280px]">
+        <div
+          className="group relative flex flex-col bg-surface-container-low"
+          style={{
+            minHeight: displaySize.maxHeight,
+            aspectRatio: getDisplayModeAspectRatio(displayMode),
+          }}
+        >
           <div className="absolute inset-0 overflow-hidden" aria-hidden>
             {media}
 

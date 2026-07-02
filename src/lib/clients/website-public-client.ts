@@ -1,5 +1,6 @@
 import { axiosInstanceFront } from "@/lib/clients/frontend-instance";
 import type { MedicalTestsResponse } from "@/components/tables/medical-tests-table/types";
+import type { MedicalTestCategoriesResponse } from "@/modules/medical-test-categories";
 import type { Vacancy } from "@/types/career";
 
 /** Public website helpers (browser) — all requests use axios `baseURL` `/api`. */
@@ -132,6 +133,48 @@ export async function getMedicalTestsPublic(params?: {
       items: [],
       page: 1,
       pageSize: params?.pageSize ?? 24,
+      totalCount: 0,
+      totalPages: 0,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    }
+  );
+}
+
+export async function getMedicalCategoriesPublic(params?: {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  activeOnly?: boolean;
+}): Promise<MedicalTestCategoriesResponse> {
+  const { data, status } = await axiosInstanceFront.get<MedicalTestCategoriesResponse>(
+    "/website/category-medical",
+    {
+      params: {
+        Page: String(params?.page ?? 1),
+        PageSize: String(params?.pageSize ?? 1000),
+        ...(params?.search?.trim() ? { Search: params.search.trim() } : {}),
+        ...(typeof params?.activeOnly === "boolean"
+          ? { activeOnly: String(params.activeOnly) }
+          : {}),
+      },
+      validateStatus: () => true,
+    },
+  );
+
+  if (status >= 400) {
+    const errorCode =
+      data && typeof data === "object" && "error" in data
+        ? String((data as { error?: unknown }).error ?? "")
+        : "";
+    throw new Error(errorCode || `Medical categories request failed (${status})`);
+  }
+
+  return (
+    data ?? {
+      items: [],
+      page: 1,
+      pageSize: params?.pageSize ?? 1000,
       totalCount: 0,
       totalPages: 0,
       hasNextPage: false,

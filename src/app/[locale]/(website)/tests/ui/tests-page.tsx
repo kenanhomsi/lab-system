@@ -7,7 +7,8 @@ import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { MedicalTestItem } from "@/components/tables/medical-tests-table/types";
-import { getMedicalTestsPublic } from "@/lib/clients/website-public-client";
+import type { MedicalTestCategory } from "@/modules/medical-test-categories";
+import { getMedicalCategoriesPublic, getMedicalTestsPublic } from "@/lib/clients/website-public-client";
 import { BANNER_PLACEMENT } from "@/lib/banners/locations";
 import { PageBannerOverflowClient, PageBannerSlotClient } from "@/components/layout/page-banner-slot-client";
 
@@ -43,15 +44,17 @@ export function TestsPage() {
   const numberFormatter = useMemo(() => new Intl.NumberFormat(locale), [locale]);
 
   const [items, setItems] = useState<MedicalTestItem[]>([]);
+  const [categories, setCategories] = useState<MedicalTestCategory[]>([]);
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [loadError, setLoadError] = useState<"generic" | "unauthorized" | null>(null);
 
   useEffect(() => {
@@ -61,6 +64,45 @@ export function TestsPage() {
     }, 350);
     return () => window.clearTimeout(timer);
   }, [searchInput]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadCategories = async () => {
+      setCategoriesLoading(true);
+      try {
+        const response = await getMedicalCategoriesPublic({
+          page: 1,
+          pageSize: 1000,
+          activeOnly: true,
+        });
+        if (isMounted) {
+          setCategories(
+            [...response.items].sort(
+              (a, b) =>
+                a.displayOrder - b.displayOrder ||
+                a.nameEn.localeCompare(b.nameEn) ||
+                a.nameAr.localeCompare(b.nameAr),
+            ),
+          );
+        }
+      } catch {
+        if (isMounted) {
+          setCategories([]);
+        }
+      } finally {
+        if (isMounted) {
+          setCategoriesLoading(false);
+        }
+      }
+    };
+
+    void loadCategories();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const loadTests = useCallback(async () => {
     setLoading(true);
@@ -96,19 +138,57 @@ export function TestsPage() {
   const testName = (test: MedicalTestItem) =>
     locale === "ar" ? test.nameAr : test.nameEn;
 
-  const categories = useMemo(() => {
-    const unique = new Set<string>();
+  const categoriesForDisplay = useMemo(() => {
+    if (categories.length > 0) return categories;
+
+    const fallback = new Map<string, MedicalTestCategory>();
     for (const item of items) {
-      const category = categoryName(item, locale).trim();
-      if (category) unique.add(category);
+      const fallbackId = item.categoryMedicalId != null ? String(item.categoryMedicalId) : "";
+      const displayName = categoryName(item, locale).trim();
+      if (!fallbackId || !displayName || fallback.has(fallbackId)) continue;
+      fallback.set(fallbackId, {
+        id: Number(fallbackId),
+        nameAr: item.categoryNameAr || item.categoryNameEn || item.category,
+        nameEn: item.categoryNameEn || item.categoryNameAr || item.category,
+        description: "",
+        displayOrder: 0,
+        isActive: true,
+        createdAt: "",
+        updatedAt: "",
+      });
     }
-    return Array.from(unique).sort((a, b) => a.localeCompare(b, locale));
-  }, [items, locale]);
+
+    return Array.from(fallback.values()).sort(
+      (a, b) => a.displayOrder - b.displayOrder || a.nameEn.localeCompare(b.nameEn),
+    );
+  }, [categories, items, locale]);
 
   const visibleItems = useMemo(() => {
-    if (!activeCategory) return items;
-    return items.filter((item) => categoryName(item, locale) === activeCategory);
-  }, [activeCategory, items, locale]);
+    if (!activeCategoryId) return items;
+    const categoryLookup = new Map(
+      categoriesForDisplay.map((category) => [String(category.id), category] as const),
+    );
+    const selectedCategory = categoryLookup.get(activeCategoryId);
+    const selectedCategoryName = selectedCategory
+      ? locale === "ar"
+        ? selectedCategory.nameAr || selectedCategory.nameEn
+        : selectedCategory.nameEn || selectedCategory.nameAr
+      : "";
+    const selectedCategoryNameNormalized = selectedCategoryName.trim().toLowerCase();
+
+    return items.filter((item) => {
+      if (item.categoryMedicalId != null && String(item.categoryMedicalId) === activeCategoryId) {
+        return true;
+      }
+
+      if (!selectedCategoryNameNormalized) {
+        return false;
+      }
+
+      const itemCategoryName = categoryName(item, locale).trim().toLowerCase();
+      return itemCategoryName === selectedCategoryNameNormalized;
+    });
+  }, [activeCategoryId, categoriesForDisplay, items, locale]);
 
   const pageNumbers = useMemo(() => {
     const maxButtons = 5;
@@ -146,11 +226,11 @@ export function TestsPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-black tracking-tight text-on-surface">
-                    {loading ? "—" : numberFormatter.format(totalCount)}
-                  </p>
-                  <p className="text-sm text-on-surface-variant">{t("statTotalTests")}</p>
-                </div>
+                  {loading ? "—" : numberFormatter.format(totalCount)}
+                </p>
+                <p className="text-sm text-on-surface-variant">{t("statTotalTests")}</p>
               </div>
+            </div>
             </div>
             <div className="rounded-[1.5rem] border border-outline-variant/15 bg-linear-to-br from-surface-container-lowest to-surface px-5 py-5 shadow-sm">
               <div className="flex items-center gap-4">
@@ -159,7 +239,7 @@ export function TestsPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-black tracking-tight text-on-surface">
-                    {loading ? "—" : numberFormatter.format(categories.length)}
+                    {categoriesLoading ? "—" : numberFormatter.format(categoriesForDisplay.length)}
                   </p>
                   <p className="text-sm text-on-surface-variant">{t("statCategories")}</p>
                 </div>
@@ -202,31 +282,31 @@ export function TestsPage() {
               </div>
             </div>
 
-            {categories.length > 0 ? (
+            {categoriesForDisplay.length > 0 ? (
               <div className="mt-5 flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={() => setActiveCategory(null)}
+                  onClick={() => setActiveCategoryId(null)}
                   className={[
                     "rounded-full px-4 py-2.5 text-xs font-bold transition-all duration-200",
-                    activeCategory === null ? CHIP_ACTIVE : CHIP_INACTIVE,
+                    activeCategoryId === null ? CHIP_ACTIVE : CHIP_INACTIVE,
                   ].join(" ")}
                 >
                   {t("allCategories")}
                 </button>
-                {categories.map((category) => (
+                {categoriesForDisplay.map((category) => (
                   <button
-                    key={category}
+                    key={category.id}
                     type="button"
                     onClick={() =>
-                      setActiveCategory(activeCategory === category ? null : category)
+                      setActiveCategoryId(activeCategoryId === String(category.id) ? null : String(category.id))
                     }
                     className={[
                       "rounded-full px-4 py-2.5 text-xs font-bold transition-all duration-200",
-                      activeCategory === category ? CHIP_ACTIVE : CHIP_INACTIVE,
+                      activeCategoryId === String(category.id) ? CHIP_ACTIVE : CHIP_INACTIVE,
                     ].join(" ")}
                   >
-                    {category}
+                    {locale === "ar" ? category.nameAr || category.nameEn : category.nameEn || category.nameAr}
                   </button>
                 ))}
               </div>

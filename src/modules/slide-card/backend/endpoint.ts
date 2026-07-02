@@ -3,6 +3,8 @@ const endpoint = {
   findAllPublic: "/api/website/slide-cards",
   create: "/api/admin/slide-cards",
   findOne: (id: string) => `/api/admin/slide-cards/${id}`,
+  update: (id: string) => `/api/admin/slide-cards/${id}`,
+  remove: (id: string) => `/api/admin/slide-cards/${id}`,
 };
 
 export { endpoint };

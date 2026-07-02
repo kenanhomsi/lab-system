@@ -1,4 +1,5 @@
 import { z, type ZodType } from "zod";
+import { SYRIAN_CITY_VALUES } from "@/lib/syrian-cities";
 
 const MSG_REQUIRED = "هذا الحقل مطلوب";
 const MSG_EMAIL = "البريد الإلكتروني غير صالح";
@@ -34,10 +35,9 @@ export const registerSchema = z
       .string({ error: () => MSG_REQUIRED })
       .min(2, "الاسم يجب أن يكون حرفين على الأقل")
       .max(120, "الاسم طويل جداً"),
-    city: z
-      .string({ error: () => MSG_REQUIRED })
-      .min(2, "اسم المدينة مطلوب")
-      .max(80, "اسم المدينة طويل جداً"),
+    city: z.enum(SYRIAN_CITY_VALUES, {
+      error: () => "يرجى اختيار مدينة سورية صحيحة",
+    }),
     password: z
       .string({ error: () => MSG_REQUIRED })
       .min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل")

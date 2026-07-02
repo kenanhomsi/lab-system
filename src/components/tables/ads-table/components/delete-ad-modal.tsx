@@ -20,15 +20,17 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   ad: AdItem | null;
+  onDelete?: (id: number) => Promise<void>;
 };
 
 /**
  * Confirmation modal for deleting an ad.
  */
-const DeleteAdModal = ({ isOpen, onClose, ad }: Props) => {
+const DeleteAdModal = ({ isOpen, onClose, ad, onDelete }: Props) => {
   const t = useTranslations("admin.settings.ads");
   const tc = useTranslations("admin.common");
-  const deleteAd = useMirror("deleteAd");
+  const deleteAdMirror = useMirror("deleteAd");
+  const deleteAd = onDelete ?? deleteAdMirror;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {

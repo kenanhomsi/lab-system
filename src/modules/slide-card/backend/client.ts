@@ -5,9 +5,11 @@ import { endpoint } from "./endpoint";
 import type { SlideCardItem } from "@/types/slide-card";
 import {
   CreateSlideCardParams,
+  DeleteSlideCardParams,
   FindAllPublicSlideCardParams,
   FindAllSlideCardParams,
   FindOneSlideCardParams,
+  UpdateSlideCardParams,
 } from "./types";
 
 type PublicSlideCardResponse =
@@ -80,6 +82,26 @@ const parseJsonOrThrow = <T>(text: string, status: number): T => {
   }
 };
 
+const toSlideCardFormData = (
+  params: Omit<CreateSlideCardParams, "token"> | Omit<UpdateSlideCardParams, "token" | "id">,
+  image?: File,
+) => {
+  const formData = new FormData();
+  formData.append("Title", params.title);
+  formData.append("Description", params.description);
+  formData.append("Price", String(params.price));
+  formData.append("Discount", String(params.discount));
+  formData.append("ExpiryDate", params.expiryDate);
+  formData.append("Badge", params.badge);
+  formData.append("DetailPageLink", params.detailPageLink);
+  formData.append("DisplayOrder", String(params.displayOrder));
+  formData.append("IsActive", String(params.isActive));
+  if (image) {
+    formData.append("Image", image);
+  }
+  return formData;
+};
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends SlideCardClient<BackendState> {
@@ -116,17 +138,8 @@ class Client extends SlideCardClient<BackendState> {
       throw new Error("BACKEND_URL is not configured");
     }
 
-    const formData = new FormData();
-    formData.append("Title", params.title);
-    formData.append("Description", params.description);
-    formData.append("Price", String(params.price));
-    formData.append("Discount", String(params.discount));
-    formData.append("ExpiryDate", params.expiryDate);
-    formData.append("Badge", params.badge);
-    formData.append("DetailPageLink", params.detailPageLink);
-    formData.append("DisplayOrder", String(params.displayOrder));
-    formData.append("IsActive", String(params.isActive));
-    formData.append("Image", params.image);
+    const formData = toSlideCardFormData(params, params.image);
+    formData.set("Image", params.image);
 
     const res = await fetch(`${backendBase}${endpoint.create}`, {
       method: "POST",
@@ -154,6 +167,49 @@ class Client extends SlideCardClient<BackendState> {
 
     const payload = parseJsonOrThrow<unknown>(text, res.status);
     return normalizeAdminSlideCard(payload as AdminSlideCardResponse);
+  }
+
+  async update(params: UpdateSlideCardParams) {
+    const backendBase = process.env.BACKEND_URL?.replace(/\/$/, "");
+    if (!backendBase) {
+      throw new Error("BACKEND_URL is not configured");
+    }
+
+    const formData = toSlideCardFormData(params, params.image);
+
+    const res = await fetch(`${backendBase}${endpoint.update(params.id)}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${params.token}` },
+      body: formData,
+    });
+
+    const text = await res.text();
+    if (!res.ok) {
+      let message = text.trim() || `Backend error (${res.status})`;
+      try {
+        const errBody = JSON.parse(text) as {
+          error?: string;
+          message?: string;
+        };
+        const candidate = errBody?.error ?? errBody?.message;
+        if (typeof candidate === "string" && candidate.trim()) {
+          message = candidate;
+        }
+      } catch {
+        // keep plain-text message from upstream
+      }
+      throw new Error(message);
+    }
+
+    const payload = parseJsonOrThrow<unknown>(text, res.status);
+    return normalizeAdminSlideCard(payload as AdminSlideCardResponse);
+  }
+
+  async delete(params: DeleteSlideCardParams) {
+    await super
+      .sharedDelete({ endpoint: endpoint.remove(params.id) })
+      .withAuth(params.token)
+      .perform<unknown>();
   }
 }
 

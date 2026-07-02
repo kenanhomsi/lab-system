@@ -16,7 +16,7 @@ export async function AboutHeroSection() {
       : "text-primary transition-transform group-hover:translate-x-1";
 
   return (
-    <section className="relative flex min-h-[600px] items-center overflow-hidden md:min-h-[700px]">
+    <section className="relative flex min-h-[520px] items-center overflow-hidden md:min-h-[700px]">
       <div className="absolute inset-0 z-0">
         <Image
           src={HERO}
@@ -38,7 +38,7 @@ export async function AboutHeroSection() {
             {t("badge")}
           </span>
           <h1
-            className="reveal-up mb-8 font-headline text-5xl font-black leading-[1.2] tracking-tight text-on-surface md:text-7xl"
+            className="reveal-up mb-8 font-headline text-4xl font-black leading-[1.08] tracking-normal text-on-surface sm:text-5xl md:text-6xl"
             style={{ animationDelay: "180ms" }}
           >
             {t("titleBefore")} <br />
@@ -53,7 +53,7 @@ export async function AboutHeroSection() {
           <div className="reveal-up" style={{ animationDelay: "340ms" }}>
             <Link
               href="/contact"
-              className="group inline-flex items-center gap-3 rounded-xl border border-outline-variant/20 bg-surface-container-lowest px-8 py-4 shadow-sm transition-all hover:shadow-lg"
+              className="group inline-flex items-center justify-center gap-3 rounded-xl border border-outline-variant/20 bg-surface-container-lowest px-8 py-4 shadow-sm transition-all hover:shadow-lg max-sm:w-full"
             >
               <span className="text-sm font-bold tracking-wide">
                 {t("ctaContact")}

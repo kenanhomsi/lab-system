@@ -1,9 +1,10 @@
-import type { BannerPlacement } from "@/lib/banners/locations";
+import type { DisplayMode } from "@/lib/banners/display-mode";
 
 export type BannerItem = {
   id: string;
   title: string;
   type: string;
+  displayMode?: DisplayMode;
   mediaUrl: string;
   internalLink: string;
   externalLink: string;
@@ -24,10 +25,11 @@ export type BannersResponse = BannerItem[];
 export type CreateBannerRequest = {
   title: string;
   type: string;
+  displayMode: DisplayMode;
   internalLink: string;
   externalLink: string;
   targetType: string;
-  location: BannerPlacement;
+  location: string;
   displayOrder: number;
   isActive: boolean;
   visibilityRulesJson: string;
@@ -36,16 +38,17 @@ export type CreateBannerRequest = {
   media: File;
 };
 
-export type BannerModalType = "create" | "edit" | "delete" | null;
+export type BannerModalType = "create" | "edit" | "delete" | "view" | null;
 
 export type UpdateBannerRequest = {
   id: string;
   title: string;
   type: string;
+  displayMode: DisplayMode;
   internalLink: string;
   externalLink: string;
   targetType: string;
-  location: BannerPlacement;
+  location: string;
   displayOrder: number;
   isActive: boolean;
   visibilityRulesJson: string;

@@ -14,7 +14,7 @@ export async function ServicesHeroSection() {
       : "absolute inset-0 bg-linear-to-r from-background via-background/80 to-background/20";
 
   return (
-    <section className="relative flex min-h-[600px] items-center overflow-hidden md:min-h-[700px] bg-surface">
+    <section className="relative flex min-h-[520px] items-center overflow-hidden bg-surface md:min-h-[700px]">
       <div className="absolute inset-0 z-0">
         <Image
           src={HERO_IMG}
@@ -40,7 +40,7 @@ export async function ServicesHeroSection() {
             {t("badge")}
           </span>
           <h1
-            className="reveal-up mb-8 font-headline text-5xl font-black leading-[0.95] tracking-tight text-on-surface md:text-7xl"
+            className="reveal-up mb-8 font-headline text-4xl font-black leading-[1.02] tracking-normal text-on-surface sm:text-5xl md:text-6xl"
             style={{ animationDelay: "180ms" }}
           >
             {t("titleLine1")} <br />
@@ -54,7 +54,7 @@ export async function ServicesHeroSection() {
           </p>
           <a
             href="#tests-catalog"
-            className="reveal-up group inline-flex items-center gap-3 rounded-xl border border-outline-variant/20 bg-surface-container-lowest px-8 py-4 shadow-sm transition-all hover:shadow-lg"
+            className="reveal-up group inline-flex items-center justify-center gap-3 rounded-xl border border-outline-variant/20 bg-surface-container-lowest px-8 py-4 shadow-sm transition-all hover:shadow-lg max-sm:w-full"
             style={{ animationDelay: "340ms" }}
           >
             <span className="text-sm font-bold tracking-wide">

@@ -5,9 +5,11 @@ import { endpoint } from "./endpoint";
 import type { SlideCardItem } from "@/types/slide-card";
 import {
   CreateSlideCardParams,
+  DeleteSlideCardParams,
   FindAllPublicSlideCardParams,
   FindAllSlideCardParams,
   FindOneSlideCardParams,
+  UpdateSlideCardParams,
 } from "./types";
 
 type PublicSlideCardResponse =
@@ -80,6 +82,25 @@ const normalizeAdminSlideCard = (response: AdminSlideCardResponse): SlideCardIte
   return response as SlideCardItem;
 };
 
+const toSlideCardFormData = (
+  params: CreateSlideCardParams | UpdateSlideCardParams,
+) => {
+  const formData = new FormData();
+  formData.append("Title", params.title);
+  formData.append("Description", params.description);
+  formData.append("Price", String(params.price));
+  formData.append("Discount", String(params.discount));
+  formData.append("ExpiryDate", params.expiryDate);
+  formData.append("Badge", params.badge);
+  formData.append("DetailPageLink", params.detailPageLink);
+  formData.append("DisplayOrder", String(params.displayOrder));
+  formData.append("IsActive", String(params.isActive));
+  if ("image" in params && params.image) {
+    formData.append("Image", params.image);
+  }
+  return formData;
+};
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends SlideCardClient<AxiosState> {
@@ -109,17 +130,8 @@ class Client extends SlideCardClient<AxiosState> {
   }
 
   async create(params: CreateSlideCardParams) {
-    const formData = new FormData();
-    formData.append("Title", params.title);
-    formData.append("Description", params.description);
-    formData.append("Price", String(params.price));
-    formData.append("Discount", String(params.discount));
-    formData.append("ExpiryDate", params.expiryDate);
-    formData.append("Badge", params.badge);
-    formData.append("DetailPageLink", params.detailPageLink);
-    formData.append("DisplayOrder", String(params.displayOrder));
-    formData.append("IsActive", String(params.isActive));
-    formData.append("Image", params.image);
+    const formData = toSlideCardFormData(params);
+    formData.set("Image", params.image);
 
     const res = await super
       .sharedCreate({
@@ -128,6 +140,27 @@ class Client extends SlideCardClient<AxiosState> {
       })
       .perform<AdminSlideCardResponse>();
     return normalizeAdminSlideCard(res.data);
+  }
+
+  async update(params: UpdateSlideCardParams) {
+    const formData = toSlideCardFormData(params);
+    if (params.image) {
+      formData.set("Image", params.image);
+    }
+
+    const res = await super
+      .sharedPutFormData({
+        endpoint: endpoint.update(String(params.id)),
+        formData,
+      })
+      .perform<AdminSlideCardResponse>();
+    return normalizeAdminSlideCard(res.data);
+  }
+
+  async delete(params: DeleteSlideCardParams) {
+    await super
+      .sharedDelete({ endpoint: endpoint.remove(String(params.id)) })
+      .perform<unknown>();
   }
 }
 

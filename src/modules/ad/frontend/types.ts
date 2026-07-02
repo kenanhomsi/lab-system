@@ -1,4 +1,5 @@
 import type { AdMediaType } from "@/types/ad";
+import type { DisplayMode } from "@/lib/banners/display-mode";
 
 type FindAllAdParams = {
   query?: {
@@ -18,6 +19,7 @@ type DeleteAdParams = {
 type CreateAdParams = {
   name: string;
   description: string;
+  displayMode: DisplayMode;
   mediaType: AdMediaType;
   media: File;
   addressName: string;
@@ -27,6 +29,7 @@ type UpdateAdParams = {
   id: number;
   name: string;
   description: string;
+  displayMode: DisplayMode;
   mediaType: AdMediaType;
   media?: File;
   addressName: string;

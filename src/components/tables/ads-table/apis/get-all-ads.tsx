@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { frontendContainer } from "@/container";
 import { adModuleNames, AdFrontendService } from "@/modules/ad";
+import { normalizeDisplayMode } from "@/lib/banners/display-mode";
 import type { AdItem } from "@/types/ad";
 import { useMirror, useMirrorRegistry } from "../store";
 
@@ -25,6 +26,7 @@ const normalizeAd = (value: unknown): AdItem | null => {
     id: item.id,
     name: item.name,
     description: item.description,
+    displayMode: normalizeDisplayMode(item.displayMode as string | undefined),
     mediaType: item.mediaType,
     mediaUrl: item.mediaUrl,
     websiteUrl: typeof item.websiteUrl === "string" ? item.websiteUrl : undefined,

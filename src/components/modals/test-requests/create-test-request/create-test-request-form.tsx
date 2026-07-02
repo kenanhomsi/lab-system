@@ -149,6 +149,8 @@ const CreateTestRequestForm = () => {
   const [locationType, setLocationType] = useState("lab");
   const [latitude, setLatitude] = useState<number | "">("");
   const [longitude, setLongitude] = useState<number | "">("");
+  const [patientAge, setPatientAge] = useState<number | "">("");
+  const [gender, setGender] = useState<string | null>(null);
   const [appointmentNotes, setAppointmentNotes] = useState("");
   const [createdTestRequestId, setCreatedTestRequestId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -177,6 +179,8 @@ const CreateTestRequestForm = () => {
       setLocationType("lab");
       setLatitude("");
       setLongitude("");
+      setPatientAge("");
+      setGender(null);
       setAppointmentNotes("");
       setCreatedTestRequestId(null);
       return;
@@ -197,6 +201,8 @@ const CreateTestRequestForm = () => {
     setLocationType("lab");
     setLatitude("");
     setLongitude("");
+    setPatientAge("");
+    setGender(null);
     setAppointmentNotes("");
     setCreatedTestRequestId(null);
   }, [initialMedicalTestIds, opened]);
@@ -369,7 +375,7 @@ const CreateTestRequestForm = () => {
                   placeholder={ta("selectAppointmentDate")}
                   description={ta("appointmentDateDesc")}
                   value={appointmentDate ? dayjs(appointmentDate).toDate() : null}
-                  minDate={new Date()}
+                  minDate={dayjs().startOf("day").toDate()}
                   leftSection={<IconCalendarEvent size={16} />}
                   onChange={(date) => {
                     setAppointmentDate(date ? dayjs(date).format("YYYY-MM-DD") : "");
@@ -427,15 +433,37 @@ const CreateTestRequestForm = () => {
                     withAsterisk
                     leftSection={<IconMapPin size={16} />}
                   />
-                  <Textarea
-                    label={ta("notes")}
-                    autosize
-                    minRows={2}
-                    placeholder={ta("collectionNotesPlaceholder")}
-                    value={appointmentNotes}
-                    onChange={(event) => setAppointmentNotes(event.currentTarget.value)}
+                </SimpleGrid>
+                <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
+                  <NumberInput
+                    label={ta("patientAge")}
+                    value={patientAge}
+                    onChange={(value) => setPatientAge(typeof value === "number" ? value : "")}
+                    min={0}
+                    max={150}
+                    allowDecimal={false}
+                  />
+                  <Select
+                    label={ta("patientGender")}
+                    placeholder={ta("selectGender")}
+                    clearable
+                    data={[
+                      { value: "Male", label: ta("genderMale") },
+                      { value: "Female", label: ta("genderFemale") },
+                      { value: "Other", label: ta("genderOther") },
+                    ]}
+                    value={gender}
+                    onChange={setGender}
                   />
                 </SimpleGrid>
+                <Textarea
+                  label={ta("notes")}
+                  autosize
+                  minRows={2}
+                  placeholder={ta("collectionNotesPlaceholder")}
+                  value={appointmentNotes}
+                  onChange={(event) => setAppointmentNotes(event.currentTarget.value)}
+                />
                 {isHomeCollection ? (
                   <Stack gap="sm">
                     <Stack gap={2}>
@@ -702,6 +730,8 @@ const CreateTestRequestForm = () => {
                       patientLocationType: locationType,
                       patientLatitude: isHomeCollection && selectedLocation ? selectedLocation.lat : null,
                       patientLongitude: isHomeCollection && selectedLocation ? selectedLocation.lng : null,
+                      ...(patientAge !== "" ? { age: Number(patientAge) } : {}),
+                      ...(gender ? { gender } : {}),
                       notes: appointmentNotes,
                       startTime: selectedSlot.startTime,
                       endTime: selectedSlot.endTime,

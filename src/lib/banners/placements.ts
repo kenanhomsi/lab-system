@@ -1,0 +1,87 @@
+/** Auto-advance interval for banner carousels (ms). */
+export const BANNER_ROTATE_MS = 30_000;
+
+export const WEBSITE_BANNERS_QUERY_KEY = ["website-banners-public"] as const;
+
+/** Canonical placement strings stored in the API `location` field. */
+export const BANNER_PLACEMENT = {
+  HOME_PAGE: "homepage",
+  ABOUT: "about",
+  BLOG: "blog",
+  CONTACT: "contact",
+  SERVICES: "services",
+  CAREERS: "careers",
+  OFFERS: "offers",
+  /** Fixed strip / dismissible ad placement (e.g. GlobalAdBar). */
+  AD_BAR: "ad",
+  PLANS: "plans",
+  TESTS: "tests",
+  /** Matches any role-specific dashboard when filtering. */
+  DASHBOARD: "dashboard",
+  ADMIN_DASHBOARD: "admin_dashboard",
+  DOCTOR_DASHBOARD: "doctor_dashboard",
+  PATIENT_DASHBOARD: "patient_dashboard",
+  LAB_DASHBOARD: "lab_dashboard",
+  MEDICAL_ADVICE: "medical_advice",
+  EQUIPMENT: "equipment",
+  CLIENTS: "clients",
+  PARTNERS: "partners",
+  DEPARTMENTS: "departments",
+  WELCOME: "welcome",
+} as const;
+
+export type BannerPlacement =
+  (typeof BANNER_PLACEMENT)[keyof typeof BANNER_PLACEMENT];
+
+export const BANNER_PLACEMENT_VALUES: readonly BannerPlacement[] =
+  Object.values(BANNER_PLACEMENT);
+
+const CANONICAL_SET = new Set<string>(BANNER_PLACEMENT_VALUES);
+
+/** Legacy / free-text values mapped to canonical placements. */
+const PLACEMENT_ALIASES: Record<string, BannerPlacement> = {
+  home: BANNER_PLACEMENT.HOME_PAGE,
+  homepage: BANNER_PLACEMENT.HOME_PAGE,
+  "الصفحة الرئيسية": BANNER_PLACEMENT.HOME_PAGE,
+  الرئيسية: BANNER_PLACEMENT.HOME_PAGE,
+  about: BANNER_PLACEMENT.ABOUT,
+  "من نحن": BANNER_PLACEMENT.ABOUT,
+  blog: BANNER_PLACEMENT.BLOG,
+  المدونة: BANNER_PLACEMENT.BLOG,
+  contact: BANNER_PLACEMENT.CONTACT,
+  "اتصل بنا": BANNER_PLACEMENT.CONTACT,
+  services: BANNER_PLACEMENT.SERVICES,
+  الخدمات: BANNER_PLACEMENT.SERVICES,
+  careers: BANNER_PLACEMENT.CAREERS,
+  ad: BANNER_PLACEMENT.AD_BAR,
+  ad_bar: BANNER_PLACEMENT.AD_BAR,
+  offers: BANNER_PLACEMENT.OFFERS,
+  partners: BANNER_PLACEMENT.PARTNERS,
+  clients: BANNER_PLACEMENT.CLIENTS,
+  equipment: BANNER_PLACEMENT.EQUIPMENT,
+  departments: BANNER_PLACEMENT.DEPARTMENTS,
+  medical_advice: BANNER_PLACEMENT.MEDICAL_ADVICE,
+  plans: BANNER_PLACEMENT.PLANS,
+  tests: BANNER_PLACEMENT.TESTS,
+  dashboard: BANNER_PLACEMENT.DASHBOARD,
+  admin_dashboard: BANNER_PLACEMENT.ADMIN_DASHBOARD,
+  doctor_dashboard: BANNER_PLACEMENT.DOCTOR_DASHBOARD,
+  patient_dashboard: BANNER_PLACEMENT.PATIENT_DASHBOARD,
+  lab_dashboard: BANNER_PLACEMENT.LAB_DASHBOARD,
+};
+
+export function normalizeBannerPlacement(raw: string): BannerPlacement | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  const aliasHit =
+    PLACEMENT_ALIASES[trimmed] ?? PLACEMENT_ALIASES[trimmed.toLowerCase()];
+  if (aliasHit) return aliasHit;
+
+  if (CANONICAL_SET.has(trimmed)) return trimmed as BannerPlacement;
+  if (CANONICAL_SET.has(trimmed.toLowerCase())) {
+    return trimmed.toLowerCase() as BannerPlacement;
+  }
+
+  return null;
+}

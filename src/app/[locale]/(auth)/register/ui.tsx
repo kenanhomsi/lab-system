@@ -1,10 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
 import { AuthPasswordField } from "@/components/ui/auth-password-field";
 import { BrandLogo } from "@/components/shared/brand-logo";
+import { getPasswordStrength } from "@/lib/password-strength";
+import { SYRIAN_CITIES } from "@/lib/syrian-cities";
+import { cn } from "@/lib/cn";
 import { useMirror } from "./store";
 
 const UI = () => {
@@ -15,12 +19,14 @@ const UI = () => {
   const submitRegisterForm = useMirror("submitRegisterForm");
   const locale = useLocale();
   const t = useTranslations("auth");
+  const [password, setPassword] = useState("");
+  const passwordStrength = getPasswordStrength(password);
   const inputClassName =
     "w-full rounded-xl border-none bg-surface-container-low px-4 py-3 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40";
 
   if (success) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-surface p-6">
+      <main className="flex min-h-dvh items-center justify-center bg-surface px-4 py-8 sm:p-6">
         <div className="w-full max-w-md text-center">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
             <Icon name="check_circle" className="text-5xl text-green-600" />
@@ -36,10 +42,10 @@ const UI = () => {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-surface p-6">
-      <div className="w-full max-w-lg">
+    <main className="flex min-h-dvh items-center justify-center bg-surface px-4 py-8 sm:p-6">
+      <div className="w-full max-w-lg min-w-0">
         <div className="mb-8 text-center">
-          <Link href={`/${locale}`} className="mb-6 inline-flex items-center gap-3">
+          <Link href={`/${locale}`} className="mb-6 inline-flex max-w-full items-center gap-3">
             <BrandLogo
               label={t("brand")}
               priority
@@ -107,17 +113,26 @@ const UI = () => {
             <label htmlFor="city" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
               {t("city")}
             </label>
-            <input
+            <select
               id="city"
               name="city"
-              type="text"
               required
               autoComplete="address-level2"
+              defaultValue=""
               className={inputClassName}
-            />
+            >
+              <option value="" disabled>
+                {t("selectCity")}
+              </option>
+              {SYRIAN_CITIES.map((city) => (
+                <option key={city.value} value={city.value}>
+                  {locale.startsWith("ar") ? city.ar : city.en}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2">
             <div>
               <label htmlFor="age" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
                 {t("age")}
@@ -149,15 +164,38 @@ const UI = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <AuthPasswordField
-              id="password"
-              name="password"
-              label={t("password")}
-              inputClassName={inputClassName}
-              required
-              autoComplete="new-password"
-              minLength={6}
-            />
+            <div>
+              <AuthPasswordField
+                id="password"
+                name="password"
+                label={t("password")}
+                inputClassName={inputClassName}
+                value={password}
+                onValueChange={setPassword}
+                required
+                autoComplete="new-password"
+                minLength={6}
+                aria-describedby={passwordStrength ? "password-strength" : undefined}
+              />
+              {passwordStrength ? (
+                <p
+                  id="password-strength"
+                  role="status"
+                  className={cn(
+                    "mt-2 text-xs font-medium",
+                    passwordStrength === "weak" && "text-red-600 dark:text-red-400",
+                    passwordStrength === "medium" && "text-amber-600 dark:text-amber-400",
+                    passwordStrength === "strong" && "text-green-600 dark:text-green-400",
+                  )}
+                >
+                  {passwordStrength === "weak"
+                    ? t("passwordWeak")
+                    : passwordStrength === "medium"
+                      ? t("passwordMedium")
+                      : t("passwordStrong")}
+                </p>
+              ) : null}
+            </div>
             <AuthPasswordField
               id="confirmPassword"
               name="confirmPassword"

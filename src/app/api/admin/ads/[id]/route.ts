@@ -5,21 +5,25 @@ import { jsonError } from "@/lib/api/bff-errors";
 import { resolveAccessToken } from "@/lib/api/resolve-access-token";
 import { adModuleNames } from "@/modules/ad";
 import { AdBackendService } from "@/modules/ad/backend";
+import { pageTargetSchema } from "@/lib/banners/page-target";
+import { DISPLAY_MODE_VALUES } from "@/lib/banners/display-mode";
 
 const adService = backendContainer.get<AdBackendService>(adModuleNames.service);
 
 type RouteContext = { params: Promise<{ id: string }> };
 
 const mediaTypeSchema = z.enum(["Image", "Video"]);
+const displayModeSchema = z.enum(DISPLAY_MODE_VALUES);
 
 const updateAdSchema = z
   .object({
     id: z.number().int().positive(),
     name: z.string().trim().min(1),
     description: z.string().trim().min(1),
+    displayMode: displayModeSchema,
     mediaType: mediaTypeSchema,
     media: z.instanceof(File).optional(),
-    addressName: z.string().trim().min(1),
+    addressName: pageTargetSchema,
   })
   .superRefine((value, context) => {
     if (!value.media) return;
@@ -74,6 +78,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
       id,
       name: String(body.get("Name") ?? ""),
       description: String(body.get("Description") ?? ""),
+      displayMode: String(body.get("DisplayMode") ?? ""),
       mediaType: String(body.get("MediaType") ?? ""),
       addressName: String(body.get("AddressName") ?? ""),
       media: media instanceof File ? media : undefined,

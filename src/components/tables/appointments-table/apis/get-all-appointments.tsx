@@ -20,6 +20,11 @@ const normalizeAppointment = (value: unknown): AppointmentRow | null => {
     endTime: String(item.endTime ?? ""),
     status: String(item.status ?? ""),
     patientLocationType: String(item.patientLocationType ?? ""),
+    age:
+      item.age !== null && item.age !== undefined && Number.isFinite(Number(item.age))
+        ? Number(item.age)
+        : null,
+    gender: typeof item.gender === "string" && item.gender.trim() ? item.gender : null,
     patientLatitude: item.patientLatitude ?? null,
     patientLongitude: item.patientLongitude ?? null,
     notes: typeof item.notes === "string" ? item.notes : null,

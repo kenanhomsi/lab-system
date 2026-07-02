@@ -20,8 +20,8 @@ const UI = () => {
   if (success) return <SuccessView />;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-surface p-6">
-      <div className="w-full max-w-md">
+    <main className="flex min-h-dvh items-center justify-center bg-surface px-4 py-8 sm:p-6">
+      <div className="w-full max-w-md min-w-0">
         <div className="mb-8 text-center">
           <Link href={`/${locale}`} className="mb-6 inline-flex items-center justify-center">
             <BrandLogo variant="full" />
