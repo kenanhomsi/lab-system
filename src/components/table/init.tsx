@@ -12,6 +12,7 @@ const Init = (props: FactoryProps & PropsWithChildren) => {
     data,
     schema,
     expandedRowIds,
+    onExpandedRowIdsChange,
     isLoading,
     type,
     onReorder,
@@ -32,6 +33,7 @@ const Init = (props: FactoryProps & PropsWithChildren) => {
   useMirrorRegistry("data", data);
   useMirrorRegistry("schema", schema);
   useMirrorRegistry("expandedRowIds", expandedRowIds);
+  useMirrorRegistry("onExpandedRowIdsChange", onExpandedRowIdsChange);
   useMirrorRegistry("type", type);
   useMirrorRegistry("isLoading", isLoading);
   useMirrorRegistry("onReorder", onReorder);

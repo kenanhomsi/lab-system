@@ -15,7 +15,9 @@ import {
 } from "@mantine/core";
 import { FiBell, FiBellOff, FiCheck, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useLocale, useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 import { Link } from "@/i18n/navigation";
+import { getNotificationsViewAllHref } from "../lib/notifications-page-href";
 import { usePushNotificationsContext } from "../context/push-notifications-context";
 import { useNotificationsList } from "../hooks/use-notifications-list";
 import { NotificationList } from "./notification-list";
@@ -50,6 +52,8 @@ export function NotificationsMenu() {
   const t = useTranslations("pushNotifications");
   const locale = useLocale();
   const isRtl = locale === "ar";
+  const { data: session } = useSession();
+  const viewAllHref = getNotificationsViewAllHref(session?.user?.roles);
   const { status, lastError, enablePush } = usePushNotificationsContext();
   const [opened, setOpened] = useState(false);
   const [isEnabling, setIsEnabling] = useState(false);
@@ -236,7 +240,7 @@ export function NotificationsMenu() {
         <div className={styles.footer}>
           <UnstyledButton
             component={Link}
-            href="/notifications"
+            href={viewAllHref}
             className={styles.viewAllButton}
             onClick={() => setOpened(false)}
           >

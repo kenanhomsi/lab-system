@@ -1,4 +1,15 @@
+import type { Appointment } from "@/modules/appointments";
 import { TestRequestItem } from "../types";
+
+export type TestRequestModalType =
+  | "create"
+  | "edit"
+  | "delete"
+  | "appointment"
+  | "detail"
+  | null;
+
+export type AppointmentInlineModalType = "edit" | "cancel" | null;
 
 type Params = {
   pageNumber: number;
@@ -12,10 +23,17 @@ type Params = {
   setSortBy: (value: string) => void;
   sortDesc: boolean;
   setSortDesc: (value: boolean) => void;
-  activeModal: "create" | "edit" | "delete" | "appointment" | null;
-  setActiveModal: (value: "create" | "edit" | "delete" | "appointment" | null) => void;
+  activeModal: TestRequestModalType;
+  setActiveModal: (value: TestRequestModalType) => void;
   selectedTestRequest: TestRequestItem | null;
   setSelectedTestRequest: (value: TestRequestItem | null) => void;
+  expandedRows: number[];
+  setExpandedRows: (value: number[] | ((current: number[]) => number[])) => void;
+  toggleExpandedRow: (id: number) => void;
+  appointmentActiveModal: AppointmentInlineModalType;
+  setAppointmentActiveModal: (value: AppointmentInlineModalType) => void;
+  selectedAppointment: Appointment | null;
+  setSelectedAppointment: (value: Appointment | null) => void;
 };
 
 const store = (): Params => ({
@@ -34,6 +52,13 @@ const store = (): Params => ({
   setActiveModal: () => {},
   selectedTestRequest: null,
   setSelectedTestRequest: () => {},
+  expandedRows: [],
+  setExpandedRows: () => {},
+  toggleExpandedRow: () => {},
+  appointmentActiveModal: null,
+  setAppointmentActiveModal: () => {},
+  selectedAppointment: null,
+  setSelectedAppointment: () => {},
 });
 
 export { store as stateStore };

@@ -11,6 +11,7 @@ import {
   Alert,
   Badge,
   Button,
+  FileInput,
   Group,
   Modal,
   NumberInput,
@@ -25,7 +26,7 @@ import {
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { notifications } from "@mantine/notifications";
-import { IconCalendarEvent, IconCalendarPlus, IconClock, IconMapPin } from "@tabler/icons-react";
+import { IconCalendarEvent, IconCalendarPlus, IconClock, IconMapPin, IconPaperclip } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
@@ -54,6 +55,7 @@ export function BookBloodDrawModal({
   const [patientAge, setPatientAge] = useState<number | "">("");
   const [gender, setGender] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
+  const [attachment, setAttachment] = useState<File | null>(null);
 
   const slotsQuery = useQuery({
     queryKey: ["appointment-day-availability", appointmentDate],
@@ -109,6 +111,7 @@ export function BookBloodDrawModal({
         notes,
         startTime: selectedSlot.startTime,
         endTime: selectedSlot.endTime,
+        attachment,
       });
     },
     onSuccess: async () => {
@@ -120,7 +123,13 @@ export function BookBloodDrawModal({
       setPatientAge("");
       setGender(null);
       setNotes("");
+      setAttachment(null);
       await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      if (testRequest?.id) {
+        await queryClient.invalidateQueries({
+          queryKey: ["test-request-appointments", testRequest.id],
+        });
+      }
       onClose();
     },
   });
@@ -248,6 +257,15 @@ export function BookBloodDrawModal({
               minRows={3}
               value={notes}
               onChange={(event) => setNotes(event.currentTarget.value)}
+            />
+            <FileInput
+              label={t("prescriptionAttachment")}
+              description={t("prescriptionAttachmentDesc")}
+              accept="image/*"
+              clearable
+              leftSection={<IconPaperclip size={16} />}
+              value={attachment}
+              onChange={setAttachment}
             />
             <Group justify="flex-end">
               <Button variant="default" onClick={onClose}>

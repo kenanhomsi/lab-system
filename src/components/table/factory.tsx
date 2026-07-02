@@ -15,7 +15,8 @@ type FactoryProps = {
   OnPageNumberChange: (value: number) => void;
   paginationStatic: { page: number; limit: number; count: number };
   type: "normal" | "expansion" | "isLoading";
-  expandedRowIds?: string[];
+  expandedRowIds?: unknown[];
+  onExpandedRowIdsChange?: (recordIds: unknown[]) => void;
   //eslint-disable-next-line  @typescript-eslint/no-explicit-any
   schema: DataTableColumn<any>[];
   //eslint-disable-next-line  @typescript-eslint/no-explicit-any

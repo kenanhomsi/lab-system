@@ -10,10 +10,10 @@ const ExpansionTable = () => {
   const schema = useMirror("schema");
   const data = useMirror("data");
   const expandedRowIds = useMirror("expandedRowIds");
+  const onExpandedRowIdsChange = useMirror("onExpandedRowIdsChange");
   const headerComp = useMirror("headerComp");
   const ContentComp = useMirror("ContentComp");
   const isLoading = useMirror("isLoading");
-  const onRowClick = useMirror("onRowClick");
   const records = Array.isArray(data) ? data : [];
   const hasRecords = records.length > 0;
   const minHeight = hasRecords ? undefined : "20rem";
@@ -25,6 +25,7 @@ const ExpansionTable = () => {
       <span>No records found</span>
     </Box>
   );
+
   return (
     <>
       {headerComp}
@@ -32,9 +33,6 @@ const ExpansionTable = () => {
       {!isLoading && (
         <>
           <DataTable
-            onRowClick={({ record }) => {
-              onRowClick?.(record.id as string);
-            }}
             rowClassName={() => {
               return `${styles.hoverRow}`;
             }}
@@ -55,10 +53,12 @@ const ExpansionTable = () => {
               <div className={styles.tableScrollWrapper}>{children}</div>
             )}
             rowExpansion={{
+              allowMultiple: true,
               expanded: {
-                recordIds: expandedRowIds as string[],
+                recordIds: expandedRowIds ?? [],
+                onRecordIdsChange: onExpandedRowIdsChange,
               },
-              content: ({ record }) => ContentComp?.(record.id),
+              content: ({ record }) => ContentComp?.(String(record.id)),
             }}
           />
           <PaginationComp />

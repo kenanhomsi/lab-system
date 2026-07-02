@@ -28,6 +28,7 @@ const normalizeAppointment = (value: unknown): AppointmentRow | null => {
     patientLatitude: item.patientLatitude ?? null,
     patientLongitude: item.patientLongitude ?? null,
     notes: typeof item.notes === "string" ? item.notes : null,
+    attachmentUrl: typeof item.attachmentUrl === "string" ? item.attachmentUrl : null,
     createdByUserId: typeof item.createdByUserId === "string" ? item.createdByUserId : null,
     createdAt: typeof item.createdAt === "string" ? item.createdAt : null,
     updatedAt: typeof item.updatedAt === "string" ? item.updatedAt : null,

@@ -1,6 +1,7 @@
 "use client";
 
-import { Badge, Stack, Text } from "@mantine/core";
+import { Badge, Group, Stack, Text, Anchor } from "@mantine/core";
+import { IconPaperclip } from "@tabler/icons-react";
 import type { AppointmentRow } from "../types";
 import type { DataTableColumn } from "./types";
 import { ActionsRender } from "./columns-rendering";
@@ -183,6 +184,24 @@ const getAppointmentColumns = (t: Translate): DataTableColumn<AppointmentRow>[] 
         </Badge>
       );
     },
+  },
+  {
+    accessor: "attachmentUrl",
+    title: t("columnPrescription"),
+    width: "12%",
+    render: (row) =>
+      row.attachmentUrl?.trim() ? (
+        <Anchor href={row.attachmentUrl} target="_blank" rel="noreferrer">
+          <Group gap={4}>
+            <IconPaperclip size={14} />
+            <Text size="sm">{t("openPrescription")}</Text>
+          </Group>
+        </Anchor>
+      ) : (
+        <Text size="sm" c="dimmed" py={4}>
+          —
+        </Text>
+      ),
   },
   {
     accessor: "createdAt",

@@ -6,6 +6,7 @@ import { ActionIcon, CloseButton, Select, TextInput, Tooltip } from "@mantine/co
 import { IconArrowsSort, IconClipboardList, IconPlus, IconRefresh, IconSearch } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
+import { ExpandedAppointmentsRow } from "./components/expanded-appointments-row";
 import { useMirror } from "./store";
 
 const UI = () => {
@@ -25,6 +26,8 @@ const UI = () => {
   const setSortDesc = useMirror("setSortDesc");
   const setActiveModal = useMirror("setActiveModal");
   const setSelectedTestRequest = useMirror("setSelectedTestRequest");
+  const expandedRows = useMirror("expandedRows");
+  const setExpandedRows = useMirror("setExpandedRows");
 
   const hasActiveFilters = Boolean(searchValue.trim()) || sortBy !== "createdAt" || !sortDesc;
 
@@ -47,11 +50,15 @@ const UI = () => {
 
   return (
     <Table
-      type="normal"
+      type="expansion"
       isLoading={isPending}
       schema={schema}
       OnPageNumberChange={setPageNumber}
       data={testRequestsData?.items || []}
+      expandedRowIds={expandedRows}
+      onExpandedRowIdsChange={(recordIds) =>
+        setExpandedRows(recordIds.map((id) => Number(id)))
+      }
       paginationStatic={{
         count: testRequestsData?.totalCount || 0,
         limit: testRequestsData?.pageSize || pageSize || 20,
@@ -134,6 +141,9 @@ const UI = () => {
           )}
         </TablePageHeader>
       </Table.Header>
+      <Table.Content>
+        {(recordId) => <ExpandedAppointmentsRow testRequestId={recordId} />}
+      </Table.Content>
     </Table>
   );
 };

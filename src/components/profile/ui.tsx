@@ -27,6 +27,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import {
+  IconBell,
   IconAlertCircle,
   IconAlertTriangle,
   IconCheck,
@@ -59,6 +60,7 @@ import {
   PatientTestRequestsFeed,
   PatientTestResultsFeed,
 } from "./patient-activity-feeds";
+import { NotificationsPanel } from "@/features/push-notifications/ui/notifications-panel";
 
 import { useMirror } from "./store";
 import { hasAdminRole, hasPatientRole, resolveDashboardBaseFromRoles } from "./role-path";
@@ -80,7 +82,8 @@ const isProfileTab = (value: string | null): value is ProfileTab =>
   value === "testRequests" ||
   value === "testResults" ||
   value === "insuranceApprovals" ||
-  value === "complaints";
+  value === "complaints" ||
+  value === "notifications";
 
 /**
  * Dashboard profile surface: identity summary, account metadata, and editable tabs.
@@ -708,6 +711,9 @@ const UI = () => {
                     <Tabs.Tab value="complaints" leftSection={<IconAlertCircle size={16} aria-hidden />}>
                       {t("tabComplaints")}
                     </Tabs.Tab>
+                    <Tabs.Tab value="notifications" leftSection={<IconBell size={16} aria-hidden />}>
+                      {t("tabNotifications")}
+                    </Tabs.Tab>
                   </>
                 ) : null}
                 <Tabs.Tab value="security" leftSection={<IconKey size={16} aria-hidden />}>
@@ -866,6 +872,18 @@ const UI = () => {
                         </Text>
                       </Stack>
                       <PatientComplaintsFeed />
+                    </Stack>
+                  </Tabs.Panel>
+
+                  <Tabs.Panel value="notifications" pt="lg" className={styles.tabPanel}>
+                    <Stack gap="md">
+                      <Stack gap={2}>
+                        <Text fw={700}>{t("tabNotifications")}</Text>
+                        <Text size="sm" c="dimmed">
+                          {t("notificationsDesc")}
+                        </Text>
+                      </Stack>
+                      <NotificationsPanel showHeader={false} />
                     </Stack>
                   </Tabs.Panel>
                 </>

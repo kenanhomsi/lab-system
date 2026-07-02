@@ -6,6 +6,8 @@ import {
   EditTestRequestModal,
 } from "@/components/modals/test-requests";
 import { BookBloodDrawModal } from "@/components/features/appointments";
+import { AppointmentInlineModals } from "./appointment-inline-modals";
+import { DetailModal } from "./detail-modal";
 import { useMirror } from "../store";
 
 const Modals = () => {
@@ -33,6 +35,8 @@ const Modals = () => {
         onClose={closeModal}
         testRequest={selectedTestRequest}
       />
+      <AppointmentInlineModals />
+      <DetailModal />
     </>
   );
 };

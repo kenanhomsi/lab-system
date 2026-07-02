@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { jsonError } from "@/lib/api/bff-errors";
 import { proxyBackendRequest } from "@/lib/api/backend-proxy";
+import { forwardMultipartToBackend } from "@/lib/api/forward-multipart";
 
 export async function GET(req: NextRequest) {
   try {
@@ -12,12 +13,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    return await proxyBackendRequest(req, {
-      method: "POST",
-      path: "/api/appointments",
-      body,
-    });
+    return await forwardMultipartToBackend(req, "/api/appointments");
   } catch (error: unknown) {
     return jsonError(error, 400);
   }

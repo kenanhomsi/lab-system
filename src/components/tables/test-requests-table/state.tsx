@@ -1,8 +1,10 @@
 "use client";
 
+import type { Appointment } from "@/modules/appointments";
 import { useDebouncedValue } from "@mantine/hooks";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useMirrorRegistry } from "./store";
+import type { AppointmentInlineModalType, TestRequestModalType } from "./store/state";
 import { TestRequestItem } from "./types";
 
 type StateProps = {
@@ -17,10 +19,18 @@ const State = ({ children, initialActiveModal = null }: StateProps) => {
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortDesc, setSortDesc] = useState(true);
   const [selectedTestRequest, setSelectedTestRequest] = useState<TestRequestItem | null>(null);
-  const [activeModal, setActiveModal] = useState<null | "create" | "edit" | "delete" | "appointment">(
-    initialActiveModal,
-  );
+  const [activeModal, setActiveModal] = useState<TestRequestModalType>(initialActiveModal);
+  const [expandedRows, setExpandedRows] = useState<number[]>([]);
+  const [appointmentActiveModal, setAppointmentActiveModal] =
+    useState<AppointmentInlineModalType>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [debouncedValue] = useDebouncedValue(searchValue, 500);
+
+  const toggleExpandedRow = useCallback((id: number) => {
+    setExpandedRows((current) =>
+      current.includes(id) ? current.filter((rowId) => rowId !== id) : [...current, id],
+    );
+  }, []);
 
   useMirrorRegistry("pageNumber", pageNumber);
   useMirrorRegistry("setPageNumber", setPageNumber);
@@ -37,6 +47,13 @@ const State = ({ children, initialActiveModal = null }: StateProps) => {
   useMirrorRegistry("setSelectedTestRequest", setSelectedTestRequest);
   useMirrorRegistry("activeModal", activeModal);
   useMirrorRegistry("setActiveModal", setActiveModal);
+  useMirrorRegistry("expandedRows", expandedRows);
+  useMirrorRegistry("setExpandedRows", setExpandedRows);
+  useMirrorRegistry("toggleExpandedRow", toggleExpandedRow);
+  useMirrorRegistry("appointmentActiveModal", appointmentActiveModal);
+  useMirrorRegistry("setAppointmentActiveModal", setAppointmentActiveModal);
+  useMirrorRegistry("selectedAppointment", selectedAppointment);
+  useMirrorRegistry("setSelectedAppointment", setSelectedAppointment);
 
   return <>{children}</>;
 };

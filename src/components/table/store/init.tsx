@@ -19,7 +19,8 @@ type Params = {
   OnPageNumberChange: (value: number) => void;
   paginationStatic: { page: number; limit: number; count: number };
   type: "normal" | "expansion" | "isLoading";
-  expandedRowIds?: string[];
+  expandedRowIds?: unknown[];
+  onExpandedRowIdsChange?: (recordIds: unknown[]) => void;
   //eslint-disable-next-line  @typescript-eslint/no-explicit-any
   schema: DataTableColumn<any>[];
   //eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -44,6 +45,7 @@ const store = (): Params => ({
   paginationStatic: { page: 1, limit: 5, count: 1 },
   type: "normal",
   expandedRowIds: [],
+  onExpandedRowIdsChange: undefined,
   schema: [],
   data: [],
   isLoading: false,

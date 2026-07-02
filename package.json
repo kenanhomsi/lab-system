@@ -32,7 +32,7 @@
     "inversify": "^8.1.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.16.0",
-    "mantine-datatable": "^8.3.13",
+    "mantine-datatable": "^9.3.1",
     "motion": "^12.40.0",
     "next": "16.2.2",
     "next-auth": "^4.24.13",

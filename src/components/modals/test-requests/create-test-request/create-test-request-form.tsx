@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   Divider,
+  FileInput,
   Group,
   Box,
   Modal,
@@ -28,6 +29,7 @@ import {
   IconCurrencyDollar,
   IconFlask2,
   IconMapPin,
+  IconPaperclip,
   IconPlus,
   IconUsers,
 } from "@tabler/icons-react";
@@ -152,6 +154,7 @@ const CreateTestRequestForm = () => {
   const [patientAge, setPatientAge] = useState<number | "">("");
   const [gender, setGender] = useState<string | null>(null);
   const [appointmentNotes, setAppointmentNotes] = useState("");
+  const [attachment, setAttachment] = useState<File | null>(null);
   const [createdTestRequestId, setCreatedTestRequestId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
@@ -182,6 +185,7 @@ const CreateTestRequestForm = () => {
       setPatientAge("");
       setGender(null);
       setAppointmentNotes("");
+      setAttachment(null);
       setCreatedTestRequestId(null);
       return;
     }
@@ -204,6 +208,7 @@ const CreateTestRequestForm = () => {
     setPatientAge("");
     setGender(null);
     setAppointmentNotes("");
+    setAttachment(null);
     setCreatedTestRequestId(null);
   }, [initialMedicalTestIds, opened]);
 
@@ -463,6 +468,15 @@ const CreateTestRequestForm = () => {
                   placeholder={ta("collectionNotesPlaceholder")}
                   value={appointmentNotes}
                   onChange={(event) => setAppointmentNotes(event.currentTarget.value)}
+                />
+                <FileInput
+                  label={ta("prescriptionAttachment")}
+                  description={ta("prescriptionAttachmentDesc")}
+                  accept="image/*"
+                  clearable
+                  leftSection={<IconPaperclip size={16} />}
+                  value={attachment}
+                  onChange={setAttachment}
                 />
                 {isHomeCollection ? (
                   <Stack gap="sm">
@@ -735,6 +749,7 @@ const CreateTestRequestForm = () => {
                       notes: appointmentNotes,
                       startTime: selectedSlot.startTime,
                       endTime: selectedSlot.endTime,
+                      attachment,
                     });
                     handleClose();
                   } catch (error) {

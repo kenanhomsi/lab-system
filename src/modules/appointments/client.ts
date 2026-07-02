@@ -67,6 +67,27 @@ const isBookableSlot = (slot: AppointmentSlot): boolean => {
   return true;
 };
 
+const buildCreateAppointmentFormData = (input: CreateAppointmentInput): FormData => {
+  const form = new FormData();
+  form.append("AvailabilityId", String(input.availabilityId));
+  form.append("TestRequestId", String(input.testRequestId));
+  form.append("UserId", input.userId);
+  form.append("PatientLocationType", input.patientLocationType);
+  if (input.age != null) form.append("Age", String(input.age));
+  if (input.gender) form.append("Gender", input.gender);
+  if (input.patientLatitude != null) {
+    form.append("PatientLatitude", String(input.patientLatitude));
+  }
+  if (input.patientLongitude != null) {
+    form.append("PatientLongitude", String(input.patientLongitude));
+  }
+  if (input.notes) form.append("Notes", input.notes);
+  if (input.startTime) form.append("StartTime", input.startTime);
+  if (input.endTime) form.append("EndTime", input.endTime);
+  if (input.attachment) form.append("Attachment", input.attachment);
+  return form;
+};
+
 export const appointmentsClient = {
   async findAll(params?: Record<string, string | number | undefined>) {
     const response = await axiosInstanceFront.get("/appointments", { params });
@@ -74,7 +95,10 @@ export const appointmentsClient = {
   },
 
   async create(input: CreateAppointmentInput) {
-    const response = await axiosInstanceFront.post("/appointments", input);
+    const form = buildCreateAppointmentFormData(input);
+    const response = await axiosInstanceFront.post("/appointments", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return unwrapData<Appointment>(response.data);
   },
 

@@ -12,6 +12,7 @@ export type Appointment = {
   patientLatitude?: number | null;
   patientLongitude?: number | null;
   notes?: string | null;
+  attachmentUrl?: string | null;
   createdByUserId?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
@@ -43,6 +44,7 @@ export type CreateAppointmentInput = {
   notes?: string;
   startTime?: string;
   endTime?: string;
+  attachment?: File | null;
 };
 
 export type DayAvailabilityInput = {

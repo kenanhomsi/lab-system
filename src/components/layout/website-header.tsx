@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { signOut, useSession } from "next-auth/react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { WebsiteNotificationsBell } from "@/components/layout/website-notifications-bell";
 import { cn } from "@/lib/cn";
 
 import { BrandLogo } from "@/components/shared/brand-logo";
@@ -88,6 +89,7 @@ export function WebsiteHeader({
             ? "/special/daily-tasks"
             : "/";
   const accountLabel = session?.user?.fullName?.trim() || t("navbar.profile");
+  const notificationsHref = isPatient ? "/profile?tab=notifications" : "/notifications";
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -184,6 +186,16 @@ export function WebsiteHeader({
         </span>
         {t("navbar.profile")}
       </Link>
+      <Link
+        href={notificationsHref}
+        className="flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors hover:bg-slate-50"
+        onClick={() => setProfileMenuOpen(false)}
+      >
+        <span className="material-symbols-outlined text-lg" aria-hidden>
+          notifications
+        </span>
+        {t("pushNotifications.menuTitle")}
+      </Link>
       {!isPatient ? (
         <Link
           href={dashboardHref}
@@ -275,6 +287,9 @@ export function WebsiteHeader({
               isDark && "border-white/20 bg-surface-container-low",
             )}
           />
+          {isAuthenticated ? (
+            <WebsiteNotificationsBell isDark={isDark} className="hidden md:inline-flex" />
+          ) : null}
           {isAuthenticated ? (
             <div className="relative hidden md:block">
               <button
@@ -501,6 +516,11 @@ export function WebsiteHeader({
                     : "border-slate-200/90 bg-slate-100/80 shadow-sm shadow-slate-200/40",
                 )}
               />
+              {isAuthenticated ? (
+                <div className="flex justify-center">
+                  <WebsiteNotificationsBell isDark={isDark} />
+                </div>
+              ) : null}
               {!isDark && showCta ? (
                 isAuthenticated ? null : (
                   <Link
@@ -520,6 +540,13 @@ export function WebsiteHeader({
                     onClick={() => setDrawerOpen(false)}
                   >
                     {t("navbar.profile")}
+                  </Link>
+                  <Link
+                    href={notificationsHref}
+                    className="rounded-xl border border-primary/25 px-4 py-2.5 text-center text-sm font-bold text-primary transition-colors hover:bg-primary/10"
+                    onClick={() => setDrawerOpen(false)}
+                  >
+                    {t("pushNotifications.menuTitle")}
                   </Link>
                   {!isPatient ? (
                     <Link
