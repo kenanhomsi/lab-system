@@ -43,11 +43,11 @@ import {
 
 type SelectOption = { value: string; label: string };
 type RoleOption = SelectOption & { roleId: string };
-type ActionValue = "*" | "read" | "write" | "delete" | "approve" | "assign";
+type ActionValue = "*" | "read" | "create" | "delete" | "approve" | "assign";
 type ConditionType = "all" | "any";
 type ConditionRuleDraft = { field: string; operator: string; valueText: string };
 
-const ACTION_VALUES: ActionValue[] = ["*", "read", "write", "delete", "approve", "assign"];
+const ACTION_VALUES: ActionValue[] = ["*", "read", "create", "delete", "approve", "assign"];
 const SUBJECT_TYPE_VALUES = ["User", "Role", "Authenticated", "All"] as const;
 type SubjectTypeValue = (typeof SUBJECT_TYPE_VALUES)[number];
 const WILDCARD_SUBJECT_KEY = "*";
@@ -304,7 +304,8 @@ function emptyPayload(): CreateAccessPolicyRequest {
 function fromRow(row: AccessPolicyTableItem): CreateAccessPolicyRequest {
   const effect = row.effect === "Allow" || row.effect === "Deny" ? row.effect : "Deny";
   const subjectType = isSubjectTypeValue(row.subjectType ?? "") ? row.subjectType : "User";
-  const action = row.action?.trim().toLowerCase() ?? "";
+  const rawAction = row.action?.trim().toLowerCase() ?? "";
+  const action = rawAction === "write" ? "create" : rawAction;
 
   let conditionStr = "";
   if (typeof row.condition === "string") {
