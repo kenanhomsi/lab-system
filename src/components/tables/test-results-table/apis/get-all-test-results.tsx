@@ -71,7 +71,6 @@ const GetAllTestResults = (props: PropsWithChildren) => {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["test-results", pageNumber, pageSize, debouncedValue, sortBy, sortDesc],
     queryFn: () => fetchTestResultsList({ pageNumber, pageSize, search: debouncedValue, sortBy, sortDesc }),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("testResultsData", data ?? emptyResponse);

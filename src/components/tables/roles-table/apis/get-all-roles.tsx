@@ -33,7 +33,6 @@ const GetAllRoles = (props: PropsWithChildren) => {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["admin-roles", pageNumber],
     queryFn: () => getAllRoles({ pageNumber }),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("rolesData", data!);

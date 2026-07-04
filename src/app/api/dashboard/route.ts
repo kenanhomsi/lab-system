@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jsonError } from "@/lib/api/bff-errors";
-import { backendContainer } from "@/container";
 import { resolveAccessToken } from "@/lib/api/resolve-access-token";
 import {
-  DashboardBackendService,
-  dashboardModuleNames,
-} from "@/modules/dashboard";
+  DASHBOARD_CACHE_SECONDS,
+  fetchDashboardResponseForToken,
+} from "@/lib/api/fetch-dashboard";
 
-const dashboardService = backendContainer.get<DashboardBackendService>(
-  dashboardModuleNames.service,
-);
+const DASHBOARD_PRIVATE_CACHE = [
+  "private",
+  `max-age=${DASHBOARD_CACHE_SECONDS}`,
+  `stale-while-revalidate=${DASHBOARD_CACHE_SECONDS}`,
+].join(", ");
 
 export async function GET(req: NextRequest) {
   try {
@@ -18,8 +19,13 @@ export async function GET(req: NextRequest) {
       throw new Error("Missing authorization token");
     }
 
-    const res = await dashboardService.getDashboard({ token });
-    return NextResponse.json(res);
+    const res = await fetchDashboardResponseForToken(token);
+    return NextResponse.json(res, {
+      headers: {
+        "Cache-Control": DASHBOARD_PRIVATE_CACHE,
+        Vary: "Cookie, Authorization",
+      },
+    });
   } catch (error: unknown) {
     return jsonError(error);
   }

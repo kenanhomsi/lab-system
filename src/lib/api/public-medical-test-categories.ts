@@ -89,7 +89,7 @@ async function fetchUpstreamMedicalTestCategoriesList(
   try {
     const response = await fetch(url.toString(), {
       headers: buildUpstreamMedicalTestCategoriesHeaders(),
-      cache: "no-store",
+      next: { revalidate: 300 },
     });
 
     if (!response.ok) {

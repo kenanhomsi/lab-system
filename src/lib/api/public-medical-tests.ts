@@ -73,7 +73,7 @@ async function fetchUpstreamMedicalTestsList(
   try {
     const response = await fetch(url.toString(), {
       headers: buildUpstreamMedicalTestsHeaders(),
-      cache: "no-store",
+      next: { revalidate: 300 },
     });
 
     if (!response.ok) {
@@ -97,7 +97,7 @@ async function fetchUpstreamMedicalTestDetail(id: string): Promise<UpstreamMedic
   try {
     const response = await fetch(url, {
       headers: buildUpstreamMedicalTestsHeaders(),
-      cache: "no-store",
+      next: { revalidate: 300 },
     });
 
     if (!response.ok) {

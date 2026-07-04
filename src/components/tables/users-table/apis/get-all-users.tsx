@@ -68,7 +68,6 @@ const GetAllUsers = (props: PropsWithChildren) => {
         sortBy,
         sortDesc,
       }),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("usersData", data ?? {

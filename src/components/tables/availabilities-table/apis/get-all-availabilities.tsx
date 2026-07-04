@@ -51,7 +51,6 @@ const GetAllAvailabilities = ({ children }: PropsWithChildren) => {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["admin-availabilities", pageNumber],
     queryFn: () => availabilitiesClient.findAll(),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("availabilitiesData", asAvailabilityRows(data));

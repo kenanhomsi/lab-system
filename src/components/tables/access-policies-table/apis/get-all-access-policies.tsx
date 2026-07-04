@@ -31,7 +31,6 @@ const GetAllAccessPolicies = (props: PropsWithChildren) => {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["admin-access-policies", pageNumber],
     queryFn: () => getAllAccessPolicies({ pageNumber }),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("policiesData", data ?? []);

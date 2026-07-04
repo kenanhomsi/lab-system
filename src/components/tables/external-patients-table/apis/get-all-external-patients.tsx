@@ -59,7 +59,6 @@ const GetAllExternalPatients = (props: PropsWithChildren) => {
   const { data: list = [], isPending, refetch } = useQuery({
     queryKey: ["external-patients"],
     queryFn: async () => normalizeExternalPatientsList(await service.findAll()),
-    refetchInterval: 1000 * 60,
   });
 
   const pageData = useMemo((): ExternalPatientsPageData => {

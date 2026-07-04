@@ -209,7 +209,6 @@ export function WebsiteWelcomePagesModal() {
     const load = async () => {
       try {
         const response = await fetch("/api/website/welcome-pages", {
-          cache: "no-store",
           signal: controller.signal,
         });
         if (!response.ok) {
@@ -225,10 +224,29 @@ export function WebsiteWelcomePagesModal() {
       }
     };
 
-    void load();
+    const runAfterFirstPaint = () => {
+      const idleWindow = window as Window & {
+        requestIdleCallback?: (
+          callback: IdleRequestCallback,
+          options?: IdleRequestOptions,
+        ) => number;
+        cancelIdleCallback?: (handle: number) => void;
+      };
+      if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
+        const idleId = idleWindow.requestIdleCallback(() => void load(), {
+          timeout: 2000,
+        });
+        return () => idleWindow.cancelIdleCallback?.(idleId);
+      }
+      const timeoutId = window.setTimeout(() => void load(), 250);
+      return () => window.clearTimeout(timeoutId);
+    };
+
+    const cancelScheduledLoad = runAfterFirstPaint();
 
     return () => {
       mounted = false;
+      cancelScheduledLoad();
       controller.abort();
     };
   }, [isDismissed]);

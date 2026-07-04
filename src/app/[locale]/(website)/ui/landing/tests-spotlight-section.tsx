@@ -1,12 +1,12 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import type {
-  MedicalTestCategoriesResponse,
-  MedicalTestCategory,
-} from "@/modules/medical-test-categories";
+import type { MedicalTestCategory } from "@/modules/medical-test-categories";
 import { Card } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/i18n/navigation";
-import { getRequestOrigin } from "@/lib/api/request-origin";
+import {
+  fetchUpstreamMedicalTestCategoriesList,
+  parsePublicMedicalTestCategoriesList,
+} from "@/lib/api/public-medical-test-categories";
 
 const FEATURED_CATEGORIES_LIMIT = 3;
 
@@ -28,21 +28,20 @@ const categoryLabel = (category: MedicalTestCategory, locale: string): string =>
 
 async function fetchFeaturedCategories(): Promise<MedicalTestCategory[]> {
   try {
-    const origin = await getRequestOrigin();
-    const url = new URL("/api/website/category-medical", origin);
-    url.searchParams.set("Page", "1");
-    url.searchParams.set("PageSize", String(FEATURED_CATEGORIES_LIMIT));
-    url.searchParams.set("activeOnly", "true");
-
-    const response = await fetch(url.toString(), {
-      next: { revalidate: 3600 },
+    const result = await fetchUpstreamMedicalTestCategoriesList({
+      Page: "1",
+      PageSize: String(FEATURED_CATEGORIES_LIMIT),
+      activeOnly: "true",
     });
 
-    if (!response.ok) {
+    if (!result.ok) {
       return [];
     }
 
-    const payload = (await response.json()) as MedicalTestCategoriesResponse;
+    const payload = parsePublicMedicalTestCategoriesList(result.payload, {
+      pageNumber: 1,
+      pageSize: FEATURED_CATEGORIES_LIMIT,
+    });
     if (!Array.isArray(payload.items)) {
       return [];
     }

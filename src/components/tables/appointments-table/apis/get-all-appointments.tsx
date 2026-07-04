@@ -59,7 +59,6 @@ const GetAllAppointments = ({ children }: PropsWithChildren) => {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["admin-blood-draw-appointments"],
     queryFn: () => appointmentsClient.findAll(),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("appointmentsRaw", asAppointmentRows(data));

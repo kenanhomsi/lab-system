@@ -5,13 +5,12 @@ import "@mantine/charts/styles.css";
 import "@mantine/notifications/styles.css";
 import "./globals.css";
 import type { ReactNode } from "react";
-import { cookies, headers } from "next/headers";
 import { Inter, Plus_Jakarta_Sans, Geist } from "next/font/google";
 import localFont from "next/font/local";
 import { routing } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const inter = Inter({
   variable: "--font-inter",
@@ -47,32 +46,12 @@ const qomraArabic = localFont({
   display: "swap",
 });
 
-async function resolveLocale(): Promise<string> {
-  const locales = routing.locales as readonly string[];
-  const isValid = (v: string | undefined | null) =>
-    !!v && locales.includes(v);
-
-  const headersList = await headers();
-  const headerLocale = headersList.get("x-next-intl-locale");
-  if (isValid(headerLocale)) {
-    return headerLocale!;
-  }
-
-  const cookieStore = await cookies();
-  const cookieLocale = cookieStore.get("NEXT_LOCALE")?.value;
-  if (isValid(cookieLocale)) {
-    return cookieLocale!;
-  }
-
-  return routing.defaultLocale;
-}
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const locale = await resolveLocale();
+  const locale = routing.defaultLocale;
   const dir = locale === "ar" ? "rtl" : "ltr";
 
   return (

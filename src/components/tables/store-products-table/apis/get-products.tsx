@@ -12,7 +12,6 @@ const GetProducts = ({ children }: PropsWithChildren) => {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["store", "admin", "products", pageNumber],
     queryFn: () => storeService.listProducts({ query: { page: pageNumber, pageSize: 20 } }),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("productsData", data ?? emptyProductsData());

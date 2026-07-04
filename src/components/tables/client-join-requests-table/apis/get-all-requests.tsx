@@ -60,7 +60,6 @@ const GetAllClientJoinRequests = (props: PropsWithChildren) => {
         pageNumber,
         status: statusFilter,
       }),
-    refetchInterval: 1000 * 60,
   });
 
   const requestsData = useMemo(() => {

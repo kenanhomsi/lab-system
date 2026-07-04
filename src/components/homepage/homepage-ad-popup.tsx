@@ -105,7 +105,6 @@ export function HomepageAdPopup() {
     const fetchAds = async () => {
       try {
         const response = await fetch("/api/website/ads", {
-          cache: "no-store",
           signal: controller.signal,
         });
         if (!response.ok) return;
@@ -120,10 +119,29 @@ export function HomepageAdPopup() {
       }
     };
 
-    void fetchAds();
+    const runAfterFirstPaint = () => {
+      const idleWindow = window as Window & {
+        requestIdleCallback?: (
+          callback: IdleRequestCallback,
+          options?: IdleRequestOptions,
+        ) => number;
+        cancelIdleCallback?: (handle: number) => void;
+      };
+      if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
+        const idleId = idleWindow.requestIdleCallback(() => void fetchAds(), {
+          timeout: 2000,
+        });
+        return () => idleWindow.cancelIdleCallback?.(idleId);
+      }
+      const timeoutId = window.setTimeout(() => void fetchAds(), 250);
+      return () => window.clearTimeout(timeoutId);
+    };
+
+    const cancelScheduledLoad = runAfterFirstPaint();
 
     return () => {
       isMounted = false;
+      cancelScheduledLoad();
       controller.abort();
     };
   }, [pathname]);

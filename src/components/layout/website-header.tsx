@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { useLocale, useTranslations } from "next-intl";
-import { signOut, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
-import { WebsiteNotificationsBell } from "@/components/layout/website-notifications-bell";
 import { cn } from "@/lib/cn";
 
 import { BrandLogo } from "@/components/shared/brand-logo";
@@ -65,31 +63,12 @@ export function WebsiteHeader({
   cmsNavigationLinks = [],
 }: WebsiteHeaderProps) {
   const t = useTranslations();
-  const locale = useLocale();
   const pathname = usePathname();
-  const { data: session, status } = useSession();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [mobileOpenGroup, setMobileOpenGroup] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const isDark = variant === "dark";
-  const roles = session?.user?.roles ?? [];
-  const normalizedRoles = roles.map((role) => role.toLowerCase());
-  const isPatient = normalizedRoles.some((role) => role.includes("patient"));
-  const isAuthenticated = status === "authenticated";
-  const dashboardHref = normalizedRoles.some((role) => role.includes("admin"))
-    ? "/admin/dashboard"
-    : normalizedRoles.some((role) => role.includes("doctor"))
-      ? "/doctor/dashboard"
-      : normalizedRoles.some((role) => role.includes("lab"))
-        ? "/lab/dashboard"
-        : normalizedRoles.some((role) => role.includes("secretary"))
-          ? "/secretary/dashboard"
-          : normalizedRoles.some((role) => role.includes("special"))
-            ? "/special/daily-tasks"
-            : "/";
-  const accountLabel = session?.user?.fullName?.trim() || t("navbar.profile");
-  const notificationsHref = isPatient ? "/profile?tab=notifications" : "/notifications";
+  const dashboardHref = "/login";
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -135,28 +114,11 @@ export function WebsiteHeader({
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setDrawerOpen(false);
-    setProfileMenuOpen(false);
     setMobileOpenGroup(null);
   }, [pathname]);
 
-  const handleSignOut = async () => {
-    await signOut({ redirect: false, callbackUrl: `/${locale}` });
-    window.location.href = `/${locale}`;
-  };
-
   useEffect(() => {
-    if (!profileMenuOpen) return;
-
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setProfileMenuOpen(false);
-    };
-
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [profileMenuOpen]);
-
-  useEffect(() => {
-    if (!drawerOpen && !profileMenuOpen) return;
+    if (!drawerOpen) return;
 
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -164,65 +126,7 @@ export function WebsiteHeader({
     return () => {
       document.body.style.overflow = prevOverflow;
     };
-  }, [drawerOpen, profileMenuOpen]);
-
-  const accountMenu = (
-    <div
-      role="menu"
-      aria-label={t("navbar.profile")}
-      className="absolute end-0 top-full z-[80] mt-2 w-56 max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-800 shadow-xl shadow-slate-900/10"
-    >
-      <div className="border-b border-slate-100 px-4 py-3">
-        <p className="truncate text-sm font-bold">{accountLabel}</p>
-        <p className="truncate text-xs text-slate-500">{session?.user?.email}</p>
-      </div>
-      <Link
-        href="/profile"
-        className="flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors hover:bg-slate-50"
-        onClick={() => setProfileMenuOpen(false)}
-      >
-        <span className="material-symbols-outlined text-lg" aria-hidden>
-          account_circle
-        </span>
-        {t("navbar.profile")}
-      </Link>
-      <Link
-        href={notificationsHref}
-        className="flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors hover:bg-slate-50"
-        onClick={() => setProfileMenuOpen(false)}
-      >
-        <span className="material-symbols-outlined text-lg" aria-hidden>
-          notifications
-        </span>
-        {t("pushNotifications.menuTitle")}
-      </Link>
-      {!isPatient ? (
-        <Link
-          href={dashboardHref}
-          className="flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors hover:bg-slate-50"
-          onClick={() => setProfileMenuOpen(false)}
-        >
-          <span className="material-symbols-outlined text-lg" aria-hidden>
-            dashboard
-          </span>
-          {t("nav.dashboard")}
-        </Link>
-      ) : null}
-      <button
-        type="button"
-        className="flex w-full items-center gap-2 px-4 py-3 text-start text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
-        onClick={() => {
-          setProfileMenuOpen(false);
-          void handleSignOut();
-        }}
-      >
-        <span className="material-symbols-outlined text-lg" aria-hidden>
-          logout
-        </span>
-        {t("navbar.logout")}
-      </button>
-    </div>
-  );
+  }, [drawerOpen]);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -287,31 +191,7 @@ export function WebsiteHeader({
               isDark && "border-white/20 bg-surface-container-low",
             )}
           />
-          {isAuthenticated ? (
-            <WebsiteNotificationsBell isDark={isDark} className="hidden md:inline-flex" />
-          ) : null}
-          {isAuthenticated ? (
-            <div className="relative hidden md:block">
-              <button
-                type="button"
-                className={cn(
-                  "inline-flex h-10 w-10 items-center justify-center rounded-full border transition-all",
-                  isDark
-                    ? "border-white/20 bg-white/10 text-on-surface hover:bg-white/15"
-                    : "border-slate-200 bg-white text-slate-700 shadow-sm shadow-slate-200/70 hover:bg-slate-50",
-                )}
-                aria-label={t("navbar.profile")}
-                aria-expanded={profileMenuOpen}
-                aria-haspopup="menu"
-                onClick={() => setProfileMenuOpen((open) => !open)}
-              >
-                <span className="material-symbols-outlined text-2xl" aria-hidden>
-                  account_circle
-                </span>
-              </button>
-              {profileMenuOpen ? accountMenu : null}
-            </div>
-          ) : isDark ? (
+          {isDark ? (
             <div className="hidden items-center gap-2 sm:gap-3 md:flex">
               <Link
                 href="/login"
@@ -342,18 +222,6 @@ export function WebsiteHeader({
           isDark ? "bg-white/5" : "bg-slate-200/50",
         )}
       />
-
-      {profileMenuOpen && mounted
-        ? createPortal(
-          <button
-            type="button"
-            className="fixed inset-0 z-40 hidden md:block"
-            aria-label={t("header.closeMenu")}
-            onClick={() => setProfileMenuOpen(false)}
-          />,
-          document.body,
-        )
-        : null}
 
       {drawerOpen && mounted ? createPortal(
         <>
@@ -516,59 +384,16 @@ export function WebsiteHeader({
                     : "border-slate-200/90 bg-slate-100/80 shadow-sm shadow-slate-200/40",
                 )}
               />
-              {isAuthenticated ? (
-                <div className="flex justify-center">
-                  <WebsiteNotificationsBell isDark={isDark} />
-                </div>
-              ) : null}
               {!isDark && showCta ? (
-                isAuthenticated ? null : (
-                  <Link
-                    href={ctaHref}
-                    className="clinical-gradient block w-full rounded-xl px-4 py-3 text-center font-headline text-sm font-semibold text-on-primary-container shadow-lg shadow-primary/25 transition-all hover:opacity-95 active:scale-[0.99]"
-                    onClick={() => setDrawerOpen(false)}
-                  >
-                    {t("header.ctaNewLab")}
-                  </Link>
-                )
+                <Link
+                  href={ctaHref}
+                  className="clinical-gradient block w-full rounded-xl px-4 py-3 text-center font-headline text-sm font-semibold text-on-primary-container shadow-lg shadow-primary/25 transition-all hover:opacity-95 active:scale-[0.99]"
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  {t("header.ctaNewLab")}
+                </Link>
               ) : null}
-              {isAuthenticated ? (
-                <div className="flex flex-col gap-2">
-                  <Link
-                    href="/profile"
-                    className="rounded-xl border border-primary/25 px-4 py-2.5 text-center text-sm font-bold text-primary transition-colors hover:bg-primary/10"
-                    onClick={() => setDrawerOpen(false)}
-                  >
-                    {t("navbar.profile")}
-                  </Link>
-                  <Link
-                    href={notificationsHref}
-                    className="rounded-xl border border-primary/25 px-4 py-2.5 text-center text-sm font-bold text-primary transition-colors hover:bg-primary/10"
-                    onClick={() => setDrawerOpen(false)}
-                  >
-                    {t("pushNotifications.menuTitle")}
-                  </Link>
-                  {!isPatient ? (
-                    <Link
-                      href={dashboardHref}
-                      className="clinical-gradient block w-full rounded-xl px-4 py-3 text-center text-sm font-bold uppercase tracking-wide text-on-primary shadow-lg shadow-primary/25 transition-all hover:opacity-95"
-                      onClick={() => setDrawerOpen(false)}
-                    >
-                      {t("about.quickAccess")}
-                    </Link>
-                  ) : null}
-                  <button
-                    type="button"
-                    className="rounded-xl px-4 py-2.5 text-center text-sm font-bold text-red-600 transition-colors hover:bg-red-50"
-                    onClick={() => {
-                      setDrawerOpen(false);
-                      void handleSignOut();
-                    }}
-                  >
-                    {t("navbar.logout")}
-                  </button>
-                </div>
-              ) : isDark ? (
+              {isDark ? (
                 <div className="flex flex-col gap-2">
                   <Link
                     href="/login"

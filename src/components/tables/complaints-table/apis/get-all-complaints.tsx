@@ -89,7 +89,6 @@ const GetAllComplaints = (props: PropsWithChildren) => {
   const { data: allItems = [], isPending, refetch } = useQuery({
     queryKey: ["complaints"],
     queryFn: fetchAllComplaints,
-    refetchInterval: 1000 * 60,
   });
 
   const complaintsData = useMemo(() => {

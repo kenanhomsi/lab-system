@@ -53,7 +53,6 @@ const GetAllInsuranceApprovalRequests = (props: PropsWithChildren) => {
         search: debouncedValue,
         status: statusFilter,
       }),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry(

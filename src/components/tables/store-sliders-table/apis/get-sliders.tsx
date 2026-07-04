@@ -9,7 +9,6 @@ const GetSliders = ({ children }: PropsWithChildren) => {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["store", "admin", "sliders"],
     queryFn: () => storeService.listSliders(),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("slidersData", data ?? []);

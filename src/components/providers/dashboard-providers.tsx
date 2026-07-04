@@ -23,6 +23,7 @@ export function DashboardProviders({ children }: { children: ReactNode }) {
           queries: {
             staleTime: 60_000,
             retry: 1,
+            refetchOnReconnect: true,
           },
         },
       }),

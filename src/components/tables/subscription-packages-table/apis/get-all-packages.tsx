@@ -55,7 +55,6 @@ const GetAllPackages = (props: PropsWithChildren) => {
         targetAudience: targetAudienceFilter,
         isActive: isActiveFilter,
       }),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("packagesData", data ?? {

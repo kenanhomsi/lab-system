@@ -29,20 +29,11 @@ const authConfig: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          console.log("here i am");
-          console.log(
-            "[AUTH] authorize called with identifier:",
-            credentials?.identifier,
-          );
           const res = await authService.Login({
             email: credentials?.identifier ?? "",
             password: credentials?.password ?? "",
           });
-          console.log("but not here i am");
-          console.log(res);
-          console.log("[AUTH] login success, user:", res.user?.email);
           if (!res.user?.id) {
-            console.error("[AUTH] login response missing user id:", res);
             throw new Error("Invalid login response: missing user id");
           }
 
@@ -131,17 +122,10 @@ const authConfig: AuthOptions = {
       }
 
       try {
-        console.log("here i am");
-        console.log(token.refreshToken);
-        console.log(token.expiresAt);
-        console.log(token.accessToken);
-
         const refreshed = await renewAccessTokenSingleFlight(
           token.refreshToken,
           (p) => authService.renewAccessToken(p),
         );
-        console.log("but not here i am");
-        console.log(refreshed);
         applyRenewalPayloadToJwt(token, refreshed);
       } catch {
         return token;

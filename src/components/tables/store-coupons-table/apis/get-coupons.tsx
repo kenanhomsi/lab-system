@@ -9,7 +9,6 @@ const GetCoupons = ({ children }: PropsWithChildren) => {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["store", "admin", "coupons"],
     queryFn: () => storeService.listCoupons(),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("couponsData", data ?? []);

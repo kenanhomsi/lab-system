@@ -9,7 +9,6 @@ const GetCategories = ({ children }: PropsWithChildren) => {
   const { data } = useQuery({
     queryKey: ["store", "admin", "categories"],
     queryFn: () => storeService.listCategories(),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("categoriesData", data ?? []);

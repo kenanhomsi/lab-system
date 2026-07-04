@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import type { ReactNode } from "react";
 import { SidebarFactory } from "@/components/shared/sidebar";
 import { NavbarFactory } from "@/components/shared/navbar";
+import { DashboardProviders } from "@/components/providers/dashboard-providers";
 import styles from "./styles.module.scss";
 import { DashboardPushNotifications } from "./dashboard-push-notifications";
 
@@ -29,12 +30,14 @@ export default async function LocaleLayout({
     roleTitle: requestedRole ? formatRoleTitle(requestedRole) : undefined,
   });
   return (
-    <DashboardPushNotifications>
-      <div className={styles.dashboardRoot}>
-        <SidebarFactory items={siderBarItems} />
-        <NavbarFactory config={navbarConfig} />
-        <main className={styles.sectionPadding}>{children}</main>
-      </div>
-    </DashboardPushNotifications>
+    <DashboardProviders>
+      <DashboardPushNotifications>
+        <div className={styles.dashboardRoot}>
+          <SidebarFactory items={siderBarItems} />
+          <NavbarFactory config={navbarConfig} />
+          <main className={styles.sectionPadding}>{children}</main>
+        </div>
+      </DashboardPushNotifications>
+    </DashboardProviders>
   );
 }

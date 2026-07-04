@@ -27,7 +27,6 @@ const GetAllBanners = ({ children }: PropsWithChildren) => {
             });
             return response
         },
-        refetchInterval: 1000 * 60,
     });
 
     useMirrorRegistry("bannersData", asBannerRows(data));

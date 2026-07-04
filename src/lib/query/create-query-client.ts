@@ -24,6 +24,7 @@ export function createAppQueryClient(): QueryClient {
       queries: {
         staleTime: 60_000,
         retry: 1,
+        refetchOnReconnect: true,
       },
     },
   });

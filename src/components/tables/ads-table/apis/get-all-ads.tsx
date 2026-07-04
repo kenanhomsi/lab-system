@@ -73,7 +73,6 @@ const GetAllAds = ({ children }: PropsWithChildren) => {
           PageSize: "20",
         },
       }),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("adsData", asAdRows(data));

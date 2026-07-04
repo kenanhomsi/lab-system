@@ -16,6 +16,11 @@ const axiosInstanceFront = axios.create({
 
 let sessionTouchDeduped: Promise<boolean> | undefined;
 let sessionForceRefreshDeduped: Promise<boolean> | undefined;
+let lastSessionTouchAt = 0;
+
+const SESSION_TOUCH_INTERVAL_MS = 60_000;
+const DASHBOARD_PATH_PATTERN =
+  /^\/(?:en|ar)\/(?:admin|doctor|patient|lab|secretary|special|profile|notifications)(?:\/|$)/;
 
 /**
  * Touches GET /api/auth/session so NextAuth runs the jwt callback (proactive refresh
@@ -26,9 +31,15 @@ async function touchSession(): Promise<boolean> {
     return false;
   }
 
+  const now = Date.now();
+  if (now - lastSessionTouchAt < SESSION_TOUCH_INTERVAL_MS) {
+    return true;
+  }
+
   if (!sessionTouchDeduped) {
     sessionTouchDeduped = (async () => {
       try {
+        lastSessionTouchAt = Date.now();
         const res = await fetch(`${window.location.origin}/api/auth/session`, {
           method: "GET",
           credentials: "include",
@@ -45,6 +56,19 @@ async function touchSession(): Promise<boolean> {
   }
 
   return sessionTouchDeduped;
+}
+
+function shouldTouchSession(config: InternalAxiosRequestConfig): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const url = config.url ?? "";
+  if (url.includes("/auth/") || url.startsWith("/website/")) {
+    return false;
+  }
+
+  return DASHBOARD_PATH_PATTERN.test(window.location.pathname);
 }
 
 /**
@@ -98,7 +122,9 @@ const stripAuthorizationHeader = (
 };
 
 axiosInstanceFront.interceptors.request.use(async (config) => {
-  await touchSession();
+  if (shouldTouchSession(config)) {
+    await touchSession();
+  }
   return stripAuthorizationHeader(config);
 });
 

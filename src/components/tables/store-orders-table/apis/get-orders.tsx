@@ -14,7 +14,6 @@ const GetOrders = ({ children }: PropsWithChildren) => {
     queryKey: ["store", "admin", "orders", pageNumber],
     queryFn: () =>
       storeService.listOrders({ query: { page: pageNumber, pageSize } }),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("ordersData", data ?? emptyOrders());

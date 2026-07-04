@@ -35,7 +35,6 @@ const GetMyInsuranceApprovalRequests = (props: PropsWithChildren) => {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["my-insurance-approval-requests", pageNumber],
     queryFn: () => fetchMyRequests(pageNumber),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry(

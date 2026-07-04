@@ -46,7 +46,6 @@ function useMedicalTestsCatalogQuery(params: UseMedicalTestsCatalogQueryParams) 
       params.sortDesc,
     ],
     queryFn: () => getAllMedicalTests(params),
-    refetchInterval: 1000 * 60,
   });
 }
 

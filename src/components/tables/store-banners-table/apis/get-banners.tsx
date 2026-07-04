@@ -9,7 +9,6 @@ const GetBanners = ({ children }: PropsWithChildren) => {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["store", "admin", "banners"],
     queryFn: () => storeService.listBanners(),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("bannersData", data ?? []);

@@ -27,7 +27,6 @@ const GetCategories = ({ children }: PropsWithChildren) => {
           SortDesc: false,
         },
       }),
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("categoriesData", data ?? emptyCategories);

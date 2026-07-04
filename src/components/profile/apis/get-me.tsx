@@ -19,7 +19,6 @@ const GetMe = (props: PropsWithChildren) => {
   const { data, isPending } = useQuery({
     queryKey: ["me"],
     queryFn: getMe,
-    refetchInterval: 1000 * 60,
   });
 
   useMirrorRegistry("me", data ?? null);
