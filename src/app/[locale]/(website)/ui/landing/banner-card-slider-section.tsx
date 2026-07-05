@@ -1,7 +1,13 @@
+import dynamic from "next/dynamic";
 import { getLocale } from "next-intl/server";
 import { fetchPublicBannersForPlacement } from "@/lib/banners/fetch-public-banners";
 import type { BannerPlacement } from "@/lib/banners/locations";
-import { BannerCardSliderClient } from "./banner-card-slider-client";
+
+const BannerCardSliderClient = dynamic(() =>
+  import("./banner-card-slider-client").then((m) => ({
+    default: m.BannerCardSliderClient,
+  })),
+);
 
 type BannerCardSliderSectionProps = {
   placement: BannerPlacement;

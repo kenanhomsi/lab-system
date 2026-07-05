@@ -364,6 +364,13 @@ html.dark body {
     ),
     var(--background);
 }
+html[dir="rtl"] {
+  --font-sans: var(--font-qomra-arabic), system-ui, sans-serif;
+  --font-headline: var(--font-qomra-arabic), system-ui, sans-serif;
+  --font-plus-jakarta: var(--font-qomra-arabic), system-ui, sans-serif;
+}
+
+html[dir="rtl"],
 body[data-locale-ar="true"] {
   font-family: var(--font-qomra-arabic), system-ui, sans-serif;
 }
@@ -604,6 +611,12 @@ html[dir="rtl"] .font-headline {
   animation: fade-up 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Above-fold hero content: visible on SSR without waiting for ScrollRevealObserver */
+.reveal-up--ssr-visible {
+  opacity: 1;
+  transform: none;
+}
+
 .reveal-in {
   opacity: 0;
   will-change: opacity;
@@ -643,6 +656,7 @@ html[dir="rtl"] .font-headline {
 
 @media (prefers-reduced-motion: reduce) {
   .reveal-up,
+  .reveal-up--ssr-visible,
   .reveal-up.is-visible,
   .reveal-in,
   .reveal-in.is-visible,

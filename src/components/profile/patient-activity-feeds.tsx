@@ -240,11 +240,13 @@ function EmptyFeedState({
   description,
   ctaLabel,
   ctaHref,
+  ctaOnClick,
 }: {
   title: string;
   description: string;
   ctaLabel?: string;
   ctaHref?: string;
+  ctaOnClick?: () => void;
 }) {
   return (
     <Paper withBorder radius="xl" p="xl" className={styles.emptyState}>
@@ -253,7 +255,11 @@ function EmptyFeedState({
         <Text size="sm" c="dimmed" ta="center" maw={420}>
           {description}
         </Text>
-        {ctaLabel && ctaHref ? (
+        {ctaLabel && ctaOnClick ? (
+          <Button variant="light" color="teal" radius="xl" onClick={ctaOnClick}>
+            {ctaLabel}
+          </Button>
+        ) : ctaLabel && ctaHref ? (
           <Button component={Link} href={ctaHref} variant="light" color="teal" radius="xl">
             {ctaLabel}
           </Button>
@@ -488,9 +494,13 @@ function InsuranceApprovalCreateModal({
 }
 
 /** Shows recent patient test requests as cards with inline actions. */
-function PatientTestRequestsFeed() {
+function PatientTestRequestsFeed({
+  onOpenCreateTestRequest,
+}: {
+  onOpenCreateTestRequest?: () => void;
+}) {
   const tProfile = useTranslations("dashboard.profile");
-  const tTable = useTranslations("table");
+  const tTable = useTranslations("admin.table");
   const tRequests = useTranslations("admin.testRequests");
   const tAppointments = useTranslations("appointmentsFeature");
   const tPricing = useTranslations("priceCalculator");
@@ -525,21 +535,7 @@ function PatientTestRequestsFeed() {
 
   return (
     <Stack gap="md">
-      <Group justify="space-between" align="center" wrap="wrap" gap="sm">
-        <Badge variant="light" color="teal" radius="xl">
-          {data?.totalCount ?? 0}
-        </Badge>
-        <Button
-          component={Link}
-          href="/tests"
-          leftSection={<IconPlus size={16} />}
-          variant="light"
-          color="teal"
-          radius="xl"
-        >
-          {tProfile("orderTestRequest")}
-        </Button>
-      </Group>
+
 
       {isPending ? <ActivitySkeletonList /> : null}
       {isError ? <Alert color="red">{tTable("emptyHint")}</Alert> : null}
@@ -548,7 +544,7 @@ function PatientTestRequestsFeed() {
           title={tTable("emptyTitle")}
           description={tProfile("testRequestsDesc")}
           ctaLabel={tProfile("orderTestRequest")}
-          ctaHref="/tests"
+          ctaOnClick={onOpenCreateTestRequest}
         />
       ) : null}
 
@@ -678,7 +674,7 @@ function PatientTestRequestsFeed() {
 /** Shows patient test results as compact cards with preview and file actions. */
 function PatientTestResultsFeed() {
   const tProfile = useTranslations("dashboard.profile");
-  const tTable = useTranslations("table");
+  const tTable = useTranslations("admin.table");
   const tResults = useTranslations("admin.testResults");
   const tc = useTranslations("admin.common");
   const locale = useLocale();
@@ -847,7 +843,7 @@ function PatientTestResultsFeed() {
 /** Shows patient insurance approval requests as cards with detail and delete actions. */
 function PatientInsuranceApprovalsFeed() {
   const tProfile = useTranslations("dashboard.profile");
-  const tTable = useTranslations("table");
+  const tTable = useTranslations("admin.table");
   const tInsurance = useTranslations("myInsuranceApproval");
   const tc = useTranslations("admin.common");
   const locale = useLocale();
@@ -1126,7 +1122,7 @@ function ComplaintCreateModal({
 /** Shows patient complaints as cards with create and attachment actions. */
 function PatientComplaintsFeed() {
   const tProfile = useTranslations("dashboard.profile");
-  const tTable = useTranslations("table");
+  const tTable = useTranslations("admin.table");
   const tComplaints = useTranslations("myComplaints");
   const tInsurance = useTranslations("myInsuranceApproval");
   const locale = useLocale();

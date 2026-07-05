@@ -11,3 +11,13 @@ export type UpdateAvailabilityRequest = UpsertAvailabilityInput & {
 };
 
 export type AvailabilitiesResponse = AvailabilityRow[];
+
+export type AvailabilitiesPage = {
+  items: AvailabilityRow[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};

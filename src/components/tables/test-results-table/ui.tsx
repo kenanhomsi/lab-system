@@ -1,9 +1,9 @@
 "use client";
 
-import { isClinicalPatientUser } from "@/components/modals/test-requests/party-ids";
 import { Table } from "@/components/table";
 import { TablePageHeader } from "@/components/table-page-header";
 import { useSessionUserStore } from "@/stores/session-user-store";
+import { getTestResultPermissions } from "./test-result-permissions";
 import { ActionIcon, Button, CloseButton, Select, TextInput, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconArrowsSort, IconClipboardList, IconDownload, IconPlus, IconRefresh, IconSearch } from "@tabler/icons-react";
@@ -36,7 +36,8 @@ const UI = () => {
   const selectedTestResultIds = useMirror("selectedTestResultIds");
   const setSelectedTestResultIds = useMirror("setSelectedTestResultIds");
   const roles = useSessionUserStore((s) => s.user?.roles);
-  const canManageTestResults = !isClinicalPatientUser(roles);
+  const permissions = useSessionUserStore((s) => s.user?.permissions);
+  const { canCreate } = getTestResultPermissions(roles, permissions);
   const [isExportingSelected, setIsExportingSelected] = useState(false);
 
   const hasActiveFilters = Boolean(searchValue.trim()) || sortBy !== "createdAt" || !sortDesc;
@@ -117,7 +118,7 @@ const UI = () => {
           icon={<IconClipboardList size={22} />}
           iconColor="teal"
           totalCount={testResultsData?.totalCount || 0}
-          {...(canManageTestResults
+          {...(canCreate
             ? {
                 createLabel: t("createLabel"),
                 createIcon: <IconPlus size={15} />,

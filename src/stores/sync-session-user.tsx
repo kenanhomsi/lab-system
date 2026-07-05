@@ -32,6 +32,7 @@ function SyncSessionUser() {
     const nextUser = {
       id,
       roles: Array.isArray(u.roles) ? [...u.roles] : [],
+      permissions: Array.isArray(u.permissions) ? [...u.permissions] : [],
       email: u.email,
       fullName: u.fullName,
     };
@@ -41,7 +42,11 @@ function SyncSessionUser() {
       currentUser?.email === nextUser.email &&
       currentUser?.fullName === nextUser.fullName &&
       currentUser?.roles.length === nextUser.roles.length &&
-      currentUser?.roles.every((role, index) => role === nextUser.roles[index]);
+      currentUser?.roles.every((role, index) => role === nextUser.roles[index]) &&
+      currentUser?.permissions.length === nextUser.permissions.length &&
+      currentUser?.permissions.every(
+        (permission, index) => permission === nextUser.permissions[index],
+      );
 
     if (!hasSameUser) {
       setSessionUser(nextUser);

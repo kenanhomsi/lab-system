@@ -1,17 +1,17 @@
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
-import {
-  PageBannerOverflowServer,
-  PageBannerSlotServer,
-} from "@/components/layout/page-banner-slots-server";
 import { BANNER_PLACEMENT } from "@/lib/banners/locations";
-import { ServicesGrid } from "./ui/landing/services-grid";
+import {
+  getHomePageBannerGroups,
+  HomePageBannerOverflow,
+  HomePageBannerSlot,
+} from "./ui/landing/home-page-banners";
 import { BannerCardSliderSection } from "./ui/landing/banner-card-slider-section";
 import { HeroSection } from "./ui/landing/hero-section";
 import { TestsSpotlightSection } from "./ui/landing/tests-spotlight-section";
 
 const SlideCardsSection = dynamic(() =>
-  import("./ui/landing/slide-cards-section").then((m) => ({
+  import("./ui/landing/slide-cards-section-server").then((m) => ({
     default: m.SlideCardsSection,
   })),
 );
@@ -40,27 +40,34 @@ const PartnersStrip = dynamic(() =>
     default: m.PartnersStrip,
   })),
 );
+const ServicesGrid = dynamic(() =>
+  import("./ui/landing/services-grid").then((m) => ({
+    default: m.ServicesGrid,
+  })),
+);
 
 /**
  * Renders the public customer homepage.
  */
-export default function LandingPage() {
+export default async function LandingPage() {
+  const bannerGroups = await getHomePageBannerGroups();
+
   return (
     <main>
       <HeroSection />
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={1} />
+      <HomePageBannerSlot groups={bannerGroups} order={1} />
 
       <EditorialSection />
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={2} />
+      <HomePageBannerSlot groups={bannerGroups} order={2} />
       <ServicesGrid />
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={3} />
+      <HomePageBannerSlot groups={bannerGroups} order={3} />
       <SlideCardsSection />
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={4} />
+      <HomePageBannerSlot groups={bannerGroups} order={4} />
 
       <Suspense fallback={null}>
         <TestsSpotlightSection />
       </Suspense>
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={5} />
+      <HomePageBannerSlot groups={bannerGroups} order={5} />
 
       <Suspense fallback={null}>
         <BannerCardSliderSection
@@ -73,12 +80,12 @@ export default function LandingPage() {
           surface="muted"
         />
       </Suspense>
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={6} />
+      <HomePageBannerSlot groups={bannerGroups} order={6} />
 
       <QualitySection />
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={7} />
+      <HomePageBannerSlot groups={bannerGroups} order={7} />
       <DepartmentsSection />
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={8} />
+      <HomePageBannerSlot groups={bannerGroups} order={8} />
 
       <Suspense fallback={null}>
         <BannerCardSliderSection
@@ -90,10 +97,10 @@ export default function LandingPage() {
           viewAllHref="/services"
         />
       </Suspense>
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={9} />
+      <HomePageBannerSlot groups={bannerGroups} order={9} />
 
       <BranchesMapSection />
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={10} />
+      <HomePageBannerSlot groups={bannerGroups} order={10} />
       <PartnersStrip />
 
       <Suspense fallback={null}>
@@ -108,7 +115,7 @@ export default function LandingPage() {
           surface="muted"
         />
       </Suspense>
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={11} />
+      <HomePageBannerSlot groups={bannerGroups} order={11} />
 
       <Suspense fallback={null}>
         <BannerCardSliderSection
@@ -121,8 +128,8 @@ export default function LandingPage() {
           displayMode="logos"
         />
       </Suspense>
-      <PageBannerSlotServer placement={BANNER_PLACEMENT.HOME_PAGE} order={12} />
-      <PageBannerOverflowServer placement={BANNER_PLACEMENT.HOME_PAGE} />
+      <HomePageBannerSlot groups={bannerGroups} order={12} />
+      <HomePageBannerOverflow groups={bannerGroups} />
     </main>
   );
 }

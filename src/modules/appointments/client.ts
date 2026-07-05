@@ -1,6 +1,7 @@
 "use client";
 
 import { axiosInstanceFront } from "@/lib/clients/frontend-instance";
+import { toApiPatientLocationType } from "./location-type-utils";
 import type {
   Appointment,
   AppointmentAdminStatus,
@@ -72,7 +73,7 @@ const buildCreateAppointmentFormData = (input: CreateAppointmentInput): FormData
   form.append("AvailabilityId", String(input.availabilityId));
   form.append("TestRequestId", String(input.testRequestId));
   form.append("UserId", input.userId);
-  form.append("PatientLocationType", input.patientLocationType);
+  form.append("PatientLocationType", toApiPatientLocationType(input.patientLocationType));
   if (input.age != null) form.append("Age", String(input.age));
   if (input.gender) form.append("Gender", input.gender);
   if (input.patientLatitude != null) {

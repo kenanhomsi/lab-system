@@ -175,16 +175,6 @@ export function PushNotificationsProvider({ children }: { children: ReactNode })
 
       if (initial === "registered") {
         await bindForegroundListener();
-        return;
-      }
-
-      if (initial === "default" && isFirebaseConfigured()) {
-        if (readNotificationPermission() === "granted") {
-          const ok = await enablePush();
-          if (!cancelled && !ok) {
-            setStatus("default");
-          }
-        }
       }
     };
 
@@ -193,7 +183,7 @@ export function PushNotificationsProvider({ children }: { children: ReactNode })
     return () => {
       cancelled = true;
     };
-  }, [sessionStatus, bindForegroundListener, enablePush]);
+  }, [sessionStatus, bindForegroundListener]);
 
   const value = useMemo(
     () => ({ status, lastError, enablePush }),

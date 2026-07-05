@@ -3,6 +3,7 @@ import { externalPatientsModuleNames } from "../names";
 import { ExternalPatientsFrontendClient } from "./client";
 import type {
   CreateExternalPatientFrontendParams,
+  FindAllExternalPatientsFrontendParams,
   FindOneExternalPatientFrontendParams,
   LinkDirectPatientFrontendParams,
 } from "./types";
@@ -12,8 +13,8 @@ class Service {
   @inject(externalPatientsModuleNames.client)
   private Client: ExternalPatientsFrontendClient;
 
-  async findAll() {
-    return this.Client.findAll();
+  async findAll(params?: FindAllExternalPatientsFrontendParams) {
+    return this.Client.findAll(params);
   }
 
   async create(params: CreateExternalPatientFrontendParams) {

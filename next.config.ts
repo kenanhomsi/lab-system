@@ -2,8 +2,28 @@ import { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import path from "path";
 
+const withBundleAnalyzer = process.env.ANALYZE === "true"
+  ? // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require("@next/bundle-analyzer")({ enabled: true })
+  : (config: NextConfig) => config;
+
 const nextConfig: NextConfig = {
   output: "standalone",
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? { exclude: ["error", "warn"] }
+        : false,
+  },
+  experimental: {
+    optimizePackageImports: [
+      "@mantine/core",
+      "@tabler/icons-react",
+      "react-icons",
+      "ramda",
+      "@tanstack/react-query",
+    ],
+  },
   sassOptions: {
     includePaths: [path.join(process.cwd())],
   },
@@ -98,4 +118,4 @@ const nextConfig: NextConfig = {
 };
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
-export default withNextIntl(nextConfig);
+export default withBundleAnalyzer(withNextIntl(nextConfig));

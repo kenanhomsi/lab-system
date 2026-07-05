@@ -11,13 +11,13 @@ export async function GET(req: NextRequest) {
     Number(req.nextUrl.searchParams.get("Page") ?? req.nextUrl.searchParams.get("page") ?? 1),
   );
   const pageSize = Math.min(
-    1000,
+    100,
     Math.max(
       1,
       Number(
         req.nextUrl.searchParams.get("PageSize") ??
           req.nextUrl.searchParams.get("pageSize") ??
-          1000,
+          50,
       ),
     ),
   );

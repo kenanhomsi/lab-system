@@ -14,7 +14,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { IconInfoCircle, IconUser } from "@tabler/icons-react";
+import { IconInfoCircle } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
@@ -131,7 +131,7 @@ const Modals = () => {
               {t("sessionUnauthenticatedBody")}
             </Alert>
           ) : null}
-
+          {/* 
           {accountExternalId ? (
             <Alert
               variant="light"
@@ -159,7 +159,7 @@ const Modals = () => {
                 {accountExternalId}
               </Text>
             </Alert>
-          ) : null}
+          ) : null} */}
 
           <Divider label={t("createFormSectionLabel")} labelPosition="center" />
 
@@ -239,7 +239,7 @@ const Modals = () => {
       >
         {selectedPatient ? (
           <Stack gap="md">
-        <MutationErrorAlert />
+            <MutationErrorAlert />
             <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
               <Stack gap={4}>
                 <Text size="xs" c="dimmed" tt="uppercase" fw={600}>
@@ -318,7 +318,7 @@ const Modals = () => {
         overlayProps={{ backgroundOpacity: 0.45, blur: 4 }}
       >
         <Stack gap="md">
-        <MutationErrorAlert />
+          <MutationErrorAlert />
           <TextInput
             label={t("fieldDirectPatientUserId")}
             placeholder={t("fieldDirectPatientUserIdPlaceholder")}

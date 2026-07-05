@@ -1,5 +1,5 @@
-import { ChatShell } from "@/features/realtime-chat/ui/chat-shell";
+import { LazyChatShell } from "@/features/realtime-chat/ui/lazy-chat-shell";
 
-export default function PatientChatPage() {
-  return <ChatShell />;
+export default function Page() {
+  return <LazyChatShell />;
 }

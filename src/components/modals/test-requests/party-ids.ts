@@ -88,9 +88,23 @@ function isClinicalPatientUser(roles: string[] | undefined): boolean {
   return resolveClinicalPartyKind(roles) === "patient";
 }
 
+/** Doctors pick from their external patients; labs and staff can link optionally. */
+function shouldShowExternalPatientField(roles: string[] | undefined): boolean {
+  const kind = resolveClinicalPartyKind(roles);
+  return kind === "doctor" || kind === "lab" || isStaffPartyUser(roles);
+}
+
+function requiresExternalPatientForTestRequest(
+  roles: string[] | undefined,
+): boolean {
+  return resolveClinicalPartyKind(roles) === "doctor";
+}
+
 export {
   buildTestRequestPartyPayload,
   isClinicalPatientUser,
   isStaffPartyUser,
+  requiresExternalPatientForTestRequest,
   resolveClinicalPartyKind,
+  shouldShowExternalPatientField,
 };

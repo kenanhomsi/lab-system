@@ -2,6 +2,7 @@ import { BackendState } from "@/modules/axios/backend/backend-state";
 import { injectable, injectFromBase } from "inversify";
 import { ExternalPatientsClientBase } from "../abstraction/client";
 import { endpoint } from "./endpoint";
+import { DEFAULT_BFF_PAGE_SIZE, MAX_BFF_PAGE_SIZE, parsePaginatedList } from "@/lib/api/bff-pagination";
 import type {
   CreateExternalPatientParams,
   ExternalPatient,
@@ -10,31 +11,25 @@ import type {
   LinkDirectPatientParams,
 } from "./types";
 
-function extractExternalPatientsList(payload: unknown): ExternalPatient[] {
-  if (Array.isArray(payload)) return payload;
-  if (!payload || typeof payload !== "object") return [];
-
-  const record = payload as Record<string, unknown>;
-  if (Array.isArray(record.items)) return record.items as ExternalPatient[];
-
-  const data = record.data;
-  if (Array.isArray(data)) return data as ExternalPatient[];
-  if (data && typeof data === "object" && Array.isArray((data as Record<string, unknown>).items)) {
-    return (data as { items: ExternalPatient[] }).items;
-  }
-
-  return [];
-}
-
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends ExternalPatientsClientBase<BackendState> {
   async findAll(params: FindAllExternalPatientsParams) {
-    const { token } = params;
-    const res = await this.getEndpoint(`${endpoint.findAll}?Page=1&PageSize=500`)
+    const { token, page = 1, pageSize = DEFAULT_BFF_PAGE_SIZE, search } = params;
+    const cappedPage = Math.max(1, page);
+    const cappedPageSize = Math.min(MAX_BFF_PAGE_SIZE, Math.max(1, pageSize));
+    const query = new URLSearchParams({
+      Page: String(cappedPage),
+      PageSize: String(cappedPageSize),
+    });
+    if (search?.trim()) {
+      query.set("Search", search.trim());
+    }
+
+    const res = await this.getEndpoint(`${endpoint.findAll}?${query.toString()}`)
       .withAuth(token)
       .perform<unknown>();
-    return extractExternalPatientsList(res.data);
+    return parsePaginatedList<ExternalPatient>(res.data, cappedPage, cappedPageSize);
   }
 
   async create(params: CreateExternalPatientParams) {

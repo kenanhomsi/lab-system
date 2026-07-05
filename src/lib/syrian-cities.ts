@@ -35,3 +35,13 @@ export function getSyrianCityLabel(value: string, locale: string): string {
   if (!city) return value;
   return locale.startsWith("ar") ? city.ar : city.en;
 }
+
+/**
+ * Returns Syrian city options for select dropdowns.
+ */
+export function getSyrianCityOptions(locale: string) {
+  return SYRIAN_CITIES.map((city) => ({
+    value: city.value,
+    label: locale.startsWith("ar") ? city.ar : city.en,
+  }));
+}

@@ -3,8 +3,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { appointmentsClient, type Appointment } from "@/modules/appointments";
-import { useMirrorRegistry } from "../store";
-import type { AppointmentRow } from "../types";
+import { parsePaginatedList } from "@/lib/api/bff-pagination";
+import { useMirror, useMirrorRegistry } from "../store";
+import { APPOINTMENTS_PAGE_SIZE, type AppointmentRow } from "../types";
 
 const normalizeAppointment = (value: unknown): AppointmentRow | null => {
   if (typeof value !== "object" || value === null) return null;
@@ -35,33 +36,58 @@ const normalizeAppointment = (value: unknown): AppointmentRow | null => {
   };
 };
 
-const asAppointmentRows = (payload: unknown): AppointmentRow[] => {
-  if (Array.isArray(payload)) {
-    return payload
-      .map(normalizeAppointment)
-      .filter((item): item is AppointmentRow => item !== null);
-  }
-  if (payload && typeof payload === "object" && "data" in payload) {
-    const inner = (payload as { data: unknown }).data;
-    if (Array.isArray(inner)) {
-      return inner
-        .map(normalizeAppointment)
-        .filter((item): item is AppointmentRow => item !== null);
-    }
-  }
-  return [];
-};
+const emptyAppointmentsPage = () => ({
+  items: [] as AppointmentRow[],
+  page: 1,
+  pageSize: APPOINTMENTS_PAGE_SIZE,
+  totalCount: 0,
+  totalPages: 0,
+  hasNextPage: false,
+  hasPreviousPage: false,
+});
 
 /**
- * Loads blood draw appointments and mirrors them into the table store.
+ * Loads blood draw appointments with server-side pagination.
  */
 const GetAllAppointments = ({ children }: PropsWithChildren) => {
+  const pageNumber = useMirror("pageNumber");
+  const debouncedValue = useMirror("debouncedValue");
+  const statusFilter = useMirror("statusFilter");
+
   const { data, isPending, refetch } = useQuery({
-    queryKey: ["admin-blood-draw-appointments"],
-    queryFn: () => appointmentsClient.findAll(),
+    queryKey: [
+      "admin-blood-draw-appointments",
+      pageNumber,
+      debouncedValue,
+      statusFilter,
+    ],
+    queryFn: async () => {
+      const params: Record<string, string | number> = {
+        Page: pageNumber,
+        PageSize: APPOINTMENTS_PAGE_SIZE,
+      };
+      if (debouncedValue.trim()) {
+        params.Search = debouncedValue.trim();
+      }
+      if (statusFilter !== "all") {
+        params.Status = statusFilter;
+      }
+
+      const payload = await appointmentsClient.findAll(params);
+      const page = parsePaginatedList<unknown>(payload, pageNumber, APPOINTMENTS_PAGE_SIZE);
+      return {
+        ...page,
+        items: page.items
+          .map(normalizeAppointment)
+          .filter((item): item is AppointmentRow => item !== null),
+      };
+    },
   });
 
-  useMirrorRegistry("appointmentsRaw", asAppointmentRows(data));
+  const appointmentsPage = data ?? emptyAppointmentsPage();
+
+  useMirrorRegistry("appointmentsPage", appointmentsPage);
+  useMirrorRegistry("appointmentsData", appointmentsPage.items);
   useMirrorRegistry("isPending", isPending);
   useMirrorRegistry("refetchAppointments", () => {
     void refetch();
@@ -70,4 +96,4 @@ const GetAllAppointments = ({ children }: PropsWithChildren) => {
   return <>{children}</>;
 };
 
-export { GetAllAppointments, asAppointmentRows };
+export { GetAllAppointments };

@@ -1,6 +1,6 @@
 "use client";
 
-import { isClinicalPatientUser } from "@/components/modals/test-requests/party-ids";
+import { getTestResultPermissions } from "../test-result-permissions";
 import { Anchor, Badge, Checkbox, Group, Text } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
 import { getTestRequestCreatorLabel } from "../get-test-request-creator-label";
@@ -14,6 +14,7 @@ type TFunction = (key: string) => string;
 
 type GetTestResultsColumnsOptions = {
   roles?: string[] | undefined;
+  permissions?: string[] | undefined;
   selectedIds?: number[] | undefined;
   visibleRows?: TestResultItem[] | undefined;
   onSelectedIdsChange?: ((ids: number[]) => void) | undefined;
@@ -72,7 +73,11 @@ const getTestResultsColumns = (
   t: TFunction,
   options?: GetTestResultsColumnsOptions,
 ): DataTableColumn<TestResultItem>[] => {
-  const readOnly = isClinicalPatientUser(options?.roles);
+  const { canUpdate, canDelete } = getTestResultPermissions(
+    options?.roles,
+    options?.permissions,
+  );
+  const hasManageActions = canUpdate || canDelete;
   const selectedIds = options?.selectedIds ?? [];
   const visibleRows = options?.visibleRows ?? [];
   const visibleIds = visibleRows.map((row) => row.id);
@@ -219,8 +224,10 @@ const getTestResultsColumns = (
   columns.push({
     accessor: "actions",
     title: "",
-    width: readOnly ? "6%" : "9%",
-    render: (row) => <ActionsRender row={row} canManage={!readOnly} />,
+    width: hasManageActions ? "9%" : "6%",
+    render: (row) => (
+      <ActionsRender row={row} canEdit={canUpdate} canDelete={canDelete} />
+    ),
   });
 
   return columns;

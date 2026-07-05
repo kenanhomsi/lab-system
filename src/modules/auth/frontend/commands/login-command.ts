@@ -27,6 +27,7 @@ class Command {
         roles: Array.isArray(u.roles) ? [...u.roles] : [],
         email: u.email,
         fullName: u.fullName,
+        permissions: [],
       });
     }
     this.eventService.emit("LoginSucceeded", {

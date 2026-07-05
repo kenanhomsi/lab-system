@@ -33,7 +33,12 @@ import {
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import type { MedicalTestItem } from "@/components/tables/medical-tests-table/types";
-import { buildTestRequestPartyPayload, isStaffPartyUser, resolveClinicalPartyKind } from "../party-ids";
+import {
+  buildTestRequestPartyPayload,
+  isStaffPartyUser,
+  requiresExternalPatientForTestRequest,
+  shouldShowExternalPatientField,
+} from "../party-ids";
 import {
   useExternalPatientsForSelectQuery,
   useMedicalTestsForSelectQuery,
@@ -276,14 +281,16 @@ const EditTestRequestBody = ({
     }));
   }, [externalPatientsQuery.data]);
 
-  const partyKind = resolveClinicalPartyKind(sessionUser?.roles);
-
   const showStaffPartyFields = Boolean(
     hasUserId && isStaffPartyUser(sessionUser?.roles),
   );
 
   const showExternalPatientField = Boolean(
-    hasUserId && (partyKind === "lab" || isStaffPartyUser(sessionUser?.roles)),
+    hasUserId && shouldShowExternalPatientField(sessionUser?.roles),
+  );
+
+  const requiresExternalPatient = requiresExternalPatientForTestRequest(
+    sessionUser?.roles,
   );
 
   const payloadOrNull = hasUserId && sessionUser
@@ -311,7 +318,10 @@ const EditTestRequestBody = ({
     : null;
 
   const isStepOneValid = Boolean(
-    form.id && form.medicalTestId > 0 && form.requestDate.trim(),
+    form.id &&
+      form.medicalTestId > 0 &&
+      form.requestDate.trim() &&
+      (!requiresExternalPatient || form.externalPatientId > 0),
   );
 
   const canSave = isStepOneValid && hasUserId && Boolean(payloadOrNull);
@@ -430,11 +440,14 @@ const EditTestRequestBody = ({
                   <Select
                     label={t("fieldExternalPatient")}
                     searchable
-                    clearable
+                    clearable={!requiresExternalPatient}
+                    withAsterisk={requiresExternalPatient}
                     placeholder={
                       externalPatientsQuery.isPending
                         ? t("placeholderLoadingPatients")
-                        : t("placeholderExternalPatient")
+                        : requiresExternalPatient
+                          ? t("placeholderExternalPatientDoctor")
+                          : t("placeholderExternalPatient")
                     }
                     description={t("fieldExternalPatientDesc")}
                     data={externalPatientOptions}

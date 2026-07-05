@@ -1,5 +1,7 @@
 "use client";
 
+import { hasAdminRole } from "@/components/profile/role-path";
+import { useSyncedSessionUser } from "@/stores/use-synced-session-user";
 import { ActionIcon, Group, Tooltip } from "@mantine/core";
 import { IconEye, IconLink } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
@@ -8,10 +10,11 @@ import type { ExternalPatientRow } from "../../types";
 
 const ActionsRender = ({ row }: { row: ExternalPatientRow }) => {
   const t = useTranslations("externalPatients");
+  const { user } = useSyncedSessionUser();
   const setSelectedPatient = useMirror("setSelectedPatient");
   const setActiveModal = useMirror("setActiveModal");
 
-  const canLink = !row.linkedDirectPatientId;
+  const canLink = hasAdminRole(user?.roles) && !row.linkedDirectPatientId;
 
   return (
     <Group gap={6} wrap="nowrap" justify="flex-end">

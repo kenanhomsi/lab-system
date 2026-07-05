@@ -1,7 +1,3 @@
-"use client";
-
-import { Highlighter } from "@/components/ui/highlighter";
-
 type EditorialHighlightedHeadingProps = {
   id: string;
   before: string;
@@ -9,6 +5,7 @@ type EditorialHighlightedHeadingProps = {
   className?: string;
 };
 
+/** Server-rendered heading with a CSS underline highlight (no motion/rough-notation). */
 export function EditorialHighlightedHeading({
   id,
   before,
@@ -18,16 +15,9 @@ export function EditorialHighlightedHeading({
   return (
     <h2 id={id} className={className}>
       {before}{" "}
-      <Highlighter
-        action="underline"
-        color="#009cc2"
-        strokeWidth={2}
-        animationDuration={700}
-        iterations={2}
-        isView
-      >
+      <span className="underline decoration-[#009cc2] decoration-2 underline-offset-[6px]">
         {highlight}
-      </Highlighter>
+      </span>
     </h2>
   );
 }

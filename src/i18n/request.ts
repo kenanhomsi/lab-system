@@ -1,5 +1,7 @@
 import { getRequestConfig } from "next-intl/server";
+import { headers } from "next/headers";
 import { routing } from "./routing";
+import { getMessagesForPath } from "@/lib/i18n/message-segments";
 
 export default getRequestConfig(async ({ requestLocale }) => {
   let locale = await requestLocale;
@@ -24,12 +26,15 @@ export default getRequestConfig(async ({ requestLocale }) => {
     darkMode: locale === "ar" ? "الوضع الداكن" : "Dark mode",
   };
 
+  const mergedMessages = {
+    ...fallbackMessages,
+    ...loadedMessages,
+    navbar: loadedMessages?.navbar ?? fallbackMessages?.navbar ?? navbarFallback,
+  };
+  const pathname = (await headers()).get("x-pathname") ?? `/${locale}`;
+
   return {
     locale,
-    messages: {
-      ...fallbackMessages,
-      ...loadedMessages,
-      navbar: loadedMessages?.navbar ?? fallbackMessages?.navbar ?? navbarFallback,
-    },
+    messages: getMessagesForPath(mergedMessages, pathname),
   };
 });

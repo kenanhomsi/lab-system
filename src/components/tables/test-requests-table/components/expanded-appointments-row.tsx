@@ -32,23 +32,13 @@ import {
   isEditableStatus,
 } from "@/components/tables/appointments-table/utils/format";
 import type { Appointment } from "@/modules/appointments";
-import { appointmentsClient } from "@/modules/appointments";
+import { appointmentsClient, locationLabelKey } from "@/modules/appointments";
 import { useSyncedSessionUser } from "@/stores/use-synced-session-user";
 import { useMirror } from "../store";
 import type { TestRequestItem } from "../types";
 
 type ExpandedAppointmentsRowProps = {
   testRequestId: string;
-};
-
-const locationLabelKey = (location: string): string => {
-  const normalized = location.trim().toLowerCase();
-  const map: Record<string, string> = {
-    lab: "locationLab",
-    home: "locationHome",
-    work: "locationWork",
-  };
-  return map[normalized] ?? "locationUnknown";
 };
 
 const statusLabelKey = (status: string): string => {

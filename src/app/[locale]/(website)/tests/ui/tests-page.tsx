@@ -73,7 +73,7 @@ export function TestsPage() {
       try {
         const response = await getMedicalCategoriesPublic({
           page: 1,
-          pageSize: 1000,
+          pageSize: 100,
           activeOnly: true,
         });
         if (isMounted) {

@@ -2,19 +2,46 @@ import { AxiosState } from "@/modules/axios";
 import { injectable, injectFromBase } from "inversify";
 import { ExternalPatientsClientBase } from "../abstraction/client";
 import { endpoint } from "./endpoint";
+import { parsePaginatedList } from "@/lib/api/bff-pagination";
 import type { ExternalPatient } from "../backend/types";
 import type {
   CreateExternalPatientFrontendParams,
+  FindAllExternalPatientsFrontendParams,
   FindOneExternalPatientFrontendParams,
   LinkDirectPatientFrontendParams,
 } from "./types";
 
+const appendQueryParams = (
+  path: string,
+  query?: Record<string, string | undefined>,
+) => {
+  if (!query) return path;
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (value !== undefined && value !== "") {
+      params.set(key, value);
+    }
+  }
+  const queryString = params.toString();
+  return queryString ? `${path}?${queryString}` : path;
+};
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends ExternalPatientsClientBase<AxiosState> {
-  async findAll() {
-    const res = await this.getEndpoint(endpoint.findAll).perform<ExternalPatient[]>();
-    return res.data;
+  async findAll(params?: FindAllExternalPatientsFrontendParams) {
+    const page = params?.page ?? 1;
+    const pageSize = params?.pageSize ?? 20;
+    const query: Record<string, string> = {
+      Page: String(page),
+      PageSize: String(pageSize),
+    };
+    if (params?.search?.trim()) {
+      query.Search = params.search.trim();
+    }
+
+    const res = await this.getEndpoint(appendQueryParams(endpoint.findAll, query)).perform<unknown>();
+    return parsePaginatedList<ExternalPatient>(res.data, page, pageSize);
   }
 
   async create(params: CreateExternalPatientFrontendParams) {

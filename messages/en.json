@@ -198,6 +198,17 @@
         "notNow": "Not now",
         "disclaimer": "Promotional content from Al Mutawali partners. Terms and pricing may vary."
       }
+    },
+    "welcomePages": {
+      "eyebrow": "{current} of {total}",
+      "skip": "Skip",
+      "previous": "Previous",
+      "next": "Next",
+      "finish": "Start",
+      "goTo": "Go to welcome page {index}",
+      "loading": "Loading welcome media...",
+      "play": "Play welcome video",
+      "error": "Could not play this welcome media."
     }
   },
   "about": {
@@ -1277,9 +1288,13 @@
       "fieldTotalAmountDescCreate": "Set automatically from the selected medical test price. Admins can change status and amounts when editing the request.",
       "fieldTotalAmountDescEdit": "Billing amount for this request.",
       "fieldExternalPatient": "External patient",
-      "fieldExternalPatientDesc": "Linked external patient profile.",
+      "fieldExternalPatientDesc": "Select a patient from your external patients linked to your account.",
       "placeholderLoadingPatients": "Loading patients…",
       "placeholderExternalPatient": "Choose external patient (optional)",
+      "placeholderExternalPatientDoctor": "Choose one of your patients",
+      "alertExternalPatientsTitle": "Could not load external patients",
+      "alertExternalPatientsBody": "Check your session and try again. You can add patients from the External patients page.",
+      "noExternalPatientsCreate": "No external patients yet. Add patients from External patients before creating a request.",
       "fieldDoctorId": "Doctor ID",
       "fieldLabClientId": "Lab Client ID",
       "fieldDirectPatientId": "Direct Patient ID",
@@ -2192,6 +2207,7 @@
       "phoneNumberLabel": "Phone number",
       "phoneNumberPlaceholder": "+20 100 000 0000",
       "cityPlaceholder": "Cairo",
+      "selectCity": "Select city",
       "profileMetadataLabel": "Profile metadata",
       "profileMetadataPlaceholder": "Optional notes or JSON",
       "profileMetadataDescription": "Use this for extra profile details when needed.",
@@ -2762,7 +2778,11 @@
       "recentCols": {
         "patient": "Patient",
         "lastVisit": "Last visit",
-        "notes": "Clinical notes"
+        "notes": "Clinical notes",
+        "test": "Test",
+        "date": "Date",
+        "status": "Status",
+        "title": "Title"
       },
       "stats": {
         "todayPatients": "Patients scheduled today",

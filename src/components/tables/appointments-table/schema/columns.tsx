@@ -2,6 +2,7 @@
 
 import { Badge, Group, Stack, Text, Anchor } from "@mantine/core";
 import { IconPaperclip } from "@tabler/icons-react";
+import { locationLabelKey } from "@/modules/appointments";
 import type { AppointmentRow } from "../types";
 import type { DataTableColumn } from "./types";
 import { ActionsRender } from "./columns-rendering";
@@ -42,16 +43,6 @@ const statusLabelKey = (status: string): string => {
     canceled: "statusCancelled",
   };
   return map[normalized] ?? "statusUnknown";
-};
-
-const locationLabelKey = (location: string): string => {
-  const normalized = location.trim().toLowerCase();
-  const map: Record<string, string> = {
-    lab: "locationLab",
-    home: "locationHome",
-    work: "locationWork",
-  };
-  return map[normalized] ?? "locationUnknown";
 };
 
 const genderLabelKey = (gender: string): string => {

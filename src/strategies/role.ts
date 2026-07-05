@@ -10,6 +10,7 @@ const buildNavbarConfig = (
   name: string,
   roleTitle: string,
   quickActions: navbarQuickAction[] = [],
+  profileHref = "/profile",
 ): navbarConfig => ({
   searchPlaceholder: "searchPlaceholder",
   actions: [
@@ -31,7 +32,7 @@ const buildNavbarConfig = (
     {
       id: "profile",
       label: "profile",
-      href: "/profile",
+      href: profileHref,
     },
 
     {
@@ -212,12 +213,18 @@ const secretaryQuickActions: navbarQuickAction[] = [
 ];
 
 const withNavbarProfileOverrides =
-  (defaultName: string, defaultRoleTitle: string, quickActions: navbarQuickAction[] = []) =>
+  (
+    defaultName: string,
+    defaultRoleTitle: string,
+    quickActions: navbarQuickAction[] = [],
+    profileHref = "/profile",
+  ) =>
   (profile?: NavbarProfileOverrides): navbarConfig =>
     buildNavbarConfig(
       profile?.name?.trim() || defaultName,
       profile?.roleTitle?.trim() || defaultRoleTitle,
       quickActions,
+      profileHref,
     );
 
 export const roleStrategy = {
@@ -343,6 +350,7 @@ export const roleStrategy = {
       "Dr. Elena Vance",
       "LAB DIRECTOR",
       adminQuickActions,
+      "/admin/profile",
     ),
     canAccess: (route: string) => route.startsWith("/admin"),
   },
@@ -389,6 +397,7 @@ export const roleStrategy = {
       "Dr. Ahmad Salem",
       "DOCTOR",
       doctorQuickActions,
+      "/doctor/profile",
     ),
     canAccess: (route: string) => route.startsWith("/doctor"),
   },
@@ -491,6 +500,7 @@ export const roleStrategy = {
       "Dr. Elena Vance",
       "LAB DIRECTOR",
       labQuickActions,
+      "/lab/profile",
     ),
     canAccess: (route: string) => route.startsWith("/lab"),
   },
@@ -522,6 +532,7 @@ export const roleStrategy = {
       "Special Account",
       "SPECIAL",
       [],
+      "/special/profile",
     ),
     canAccess: (route: string) => route.startsWith("/special"),
   },
@@ -563,6 +574,7 @@ export const roleStrategy = {
       "Sara Nabil",
       "SECRETARY",
       secretaryQuickActions,
+      "/secretary/profile",
     ),
     canAccess: (route: string) => route.startsWith("/secretary"),
   },

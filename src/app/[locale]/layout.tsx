@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { getMessagesForPath } from "@/lib/i18n/message-segments";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -44,8 +46,6 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const loadedMessages = (await import(`../../../messages/${locale}.json`))
     .default;
-  // Defensive merge to avoid runtime "missing namespace" crashes
-  // in case a namespace is omitted by the bundler/serializer.
   const fallbackMessages =
     locale === "en"
       ? loadedMessages
@@ -60,12 +60,14 @@ export default async function LocaleLayout({
     lightMode: locale === "ar" ? "الوضع الفاتح" : "Light mode",
     darkMode: locale === "ar" ? "الوضع الداكن" : "Dark mode",
   };
-  const messages = {
+  const mergedMessages = {
     ...fallbackMessages,
     ...loadedMessages,
     navbar:
       loadedMessages?.navbar ?? fallbackMessages?.navbar ?? navbarFallback,
   };
+  const pathname = (await headers()).get("x-pathname") ?? `/${locale}`;
+  const messages = getMessagesForPath(mergedMessages, pathname);
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>

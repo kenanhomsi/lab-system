@@ -198,6 +198,17 @@
         "notNow": "ليس الآن",
         "disclaimer": "محتوى ترويجي من شركاء مخبر المتوالي. قد تختلف الشروط والأسعار."
       }
+    },
+    "welcomePages": {
+      "eyebrow": "{current} من {total}",
+      "skip": "تخطي",
+      "previous": "السابق",
+      "next": "التالي",
+      "finish": "ابدأ",
+      "goTo": "الانتقال إلى صفحة الترحيب {index}",
+      "loading": "جار تحميل شاشة الترحيب...",
+      "play": "تشغيل فيديو الترحيب",
+      "error": "تعذر تشغيل وسائط الترحيب."
     }
   },
   "about": {
@@ -629,6 +640,7 @@
     "permissionDenied": "تم رفض الإذن. اسمح بالإشعارات من إعدادات الموقع في المتصفح.",
     "permissionNeeded": "اضغط تفعيل ثم اقبل طلب الإذن من المتصفح.",
     "registerFailed": "تعذّر تسجيل الجهاز للإشعارات.",
+    "backendServerError": "حدث خطأ داخلي في الخادم — راجع سجلات الخادم لمسار POST /api/notifications/device-tokens.",
     "vapidHint": "من Firebase Console → Cloud Messaging → Web Push certificates انسخ Key pair كاملاً إلى NEXT_PUBLIC_FIREBASE_VAPID_KEY (وليس Sender ID)."
   },
   "notificationsPage": {
@@ -1276,9 +1288,13 @@
       "fieldTotalAmountDescCreate": "يُضبط تلقائياً من سعر التحليل المختار. يمكن للمسؤولين تغيير الحالة والمبالغ عند التعديل.",
       "fieldTotalAmountDescEdit": "مبلغ الفوترة لهذا الطلب.",
       "fieldExternalPatient": "مريض خارجي",
-      "fieldExternalPatientDesc": "ربط بملف مريض خارجي.",
+      "fieldExternalPatientDesc": "اختر مريضاً من قائمة مرضاك الخارجيين المرتبطين بحسابك.",
       "placeholderLoadingPatients": "جاري تحميل المرضى…",
       "placeholderExternalPatient": "اختر مريضاً خارجياً (اختياري)",
+      "placeholderExternalPatientDoctor": "اختر مريضاً من مرضاك",
+      "alertExternalPatientsTitle": "تعذّر تحميل المرضى الخارجيين",
+      "alertExternalPatientsBody": "تحقق من الجلسة وحاول مجدداً. يمكنك إضافة مرضى من صفحة «مرضى خارجيون».",
+      "noExternalPatientsCreate": "لا يوجد مرضى خارجيون بعد. أضف مرضى من صفحة «مرضى خارجيون» قبل إنشاء الطلب.",
       "fieldDoctorId": "معرّف الطبيب",
       "fieldLabClientId": "معرّف عميل المختبر",
       "fieldDirectPatientId": "معرّف المريض المباشر",
@@ -2191,6 +2207,7 @@
       "phoneNumberLabel": "رقم الهاتف",
       "phoneNumberPlaceholder": "+963 900 000 000",
       "cityPlaceholder": "دمشق",
+      "selectCity": "اختر المدينة",
       "profileMetadataLabel": "بيانات إضافية",
       "profileMetadataPlaceholder": "ملاحظات اختيارية أو JSON",
       "profileMetadataDescription": "استخدم هذا لإضافة تفاصيل إضافية للملف عند الحاجة.",
@@ -2402,6 +2419,7 @@
     },
     "appointments": {
       "title": "المواعيد",
+      "filterPatient": "معرّف المريض",
       "description": "إدارة المواعيد الطبية مع التصفية والتأكيد والإلغاء.",
       "createTitle": "إضافة موعد",
       "searchPlaceholder": "ابحث باسم الموعد",
@@ -2762,7 +2780,11 @@
       "recentCols": {
         "patient": "المريض",
         "lastVisit": "آخر زيارة",
-        "notes": "ملاحظات سريرية"
+        "notes": "ملاحظات سريرية",
+        "test": "الفحص",
+        "date": "التاريخ",
+        "status": "الحالة",
+        "title": "العنوان"
       },
       "stats": {
         "todayPatients": "مرضى مجدولون اليوم",
@@ -3014,7 +3036,7 @@
       "cityPlaceholder": "دمشق",
       "profileMetadata": "بيانات إضافية",
       "profileMetadataDesc": "ملاحظات اختيارية أو نص JSON.",
-      "profileMetadataPlaceholder": "مثال: department=Cardiology",
+      "profileMetadataPlaceholder": "مثال: القسم=أمراض القلب",
       "saveChanges": "حفظ التغييرات",
       "changePassword": "تغيير كلمة المرور",
       "changePasswordDesc": "استخدم كلمة مرور فريدة لا تستخدمها في مكان آخر.",

@@ -1,5 +1,6 @@
 "use client";
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
+import { SyrianCitySelect } from "@/components/ui/syrian-city-select";
 
 import {
   Button,
@@ -194,12 +195,12 @@ const UI = () => {
                   value={form.phoneNumber}
                   onChange={(e) => updateField("phoneNumber", e.target.value)}
                 />
-                <TextInput
+                <SyrianCitySelect
                   label={t("city")}
-                  placeholder={t("cityPlaceholder")}
+                  placeholder={t("selectCity")}
                   leftSection={<IconMapPin size={16} />}
                   value={form.city}
-                  onChange={(e) => updateField("city", e.target.value)}
+                  onChange={(value) => updateField("city", value)}
                 />
               </SimpleGrid>
               <Textarea

@@ -8,6 +8,12 @@ type CreateExternalPatientFrontendParams = {
   externalId: string;
 };
 
+type FindAllExternalPatientsFrontendParams = {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+};
+
 type FindOneExternalPatientFrontendParams = {
   id: string;
 };
@@ -20,6 +26,7 @@ type LinkDirectPatientFrontendParams = {
 export type {
   CreateExternalPatientFrontendParams,
   ExternalPatient,
+  FindAllExternalPatientsFrontendParams,
   FindOneExternalPatientFrontendParams,
   LinkDirectPatientFrontendParams,
 };

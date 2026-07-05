@@ -1,6 +1,7 @@
 "use client";
 
-import { Stack, Tabs, Text } from "@mantine/core";
+import dynamic from "next/dynamic";
+import { Center, Loader, Stack, Tabs, Text } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
@@ -8,16 +9,67 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { QUICK_ACTION_TAB_PARAM } from "@/lib/quick-actions/constants";
 import { clearPendingQuickAction } from "@/lib/quick-actions/storage";
 
-import { AccessPoliciesTable } from "@/components/tables/access-policies-table";
-import { RolesTable } from "@/components/tables/roles-table";
-import { BannersTable } from "@/components/tables/banners-table";
-import { AdsTable } from "@/components/tables/ads-table";
-import { SlideCardsTable } from "@/components/tables/slide-cards-table";
-import { WelcomePagesTable } from "@/components/tables/welcome-pages-table";
-import { WebsitePagesTable } from "@/components/tables/website-pages-table";
-import { WebsiteContentMapPanel } from "@/components/admin/website-content-map";
-import { MedicalTestCategoriesTable } from "@/components/tables/medical-test-categories-table";
-import { AccountingSettingsForm } from "@/components/forms/accounting-settings-form/AccountingSettingsForm";
+const TabLoader = () => (
+  <Center py="xl">
+    <Loader color="cyan" />
+  </Center>
+);
+
+const RolesTable = dynamic(
+  () => import("@/components/tables/roles-table").then((module) => module.RolesTable),
+  { loading: TabLoader },
+);
+const AccessPoliciesTable = dynamic(
+  () =>
+    import("@/components/tables/access-policies-table").then(
+      (module) => module.AccessPoliciesTable,
+    ),
+  { loading: TabLoader },
+);
+const BannersTable = dynamic(
+  () => import("@/components/tables/banners-table").then((module) => module.BannersTable),
+  { loading: TabLoader },
+);
+const AdsTable = dynamic(
+  () => import("@/components/tables/ads-table").then((module) => module.AdsTable),
+  { loading: TabLoader },
+);
+const SlideCardsTable = dynamic(
+  () =>
+    import("@/components/tables/slide-cards-table").then((module) => module.SlideCardsTable),
+  { loading: TabLoader },
+);
+const WelcomePagesTable = dynamic(
+  () =>
+    import("@/components/tables/welcome-pages-table").then((module) => module.WelcomePagesTable),
+  { loading: TabLoader },
+);
+const WebsitePagesTable = dynamic(
+  () =>
+    import("@/components/tables/website-pages-table").then((module) => module.WebsitePagesTable),
+  { loading: TabLoader },
+);
+const WebsiteContentMapPanel = dynamic(
+  () =>
+    import("@/components/admin/website-content-map").then(
+      (module) => module.WebsiteContentMapPanel,
+    ),
+  { loading: TabLoader },
+);
+const MedicalTestCategoriesTable = dynamic(
+  () =>
+    import("@/components/tables/medical-test-categories-table").then(
+      (module) => module.MedicalTestCategoriesTable,
+    ),
+  { loading: TabLoader },
+);
+const AccountingSettingsForm = dynamic(
+  () =>
+    import("@/components/forms/accounting-settings-form/AccountingSettingsForm").then(
+      (module) => module.AccountingSettingsForm,
+    ),
+  { loading: TabLoader },
+);
 
 const AdminSettingsUI = () => {
   const t = useTranslations("admin.settings");

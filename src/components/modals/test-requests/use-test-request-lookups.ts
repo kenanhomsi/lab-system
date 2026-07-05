@@ -70,8 +70,8 @@ async function fetchMedicalTestsForSelect(): Promise<MedicalTestItem[]> {
 }
 
 async function fetchExternalPatients(): Promise<ExternalPatient[]> {
-  const rows = await externalPatientsClient.findAll();
-  return Array.isArray(rows) ? rows : [];
+  const page = await externalPatientsClient.findAll({ page: 1, pageSize: 100 });
+  return page.items;
 }
 
 function useMedicalTestsForSelectQuery(enabled: boolean) {

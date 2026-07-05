@@ -5,10 +5,12 @@ import { useMirror } from "./store";
 
 const UI = () => {
   const dashboard = useMirror("dashboard");
+  const slideCards = useMirror("slideCards");
 
   return (
     <DashboardApiView
       dashboard={dashboard}
+      slideCards={slideCards}
       summaryKeys={LAB_PARTNER_SUMMARY_KEYS}
       translationNamespace="lab.dashboard"
       promoLocation="lab_dashboard"

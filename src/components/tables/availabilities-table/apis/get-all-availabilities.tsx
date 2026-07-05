@@ -4,9 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { availabilitiesClient } from "@/modules/appointments";
 import type { Availability } from "@/modules/appointments";
+import { parsePaginatedList } from "@/lib/api/bff-pagination";
 import { normalizeDayOfWeek, toFormTime } from "../utils/format";
 import { useMirror, useMirrorRegistry } from "../store";
 import type { AvailabilityRow } from "../types";
+
+const AVAILABILITIES_PAGE_SIZE = 20;
 
 const normalizeAvailability = (value: unknown): AvailabilityRow | null => {
   if (typeof value !== "object" || value === null) return null;
@@ -29,31 +32,43 @@ const normalizeAvailability = (value: unknown): AvailabilityRow | null => {
   };
 };
 
-const asAvailabilityRows = (payload: unknown): AvailabilityRow[] => {
-  if (Array.isArray(payload)) {
-    return payload.map(normalizeAvailability).filter((item): item is AvailabilityRow => item !== null);
-  }
-  if (payload && typeof payload === "object" && "data" in payload) {
-    const inner = (payload as { data: unknown }).data;
-    if (Array.isArray(inner)) {
-      return inner.map(normalizeAvailability).filter((item): item is AvailabilityRow => item !== null);
-    }
-  }
-  return [];
-};
+const emptyAvailabilitiesPage = () => ({
+  items: [] as AvailabilityRow[],
+  page: 1,
+  pageSize: AVAILABILITIES_PAGE_SIZE,
+  totalCount: 0,
+  totalPages: 0,
+  hasNextPage: false,
+  hasPreviousPage: false,
+});
 
 /**
- * Loads availabilities and mirrors them into the table store.
+ * Loads availabilities with server-side pagination.
  */
 const GetAllAvailabilities = ({ children }: PropsWithChildren) => {
   const pageNumber = useMirror("pageNumber");
 
   const { data, isPending, refetch } = useQuery({
     queryKey: ["admin-availabilities", pageNumber],
-    queryFn: () => availabilitiesClient.findAll(),
+    queryFn: async () => {
+      const payload = await availabilitiesClient.findAll({
+        Page: pageNumber,
+        PageSize: AVAILABILITIES_PAGE_SIZE,
+      });
+      const page = parsePaginatedList<unknown>(payload, pageNumber, AVAILABILITIES_PAGE_SIZE);
+      return {
+        ...page,
+        items: page.items
+          .map(normalizeAvailability)
+          .filter((item): item is AvailabilityRow => item !== null),
+      };
+    },
   });
 
-  useMirrorRegistry("availabilitiesData", asAvailabilityRows(data));
+  const availabilitiesPage = data ?? emptyAvailabilitiesPage();
+
+  useMirrorRegistry("availabilitiesPage", availabilitiesPage);
+  useMirrorRegistry("availabilitiesData", availabilitiesPage.items);
   useMirrorRegistry("isPending", isPending);
   useMirrorRegistry("refetchAvailabilities", () => {
     void refetch();
@@ -62,4 +77,4 @@ const GetAllAvailabilities = ({ children }: PropsWithChildren) => {
   return <>{children}</>;
 };
 
-export { GetAllAvailabilities, asAvailabilityRows };
+export { GetAllAvailabilities };

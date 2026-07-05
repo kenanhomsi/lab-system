@@ -19,10 +19,12 @@ import { TestResultItem } from "../../types";
  */
 const ActionsRender = ({
   row,
-  canManage,
+  canEdit,
+  canDelete,
 }: {
   row: TestResultItem;
-  canManage: boolean;
+  canEdit: boolean;
+  canDelete: boolean;
 }) => {
   const t = useTranslations("admin.common");
   const testResultsT = useTranslations("admin.testResults");
@@ -69,19 +71,19 @@ const ActionsRender = ({
           <IconDownload size={15} />
         </ActionIcon>
       </Tooltip>
-      {canManage ? (
-        <>
-          <Tooltip label={t("edit")} withArrow position="top">
-            <ActionIcon variant="subtle" color="blue" radius="md" size="md" onClick={(e) => { e.stopPropagation(); openModal("edit"); }}>
-              <IconEdit size={15} />
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label={t("delete")} withArrow position="top">
-            <ActionIcon variant="subtle" color="red" radius="md" size="md" onClick={(e) => { e.stopPropagation(); openModal("delete"); }}>
-              <IconTrash size={15} />
-            </ActionIcon>
-          </Tooltip>
-        </>
+      {canEdit ? (
+        <Tooltip label={t("edit")} withArrow position="top">
+          <ActionIcon variant="subtle" color="blue" radius="md" size="md" onClick={(e) => { e.stopPropagation(); openModal("edit"); }}>
+            <IconEdit size={15} />
+          </ActionIcon>
+        </Tooltip>
+      ) : null}
+      {canDelete ? (
+        <Tooltip label={t("delete")} withArrow position="top">
+          <ActionIcon variant="subtle" color="red" radius="md" size="md" onClick={(e) => { e.stopPropagation(); openModal("delete"); }}>
+            <IconTrash size={15} />
+          </ActionIcon>
+        </Tooltip>
       ) : null}
     </Group>
   );

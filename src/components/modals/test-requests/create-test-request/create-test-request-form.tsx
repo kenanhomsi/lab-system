@@ -37,7 +37,12 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { useMirror } from "./store";
 import type { MedicalTestItem } from "@/components/tables/medical-tests-table/types";
-import { buildTestRequestPartyPayload, isStaffPartyUser, resolveClinicalPartyKind } from "../party-ids";
+import {
+  buildTestRequestPartyPayload,
+  isStaffPartyUser,
+  requiresExternalPatientForTestRequest,
+  shouldShowExternalPatientField,
+} from "../party-ids";
 import {
   useExternalPatientsForSelectQuery,
   useMedicalTestsForSelectQuery,
@@ -49,6 +54,7 @@ import {
   appointmentSlotKey,
   findAppointmentSlotByKey,
   formatAppointmentSlotLabel,
+  requiresPatientCoordinates,
 } from "@/modules/appointments";
 import { useQuery } from "@tanstack/react-query";
 import { notifications } from "@mantine/notifications";
@@ -196,7 +202,7 @@ const CreateTestRequestForm = () => {
       medicalTestIds: initialMedicalTestIds,
       totalAmount:
         prev.medicalTestIds.length === initialMedicalTestIds.length &&
-        prev.medicalTestIds.every((id, index) => id === initialMedicalTestIds[index])
+          prev.medicalTestIds.every((id, index) => id === initialMedicalTestIds[index])
           ? prev.totalAmount
           : 0,
     }));
@@ -234,26 +240,30 @@ const CreateTestRequestForm = () => {
     const rows = externalPatientsQuery.data ?? [];
     return rows.map((p) => ({
       value: String(p.id),
-      label: `${p.fullName}${p.externalId ? ` (${p.externalId})` : ""}`,
+      label: `${p.fullName}`,
     }));
   }, [externalPatientsQuery.data]);
 
   const hasUserId = Boolean(sessionUser?.id?.trim());
-  const partyKind = resolveClinicalPartyKind(sessionUser?.roles);
 
   const showStaffPartyFields = Boolean(
     hasUserId && isStaffPartyUser(sessionUser?.roles),
   );
 
   const showExternalPatientField = Boolean(
-    hasUserId && (partyKind === "lab" || isStaffPartyUser(sessionUser?.roles)),
+    hasUserId && shouldShowExternalPatientField(sessionUser?.roles),
+  );
+
+  const requiresExternalPatient = requiresExternalPatientForTestRequest(
+    sessionUser?.roles,
   );
 
   const isRequestDetailsValid =
-    Boolean(form.requestDate.trim()) && form.medicalTestIds.length > 0;
+    form.medicalTestIds.length > 0 &&
+    (!requiresExternalPatient || form.externalPatientId > 0);
 
   const selectedSlot = findAppointmentSlotByKey(slotsQuery.data ?? [], selectedSlotKey);
-  const isHomeCollection = locationType === "home";
+  const requiresCoordinates = requiresPatientCoordinates(locationType);
   const selectedLocation = useMemo(
     () =>
       latitude !== "" && longitude !== ""
@@ -264,7 +274,7 @@ const CreateTestRequestForm = () => {
   const isAppointmentStepValid =
     Boolean(appointmentDate.trim()) &&
     Boolean(selectedSlot && sessionUser?.id?.trim()) &&
-    (!isHomeCollection || Boolean(selectedLocation));
+    (!requiresCoordinates || Boolean(selectedLocation));
   const canSubmitCreate =
     isAppointmentStepValid && hasUserId && (Boolean(createdTestRequestId) || isRequestDetailsValid);
 
@@ -299,7 +309,7 @@ const CreateTestRequestForm = () => {
     });
     return {
       medicalTestIds: form.medicalTestIds,
-      requestDate: toRequestDateIso(form.requestDate),
+      requestDate: toRequestDateIso(dayjs().toISOString()),
       status: "pending",
       totalAmount: form.totalAmount,
       notes: form.notes,
@@ -411,9 +421,9 @@ const CreateTestRequestForm = () => {
                   <Alert color="red">{ta("slotsLoadError")}</Alert>
                 ) : null}
                 {appointmentDate &&
-                !slotsQuery.isPending &&
-                !slotsQuery.isError &&
-                (slotsQuery.data ?? []).length === 0 ? (
+                  !slotsQuery.isPending &&
+                  !slotsQuery.isError &&
+                  (slotsQuery.data ?? []).length === 0 ? (
                   <Text size="sm" c="dimmed">
                     {ta("noSlots")}
                   </Text>
@@ -430,7 +440,7 @@ const CreateTestRequestForm = () => {
                     onChange={(value) => {
                       const nextValue = value || "lab";
                       setLocationType(nextValue);
-                      if (nextValue !== "home") {
+                      if (nextValue === "lab") {
                         setLatitude("");
                         setLongitude("");
                       }
@@ -478,7 +488,7 @@ const CreateTestRequestForm = () => {
                   value={attachment}
                   onChange={setAttachment}
                 />
-                {isHomeCollection ? (
+                {requiresCoordinates ? (
                   <Stack gap="sm">
                     <Stack gap={2}>
                       <Text size="sm" fw={600}>
@@ -531,6 +541,48 @@ const CreateTestRequestForm = () => {
                   </Text>
                 </Group>
                 <Divider />
+                {showExternalPatientField ? (
+                  <Select
+                    label={t("fieldExternalPatient")}
+                    searchable
+                    clearable={!requiresExternalPatient}
+                    withAsterisk={requiresExternalPatient}
+                    placeholder={
+                      externalPatientsQuery.isPending
+                        ? t("placeholderLoadingPatients")
+                        : requiresExternalPatient
+                          ? t("placeholderExternalPatientDoctor")
+                          : t("placeholderExternalPatient")
+                    }
+                    description={t("fieldExternalPatientDesc")}
+                    data={externalPatientOptions}
+                    leftSection={<IconUsers size={16} />}
+                    disabled={externalPatientsQuery.isPending || externalPatientsQuery.isError}
+                    value={
+                      form.externalPatientId > 0
+                        ? String(form.externalPatientId)
+                        : null
+                    }
+                    onChange={(v) =>
+                      setForm({
+                        ...form,
+                        externalPatientId: v ? Number(v) : 0,
+                      })
+                    }
+                  />
+                ) : null}
+                {externalPatientsQuery.isError && showExternalPatientField ? (
+                  <Alert color="red" title={t("alertExternalPatientsTitle")}>
+                    {t("alertExternalPatientsBody")}
+                  </Alert>
+                ) : null}
+                {!externalPatientsQuery.isPending &&
+                  showExternalPatientField &&
+                  externalPatientOptions.length === 0 ? (
+                  <Text size="sm" c="dimmed">
+                    {t("noExternalPatientsCreate")}
+                  </Text>
+                ) : null}
                 {medicalTestsQuery.isError ? (
                   <Alert color="red" title={t("alertMedicalTestsTitle")}>
                     {t("alertMedicalTestsBody")}
@@ -590,17 +642,6 @@ const CreateTestRequestForm = () => {
                       </Paper>
                     </Stack>
                   </Box>
-                  <DatePickerInput
-                    label={t("fieldRequestDate")}
-                    withAsterisk
-                    placeholder={t("datePlaceholder")}
-                    description={t("fieldRequestDateDescCreate")}
-                    value={form.requestDate ? dayjs(form.requestDate).toDate() : null}
-                    leftSection={<IconCalendarEvent size={16} />}
-                    onChange={(date) =>
-                      setForm({ ...form, requestDate: date ? dayjs(date).format("YYYY-MM-DD") : "" })
-                    }
-                  />
                   <NumberInput
                     label={t("fieldTotalAmount")}
                     min={0}
@@ -612,33 +653,6 @@ const CreateTestRequestForm = () => {
                     readOnly
                     leftSection={<IconCurrencyDollar size={16} />}
                   />
-                  {showExternalPatientField && (
-                    <Select
-                      label={t("fieldExternalPatient")}
-                      searchable
-                      clearable
-                      placeholder={
-                        externalPatientsQuery.isPending
-                          ? t("placeholderLoadingPatients")
-                          : t("placeholderExternalPatient")
-                      }
-                      description={t("fieldExternalPatientDesc")}
-                      data={externalPatientOptions}
-                      leftSection={<IconUsers size={16} />}
-                      disabled={externalPatientsQuery.isPending || externalPatientsQuery.isError}
-                      value={
-                        form.externalPatientId > 0
-                          ? String(form.externalPatientId)
-                          : null
-                      }
-                      onChange={(v) =>
-                        setForm({
-                          ...form,
-                          externalPatientId: v ? Number(v) : 0,
-                        })
-                      }
-                    />
-                  )}
                   {showStaffPartyFields && (
                     <>
                       <TextInput
@@ -742,8 +756,8 @@ const CreateTestRequestForm = () => {
                       testRequestId,
                       userId: sessionUser.id,
                       patientLocationType: locationType,
-                      patientLatitude: isHomeCollection && selectedLocation ? selectedLocation.lat : null,
-                      patientLongitude: isHomeCollection && selectedLocation ? selectedLocation.lng : null,
+                      patientLatitude: requiresCoordinates && selectedLocation ? selectedLocation.lat : null,
+                      patientLongitude: requiresCoordinates && selectedLocation ? selectedLocation.lng : null,
                       ...(patientAge !== "" ? { age: Number(patientAge) } : {}),
                       ...(gender ? { gender } : {}),
                       notes: appointmentNotes,

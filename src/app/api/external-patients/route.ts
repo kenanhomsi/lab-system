@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jsonError } from "@/lib/api/bff-errors";
 import { backendContainer } from "@/container";
 import { resolveAccessToken } from "@/lib/api/resolve-access-token";
+import { getBffPagination } from "@/lib/api/bff-pagination";
 import {
   ExternalPatientsBackendService,
   externalPatientsModuleNames,
@@ -17,8 +18,18 @@ export async function GET(req: NextRequest) {
     if (!token) {
       throw new Error("Missing authorization token");
     }
-    const items = await externalPatientsService.findAll({ token });
-    return NextResponse.json(items);
+    const { page, pageSize } = getBffPagination(req.nextUrl.searchParams);
+    const search =
+      req.nextUrl.searchParams.get("Search") ??
+      req.nextUrl.searchParams.get("search") ??
+      undefined;
+    const pageData = await externalPatientsService.findAll({
+      token,
+      page,
+      pageSize,
+      search,
+    });
+    return NextResponse.json(pageData);
   } catch (error: unknown) {
     return jsonError(error);
   }

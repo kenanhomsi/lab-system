@@ -2,11 +2,11 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { useMemo } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   FiAlertCircle,
   FiArrowRight,
-  FiBarChart2,
   FiClipboard,
   FiExternalLink,
   FiFileText,
@@ -15,14 +15,14 @@ import {
   FiPieChart,
   FiRefreshCw,
 } from "react-icons/fi";
-import { BarChart } from "@mantine/charts";
 import { useElementSize } from "@mantine/hooks";
 import { useLocale, useTranslations } from "next-intl";
 import type {
   ChartBreakdownItem,
   DashboardData,
 } from "@/modules/dashboard";
-import { SlideCardsSidebar } from "@/app/[locale]/(website)/ui/landing/slide-cards-section";
+import type { SlideCardItem } from "@/types/slide-card";
+import { SlideCardsSidebar } from "@/components/dashboard/slide-cards-sidebar";
 import {
   ADMIN_HERO_PILLS,
   HERO_HIGHLIGHT_KEYS,
@@ -32,6 +32,23 @@ import {
 } from "./summary-config";
 import { getStatusVariant } from "./status-utils";
 import styles from "./styles.module.scss";
+
+const DashboardCharts = dynamic(
+  () => import("./dashboard-charts").then((module) => module.DashboardCharts),
+  {
+    ssr: false,
+    loading: () => (
+      <>
+        <div className={`${styles.glassCard} ${styles.span6}`} aria-hidden="true">
+          <div className={styles.chartPlaceholder} style={{ minHeight: 240 }} />
+        </div>
+        <div className={`${styles.glassCard} ${styles.span6}`} aria-hidden="true">
+          <div className={styles.chartPlaceholder} style={{ minHeight: 240 }} />
+        </div>
+      </>
+    ),
+  },
+);
 
 type PromoLocation =
   | "admin_dashboard"
@@ -48,6 +65,7 @@ type Props = {
     | "doctor.dashboard"
     | "lab.dashboard";
   layout?: "split" | "simple";
+  slideCards?: SlideCardItem[];
   /** @deprecated Promo slot replaced by square offers sidebar; kept for call-site compatibility */
   promoLocation?: PromoLocation;
 };
@@ -280,8 +298,8 @@ const RecentTable = ({
     ) : (
       <div className={styles.recentTable}>
         <div className={styles.recentHead}>
-          {head.map((col) => (
-            <span key={col}>{col}</span>
+          {head.map((col, index) => (
+            <span key={index}>{col}</span>
           ))}
         </div>
         {rows}
@@ -298,6 +316,7 @@ export const DashboardApiView = ({
   summaryKeys,
   translationNamespace,
   layout = "split",
+  slideCards,
 }: Props) => {
   const t = useTranslations(translationNamespace);
   const locale = useLocale();
@@ -494,7 +513,7 @@ export const DashboardApiView = ({
 
         {isSplit ? (
           <div className={`${styles.asideAdSlot} ${styles.span4}`}>
-            <SlideCardsSidebar />
+            <SlideCardsSidebar initialCards={slideCards} />
           </div>
         ) : null}
 
@@ -527,64 +546,16 @@ export const DashboardApiView = ({
           title={t("sections.analytics")}
           subtitle={t("chartSubtitle")}
         />
-        <div className={`${styles.glassCard} ${styles.span6}`}>
-          <div className={styles.cardHead}>
-            <div className={styles.cardHeadIcon}>
-              <FiBarChart2 size={16} />
-            </div>
-            <div>
-              <p className={styles.cardHeadTitle}>{t("sections.monthlyRequests")}</p>
-              <p className={styles.cardHeadSub}>{t("chartSubtitle")}</p>
-            </div>
-          </div>
-          <div className={styles.chartWrap} ref={chartRef}>
-            {chartWidth > 0 && monthlyRequestsData.length > 0 ? (
-              <BarChart
-                h={200}
-                data={monthlyRequestsData}
-                dataKey="month"
-                series={[{ name: "value", color: "var(--primary, #009cc2)" }]}
-                barProps={{ radius: [6, 6, 0, 0] }}
-                tickLine="none"
-                gridAxis="y"
-              />
-            ) : (
-              <div className={styles.chartPlaceholder}>
-                <EmptyIllustration icon={FiBarChart2} message={t("emptyCharts")} />
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className={`${styles.glassCard} ${styles.span6}`}>
-          <div className={styles.cardHead}>
-            <div
-              className={styles.cardHeadIcon}
-              style={{ background: "rgba(16, 185, 129, 0.12)", color: "#059669" }}
-            >
-              <FiBarChart2 size={16} />
-            </div>
-            <div>
-              <p className={styles.cardHeadTitle}>{t("sections.monthlyRevenue")}</p>
-              <p className={styles.cardHeadSub}>{t("chartSubtitle")}</p>
-            </div>
-          </div>
-          {monthlyRevenueData.length > 0 ? (
-            <BarChart
-              h={200}
-              data={monthlyRevenueData}
-              dataKey="month"
-              series={[{ name: "value", color: "#10b981" }]}
-              barProps={{ radius: [6, 6, 0, 0] }}
-              tickLine="none"
-              gridAxis="y"
-            />
-          ) : (
-            <div className={styles.chartPlaceholder}>
-              <EmptyIllustration icon={FiBarChart2} message={t("emptyCharts")} />
-            </div>
-          )}
-        </div>
+        <DashboardCharts
+          chartRef={chartRef}
+          chartWidth={chartWidth}
+          monthlyRequestsData={monthlyRequestsData}
+          monthlyRevenueData={monthlyRevenueData}
+          monthlyRequestsTitle={t("sections.monthlyRequests")}
+          monthlyRevenueTitle={t("sections.monthlyRevenue")}
+          chartSubtitle={t("chartSubtitle")}
+          emptyChartsLabel={t("emptyCharts")}
+        />
 
         {/* Row 4: Distribution */}
         {breakdownSections.length > 0 ? (

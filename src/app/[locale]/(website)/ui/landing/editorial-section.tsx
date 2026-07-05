@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getLocale } from "next-intl/server";
 import { Icon } from "@/components/ui/icon";
 import { EditorialHighlightedHeading } from "./editorial-highlighted-heading";
@@ -48,7 +49,7 @@ export async function EditorialSection() {
       <div className="relative mx-auto max-w-screen-xl px-5 md:px-8">
         <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-start lg:gap-16">
           <div
-            className="reveal-up w-full lg:w-1/2 flex flex-col gap-6"
+            className="reveal-up reveal-up--ssr-visible w-full lg:w-1/2 flex flex-col gap-6"
             style={{ animationDelay: "100ms" }}
           >
             <div className="text-center lg:text-start">
@@ -109,16 +110,17 @@ export async function EditorialSection() {
           </div>
 
           <div
-            className="reveal-up w-full lg:w-1/2 flex justify-center lg:justify-end"
+            className="reveal-up reveal-up--ssr-visible w-full lg:w-1/2 flex justify-center lg:justify-end"
             style={{ animationDelay: "200ms" }}
           >
             <div className="relative max-w-md w-full">
               <div className="relative aspect-square w-full overflow-hidden rounded-full border-4 border-white bg-surface-container shadow-2xl">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={banner?.mediaUrl || PORTRAIT}
                   alt={banner?.title || (isRtl ? "مختبر المتوالي" : "Metwali Lab")}
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="(max-width: 768px) 80vw, 448px"
+                  className="object-cover"
                 />
               </div>
               <div className="absolute -bottom-6 -start-6 h-32 w-32 rounded-full border-8 border-white bg-primary shadow-xl flex items-center justify-center text-white">

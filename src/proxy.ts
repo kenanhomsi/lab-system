@@ -5,6 +5,7 @@ import { routing } from "./i18n/routing";
 import { getToken } from "next-auth/jwt";
 import { getAuthSecret } from "./lib/auth-secret";
 import { getMiddlewareHubRewriteBackend } from "./lib/api/signalr-hub-base-url";
+import { hasAdminRole } from "./lib/auth/permissions";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
@@ -64,27 +65,35 @@ export default async function middleware(request: NextRequest) {
     if (!token) {
       const locale = pathname.match(/^\/(en|ar)/)?.[1] || "ar";
       const loginUrl = new URL(`/${locale}/login`, request.url);
-      loginUrl.searchParams.set("callbackUrl", `${pathname}${request.nextUrl.search}`);
+      loginUrl.searchParams.set(
+        "callbackUrl",
+        `${pathname}${request.nextUrl.search}`,
+      );
       return NextResponse.redirect(loginUrl);
     }
 
     const userRoles = (token.roles as string[]) ?? [];
-    const hasAccess = userRoles.some((r) =>
-      requiredRoles.map((role) => role.toLowerCase()).includes(r.toLowerCase()),
-    );
+    const hasAccess =
+      hasAdminRole(userRoles) ||
+      userRoles.some((r) =>
+        requiredRoles
+          .map((role) => role.toLowerCase())
+          .includes(r.toLowerCase()),
+      );
 
     if (!hasAccess) {
       const locale = pathname.match(/^\/(en|ar)/)?.[1] || "ar";
-      return NextResponse.redirect(new URL(`/${locale}/forbidden`, request.url));
+      return NextResponse.redirect(
+        new URL(`/${locale}/forbidden`, request.url),
+      );
     }
   }
 
-  return intlMiddleware(request);
+  const response = intlMiddleware(request);
+  response.headers.set("x-pathname", pathname);
+  return response;
 }
 
 export const config = {
-  matcher: [
-    "/hubs/:path*",
-    "/((?!api|hubs|_next|_vercel|.*\\..*).*)",
-  ],
+  matcher: ["/hubs/:path*", "/((?!api|hubs|_next|_vercel|.*\\..*).*)"],
 };

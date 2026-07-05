@@ -7,7 +7,7 @@ import { Icon } from "@/components/ui/icon";
 import { AuthPasswordField } from "@/components/ui/auth-password-field";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { getPasswordStrength } from "@/lib/password-strength";
-import { SYRIAN_CITIES } from "@/lib/syrian-cities";
+import { SyrianCityNativeSelect } from "@/components/ui/syrian-city-select";
 import { cn } from "@/lib/cn";
 import { useMirror } from "./store";
 
@@ -113,23 +113,14 @@ const UI = () => {
             <label htmlFor="city" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
               {t("city")}
             </label>
-            <select
+            <SyrianCityNativeSelect
               id="city"
               name="city"
               required
               autoComplete="address-level2"
-              defaultValue=""
+              placeholder={t("selectCity")}
               className={inputClassName}
-            >
-              <option value="" disabled>
-                {t("selectCity")}
-              </option>
-              {SYRIAN_CITIES.map((city) => (
-                <option key={city.value} value={city.value}>
-                  {locale.startsWith("ar") ? city.ar : city.en}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2">

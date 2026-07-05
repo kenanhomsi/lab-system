@@ -1,4 +1,5 @@
 import type {
+  AvailabilitiesPage,
   AvailabilitiesResponse,
   CreateAvailabilityRequest,
   UpdateAvailabilityRequest,
@@ -6,6 +7,7 @@ import type {
 
 type Params = {
   availabilitiesData: AvailabilitiesResponse;
+  availabilitiesPage: AvailabilitiesPage;
   isPending: boolean;
   refetchAvailabilities: () => void;
   createAvailability: (payload: CreateAvailabilityRequest) => Promise<unknown>;
@@ -15,6 +17,15 @@ type Params = {
 
 const store = (): Params => ({
   availabilitiesData: [],
+  availabilitiesPage: {
+    items: [],
+    page: 1,
+    pageSize: 20,
+    totalCount: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  },
   isPending: false,
   refetchAvailabilities: () => {},
   createAvailability: async () => null,

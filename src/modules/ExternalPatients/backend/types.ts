@@ -13,7 +13,11 @@ type AuthParams = {
   token: string;
 };
 
-type FindAllExternalPatientsParams = AuthParams;
+type FindAllExternalPatientsParams = AuthParams & {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+};
 
 type FindOneExternalPatientParams = AuthParams & {
   id: string;

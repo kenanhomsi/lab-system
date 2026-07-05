@@ -61,7 +61,7 @@ export function NotificationsMenu() {
     useNotificationsList({
     page: 1,
     pageSize: 10,
-    enabled: true,
+    enabled: opened,
   });
 
   const previewItems = (data?.items ?? []).slice(0, DROPDOWN_PREVIEW_COUNT);

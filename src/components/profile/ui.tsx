@@ -54,6 +54,7 @@ import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import { showSuccessNotification } from "@/lib/error";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { CreateTestRequestModal } from "@/components/modals/test-requests";
 import {
   PatientComplaintsFeed,
   PatientInsuranceApprovalsFeed,
@@ -114,6 +115,7 @@ const UI = () => {
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isRequestingDeletion, setIsRequestingDeletion] = useState(false);
+  const [createTestRequestOpen, setCreateTestRequestOpen] = useState(false);
 
   useEffect(() => {
     if (!me) return;
@@ -579,11 +581,17 @@ const UI = () => {
                               />
                             </Group>
                           </UnstyledButton>
-                          <UnstyledButton component={Link} href="/tests" className={styles.quickLink}>
+                          <UnstyledButton
+                            className={styles.quickLink}
+                            onClick={() => {
+                              setActiveTab("testRequests");
+                              setCreateTestRequestOpen(true);
+                            }}
+                          >
                             <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
                               <Group gap="sm" wrap="nowrap">
                                 <ThemeIcon size={34} radius="md" variant="light" color="orange">
-                                  <IconExternalLink size={18} aria-hidden />
+                                  <IconClipboardList size={18} aria-hidden />
                                 </ThemeIcon>
                                 <Text size="sm" fw={600}>
                                   {t("orderTestRequest")}
@@ -826,16 +834,17 @@ const UI = () => {
                           </Text>
                         </Stack>
                         <Button
-                          component={Link}
-                          href="/tests"
                           leftSection={<IconClipboardList size={16} />}
                           variant="light"
                           color="orange"
+                          onClick={() => setCreateTestRequestOpen(true)}
                         >
                           {t("orderTestRequest")}
                         </Button>
                       </Group>
-                      <PatientTestRequestsFeed />
+                      <PatientTestRequestsFeed
+                        onOpenCreateTestRequest={() => setCreateTestRequestOpen(true)}
+                      />
                     </Stack>
                   </Tabs.Panel>
 
@@ -988,6 +997,11 @@ const UI = () => {
           </Grid.Col>
         </Grid>
       </Stack>
+
+      <CreateTestRequestModal
+        opened={createTestRequestOpen}
+        onClose={() => setCreateTestRequestOpen(false)}
+      />
     </Box>
   );
 };

@@ -6,6 +6,7 @@ import { create } from "zustand";
 export type SessionUserSnapshot = {
   id: string;
   roles: string[];
+  permissions: string[];
   email?: string;
   fullName?: string;
 };

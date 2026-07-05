@@ -9,11 +9,13 @@ import { getTestResultsColumns } from "./columns";
 const Schema = ({ children }: PropsWithChildren) => {
   const t = useTranslations("admin.testResults");
   const roles = useSessionUserStore((s) => s.user?.roles);
+  const permissions = useSessionUserStore((s) => s.user?.permissions);
   const selectedIds = useMirror("selectedTestResultIds");
   const setSelectedIds = useMirror("setSelectedTestResultIds");
   const testResultsData = useMirror("testResultsData");
   const schema = getTestResultsColumns((key: string) => t(key as never), {
     roles,
+    permissions,
     selectedIds,
     visibleRows: testResultsData.items,
     onSelectedIdsChange: setSelectedIds,

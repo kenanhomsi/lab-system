@@ -1,12 +1,15 @@
 import { roleStrategy } from "@/strategies/role";
-import { serverAuthConfig } from "@/lib/auth-options";
-import { getServerSession } from "next-auth";
 import type { ReactNode } from "react";
+import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
+import "@mantine/charts/styles.css";
+import "@mantine/notifications/styles.css";
 import { SidebarFactory } from "@/components/shared/sidebar";
 import { NavbarFactory } from "@/components/shared/navbar";
 import { DashboardProviders } from "@/components/providers/dashboard-providers";
+import { getDashboardSession } from "@/lib/auth/get-dashboard-session";
+import { LazyDashboardPushNotifications } from "./lazy-dashboard-push-notifications";
 import styles from "./styles.module.scss";
-import { DashboardPushNotifications } from "./dashboard-push-notifications";
 
 const formatRoleTitle = (role: string) =>
   role.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
@@ -18,7 +21,7 @@ export default async function LocaleLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const session = await getServerSession(serverAuthConfig);
+  const session = await getDashboardSession();
   const requestedRole = session?.user.roles?.[0]?.toLowerCase();
   const role: RoleKey =
     requestedRole && requestedRole in roleStrategy
@@ -31,13 +34,13 @@ export default async function LocaleLayout({
   });
   return (
     <DashboardProviders>
-      <DashboardPushNotifications>
+      <LazyDashboardPushNotifications>
         <div className={styles.dashboardRoot}>
           <SidebarFactory items={siderBarItems} />
           <NavbarFactory config={navbarConfig} />
           <main className={styles.sectionPadding}>{children}</main>
         </div>
-      </DashboardPushNotifications>
+      </LazyDashboardPushNotifications>
     </DashboardProviders>
   );
 }

@@ -659,6 +659,13 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--on-surface-variant);
+
+  > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 :global(html.dark) .recentHead {

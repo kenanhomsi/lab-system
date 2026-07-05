@@ -4,7 +4,7 @@ import Image from "next/image";
 import { type ReactNode } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { useBannerCarousel } from "@/lib/banners";
+import { useBannerCarousel } from "@/lib/banners/use-banner-carousel";
 import {
   getDisplayModeAspectRatio,
   getDisplayModeDetailSize,

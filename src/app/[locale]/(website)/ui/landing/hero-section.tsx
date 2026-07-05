@@ -3,7 +3,6 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/ui/icon";
 import { Ripple } from "@/components/ui/ripple";
-import { HeroWordRotate } from "./hero-word-rotate";
 
 const HERO_IMG =
   "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=1920&q=80";
@@ -58,28 +57,28 @@ export async function HeroSection() {
       <div className="relative z-10 content-container w-full">
         <div className="max-w-2xl space-y-5">
           <div
-            className="reveal-up inline-flex items-center rounded-full bg-tertiary-fixed/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-on-tertiary-fixed"
+            className="reveal-up reveal-up--ssr-visible inline-flex items-center rounded-full bg-tertiary-fixed/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-on-tertiary-fixed"
             style={{ animationDelay: "120ms" }}
           >
             <Icon name="verified" filled className="me-2 text-sm!" size="sm" />
             {t("badge")}
           </div>
           <h1
-            className="font-headline reveal-up text-4xl font-extrabold tracking-tight text-on-surface sm:text-5xl md:text-6xl"
+            className="font-headline reveal-up reveal-up--ssr-visible text-4xl font-extrabold tracking-tight text-on-surface sm:text-5xl md:text-6xl"
             style={{ animationDelay: "200ms" }}
           >
             {t("titleBefore")} <br />
-            <HeroWordRotate words={rotateWords} /> <br />
+            <span className="text-[#009cc2]">{rotateWords[0]}</span> <br />
             {t("titleAfter")}
           </h1>
           <p
-            className="reveal-up max-w-lg text-lg font-medium leading-relaxed text-on-surface-variant"
+            className="reveal-up reveal-up--ssr-visible max-w-lg text-lg font-medium leading-relaxed text-on-surface-variant"
             style={{ animationDelay: "280ms" }}
           >
             {t("description")}
           </p>
           <div
-            className="reveal-up flex flex-wrap items-center gap-4 pt-4"
+            className="reveal-up reveal-up--ssr-visible flex flex-wrap items-center gap-4 pt-4"
             style={{ animationDelay: "360ms" }}
           >
             <Link

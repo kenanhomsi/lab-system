@@ -1,14 +1,20 @@
 "use client";
-import { Box, Center, TableTd } from "@mantine/core";
-import { DataTable, DataTableDraggableRow } from "mantine-datatable";
+import dynamic from "next/dynamic";
+import { Box } from "@mantine/core";
+import { DataTable } from "mantine-datatable";
 import { useTranslations } from "next-intl";
 import { PaginationComp } from "../components/pagination";
 import { useMirror } from "../store";
 import styles from "../style.module.scss";
 import { SkeletonTable } from "../components";
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { IconGripVertical, IconInbox } from "@tabler/icons-react";
+import { IconInbox } from "@tabler/icons-react";
 import clsx from "clsx";
+
+const DraggableNormalTable = dynamic(
+  () =>
+    import("./draggable-normal-table").then((module) => module.DraggableNormalTable),
+  { ssr: false },
+);
 const NormalTable = () => {
   const tEmpty = useTranslations("admin.table");
   const schema = useMirror("schema");
@@ -63,64 +69,19 @@ const NormalTable = () => {
       {!isLoading && (
         <>
           {withDrag ? (
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="droppable-table">
-                {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    <DataTable
-                      w="100%"
-                      columns={[
-                        { accessor: "", hiddenContent: true, width: 30 },
-                        ...schema,
-                      ]}
-                      records={records}
-                      minHeight={minHeight}
-                      emptyState={emptyState}
-                      noRecordsText=""
-                      striped={striped}
-                      highlightOnHover={highlightOnHover}
-                      verticalSpacing={verticalSpacing}
-                      rowClassName={rowClassNameResolved}
-                      horizontalSpacing={horizontalSpacing}
-                      classNames={tableClassNamesMerged}
-                      tableWrapper={({ children }) => (
-                        <div className={styles.tableScrollWrapper}>{children}</div>
-                      )}
-                      rowFactory={({ record, index, rowProps, children }) => (
-                        <Draggable
-                          draggableId={record.id}
-                          index={index}
-                          key={record.id}
-                        >
-                          {(provided, snapshot) => (
-                            <DataTableDraggableRow
-                              isDragging={snapshot.isDragging}
-                              {...rowProps}
-                              {...provided.draggableProps}
-                              className={clsx(
-                                rowProps.className,
-                                styles.draggableRow,
-                              )}
-                            >
-                              <TableTd>
-                                <Center
-                                  {...provided.dragHandleProps}
-                                  ref={provided.innerRef}
-                                >
-                                  <IconGripVertical size={16} />
-                                </Center>
-                              </TableTd>
-                              {children}
-                            </DataTableDraggableRow>
-                          )}
-                        </Draggable>
-                      )}
-                    />
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+            <DraggableNormalTable
+              schema={schema}
+              records={records}
+              minHeight={minHeight}
+              emptyState={emptyState}
+              striped={striped}
+              highlightOnHover={highlightOnHover}
+              verticalSpacing={verticalSpacing}
+              horizontalSpacing={horizontalSpacing}
+              tableClassNamesMerged={tableClassNamesMerged}
+              rowClassNameResolved={rowClassNameResolved}
+              onDragEnd={onDragEnd}
+            />
           ) : (
             <>
               <DataTable

@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, Box, Text } from "@mantine/core";
+import { Box, Text } from "@mantine/core";
 import { DateRender } from "@/components/tables/test-requests-table/schema/columns-rendering/date-render";
 import type { ExternalPatientRow } from "../types";
 import { ActionsRender } from "./columns-rendering/actions-render";
@@ -65,30 +65,30 @@ const getExternalPatientsColumns = (
       width: "12%",
       render: (row) => <ExternalIdCell value={row.externalId} />,
     },
-    {
-      accessor: "linkedDirectPatientId",
-      title: t("colLinkedDirectPatientId"),
-      width: "12%",
-      render: (row) =>
-        row.linkedDirectPatientId ? (
-          <Badge
-            variant="light"
-            color="teal"
-            size="sm"
-            radius="md"
-            style={{ maxWidth: "10rem" }}
-            title={row.linkedDirectPatientId}
-          >
-            <Text size="xs" truncate component="span" inherit>
-              {row.linkedDirectPatientId}
-            </Text>
-          </Badge>
-        ) : (
-          <Text size="sm" c="dimmed" py={4}>
-            —
-          </Text>
-        ),
-    },
+    // {
+    //   accessor: "linkedDirectPatientId",
+    //   title: t("colLinkedDirectPatientId"),
+    //   width: "12%",
+    //   render: (row) =>
+    //     row.linkedDirectPatientId ? (
+    //       <Badge
+    //         variant="light"
+    //         color="teal"
+    //         size="sm"
+    //         radius="md"
+    //         style={{ maxWidth: "10rem" }}
+    //         title={row.linkedDirectPatientId}
+    //       >
+    //         <Text size="xs" truncate component="span" inherit>
+    //           {row.linkedDirectPatientId}
+    //         </Text>
+    //       </Badge>
+    //     ) : (
+    //       <Text size="sm" c="dimmed" py={4}>
+    //         —
+    //       </Text>
+    //     ),
+    // },
     {
       accessor: "createdAt",
       title: t("colCreatedAt"),

@@ -13,6 +13,7 @@ const UI = () => {
   const isLoading = useMirror("isPending");
   const setPageNumber = useMirror("setPageNumber");
   const availabilitiesData = useMirror("availabilitiesData") ?? [];
+  const availabilitiesPage = useMirror("availabilitiesPage");
   const setActiveModal = useMirror("setActiveModal");
 
   return (
@@ -24,14 +25,14 @@ const UI = () => {
         OnPageNumberChange={setPageNumber}
         data={availabilitiesData}
         paginationStatic={{
-          count: availabilitiesData.length,
-          limit: 20,
-          page: 1,
+          count: availabilitiesPage?.totalCount ?? availabilitiesData.length,
+          limit: availabilitiesPage?.pageSize ?? 20,
+          page: availabilitiesPage?.page ?? 1,
         }}
       >
         <Table.Header>
           <AvailabilitiesHeader
-            totalAvailabilities={availabilitiesData.length}
+            totalAvailabilities={availabilitiesPage?.totalCount ?? availabilitiesData.length}
             onOpenCreate={() => {
               setActiveModal("create");
             }}

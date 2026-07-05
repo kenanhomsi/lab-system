@@ -1,10 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "@/i18n/navigation";
-import { frontendContainer } from "@/container";
-import { bannerModuleNames, BannerFrontendService } from "@/modules/banner";
 import {
   buildPathTarget,
   isDetailPagePath,
@@ -22,22 +19,45 @@ export function PathTargetedBanner() {
   const currentPath = useMemo(() => normalizeTargetPath(pathname), [pathname]);
   const pathTarget = useMemo(() => buildPathTarget(currentPath), [currentPath]);
   const enabled = isDetailPagePath(currentPath);
+  const [banners, setBanners] = useState<BannerItem[]>([]);
 
-  const bannerService = frontendContainer.get<BannerFrontendService>(
-    bannerModuleNames.service,
-  );
+  useEffect(() => {
+    if (!enabled) {
+      setBanners([]);
+      return;
+    }
 
-  const { data: banners = [] } = useQuery({
-    queryKey: ["path-targeted-banners", pathTarget],
-    enabled,
-    queryFn: async (): Promise<BannerItem[]> => {
-      const rows = await bannerService.findAllPublic({ location: pathTarget });
-      return rows
-        .filter((item) => item.isActive && isPathTarget(item.location))
-        .sort((a, b) => a.displayOrder - b.displayOrder);
-    },
-    staleTime: 60_000,
-  });
+    let cancelled = false;
+
+    const loadBanners = async () => {
+      try {
+        const response = await fetch("/api/website/banners", {
+          cache: "force-cache",
+        });
+        if (!response.ok) return;
+
+        const rows = (await response.json()) as BannerItem[];
+        const matched = rows
+          .filter(
+            (item) =>
+              item.isActive &&
+              isPathTarget(item.location) &&
+              item.location === pathTarget,
+          )
+          .sort((a, b) => a.displayOrder - b.displayOrder);
+
+        if (!cancelled) setBanners(matched);
+      } catch {
+        if (!cancelled) setBanners([]);
+      }
+    };
+
+    void loadBanners();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled, pathTarget]);
 
   if (!enabled || banners.length === 0) return null;
   return <PageBanner banners={banners} />;
