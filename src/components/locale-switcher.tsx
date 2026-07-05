@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
@@ -11,11 +11,15 @@ type Props = {
   stretch?: boolean;
 };
 
+/**
+ * Language toggle used across the public site and dashboard.
+ */
 export function LocaleSwitcher({ className, stretch }: Props) {
   const locale = useLocale();
+  const t = useTranslations("common");
   const router = useRouter();
   const pathname = usePathname();
-  const groupLabel = locale === "ar" ? "اختيار اللغة" : "Language switcher";
+  const groupLabel = t("languageSwitcher");
 
   const switchLocale = (next: string) => {
     router.replace(pathname, { locale: next });

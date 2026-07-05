@@ -14,6 +14,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { IconMessageCircle, IconSearch, IconX } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import { JSX, useMemo, useState } from "react";
 
 export interface PickerUser {
@@ -44,6 +45,7 @@ export function NewChatUserPickerModal({
   currentUserId,
   onSelectUser,
 }: NewChatUserPickerModalProps): JSX.Element {
+  const t = useTranslations("chatPage");
   const [search, setSearch] = useState("");
 
   const filteredUsers = useMemo(() => {
@@ -62,14 +64,14 @@ export function NewChatUserPickerModal({
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Start a new chat"
+      title={t("newChatTitle")}
       size="md"
       centered
       onExitTransitionEnd={() => setSearch("")}
     >
       <Stack gap="md">
         <TextInput
-          placeholder="Search by name or role…"
+          placeholder={t("searchByNameOrRole")}
           leftSection={<IconSearch size={16} />}
           value={search}
           onChange={(e) => setSearch(e.currentTarget.value)}
@@ -79,7 +81,7 @@ export function NewChatUserPickerModal({
                 size="sm"
                 variant="subtle"
                 onClick={() => setSearch("")}
-                aria-label="Clear search"
+                aria-label={t("clearSearch")}
               >
                 <IconX size={14} />
               </ActionIcon>
@@ -91,7 +93,7 @@ export function NewChatUserPickerModal({
           <Group justify="center" py="xl">
             <Loader size="sm" />
             <Text size="sm" c="dimmed">
-              Loading users…
+              {t("loadingUsers")}
             </Text>
           </Group>
         ) : filteredUsers.length === 0 ? (
@@ -102,9 +104,7 @@ export function NewChatUserPickerModal({
               color="var(--mantine-color-gray-4)"
             />
             <Text size="sm" c="dimmed" ta="center">
-              {search.trim()
-                ? "No users match your search."
-                : "No other users are online right now. Try again when someone is available."}
+              {search.trim() ? t("noUsersMatchSearch") : t("noUsersOnline")}
             </Text>
           </Stack>
         ) : (
@@ -174,10 +174,7 @@ export function NewChatUserPickerModal({
                         {isPending ? (
                           <Loader size="xs" />
                         ) : (
-                          <IconMessageCircle
-                            size={18}
-                            color="var(--mantine-color-blue-6)"
-                          />
+                          <IconMessageCircle size={18} color="var(--mantine-color-blue-6)" />
                         )}
                       </Group>
                     </Group>

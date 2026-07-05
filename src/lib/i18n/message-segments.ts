@@ -37,6 +37,7 @@ const HOMEPAGE_MESSAGE_KEYS = [
   "header",
   "footer",
   "landing",
+  "tests",
   "contactPage",
   "admin",
 ] as const;

@@ -1,6 +1,7 @@
 {
   "common": {
-    "mapLoading": "جاري تحميل الخريطة…"
+    "mapLoading": "جاري تحميل الخريطة…",
+    "languageSwitcher": "اختيار اللغة"
   },
   "nav": {
     "home": "الرئيسية",
@@ -116,11 +117,11 @@
     },
     "testsSpotlight": {
       "eyebrow": "فئات التحاليل",
-      "title": "فئات التحاليل الطبية",
-      "description": "تعرّف بسرعة على فئات التحاليل المتاحة في الصفحة الرئيسية، ثم افتح الكتالوج الكامل عند الحاجة لمزيد من التفاصيل.",
-      "cardHint": "المزيد من المعلومات",
-      "moreInfo": "المزيد من المعلومات",
-      "emptyState": "نحضّر الآن المزيد من فئات التحاليل."
+      "title": "التحاليل الطبية المختارة",
+      "description": "استعرض لمحة سريعة عن أبرز التحاليل الطبية والفئات المتاحة في الصفحة الرئيسية، ثم انتقل إلى الدليل الكامل عند الحاجة.",
+      "featuredLabel": "تحاليل مميزة",
+      "browseCatalog": "استعرض الدليل الكامل",
+      "emptyState": "نحضّر الآن المزيد من التحاليل الطبية."
     },
     "quality": {
       "protocol": "البروتوكول السريري",
@@ -209,6 +210,19 @@
       "loading": "جار تحميل شاشة الترحيب...",
       "play": "تشغيل فيديو الترحيب",
       "error": "تعذر تشغيل وسائط الترحيب."
+    },
+    "editorialSection": {
+      "welcomeBefore": "مرحباً بك في",
+      "welcomeHighlight": "مختبر المتوالي",
+      "imageAlt": "مختبر المتوالي للتحاليل الطبية",
+      "precisionTitle": "الدقة",
+      "precisionBody": "تراعي خدماتنا احتياجات كل مريض مع عناية دقيقة وسرعة في الإنجاز وعمل مخبري موثوق يمكن الاعتماد عليه.",
+      "missionTitle": "المهمة",
+      "missionBody": "تقديم خدمات مخبرية موثوقة وفعالة ودقيقة في الوقت المناسب وبتكلفة معقولة لمرضانا والأطباء ومقدمي الرعاية الصحية.",
+      "visionTitle": "الرؤية",
+      "visionBody": "الحفاظ على أعلى المعايير الدولية لخدمات المختبر وجودة العمل لضمان الدقة وتحسين تجربة الرعاية الصحية للجميع.",
+      "messageTitle": "الرسالة",
+      "messageBody": "نؤمن أن التشخيص الدقيق والسريع يدعم العلاج الصحيح، لذلك نسعى لنكون الخيار الأول للخدمات المخبرية المتميزة."
     }
   },
   "about": {
@@ -498,7 +512,45 @@
     "showLogs": "عرض السجلات",
     "hideLogs": "إخفاء السجلات",
     "logsPlaceholder": "// تشخيص: محاولات الاتصال والمصافحة والاستلام ستُضاف هنا...\n",
-    "settingsAria": "إعدادات مساحة الدردشة"
+    "settingsAria": "إعدادات مساحة الدردشة",
+    "tabContacts": "جهات الاتصال",
+    "contactFallback": "جهة اتصال",
+    "selectConversationToViewProfile": "اختر محادثة لعرض الملف الشخصي",
+    "profile": "الملف الشخصي",
+    "message": "رسالة",
+    "video": "مكالمة فيديو",
+    "phone": "مكالمة صوتية",
+    "more": "مزيد من الإجراءات",
+    "displayName": "الاسم الظاهر",
+    "email": "البريد الإلكتروني",
+    "phoneLabel": "الهاتف",
+    "role": "الدور",
+    "chatType": "نوع المحادثة",
+    "group": "مجموعة",
+    "directMessage": "رسالة مباشرة",
+    "files": "الملفات",
+    "viewAll": "عرض الكل",
+    "emptyValue": "—",
+    "newChatTitle": "بدء محادثة جديدة",
+    "searchByNameOrRole": "ابحث بالاسم أو الدور…",
+    "clearSearch": "مسح البحث",
+    "loadingUsers": "جاري تحميل المستخدمين…",
+    "noUsersMatchSearch": "لا يوجد مستخدمون يطابقون بحثك.",
+    "noUsersOnline": "لا يوجد مستخدمون آخرون متصلون حالياً. حاول لاحقاً عندما يتوفر أحدهم.",
+    "newChat": "محادثة جديدة",
+    "search": "بحث…",
+    "startChatFailed": "فشل بدء المحادثة",
+    "leaveConversationFailed": "فشل مغادرة المحادثة",
+    "notConnected": "غير متصل",
+    "connectBeforeChat": "اتصل بالمحادثة قبل بدء محادثة جديدة.",
+    "joinConversation": "الانضمام إلى المحادثة",
+    "backToConversations": "العودة إلى المحادثات",
+    "leaveChat": "مغادرة المحادثة",
+    "filesTab": "الملفات",
+    "selectOrStartConversation": "اختر محادثة أو ابدأ محادثة للبدء بالدردشة",
+    "noMessagesYet": "لا توجد رسائل بعد",
+    "noConversationsMatchSearch": "لا توجد محادثات تطابق بحثك.",
+    "noConversationsYet": "لا توجد محادثات بعد. اضغط \"محادثة جديدة\" للبدء."
   },
   "myComplaints": {
     "title": "شكاواي",
@@ -1323,7 +1375,12 @@
       "detailNoAppointment": "لا يوجد موعد مرتبط بهذا الطلب.",
       "detailNoPrescription": "لم يتم رفع صورة وصفة طبية.",
       "openPrescription": "فتح الوصفة",
-      "prescriptionPreviewAlt": "معاينة الوصفة الطبية"
+      "prescriptionPreviewAlt": "معاينة الوصفة الطبية",
+      "deleteModalTitle": "حذف طلب الفحص",
+      "deleteConfirmMessage": "هل أنت متأكد من حذف {name}؟",
+      "thisRequest": "هذا الطلب",
+      "cancel": "إلغاء",
+      "delete": "حذف"
     },
     "testResults": {
       "title": "نتائج الفحوصات",
@@ -1394,7 +1451,10 @@
       "toastGenericError": "حدث خطأ أثناء الإنشاء.",
       "deleteModalTitle": "حذف نتيجة الفحص",
       "deleteConfirmMessage": "هل أنت متأكد من حذف نتيجة الفحص (طلب رقم {id})؟",
-      "deleteConfirmMessageNoId": "هل أنت متأكد من حذف نتيجة الفحص هذه؟"
+      "deleteConfirmMessageNoId": "هل أنت متأكد من حذف نتيجة الفحص هذه؟",
+      "resultKey": "المفتاح",
+      "resultValue": "القيمة",
+      "jsonLabel": "JSON"
     },
     "settings": {
       "title": "الإعدادات",
@@ -2599,6 +2659,15 @@
       "tabSliders": "السلايدرات",
       "tabCoupons": "الكوبونات",
       "tabOrders": "الطلبات"
+    },
+    "roles": {
+      "userLabel": "المستخدم",
+      "currentPermissions": "الصلاحيات الحالية",
+      "addNewPermission": "إضافة صلاحية جديدة",
+      "removeUncheckedPermissions": "إزالة الصلاحيات غير المحددة",
+      "replacePermissions": "استبدال",
+      "assignNewPermission": "تعيين جديدة",
+      "managePermissions": "إدارة الصلاحيات"
     }
   },
   "patient": {

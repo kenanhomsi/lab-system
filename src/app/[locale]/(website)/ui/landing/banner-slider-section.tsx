@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -46,11 +47,12 @@ export function BannerSliderSection() {
       style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
     />
   ) : (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={banner.mediaUrl}
       alt={banner.title}
-      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+      fill
+      sizes="(max-width: 1024px) 100vw, 66vw"
+      style={{ objectFit: "cover" }}
     />
   );
 
