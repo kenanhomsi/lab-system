@@ -329,7 +329,7 @@ const UI = () => {
         </Box>
 
         <Grid gap={{ base: "md", lg: "xl" }}>
-          <Grid.Col span={{ base: 12, lg: 4 }}>
+          <Grid.Col span={{ base: 12, lg: 3 }}>
             <Stack gap="lg">
               <Card shadow="sm" padding="lg" radius="xl" withBorder>
                 <Stack gap="md">
@@ -545,21 +545,21 @@ const UI = () => {
                           href={`${dashboardBase}/test-requests`}
                           className={styles.quickLink}
                         >
-                        <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
-                          <Group gap="sm" wrap="nowrap">
-                            <ThemeIcon size={34} radius="md" variant="light" color="orange">
-                              <IconClipboardList size={18} aria-hidden />
-                            </ThemeIcon>
-                            <Text size="sm" fw={600}>
-                              {t("quickLinkTestRequests")}
-                            </Text>
+                          <Group justify="space-between" p="sm" wrap="nowrap" gap="sm">
+                            <Group gap="sm" wrap="nowrap">
+                              <ThemeIcon size={34} radius="md" variant="light" color="orange">
+                                <IconClipboardList size={18} aria-hidden />
+                              </ThemeIcon>
+                              <Text size="sm" fw={600}>
+                                {t("quickLinkTestRequests")}
+                              </Text>
+                            </Group>
+                            <IconChevronRight
+                              size={18}
+                              style={{ opacity: 0.5, transform: rtl ? "scaleX(-1)" : undefined }}
+                              aria-hidden
+                            />
                           </Group>
-                          <IconChevronRight
-                            size={18}
-                            style={{ opacity: 0.5, transform: rtl ? "scaleX(-1)" : undefined }}
-                            aria-hidden
-                          />
-                        </Group>
                         </UnstyledButton>
                       )}
                       {patientAccount ? (
@@ -687,313 +687,313 @@ const UI = () => {
             </Stack>
           </Grid.Col>
 
-          <Grid.Col span={{ base: 12, lg: 8 }}>
+          <Grid.Col span={{ base: 12, lg: 9 }}>
             <Card shadow="sm" p={{ base: "md", sm: "lg" }} radius="xl" withBorder>
-            <MutationErrorAlert />
-            <Tabs
-              value={activeTab}
-              onChange={(value) => {
-                if (isProfileTab(value)) {
-                  setActiveTab(value);
-                }
-              }}
-              keepMounted={false}
-              variant="outline"
-              radius="md"
-            >
-              <Tabs.List grow>
-                <Tabs.Tab value="profile" leftSection={<IconSparkles size={16} aria-hidden />}>
-                  {t("tabProfile")}
-                </Tabs.Tab>
-                {patientAccount ? (
-                  <>
-                    <Tabs.Tab value="testRequests" leftSection={<IconClipboardList size={16} aria-hidden />}>
-                      {t("tabTestRequests")}
-                    </Tabs.Tab>
-                    <Tabs.Tab value="testResults" leftSection={<IconClipboardCheck size={16} aria-hidden />}>
-                      {t("tabTestResults")}
-                    </Tabs.Tab>
-                    <Tabs.Tab value="insuranceApprovals" leftSection={<IconShieldLock size={16} aria-hidden />}>
-                      {t("tabInsuranceApprovals")}
-                    </Tabs.Tab>
-                    <Tabs.Tab value="complaints" leftSection={<IconAlertCircle size={16} aria-hidden />}>
-                      {t("tabComplaints")}
-                    </Tabs.Tab>
-                    <Tabs.Tab value="notifications" leftSection={<IconBell size={16} aria-hidden />}>
-                      {t("tabNotifications")}
-                    </Tabs.Tab>
-                  </>
-                ) : null}
-                <Tabs.Tab value="security" leftSection={<IconKey size={16} aria-hidden />}>
-                  {t("tabSecurity")}
-                </Tabs.Tab>
-                <Tabs.Tab value="danger" leftSection={<IconAlertTriangle size={16} aria-hidden />} color="red">
-                  {t("tabDanger")}
-                </Tabs.Tab>
-              </Tabs.List>
+              <MutationErrorAlert />
+              <Tabs
+                value={activeTab}
+                onChange={(value) => {
+                  if (isProfileTab(value)) {
+                    setActiveTab(value);
+                  }
+                }}
+                keepMounted={false}
+                variant="outline"
+                radius="md"
+              >
+                <Tabs.List grow>
+                  <Tabs.Tab value="profile" leftSection={<IconSparkles size={16} aria-hidden />}>
+                    {t("tabProfile")}
+                  </Tabs.Tab>
+                  {patientAccount ? (
+                    <>
+                      <Tabs.Tab value="testRequests" leftSection={<IconClipboardList size={16} aria-hidden />}>
+                        {t("tabTestRequests")}
+                      </Tabs.Tab>
+                      <Tabs.Tab value="testResults" leftSection={<IconClipboardCheck size={16} aria-hidden />}>
+                        {t("tabTestResults")}
+                      </Tabs.Tab>
+                      <Tabs.Tab value="insuranceApprovals" leftSection={<IconShieldLock size={16} aria-hidden />}>
+                        {t("tabInsuranceApprovals")}
+                      </Tabs.Tab>
+                      <Tabs.Tab value="complaints" leftSection={<IconAlertCircle size={16} aria-hidden />}>
+                        {t("tabComplaints")}
+                      </Tabs.Tab>
+                      <Tabs.Tab value="notifications" leftSection={<IconBell size={16} aria-hidden />}>
+                        {t("tabNotifications")}
+                      </Tabs.Tab>
+                    </>
+                  ) : null}
+                  <Tabs.Tab value="security" leftSection={<IconKey size={16} aria-hidden />}>
+                    {t("tabSecurity")}
+                  </Tabs.Tab>
+                  <Tabs.Tab value="danger" leftSection={<IconAlertTriangle size={16} aria-hidden />} color="red">
+                    {t("tabDanger")}
+                  </Tabs.Tab>
+                </Tabs.List>
 
-              <Tabs.Panel value="profile" pt="lg" className={styles.tabPanel}>
-                <Stack gap="lg">
-                  <Group gap="sm" wrap="nowrap" align="flex-start">
-                    <ThemeIcon size={44} radius="md" variant="gradient" gradient={{ from: "cyan", to: "blue", deg: 135 }}>
-                      <IconIdBadge2 size={20} />
-                    </ThemeIcon>
-                    <Stack gap={2}>
-                      <Text fw={700}>{t("profileDetails")}</Text>
-                      <Text size="sm" c="dimmed">
-                        {t("profileDetailsDesc")}
-                      </Text>
-                    </Stack>
-                  </Group>
+                <Tabs.Panel value="profile" pt="lg" className={styles.tabPanel}>
+                  <Stack gap="lg">
+                    <Group gap="sm" wrap="nowrap" align="flex-start">
+                      <ThemeIcon size={44} radius="md" variant="gradient" gradient={{ from: "cyan", to: "blue", deg: 135 }}>
+                        <IconIdBadge2 size={20} />
+                      </ThemeIcon>
+                      <Stack gap={2}>
+                        <Text fw={700}>{t("profileDetails")}</Text>
+                        <Text size="sm" c="dimmed">
+                          {t("profileDetailsDesc")}
+                        </Text>
+                      </Stack>
+                    </Group>
 
-                  <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
-                    <TextInput
-                      label={t("fullName")}
-                      withAsterisk
-                      leftSection={<IconIdBadge2 size={16} aria-hidden />}
-                      value={profileForm.fullName}
+                    <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
+                      <TextInput
+                        label={t("fullName")}
+                        withAsterisk
+                        leftSection={<IconIdBadge2 size={16} aria-hidden />}
+                        value={profileForm.fullName}
+                        onChange={(e) => {
+                          const value = e.currentTarget.value;
+                          setProfileForm((p) => ({ ...p, fullName: value }));
+                        }}
+                        placeholder={t("fullNamePlaceholder")}
+                      />
+                      <TextInput
+                        label={t("phoneNumber")}
+                        leftSection={<IconPhone size={16} aria-hidden />}
+                        value={profileForm.phoneNumber}
+                        onChange={(e) => {
+                          const value = e.currentTarget.value;
+                          setProfileForm((p) => ({ ...p, phoneNumber: value }));
+                        }}
+                        placeholder={t("phoneNumberPlaceholder")}
+                        style={{ direction: "ltr", textAlign: rtl ? "right" : "left" }}
+                      />
+                      <TextInput
+                        label={t("city")}
+                        leftSection={<IconMapPin size={16} aria-hidden />}
+                        value={profileForm.city}
+                        onChange={(e) => {
+                          const value = e.currentTarget.value;
+                          setProfileForm((p) => ({ ...p, city: value }));
+                        }}
+                        placeholder={t("cityPlaceholder")}
+                      />
+                      <TextInput
+                        label={t("email")}
+                        leftSection={<IconMail size={16} aria-hidden />}
+                        value={me?.email ?? ""}
+                        readOnly
+                        disabled
+                      />
+                    </SimpleGrid>
+
+                    <Textarea
+                      label={t("profileMetadata")}
+                      description={t("profileMetadataDesc")}
+                      autosize
+                      minRows={4}
+                      value={profileForm.profileMetadata}
                       onChange={(e) => {
                         const value = e.currentTarget.value;
-                        setProfileForm((p) => ({ ...p, fullName: value }));
+                        setProfileForm((p) => ({ ...p, profileMetadata: value }));
                       }}
-                      placeholder={t("fullNamePlaceholder")}
-                    />
-                    <TextInput
-                      label={t("phoneNumber")}
-                      leftSection={<IconPhone size={16} aria-hidden />}
-                      value={profileForm.phoneNumber}
-                      onChange={(e) => {
-                        const value = e.currentTarget.value;
-                        setProfileForm((p) => ({ ...p, phoneNumber: value }));
-                      }}
-                      placeholder={t("phoneNumberPlaceholder")}
+                      placeholder={t("profileMetadataPlaceholder")}
                       style={{ direction: "ltr", textAlign: rtl ? "right" : "left" }}
                     />
-                    <TextInput
-                      label={t("city")}
-                      leftSection={<IconMapPin size={16} aria-hidden />}
-                      value={profileForm.city}
-                      onChange={(e) => {
-                        const value = e.currentTarget.value;
-                        setProfileForm((p) => ({ ...p, city: value }));
-                      }}
-                      placeholder={t("cityPlaceholder")}
-                    />
-                    <TextInput
-                      label={t("email")}
-                      leftSection={<IconMail size={16} aria-hidden />}
-                      value={me?.email ?? ""}
-                      readOnly
-                      disabled
-                    />
-                  </SimpleGrid>
 
-                  <Textarea
-                    label={t("profileMetadata")}
-                    description={t("profileMetadataDesc")}
-                    autosize
-                    minRows={4}
-                    value={profileForm.profileMetadata}
-                    onChange={(e) => {
-                      const value = e.currentTarget.value;
-                      setProfileForm((p) => ({ ...p, profileMetadata: value }));
-                    }}
-                    placeholder={t("profileMetadataPlaceholder")}
-                    style={{ direction: "ltr", textAlign: rtl ? "right" : "left" }}
-                  />
-
-                  <Paper withBorder radius="md" p="md" bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))">
-                    <Group justify="space-between" align="center" gap="md" wrap="wrap">
-                      <Text size="sm" c="dimmed" maw={360}>
-                        {t("saveHint")}
-                      </Text>
-                      <Button
-                        onClick={submitProfile}
-                        loading={isSavingProfile}
-                        disabled={!canSaveProfile || isPending}
-                        radius="md"
-                        variant="gradient"
-                        gradient={{ from: "cyan", to: "blue", deg: 135 }}
-                      >
-                        {t("saveChanges")}
-                      </Button>
-                    </Group>
-                  </Paper>
-                </Stack>
-              </Tabs.Panel>
-
-              {patientAccount ? (
-                <>
-                  <Tabs.Panel value="testRequests" pt="lg" className={styles.tabPanel}>
-                    <Stack gap="md">
+                    <Paper withBorder radius="md" p="md" bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))">
                       <Group justify="space-between" align="center" gap="md" wrap="wrap">
-                        <Stack gap={2}>
-                          <Text fw={700}>{t("tabTestRequests")}</Text>
-                          <Text size="sm" c="dimmed">
-                            {t("testRequestsDesc")}
-                          </Text>
-                        </Stack>
+                        <Text size="sm" c="dimmed" maw={360}>
+                          {t("saveHint")}
+                        </Text>
                         <Button
-                          leftSection={<IconClipboardList size={16} />}
-                          variant="light"
-                          color="orange"
-                          onClick={() => setCreateTestRequestOpen(true)}
-                        >
-                          {t("orderTestRequest")}
-                        </Button>
-                      </Group>
-                      <PatientTestRequestsFeed
-                        onOpenCreateTestRequest={() => setCreateTestRequestOpen(true)}
-                      />
-                    </Stack>
-                  </Tabs.Panel>
-
-                  <Tabs.Panel value="testResults" pt="lg" className={styles.tabPanel}>
-                    <Stack gap="md">
-                      <Stack gap={2}>
-                        <Text fw={700}>{t("tabTestResults")}</Text>
-                        <Text size="sm" c="dimmed">
-                          {t("testResultsDesc")}
-                        </Text>
-                      </Stack>
-                      <PatientTestResultsFeed />
-                    </Stack>
-                  </Tabs.Panel>
-
-                  <Tabs.Panel value="insuranceApprovals" pt="lg" className={styles.tabPanel}>
-                    <Stack gap="md">
-                      <Stack gap={2}>
-                        <Text fw={700}>{t("tabInsuranceApprovals")}</Text>
-                        <Text size="sm" c="dimmed">
-                          {t("insuranceApprovalsDesc")}
-                        </Text>
-                      </Stack>
-                      <PatientInsuranceApprovalsFeed />
-                    </Stack>
-                  </Tabs.Panel>
-
-                  <Tabs.Panel value="complaints" pt="lg" className={styles.tabPanel}>
-                    <Stack gap="md">
-                      <Stack gap={2}>
-                        <Text fw={700}>{t("tabComplaints")}</Text>
-                        <Text size="sm" c="dimmed">
-                          {t("complaintsDesc")}
-                        </Text>
-                      </Stack>
-                      <PatientComplaintsFeed />
-                    </Stack>
-                  </Tabs.Panel>
-
-                  <Tabs.Panel value="notifications" pt="lg" className={styles.tabPanel}>
-                    <Stack gap="md">
-                      <Stack gap={2}>
-                        <Text fw={700}>{t("tabNotifications")}</Text>
-                        <Text size="sm" c="dimmed">
-                          {t("notificationsDesc")}
-                        </Text>
-                      </Stack>
-                      <NotificationsPanel showHeader={false} />
-                    </Stack>
-                  </Tabs.Panel>
-                </>
-              ) : null}
-
-              <Tabs.Panel value="security" pt="lg" className={styles.tabPanel}>
-                <Stack gap="lg">
-                  <Group gap="sm" wrap="nowrap" align="flex-start">
-                    <ThemeIcon size={44} radius="md" variant="gradient" gradient={{ from: "grape", to: "violet", deg: 135 }}>
-                      <IconLock size={20} />
-                    </ThemeIcon>
-                    <Stack gap={2}>
-                      <Text fw={700}>{t("changePassword")}</Text>
-                      <Text size="sm" c="dimmed">
-                        {t("changePasswordDesc")}
-                      </Text>
-                      <Text size="xs" c="dimmed">
-                        {t("changePasswordHint")}
-                      </Text>
-                    </Stack>
-                  </Group>
-
-                  <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
-                    <PasswordInput
-                      label={t("currentPassword")}
-                      value={passwordForm.currentPassword}
-                      onChange={(e) => {
-                        const value = e.currentTarget.value;
-                        setPasswordForm((p) => ({
-                          ...p,
-                          currentPassword: value,
-                        }));
-                      }}
-                    />
-                    <PasswordInput
-                      label={t("newPassword")}
-                      value={passwordForm.newPassword}
-                      onChange={(e) => {
-                        const value = e.currentTarget.value;
-                        setPasswordForm((p) => ({ ...p, newPassword: value }));
-                      }}
-                    />
-                  </SimpleGrid>
-
-                  <Paper withBorder radius="md" p="md" bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))">
-                    <Group justify="flex-end">
-                      <Button
-                        onClick={submitPassword}
-                        loading={isChangingPassword}
-                        disabled={!canChangePassword}
-                        radius="md"
-                        variant="light"
-                        color="grape"
-                      >
-                        {t("updatePassword")}
-                      </Button>
-                    </Group>
-                  </Paper>
-                </Stack>
-              </Tabs.Panel>
-
-              <Tabs.Panel value="danger" pt="lg" className={styles.tabPanel}>
-                <Stack gap="lg">
-                  <Group gap="sm" wrap="nowrap" align="flex-start">
-                    <ThemeIcon size={44} radius="md" variant="light" color="red">
-                      <IconAlertTriangle size={20} />
-                    </ThemeIcon>
-                    <Stack gap={2}>
-                      <Text fw={700}>{t("dangerZone")}</Text>
-                      <Text size="sm" c="dimmed">
-                        {t("dangerZoneDesc")}
-                      </Text>
-                    </Stack>
-                  </Group>
-
-                  <Paper withBorder radius="lg" p="lg" style={{ borderColor: "var(--mantine-color-red-3)" }}>
-                    <Stack gap="md">
-                      <Group justify="space-between" align="flex-start" wrap="wrap" gap="md">
-                        <Stack gap={6} maw={440}>
-                          <Text fw={700}>{t("requestDeletion")}</Text>
-                          <Text size="sm" c="dimmed">
-                            {t("requestDeletionDesc")}
-                          </Text>
-                        </Stack>
-                        <Button
-                          color="red"
-                          leftSection={<IconTrash size={16} />}
-                          onClick={confirmDeletion}
-                          loading={isRequestingDeletion}
+                          onClick={submitProfile}
+                          loading={isSavingProfile}
+                          disabled={!canSaveProfile || isPending}
                           radius="md"
-                          variant="filled"
+                          variant="gradient"
+                          gradient={{ from: "cyan", to: "blue", deg: 135 }}
                         >
-                          {t("requestDeletionBtn")}
+                          {t("saveChanges")}
                         </Button>
                       </Group>
-                    </Stack>
-                  </Paper>
-                </Stack>
-              </Tabs.Panel>
-            </Tabs>
-          </Card>
+                    </Paper>
+                  </Stack>
+                </Tabs.Panel>
+
+                {patientAccount ? (
+                  <>
+                    <Tabs.Panel value="testRequests" pt="lg" className={styles.tabPanel}>
+                      <Stack gap="md">
+                        <Group justify="space-between" align="center" gap="md" wrap="wrap">
+                          <Stack gap={2}>
+                            <Text fw={700}>{t("tabTestRequests")}</Text>
+                            <Text size="sm" c="dimmed">
+                              {t("testRequestsDesc")}
+                            </Text>
+                          </Stack>
+                          <Button
+                            leftSection={<IconClipboardList size={16} />}
+                            variant="light"
+                            color="orange"
+                            onClick={() => setCreateTestRequestOpen(true)}
+                          >
+                            {t("orderTestRequest")}
+                          </Button>
+                        </Group>
+                        <PatientTestRequestsFeed
+                          onOpenCreateTestRequest={() => setCreateTestRequestOpen(true)}
+                        />
+                      </Stack>
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="testResults" pt="lg" className={styles.tabPanel}>
+                      <Stack gap="md">
+                        <Stack gap={2}>
+                          <Text fw={700}>{t("tabTestResults")}</Text>
+                          <Text size="sm" c="dimmed">
+                            {t("testResultsDesc")}
+                          </Text>
+                        </Stack>
+                        <PatientTestResultsFeed />
+                      </Stack>
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="insuranceApprovals" pt="lg" className={styles.tabPanel}>
+                      <Stack gap="md">
+                        <Stack gap={2}>
+                          <Text fw={700}>{t("tabInsuranceApprovals")}</Text>
+                          <Text size="sm" c="dimmed">
+                            {t("insuranceApprovalsDesc")}
+                          </Text>
+                        </Stack>
+                        <PatientInsuranceApprovalsFeed />
+                      </Stack>
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="complaints" pt="lg" className={styles.tabPanel}>
+                      <Stack gap="md">
+                        <Stack gap={2}>
+                          <Text fw={700}>{t("tabComplaints")}</Text>
+                          <Text size="sm" c="dimmed">
+                            {t("complaintsDesc")}
+                          </Text>
+                        </Stack>
+                        <PatientComplaintsFeed />
+                      </Stack>
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="notifications" pt="lg" className={styles.tabPanel}>
+                      <Stack gap="md">
+                        <Stack gap={2}>
+                          <Text fw={700}>{t("tabNotifications")}</Text>
+                          <Text size="sm" c="dimmed">
+                            {t("notificationsDesc")}
+                          </Text>
+                        </Stack>
+                        <NotificationsPanel showHeader={false} />
+                      </Stack>
+                    </Tabs.Panel>
+                  </>
+                ) : null}
+
+                <Tabs.Panel value="security" pt="lg" className={styles.tabPanel}>
+                  <Stack gap="lg">
+                    <Group gap="sm" wrap="nowrap" align="flex-start">
+                      <ThemeIcon size={44} radius="md" variant="gradient" gradient={{ from: "grape", to: "violet", deg: 135 }}>
+                        <IconLock size={20} />
+                      </ThemeIcon>
+                      <Stack gap={2}>
+                        <Text fw={700}>{t("changePassword")}</Text>
+                        <Text size="sm" c="dimmed">
+                          {t("changePasswordDesc")}
+                        </Text>
+                        <Text size="xs" c="dimmed">
+                          {t("changePasswordHint")}
+                        </Text>
+                      </Stack>
+                    </Group>
+
+                    <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
+                      <PasswordInput
+                        label={t("currentPassword")}
+                        value={passwordForm.currentPassword}
+                        onChange={(e) => {
+                          const value = e.currentTarget.value;
+                          setPasswordForm((p) => ({
+                            ...p,
+                            currentPassword: value,
+                          }));
+                        }}
+                      />
+                      <PasswordInput
+                        label={t("newPassword")}
+                        value={passwordForm.newPassword}
+                        onChange={(e) => {
+                          const value = e.currentTarget.value;
+                          setPasswordForm((p) => ({ ...p, newPassword: value }));
+                        }}
+                      />
+                    </SimpleGrid>
+
+                    <Paper withBorder radius="md" p="md" bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))">
+                      <Group justify="flex-end">
+                        <Button
+                          onClick={submitPassword}
+                          loading={isChangingPassword}
+                          disabled={!canChangePassword}
+                          radius="md"
+                          variant="light"
+                          color="grape"
+                        >
+                          {t("updatePassword")}
+                        </Button>
+                      </Group>
+                    </Paper>
+                  </Stack>
+                </Tabs.Panel>
+
+                <Tabs.Panel value="danger" pt="lg" className={styles.tabPanel}>
+                  <Stack gap="lg">
+                    <Group gap="sm" wrap="nowrap" align="flex-start">
+                      <ThemeIcon size={44} radius="md" variant="light" color="red">
+                        <IconAlertTriangle size={20} />
+                      </ThemeIcon>
+                      <Stack gap={2}>
+                        <Text fw={700}>{t("dangerZone")}</Text>
+                        <Text size="sm" c="dimmed">
+                          {t("dangerZoneDesc")}
+                        </Text>
+                      </Stack>
+                    </Group>
+
+                    <Paper withBorder radius="lg" p="lg" style={{ borderColor: "var(--mantine-color-red-3)" }}>
+                      <Stack gap="md">
+                        <Group justify="space-between" align="flex-start" wrap="wrap" gap="md">
+                          <Stack gap={6} maw={440}>
+                            <Text fw={700}>{t("requestDeletion")}</Text>
+                            <Text size="sm" c="dimmed">
+                              {t("requestDeletionDesc")}
+                            </Text>
+                          </Stack>
+                          <Button
+                            color="red"
+                            leftSection={<IconTrash size={16} />}
+                            onClick={confirmDeletion}
+                            loading={isRequestingDeletion}
+                            radius="md"
+                            variant="filled"
+                          >
+                            {t("requestDeletionBtn")}
+                          </Button>
+                        </Group>
+                      </Stack>
+                    </Paper>
+                  </Stack>
+                </Tabs.Panel>
+              </Tabs>
+            </Card>
           </Grid.Col>
         </Grid>
       </Stack>

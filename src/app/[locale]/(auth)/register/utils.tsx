@@ -46,7 +46,7 @@ const Utils = (props: PropsWithChildren) => {
         city: formData.get("city") as string,
         password: formData.get("password") as string,
         age: Number(formData.get("age")),
-        gender: formData.get("gender") as string,
+        gender: formData.get("gender") as "male" | "female",
       };
 
       const confirmPassword = formData.get("confirmPassword") as string;
@@ -68,6 +68,8 @@ const Utils = (props: PropsWithChildren) => {
           fullName: payload.fullName,
           city: payload.city,
           phoneNumber: payload.mobile,
+          age: payload.age,
+          gender: payload.gender,
           role: payload.role,
         });
 

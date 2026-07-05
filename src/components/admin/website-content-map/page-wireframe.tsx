@@ -32,7 +32,7 @@ type PageWireframeProps = {
 };
 
 /**
- * Vertical wireframe for a built-in website route with banners, ads, and slide cards.
+ * Vertical wireframe for a built-in website route with banners, ads, and Silders.
  */
 export function PageWireframe({
   surface,

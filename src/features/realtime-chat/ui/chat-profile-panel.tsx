@@ -18,6 +18,7 @@ import {
   IconVideo,
   IconX,
 } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import type { Conversation } from "../signalr/types";
 import { JSX, useMemo } from "react";
 
@@ -33,14 +34,12 @@ function getPeerFromConversation(
   currentUserId: string | null,
 ) {
   if (!conversation?.participants?.length) return null;
-  const peer = conversation.participants.find(
-    (p) => p.userId !== currentUserId,
-  );
+  const peer = conversation.participants.find((p) => p.userId !== currentUserId);
   return peer ?? conversation.participants[0] ?? null;
 }
 
 /**
- * Right sidebar profile panel (ChatTiko-style contact details).
+ * Right sidebar profile panel with localized contact details.
  */
 export function ChatProfilePanel({
   conversation,
@@ -48,15 +47,14 @@ export function ChatProfilePanel({
   currentUserId,
   onClose,
 }: ChatProfilePanelProps): JSX.Element {
+  const t = useTranslations("chatPage");
   const peer = useMemo(
     () => getPeerFromConversation(conversation, currentUserId),
     [conversation, currentUserId],
   );
 
   const displayName =
-    peer?.fullName?.trim() ||
-    conversationTitle ||
-    "Contact";
+    peer?.fullName?.trim() || conversationTitle || t("contactFallback");
   const username = peer?.email?.split("@")[0] ?? peer?.userId?.slice(0, 8);
   const role = peer?.role?.trim();
 
@@ -64,7 +62,7 @@ export function ChatProfilePanel({
     return (
       <Stack className="chat-profile" p="xl" align="center" justify="center" h="100%">
         <Text size="sm" c="dimmed" ta="center">
-          Select a conversation to view profile
+          {t("selectConversationToViewProfile")}
         </Text>
       </Stack>
     );
@@ -83,7 +81,7 @@ export function ChatProfilePanel({
     >
       <Group justify="space-between">
         <Text fw={700} size="sm">
-          Profile
+          {t("profile")}
         </Text>
         {onClose ? (
           <ActionIcon variant="subtle" color="gray" size="sm" onClick={onClose}>
@@ -112,16 +110,16 @@ export function ChatProfilePanel({
       </Stack>
 
       <Group justify="center" gap="md">
-        <ActionIcon variant="light" color="violet" size="xl" radius="xl">
+        <ActionIcon variant="light" color="violet" size="xl" radius="xl" aria-label={t("message")}>
           <IconMessage size={20} />
         </ActionIcon>
-        <ActionIcon variant="light" color="violet" size="xl" radius="xl">
+        <ActionIcon variant="light" color="violet" size="xl" radius="xl" aria-label={t("video")}>
           <IconVideo size={20} />
         </ActionIcon>
-        <ActionIcon variant="light" color="violet" size="xl" radius="xl">
+        <ActionIcon variant="light" color="violet" size="xl" radius="xl" aria-label={t("phone")}>
           <IconPhone size={20} />
         </ActionIcon>
-        <ActionIcon variant="light" color="gray" size="xl" radius="xl">
+        <ActionIcon variant="light" color="gray" size="xl" radius="xl" aria-label={t("more")}>
           <IconDots size={20} />
         </ActionIcon>
       </Group>
@@ -129,17 +127,13 @@ export function ChatProfilePanel({
       <Divider color="var(--chat-border)" />
 
       <Stack gap="sm">
-        <ProfileRow label="Display name" value={displayName} />
-        <ProfileRow label="Email" value={peer?.email ?? "—"} />
-        <ProfileRow label="Phone" value={peer?.phoneNumber ?? "—"} />
-        <ProfileRow label="Role" value={role ?? "—"} />
+        <ProfileRow label={t("displayName")} value={displayName} />
+        <ProfileRow label={t("email")} value={peer?.email ?? t("emptyValue")} />
+        <ProfileRow label={t("phone")} value={peer?.phoneNumber ?? t("emptyValue")} />
+        <ProfileRow label={t("role")} value={role ?? t("emptyValue")} />
         <ProfileRow
-          label="Chat type"
-          value={
-            conversation.type === "Group"
-              ? "Group"
-              : "Direct message"
-          }
+          label={t("chatType")}
+          value={conversation.type === "Group" ? t("group") : t("directMessage")}
         />
       </Stack>
 
@@ -147,10 +141,10 @@ export function ChatProfilePanel({
 
       <Group justify="space-between">
         <Text fw={600} size="sm">
-          Files
+          {t("files")}
         </Text>
         <Button variant="subtle" color="violet" size="compact-xs">
-          View all
+          {t("viewAll")}
         </Button>
       </Group>
 

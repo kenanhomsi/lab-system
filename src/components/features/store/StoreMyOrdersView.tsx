@@ -12,7 +12,7 @@ export function StoreMyOrdersView() {
   const t = useTranslations("labStore");
   const { data, isLoading, isError } = useQuery({
     queryKey: ["store", "my-orders"],
-    queryFn: () => storeService.listMyOrders({ query: { page: 1, pageSize: 20 } }),
+    queryFn: () => storeService.listMyOrders({ query: { page: 1, pageSize: 10 } }),
   });
 
   if (isLoading) return <StoreLoadingState variant="table" />;

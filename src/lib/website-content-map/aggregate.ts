@@ -32,7 +32,7 @@ export function getBannersForSliderPlacement(
   );
 }
 
-/** Active homepage slide cards sorted by display order. */
+/** Active homepage Silders sorted by display order. */
 export function getActiveSlideCards(cards: SlideCardItem[]): SlideCardItem[] {
   return cards
     .filter((card) => card.isActive)

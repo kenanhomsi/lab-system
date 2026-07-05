@@ -1,6 +1,7 @@
 {
   "common": {
-    "mapLoading": "Loading map…"
+    "mapLoading": "Loading map…",
+    "languageSwitcher": "Language switcher"
   },
   "nav": {
     "home": "Home",
@@ -116,11 +117,11 @@
     },
     "testsSpotlight": {
       "eyebrow": "Test categories",
-      "title": "Medical test categories",
-      "description": "Take a quick look at the test categories available on the home page, then open the full catalog when you need more detail.",
-      "cardHint": "More info",
-      "moreInfo": "More info",
-      "emptyState": "We are preparing more test categories right now."
+      "title": "Featured medical tests",
+      "description": "Take a quick look at featured medical tests and the categories available on the homepage, then open the full catalog when you need more detail.",
+      "featuredLabel": "Featured tests",
+      "browseCatalog": "Browse full catalog",
+      "emptyState": "We are preparing more medical tests right now."
     },
     "quality": {
       "protocol": "The clinical protocol",
@@ -209,6 +210,19 @@
       "loading": "Loading welcome media...",
       "play": "Play welcome video",
       "error": "Could not play this welcome media."
+    },
+    "editorialSection": {
+      "welcomeBefore": "Welcome to",
+      "welcomeHighlight": "Metwali Lab",
+      "imageAlt": "Metwali Medical Laboratory",
+      "precisionTitle": "Precision",
+      "precisionBody": "Our services respect each patient's needs with attentive care, speed, and accurate lab work you can trust.",
+      "missionTitle": "Mission",
+      "missionBody": "Deliver trusted, effective, and accurate laboratory services at the right time and at a reasonable cost for our patients, physicians, and healthcare providers.",
+      "visionTitle": "Vision",
+      "visionBody": "Maintain the highest international standards for laboratory services and work quality to ensure diagnostic accuracy and a better healthcare experience for everyone.",
+      "messageTitle": "Message",
+      "messageBody": "We believe accurate and fast diagnosis supports the right treatment, so we strive to be the first choice for exceptional laboratory services."
     }
   },
   "about": {
@@ -498,7 +512,45 @@
     "showLogs": "Show logs",
     "hideLogs": "Hide logs",
     "logsPlaceholder": "// Diagnostics: connection retries, handshake, and receipts will append here...\n",
-    "settingsAria": "Chat workspace settings"
+    "settingsAria": "Chat workspace settings",
+    "tabContacts": "Contacts",
+    "contactFallback": "Contact",
+    "selectConversationToViewProfile": "Select a conversation to view profile",
+    "profile": "Profile",
+    "message": "Message",
+    "video": "Video call",
+    "phone": "Voice call",
+    "more": "More actions",
+    "displayName": "Display name",
+    "email": "Email",
+    "phoneLabel": "Phone",
+    "role": "Role",
+    "chatType": "Chat type",
+    "group": "Group",
+    "directMessage": "Direct message",
+    "files": "Files",
+    "viewAll": "View all",
+    "emptyValue": "?",
+    "newChatTitle": "Start a new chat",
+    "searchByNameOrRole": "Search by name or role?",
+    "clearSearch": "Clear search",
+    "loadingUsers": "Loading users?",
+    "noUsersMatchSearch": "No users match your search.",
+    "noUsersOnline": "No other users are online right now. Try again when someone is available.",
+    "newChat": "New chat",
+    "search": "Search?",
+    "startChatFailed": "Start chat failed",
+    "leaveConversationFailed": "Leave conversation failed",
+    "notConnected": "Not connected",
+    "connectBeforeChat": "Connect to chat before starting a new conversation.",
+    "joinConversation": "Join conversation",
+    "backToConversations": "Back to conversations",
+    "leaveChat": "Leave chat",
+    "filesTab": "Files",
+    "selectOrStartConversation": "Select or start a conversation to begin chatting",
+    "noMessagesYet": "No messages yet",
+    "noConversationsMatchSearch": "No conversations match your search.",
+    "noConversationsYet": "No conversations yet. Tap \"New chat\" to start."
   },
   "myComplaints": {
     "title": "My Complaints",
@@ -1323,7 +1375,12 @@
       "detailNoAppointment": "No appointment linked to this request.",
       "detailNoPrescription": "No prescription image uploaded.",
       "openPrescription": "Open prescription",
-      "prescriptionPreviewAlt": "Prescription preview"
+      "prescriptionPreviewAlt": "Prescription preview",
+      "deleteModalTitle": "Delete test request",
+      "deleteConfirmMessage": "Are you sure you want to delete {name}?",
+      "thisRequest": "this request",
+      "cancel": "Cancel",
+      "delete": "Delete"
     },
     "testResults": {
       "title": "Test Results",
@@ -1394,7 +1451,10 @@
       "toastGenericError": "Something went wrong while creating.",
       "deleteModalTitle": "Delete test result",
       "deleteConfirmMessage": "Are you sure you want to delete this test result (test request {id})?",
-      "deleteConfirmMessageNoId": "Are you sure you want to delete this test result?"
+      "deleteConfirmMessageNoId": "Are you sure you want to delete this test result?",
+      "resultKey": "Key",
+      "resultValue": "Value",
+      "jsonLabel": "JSON"
     },
     "settings": {
       "title": "Settings",
@@ -1404,24 +1464,24 @@
       "tabAppointmentTypes": "Appointment types",
       "tabAds": "Ads",
       "tabBanners": "Banners",
-      "tabSlideCards": "Slide cards",
+      "tabSlideCards": "Silders",
       "tabWelcomePages": "Welcome pages",
       "tabWebsitePages": "Website pages",
       "tabWebsiteContentMap": "Page content map",
       "tabMedicalTestCategories": "Medical categories",
       "contentMap": {
         "contentMapTitle": "Page content map",
-        "contentMapSubtitle": "See how banners, pop-up ads, and slide cards appear on each website page.",
+        "contentMapSubtitle": "See how banners, pop-up ads, and Silders appear on each website page.",
         "pagePicker": "Pages",
         "builtinPages": "Built-in pages",
         "customPages": "Custom CMS pages",
         "siteWide": "Site-wide",
         "siteWideSubtitle": "Global ad bar and welcome modal",
         "emptySlot": "No banner assigned to this slot",
-        "emptySlideCards": "No active slide cards",
+        "emptySlideCards": "No active Silders",
         "emptySlider": "No banners in this section",
         "popupAd": "Pop-up ad on this page",
-        "slideCards": "Slide cards",
+        "slideCards": "Silders",
         "overflowBanners": "Extra banners (non-standard slots)",
         "overflowOrder": "Order {order}: {count} banner(s)",
         "cmsNoBannerSlots": "CMS pages use content blocks only and do not use placement-based banner slots.",
@@ -1749,7 +1809,7 @@
           "afterHero": "After hero",
           "afterEditorial": "After editorial",
           "afterServices": "After services",
-          "afterSlideCards": "After slide cards",
+          "afterSlideCards": "After Silders",
           "afterMedicalAdvice": "After medical advice",
           "afterQuality": "After quality",
           "afterDepartments": "After departments",
@@ -2078,11 +2138,11 @@
         "changeNotesLabel": "Change notes"
       },
       "slideCards": {
-        "title": "Slide cards",
-        "subtitle": "Manage website slide cards and offers.",
+        "title": "Silders",
+        "subtitle": "Manage website Silders and offers.",
         "create": "Create slide card",
         "showing": "Showing {count} records",
-        "empty": "No slide cards found.",
+        "empty": "No Silders found.",
         "columnTitle": "Title",
         "columnPrice": "Price",
         "columnDiscount": "Discount",
@@ -2597,6 +2657,15 @@
       "tabSliders": "Sliders",
       "tabCoupons": "Coupons",
       "tabOrders": "Orders"
+    },
+    "roles": {
+      "userLabel": "User",
+      "currentPermissions": "Current permissions",
+      "addNewPermission": "Add new permission",
+      "removeUncheckedPermissions": "Remove unchecked permissions",
+      "replacePermissions": "Replace",
+      "assignNewPermission": "Assign new",
+      "managePermissions": "Manage permissions"
     }
   },
   "patient": {
@@ -2913,6 +2982,12 @@
     }
   },
   "dashboard": {
+    "slideCards": {
+      "title": "Featured offers",
+      "subtitle": "Curated promotions selected for dashboard users.",
+      "expires": "Expires",
+      "viewMore": "View details"
+    },
     "sidebar": {
       "brandTitle": "Al Mutawali Medical Laboratory",
       "brandSubtitle": "Clinical curator",
@@ -4496,20 +4571,20 @@
       "tabTestResults": "Test results"
     }
   },
-    "appointmentsFeature": {
-      "bookAction": "Book blood draw",
-      "bookTitle": "Book blood draw appointment",
-      "bookSubtitle": "Choose an available slot for test request #{id}",
-      "collectionDetails": "Appointment and collection location",
-      "collectionNotesPlaceholder": "Add address notes, floor, nearby landmark, or access details...",
-      "collectionMapLabel": "Home location on map",
-      "collectionMapDescription": "Click the map to place the marker, then drag it to fine-tune the home location.",
-      "selectedCoordinates": "Selected coordinates: {lat}, {lng}",
-      "mapRequired": "Select the home location on the map.",
-      "retryAppointmentHint": "The request was saved. Try booking the appointment again; a duplicate request will not be created.",
-      "missingBookingData": "Missing appointment details.",
-      "bookingSuccess": "Appointment booked successfully.",
-      "bookingFailed": "Failed to book appointment",
+  "appointmentsFeature": {
+    "bookAction": "Book blood draw",
+    "bookTitle": "Book blood draw appointment",
+    "bookSubtitle": "Choose an available slot for test request #{id}",
+    "collectionDetails": "Appointment and collection location",
+    "collectionNotesPlaceholder": "Add address notes, floor, nearby landmark, or access details...",
+    "collectionMapLabel": "Home location on map",
+    "collectionMapDescription": "Click the map to place the marker, then drag it to fine-tune the home location.",
+    "selectedCoordinates": "Selected coordinates: {lat}, {lng}",
+    "mapRequired": "Select the home location on the map.",
+    "retryAppointmentHint": "The request was saved. Try booking the appointment again; a duplicate request will not be created.",
+    "missingBookingData": "Missing appointment details.",
+    "bookingSuccess": "Appointment booked successfully.",
+    "bookingFailed": "Failed to book appointment",
     "cancelSuccess": "Appointment cancelled.",
     "appointmentDate": "Appointment date",
     "selectAppointmentDate": "Select a day",

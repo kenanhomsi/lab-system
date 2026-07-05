@@ -14,7 +14,7 @@ type Params = {
 const store = (): Params => ({
   pageNumber: 1,
   setPageNumber: () => {},
-  pageSize: 20,
+  pageSize: 100,
   setPageSize: () => {},
   activeModal: null,
   setActiveModal: () => {},

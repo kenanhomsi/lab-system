@@ -1,10 +1,12 @@
 "use client";
-import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 
+import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import { Button, Checkbox, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
+import { useTranslations } from "next-intl";
 import { useMirror } from "./store";
 
 const UI = () => {
+  const t = useTranslations("admin.roles");
   const isOpen = useMirror("isOpen");
   const onClose = useMirror("onClose");
   const user = useMirror("user");
@@ -19,13 +21,19 @@ const UI = () => {
   const setCheckedPermissions = useMirror("setCheckedPermissions");
 
   return (
-    <Modal opened={isOpen} onClose={onClose} title="Manage Permissions" centered>
+    <Modal opened={isOpen} onClose={onClose} title={t("managePermissions")} centered>
       <Stack>
-          <MutationErrorAlert />
-        <Text size="sm">User: {user?.fullName || "-"}</Text>
-        <Text size="sm" mb={4}>Current Permissions:</Text>
+        <MutationErrorAlert />
+        <Text size="sm">
+          {t("userLabel")}: {user?.fullName || "-"}
+        </Text>
+        <Text size="sm" mb={4}>
+          {t("currentPermissions")}
+        </Text>
         <Stack gap={4} mb={8}>
-          {loadedPermissions.length === 0 && <Text size="sm">No permissions found</Text>}
+          {loadedPermissions.length === 0 && (
+            <Text size="sm">{t("noPermissions")}</Text>
+          )}
           {loadedPermissions.map((perm) => (
             <Checkbox
               key={perm}
@@ -42,7 +50,7 @@ const UI = () => {
           ))}
         </Stack>
         <TextInput
-          label="Add New Permission"
+          label={t("addNewPermission")}
           value={permissionsText}
           onChange={(event) => setPermissionsText(event.target.value)}
           placeholder="users.read"
@@ -51,17 +59,17 @@ const UI = () => {
           <Button
             variant="default"
             onClick={() => {
-              // Remove all unchecked permissions
-              const toRemove = loadedPermissions.filter((perm) => !checkedPermissions.includes(perm));
+              const toRemove = loadedPermissions.filter(
+                (perm) => !checkedPermissions.includes(perm),
+              );
               if (toRemove.length > 0) {
-                // Remove only the first unchecked permission for demo, or loop for all
                 removeOne();
               }
             }}
             loading={isSubmitting}
             disabled={!user || checkedPermissions.length === loadedPermissions.length}
           >
-            Remove Unchecked Permissions
+            {t("removeUncheckedPermissions")}
           </Button>
           <Group>
             <Button
@@ -70,14 +78,14 @@ const UI = () => {
               loading={isSubmitting}
               disabled={!user || checkedPermissions.length === 0}
             >
-              Replace
+              {t("replacePermissions")}
             </Button>
             <Button
               onClick={assign}
               loading={isSubmitting}
               disabled={!user || !permissionsText.trim()}
             >
-              Assign New
+              {t("assignNewPermission")}
             </Button>
           </Group>
         </Group>

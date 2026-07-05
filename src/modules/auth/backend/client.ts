@@ -15,6 +15,8 @@ type RegisterProps = {
   fullName: string;
   city: string;
   phoneNumber: string;
+  age: number;
+  gender: "male" | "female";
   role: string;
 };
 

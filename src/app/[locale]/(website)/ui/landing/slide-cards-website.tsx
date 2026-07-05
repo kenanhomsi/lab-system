@@ -20,7 +20,7 @@ type SlideCardsWebsiteClientProps = {
 };
 
 /**
- * Public homepage slide cards — no DI container; data is server-fetched.
+ * Public homepage Silders — no DI container; data is server-fetched.
  */
 export function SlideCardsWebsiteClient({
   initialCards,

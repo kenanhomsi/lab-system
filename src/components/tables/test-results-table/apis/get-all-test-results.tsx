@@ -54,7 +54,7 @@ async function fetchTestResultsList(params: {
 const emptyResponse: TestResultsResponse = {
   items: [],
   page: 1,
-  pageSize: 20,
+  pageSize: 100,
   totalCount: 0,
   totalPages: 0,
   hasNextPage: false,

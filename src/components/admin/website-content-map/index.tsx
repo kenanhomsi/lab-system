@@ -188,7 +188,7 @@ function WebsiteContentMapPanelInner() {
 }
 
 /**
- * Admin panel: visual map of website pages with banners, ads, and slide cards.
+ * Admin panel: visual map of website pages with banners, ads, and Silders.
  */
 export function WebsiteContentMapPanel() {
   return (

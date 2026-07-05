@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -31,7 +32,9 @@ export function SlideCardsWebsite({
   variant,
   initialCards,
 }: SlideCardsWebsiteProps) {
-  const t = useTranslations("landing.slideCards");
+  const t = useTranslations(
+    variant === "sidebar" ? "dashboard.slideCards" : "landing.slideCards",
+  );
   const locale = useLocale();
   const slideCardService = frontendContainer.get<SlideCardFrontendService>(
     slideCardModuleNames.service,
@@ -82,9 +85,14 @@ export function SlideCardsWebsite({
 
       const inner = (
         <div className={offerStyles.offerBox}>
-          <div className={offerStyles.thumb}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.imageUrl} alt={item.title} />
+          <div className={`${offerStyles.thumb} relative`}>
+            <Image
+              src={item.imageUrl}
+              alt={item.title}
+              fill
+              sizes="52px"
+              className="object-cover"
+            />
           </div>
           <div className={offerStyles.copy}>
             <p className={offerStyles.offerTitle}>{item.title}</p>
@@ -222,11 +230,12 @@ export function SlideCardsWebsite({
               const row = (
                 <div className="group flex items-center gap-3 rounded-2xl border border-outline-variant/12 bg-surface-container-lowest p-3 transition-colors hover:bg-surface-container-low">
                   <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-surface-variant/30">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={item.imageUrl}
                       alt={item.title}
-                      className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
+                      fill
+                      sizes="56px"
+                      className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
                     />
                   </div>
                   <div className="min-w-0 flex-1">

@@ -47,7 +47,7 @@ type SlideCardFormModalProps = {
 };
 
 /**
- * Create/edit modal for slide cards used by the content map.
+ * Create/edit modal for Silders used by the content map.
  */
 export function SlideCardFormModal({
   mode,

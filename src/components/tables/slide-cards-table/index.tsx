@@ -26,7 +26,7 @@ const formatDateCell = (value: string | undefined) => {
 };
 
 /**
- * Admin table for homepage slide cards with create, edit, and delete.
+ * Admin table for homepage Silders with create, edit, and delete.
  */
 const SlideCardsTable = () => {
   const t = useTranslations("admin.settings.slideCards");
@@ -237,7 +237,7 @@ const SlideCardsTable = () => {
           type="normal"
           isLoading={isPending}
           schema={schema}
-          OnPageNumberChange={() => {}}
+          OnPageNumberChange={() => { }}
           data={rows}
           paginationStatic={{
             count: rows.length,

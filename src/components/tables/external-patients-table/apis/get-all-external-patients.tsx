@@ -17,7 +17,7 @@ const service = frontendContainer.get<ExternalPatientsFrontendService>(
 const emptyPageData = (): ExternalPatientsPageData => ({
   items: [],
   page: 1,
-  pageSize: 20,
+  pageSize: 10,
   totalCount: 0,
   totalPages: 0,
   hasNextPage: false,

@@ -139,100 +139,100 @@ export function BannerSlotBlock({
               normalizeDisplayMode(banner.displayMode),
             );
             return (
-            <Group key={banner.id} gap="sm" wrap="nowrap" align="flex-start">
-              <Image
-                src={banner.mediaUrl}
-                alt={banner.title}
-                w={size.width}
-                h={size.height}
-                radius="sm"
-                fit="cover"
-              />
-              <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
-                <Text size="sm" fw={500} lineClamp={1}>
-                  {banner.title}
-                </Text>
-                <Badge
-                  size="xs"
-                  variant="light"
-                  color={banner.isActive ? "green" : "gray"}
-                >
-                  {banner.isActive ? tBanner("active") : tBanner("inactive")}
-                </Badge>
-              </Stack>
-              <Group gap={4}>
-                <ActionIcon
-                  variant="subtle"
-                  size="sm"
-                  onClick={() => openAction({ type: "banner-edit", banner })}
-                >
-                  <IconEdit size={14} />
-                </ActionIcon>
-                <ActionIcon
-                  variant="subtle"
-                  color="red"
-                  size="sm"
-                  onClick={() => openAction({ type: "banner-delete", banner })}
-                >
-                  <IconTrash size={14} />
-                </ActionIcon>
-                {availableSlotOrders.length > 0 ? (
-                  <Menu withinPortal position="bottom-end">
-                    <Menu.Target>
-                      <ActionIcon variant="subtle" size="sm">
-                        <IconArrowsMove size={14} />
-                      </ActionIcon>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                      {availableSlotOrders
-                        .filter((slotOrder) => slotOrder !== order)
-                        .map((slotOrder) => (
-                          <Menu.Item
-                            key={slotOrder}
-                            onClick={() =>
-                              void mutations.moveBannerToSlot(
-                                banner,
-                                placement,
-                                slotOrder,
-                              )
-                            }
-                          >
-                            {t("moveToSlot", { order: slotOrder })}
-                          </Menu.Item>
-                        ))}
-                    </Menu.Dropdown>
-                  </Menu>
-                ) : null}
-                {index > 0 ? (
+              <Group key={banner.id} gap="sm" wrap="nowrap" align="flex-start">
+                <Image
+                  src={banner.mediaUrl}
+                  alt={banner.title}
+                  w={size.width}
+                  h={size.height}
+                  radius="sm"
+                  fit="cover"
+                />
+                <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+                  <Text size="sm" fw={500} lineClamp={1}>
+                    {banner.title}
+                  </Text>
+                  <Badge
+                    size="xs"
+                    variant="light"
+                    color={banner.isActive ? "green" : "gray"}
+                  >
+                    {banner.isActive ? tBanner("active") : tBanner("inactive")}
+                  </Badge>
+                </Stack>
+                <Group gap={4}>
                   <ActionIcon
                     variant="subtle"
                     size="sm"
-                    onClick={() =>
-                      void mutations.swapBannerDisplayOrder(
-                        banners[index - 1],
-                        banner,
-                      )
-                    }
+                    onClick={() => openAction({ type: "banner-edit", banner })}
                   >
-                    <IconChevronUp size={14} />
+                    <IconEdit size={14} />
                   </ActionIcon>
-                ) : null}
-                {index < banners.length - 1 ? (
                   <ActionIcon
                     variant="subtle"
+                    color="red"
                     size="sm"
-                    onClick={() =>
-                      void mutations.swapBannerDisplayOrder(
-                        banner,
-                        banners[index + 1],
-                      )
-                    }
+                    onClick={() => openAction({ type: "banner-delete", banner })}
                   >
-                    <IconChevronDown size={14} />
+                    <IconTrash size={14} />
                   </ActionIcon>
-                ) : null}
+                  {availableSlotOrders.length > 0 ? (
+                    <Menu withinPortal position="bottom-end">
+                      <Menu.Target>
+                        <ActionIcon variant="subtle" size="sm">
+                          <IconArrowsMove size={14} />
+                        </ActionIcon>
+                      </Menu.Target>
+                      <Menu.Dropdown>
+                        {availableSlotOrders
+                          .filter((slotOrder) => slotOrder !== order)
+                          .map((slotOrder) => (
+                            <Menu.Item
+                              key={slotOrder}
+                              onClick={() =>
+                                void mutations.moveBannerToSlot(
+                                  banner,
+                                  placement,
+                                  slotOrder,
+                                )
+                              }
+                            >
+                              {t("moveToSlot", { order: slotOrder })}
+                            </Menu.Item>
+                          ))}
+                      </Menu.Dropdown>
+                    </Menu>
+                  ) : null}
+                  {index > 0 ? (
+                    <ActionIcon
+                      variant="subtle"
+                      size="sm"
+                      onClick={() =>
+                        void mutations.swapBannerDisplayOrder(
+                          banners[index - 1],
+                          banner,
+                        )
+                      }
+                    >
+                      <IconChevronUp size={14} />
+                    </ActionIcon>
+                  ) : null}
+                  {index < banners.length - 1 ? (
+                    <ActionIcon
+                      variant="subtle"
+                      size="sm"
+                      onClick={() =>
+                        void mutations.swapBannerDisplayOrder(
+                          banner,
+                          banners[index + 1],
+                        )
+                      }
+                    >
+                      <IconChevronDown size={14} />
+                    </ActionIcon>
+                  ) : null}
+                </Group>
               </Group>
-            </Group>
             );
           })}
         </Stack>
@@ -245,7 +245,7 @@ type SlideCardsBlockProps = {
   cards: SlideCardItem[];
 };
 
-/** Homepage slide cards row. */
+/** Homepage Silders row. */
 export function SlideCardsBlock({ cards }: SlideCardsBlockProps) {
   const t = useTranslations("admin.settings.contentMap");
   const { openAction, mutations } = useContentMapActions();
@@ -406,58 +406,58 @@ export function BannerSliderBlock({
               normalizeDisplayMode(banner.displayMode),
             );
             return (
-            <Box key={banner.id}>
-              <Image
-                src={banner.mediaUrl}
-                alt={banner.title}
-                h={size.height}
-                radius="sm"
-                fit="cover"
-                mb={4}
-              />
-              <Group justify="space-between" wrap="nowrap">
-                <Text size="xs" lineClamp={1} style={{ flex: 1 }}>
-                  {banner.title}
-                </Text>
-                <Group gap={2}>
-                  <ActionIcon
-                    variant="subtle"
-                    size="xs"
-                    onClick={() => openAction({ type: "banner-edit", banner })}
-                  >
-                    <IconEdit size={12} />
-                  </ActionIcon>
-                  {index > 0 ? (
+              <Box key={banner.id}>
+                <Image
+                  src={banner.mediaUrl}
+                  alt={banner.title}
+                  h={size.height}
+                  radius="sm"
+                  fit="cover"
+                  mb={4}
+                />
+                <Group justify="space-between" wrap="nowrap">
+                  <Text size="xs" lineClamp={1} style={{ flex: 1 }}>
+                    {banner.title}
+                  </Text>
+                  <Group gap={2}>
                     <ActionIcon
                       variant="subtle"
                       size="xs"
-                      onClick={() =>
-                        void mutations.swapBannerDisplayOrder(
-                          banners[index - 1],
-                          banner,
-                        )
-                      }
+                      onClick={() => openAction({ type: "banner-edit", banner })}
                     >
-                      <IconChevronUp size={12} />
+                      <IconEdit size={12} />
                     </ActionIcon>
-                  ) : null}
-                  {index < banners.length - 1 ? (
-                    <ActionIcon
-                      variant="subtle"
-                      size="xs"
-                      onClick={() =>
-                        void mutations.swapBannerDisplayOrder(
-                          banner,
-                          banners[index + 1],
-                        )
-                      }
-                    >
-                      <IconChevronDown size={12} />
-                    </ActionIcon>
-                  ) : null}
+                    {index > 0 ? (
+                      <ActionIcon
+                        variant="subtle"
+                        size="xs"
+                        onClick={() =>
+                          void mutations.swapBannerDisplayOrder(
+                            banners[index - 1],
+                            banner,
+                          )
+                        }
+                      >
+                        <IconChevronUp size={12} />
+                      </ActionIcon>
+                    ) : null}
+                    {index < banners.length - 1 ? (
+                      <ActionIcon
+                        variant="subtle"
+                        size="xs"
+                        onClick={() =>
+                          void mutations.swapBannerDisplayOrder(
+                            banner,
+                            banners[index + 1],
+                          )
+                        }
+                      >
+                        <IconChevronDown size={12} />
+                      </ActionIcon>
+                    ) : null}
+                  </Group>
                 </Group>
-              </Group>
-            </Box>
+              </Box>
             );
           })}
         </SimpleGrid>
@@ -512,34 +512,34 @@ export function PopupAdBanner({ ads, placement }: PopupAdBannerProps) {
               normalizeDisplayMode(ad.displayMode),
             );
             return (
-            <Group key={ad.id} gap="sm" wrap="nowrap">
-              <Image
-                src={ad.mediaUrl}
-                alt={ad.name}
-                w={size.width}
-                h={size.height}
-                radius="sm"
-                fit="cover"
-              />
-              <Text size="sm" fw={500} lineClamp={2} style={{ flex: 1 }}>
-                {ad.name}
-              </Text>
-              <ActionIcon
-                variant="subtle"
-                size="sm"
-                onClick={() => openAction({ type: "ad-edit", ad })}
-              >
-                <IconEdit size={14} />
-              </ActionIcon>
-              <ActionIcon
-                variant="subtle"
-                color="red"
-                size="sm"
-                onClick={() => openAction({ type: "ad-delete", ad })}
-              >
-                <IconTrash size={14} />
-              </ActionIcon>
-            </Group>
+              <Group key={ad.id} gap="sm" wrap="nowrap">
+                <Image
+                  src={ad.mediaUrl}
+                  alt={ad.name}
+                  w={size.width}
+                  h={size.height}
+                  radius="sm"
+                  fit="cover"
+                />
+                <Text size="sm" fw={500} lineClamp={2} style={{ flex: 1 }}>
+                  {ad.name}
+                </Text>
+                <ActionIcon
+                  variant="subtle"
+                  size="sm"
+                  onClick={() => openAction({ type: "ad-edit", ad })}
+                >
+                  <IconEdit size={14} />
+                </ActionIcon>
+                <ActionIcon
+                  variant="subtle"
+                  color="red"
+                  size="sm"
+                  onClick={() => openAction({ type: "ad-delete", ad })}
+                >
+                  <IconTrash size={14} />
+                </ActionIcon>
+              </Group>
             );
           })}
         </Stack>

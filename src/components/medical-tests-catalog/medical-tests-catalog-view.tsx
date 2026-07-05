@@ -55,7 +55,7 @@ const MedicalTestsCatalogView = () => {
 
   const { data, isPending, isError, error } = useMedicalTestsCatalogQuery({
     pageNumber,
-    pageSize: 20,
+    pageSize: 10,
     search: debouncedSearch,
     sortBy,
     sortDesc,

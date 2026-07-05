@@ -21,7 +21,7 @@ type Params = {
 const store = (): Params => ({
   pageNumber: 1,
   setPageNumber: () => {},
-  pageSize: 20,
+  pageSize: 10,
   setPageSize: () => {},
   searchValue: "",
   setSearchValue: () => {},

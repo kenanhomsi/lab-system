@@ -28,6 +28,7 @@ import {
   IconUser,
   IconX,
 } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import "./chat-theme.css";
 import { ChatProfilePanel } from "./chat-profile-panel";
 import { ChatTopBar, type ChatSidebarView } from "./chat-top-bar";
@@ -79,6 +80,7 @@ async function runAction(
  * Main realtime chat client shell for dashboard route.
  */
 export function ChatShell() {
+  const t = useTranslations("chatPage");
   const chatApi = useRealtimeChat();
   const queryClient = useQueryClient();
   const { data: session } = useSession();
@@ -456,8 +458,8 @@ export function ChatShell() {
     if (!hubsConnected) {
       notifications.show({
         color: "yellow",
-        title: "Not connected",
-        message: "Connect to chat before starting a new conversation.",
+        title: t("notConnected"),
+        message: t("connectBeforeChat"),
       });
       return;
     }
@@ -604,7 +606,7 @@ export function ChatShell() {
                   leftSection={<IconBug size={14} />}
                   onClick={() => setShowLogs(!showLogs)}
                 >
-                  {showLogs ? "Hide Logs" : "Show Logs"}
+                  {showLogs ? t("hideLogs") : t("showLogs")}
                 </Button>
               </Group>
             </Box>
@@ -632,7 +634,7 @@ export function ChatShell() {
                         variant="subtle"
                         color="gray"
                         onClick={() => setActiveConversation(null)}
-                        aria-label="Back to conversations"
+                        aria-label={t("backToConversations")}
                       >
                         <IconArrowLeft size={18} />
                       </ActionIcon>
@@ -666,7 +668,7 @@ export function ChatShell() {
                         size="compact-sm"
                         leftSection={<IconFile size={14} />}
                       >
-                        Files
+                        {t("filesTab")}
                       </Button>
                       <Button
                         variant="subtle"
@@ -675,9 +677,9 @@ export function ChatShell() {
                         leftSection={<IconUser size={14} />}
                         onClick={toggleProfile}
                       >
-                        Profile
+                        {t("profile")}
                       </Button>
-                      <Tooltip label="Leave Chat">
+                      <Tooltip label={t("leaveChat")}>
                         <ActionIcon
                           variant="light"
                           color="red"
@@ -781,7 +783,7 @@ export function ChatShell() {
                   stroke={1.5}
                 />
                 <Text c="dimmed" size="lg" fw={500}>
-                  Select or start a conversation to begin chatting
+                  {t("selectOrStartConversation")}
                 </Text>
               </Center>
             )}

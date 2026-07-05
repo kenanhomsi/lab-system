@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { getMessagesForPath } from "@/lib/i18n/message-segments";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -66,11 +64,9 @@ export default async function LocaleLayout({
     navbar:
       loadedMessages?.navbar ?? fallbackMessages?.navbar ?? navbarFallback,
   };
-  const pathname = (await headers()).get("x-pathname") ?? `/${locale}`;
-  const messages = getMessagesForPath(mergedMessages, pathname);
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={mergedMessages}>
       {children}
     </NextIntlClientProvider>
   );

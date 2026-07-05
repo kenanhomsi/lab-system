@@ -76,8 +76,8 @@ export function ViewTestResultModal({
           <Table striped highlightOnHover withTableBorder withColumnBorders>
             <Table.Thead>
               <Table.Tr>
-                <Table.Th>Key</Table.Th>
-                <Table.Th>Value</Table.Th>
+                <Table.Th>{t("resultKey")}</Table.Th>
+                <Table.Th>{t("resultValue")}</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
@@ -92,7 +92,9 @@ export function ViewTestResultModal({
         )}
 
         <Stack gap={4}>
-          <Text size="sm" fw={600} c="dimmed">JSON</Text>
+          <Text size="sm" fw={600} c="dimmed">
+            {t("jsonLabel")}
+          </Text>
           <ScrollArea.Autosize mah={400} type="hover" offsetScrollbars="x">
             <Code
               block

@@ -178,7 +178,7 @@ export function AccountingFeature({ mode }: { mode: AccountingFeatureMode }) {
         from: fromIso,
         to: toIso,
         page: paymentsPage,
-        pageSize: 20,
+        pageSize: 10,
       }),
     enabled: Boolean(effectiveLabId.trim()) && activeTab === "payments",
   });

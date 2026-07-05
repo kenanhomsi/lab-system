@@ -19,6 +19,7 @@ const UI = () => {
   const submitRegisterForm = useMirror("submitRegisterForm");
   const locale = useLocale();
   const t = useTranslations("auth");
+  const [city, setCity] = useState("");
   const [password, setPassword] = useState("");
   const passwordStrength = getPasswordStrength(password);
   const inputClassName =
@@ -117,6 +118,8 @@ const UI = () => {
               id="city"
               name="city"
               required
+              value={city}
+              onChange={setCity}
               autoComplete="address-level2"
               placeholder={t("selectCity")}
               className={inputClassName}

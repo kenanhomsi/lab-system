@@ -29,7 +29,7 @@ const fetchPublicSlideCardsCached = unstable_cache(
 );
 
 /**
- * Returns active public slide cards for dashboard and website surfaces.
+ * Returns active public Silders for dashboard and website surfaces.
  */
 export async function fetchPublicSlideCards(): Promise<SlideCardItem[]> {
   const cards = await fetchPublicSlideCardsCached();

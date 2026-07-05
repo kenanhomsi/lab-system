@@ -16,6 +16,7 @@ import {
   IconSearch,
 } from "@tabler/icons-react";
 import { JSX, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import type {
   Conversation,
   OnlineUser,
@@ -37,10 +38,10 @@ interface ConversationListPanelProps {
   onNewChat: () => void;
 }
 
-function formatLastMessagePreview(text?: string | null): string {
+function formatLastMessagePreview(text?: string | null, emptyLabel = ""): string {
   const trimmed = text?.trim();
-  if (!trimmed) return "No messages yet";
-  return trimmed.length > 48 ? `${trimmed.slice(0, 48)}…` : trimmed;
+  if (!trimmed) return emptyLabel;
+  return trimmed.length > 48 ? `${trimmed.slice(0, 48)}?` : trimmed;
 }
 
 function formatConversationTime(createdAtUtc?: string | null): string {
@@ -113,6 +114,7 @@ function ConversationRow({
   unread,
   timeLabel,
   peerOnline,
+  emptyPreviewLabel,
   onOpen,
 }: {
   conversation: Conversation;
@@ -121,6 +123,7 @@ function ConversationRow({
   unread: number;
   timeLabel: string;
   peerOnline: boolean;
+  emptyPreviewLabel: string;
   onOpen: () => void;
 }): JSX.Element {
   return (
@@ -179,7 +182,10 @@ function ConversationRow({
             </Group>
             <Group gap="xs" wrap="nowrap" mt={2}>
               <Text size="xs" c="dimmed" truncate style={{ flex: 1 }}>
-                {formatLastMessagePreview(conversation.lastMessage?.text)}
+                {formatLastMessagePreview(
+                  conversation.lastMessage?.text,
+                  emptyPreviewLabel,
+                )}
               </Text>
               {unread > 0 ? (
                 <Badge size="xs" circle color="violet">
@@ -211,6 +217,7 @@ export function ConversationListPanel({
   onNewChat,
 }: ConversationListPanelProps): JSX.Element {
   void onJoinById;
+  const t = useTranslations("chatPage");
   const [searchQuery, setSearchQuery] = useState("");
 
   const uid = currentUserId ?? "";
@@ -279,6 +286,7 @@ export function ConversationListPanel({
                 conversation.lastMessage?.createdAtUtc,
               )}
               peerOnline={isPeerOnline(conversation, uid, onlineUsersById)}
+              emptyPreviewLabel={t("noMessagesYet")}
               onOpen={() => onOpen(conversation)}
             />
           );
@@ -291,7 +299,7 @@ export function ConversationListPanel({
     <Stack gap="md">
       <TextInput
         className="chat-search-input"
-        placeholder="Search…"
+        placeholder={t("search")}
         value={searchQuery}
         onChange={(event) => setSearchQuery(event.currentTarget.value)}
         leftSection={<IconSearch size={16} stroke={1.5} />}
@@ -307,7 +315,7 @@ export function ConversationListPanel({
         disabled={!hubsConnected}
         onClick={onNewChat}
       >
-        New chat
+        {t("newChat")}
       </Button>
       {/* 
       <Group justify="flex-end">
@@ -370,8 +378,8 @@ export function ConversationListPanel({
         offlineConversations.length === 0 ? (
         <Text c="dimmed" size="sm" ta="center" py="xl">
           {searchQuery.trim()
-            ? "No conversations match your search."
-            : 'No conversations yet. Tap "New chat" to start.'}
+            ? t("noConversationsMatchSearch")
+            : t("noConversationsYet")}
         </Text>
       ) : (
         <Stack gap="xs">

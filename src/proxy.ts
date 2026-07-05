@@ -89,9 +89,8 @@ export default async function middleware(request: NextRequest) {
     }
   }
 
-  const response = intlMiddleware(request);
-  response.headers.set("x-pathname", pathname);
-  return response;
+  request.headers.set("x-pathname", pathname);
+  return intlMiddleware(request);
 }
 
 export const config = {

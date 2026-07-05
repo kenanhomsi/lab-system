@@ -22,7 +22,7 @@ const GetCategories = ({ children }: PropsWithChildren) => {
       categoryService.list({
         query: {
           Page: pageNumber,
-          PageSize: 20,
+          pageSize: 10,
           SortBy: "displayOrder",
           SortDesc: false,
         },

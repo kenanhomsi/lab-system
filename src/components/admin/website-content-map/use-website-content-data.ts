@@ -129,7 +129,7 @@ const asWelcomePageRows = (payload: unknown): WelcomePageItem[] => {
 };
 
 /**
- * Loads banners, ads, slide cards, and CMS pages for the content map panel.
+ * Loads banners, ads, Silders, and CMS pages for the content map panel.
  */
 export function useWebsiteContentData() {
   const bannerService = frontendContainer.get<BannerFrontendService>(
