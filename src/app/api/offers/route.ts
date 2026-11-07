@@ -5,7 +5,7 @@ import { fetchUpstreamGet } from "@/lib/api/bff-proxy";
 
 export async function GET(request: NextRequest) {
   const locale = request.nextUrl.searchParams.get("locale") ?? "en";
-  const upstream = await fetchUpstreamGet(request, "/offers", {
+  const upstream = await fetchUpstreamGet(request, "/api/offers", {
     omitRequestParams: ["locale"],
   });
 
@@ -17,7 +17,11 @@ export async function GET(request: NextRequest) {
         { status: res.status },
       );
     }
-    return NextResponse.json(await res.json());
+    const payload = await res.json();
+    const data = payload && typeof payload === "object" && "data" in payload
+      ? (payload as { data: unknown }).data
+      : payload;
+    return NextResponse.json(data);
   }
 
   if (upstream.reason === "network") {

@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { filterMockTests } from "@/lib/api/bff-public-mock-data";
+import { unwrapUpstreamPayload } from "@/lib/api/unwrap-upstream-payload";
 
 export async function GET(request: NextRequest) {
   const backendUrl = process.env.BACKEND_URL || "http://localhost:4000";
@@ -7,7 +8,7 @@ export async function GET(request: NextRequest) {
 
   if (isUpstreamReady) {
     try {
-      const target = new URL(`${backendUrl}/tests`);
+      const target = new URL(`${backendUrl}/api/medical-tests`);
       request.nextUrl.searchParams.forEach((value, key) => {
         target.searchParams.set(key, value);
       });
@@ -18,7 +19,8 @@ export async function GET(request: NextRequest) {
           { status: res.status },
         );
       }
-      return NextResponse.json(await res.json());
+      const payload = unwrapUpstreamPayload(await res.json()) as { items?: unknown };
+      return NextResponse.json(Array.isArray(payload) ? payload : payload.items ?? []);
     } catch {
       return NextResponse.json({ error: "Upstream unavailable" }, { status: 502 });
     }

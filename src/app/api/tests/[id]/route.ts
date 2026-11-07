@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getMockTestById } from "@/lib/api/bff-public-mock-data";
+import { unwrapUpstreamPayload } from "@/lib/api/unwrap-upstream-payload";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -10,7 +11,7 @@ export async function GET(_request: Request, context: RouteContext) {
 
   if (isUpstreamReady) {
     try {
-      const res = await fetch(`${backendUrl}/tests/${encodeURIComponent(id)}`, {
+      const res = await fetch(`${backendUrl}/api/medical-tests/${encodeURIComponent(id)}`, {
         cache: "no-store",
       });
       if (res.status === 404) {
@@ -22,7 +23,7 @@ export async function GET(_request: Request, context: RouteContext) {
           { status: res.status },
         );
       }
-      return NextResponse.json(await res.json());
+      return NextResponse.json(unwrapUpstreamPayload(await res.json()));
     } catch {
       return NextResponse.json({ error: "Upstream unavailable" }, { status: 502 });
     }

@@ -2806,11 +2806,12 @@
       "quickActions": {
         "requests": "Test requests",
         "results": "Results",
-        "complaints": "Complaints"
+        "complaints": "Complaints",
+        "monthlyPatients": "Monthly patients"
       },
       "liveChip": "Live data",
       "emptyCharts": "No data for this period",
-      "chartSubtitle": "Completed visits per weekday (mock)",
+      "chartSubtitle": "Completed visits per weekday",
       "distributionSubtitle": "Breakdown by status, category, and network",
       "recentSubtitle": "Latest requests, results, and complaints",
       "recentEmpty": "No records in this section yet",
@@ -3281,6 +3282,13 @@
     "platF2": "Full genomic mapping",
     "platF3": "VIP at-home sample collection",
     "selectPlan": "Select plan",
+    "processing": "Processing...",
+    "purchaseSuccess": "Your subscription is now active.",
+    "purchaseError": "Could not activate the subscription. Please try again.",
+    "activeSubscription": "Active subscription",
+    "validUntil": "Valid until",
+    "nextProcedure": "Next procedure",
+    "notAvailable": "Not scheduled",
     "activePlan": "Active plan",
     "upgradeVip": "Upgrade to VIP",
     "currentSelection": "Current selection",
@@ -4571,6 +4579,20 @@
       "tabTestResults": "Test results"
     }
   },
+  "doctorPatientReport": {
+    "eyebrow": "Financial report",
+    "title": "Monthly patient statement",
+    "subtitle": "Patients referred during the selected month and their total amount.",
+    "month": "Month",
+    "savePdf": "Print / Save PDF",
+    "loading": "Loading report...",
+    "error": "Could not load the report.",
+    "empty": "No patients were recorded during this month.",
+    "patient": "Patient name",
+    "date": "Date",
+    "amount": "Amount",
+    "total": "Total"
+  },
   "appointmentsFeature": {
     "bookAction": "Book blood draw",
     "bookTitle": "Book blood draw appointment",
@@ -4606,6 +4628,10 @@
     "selectGender": "Select gender",
     "latitude": "Latitude",
     "longitude": "Longitude",
+    "savedAddress": "Saved address",
+    "selectSavedAddress": "Choose a saved address",
+    "loadingAddresses": "Loading saved addresses...",
+    "addressesLoadError": "Failed to load saved addresses.",
     "notes": "Notes",
     "prescriptionAttachment": "Prescription photo (optional)",
     "prescriptionAttachmentDesc": "Upload a photo of the prescription if available.",

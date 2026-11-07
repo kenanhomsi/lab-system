@@ -8,8 +8,11 @@ type RegisterProps = {
   fullName: string;
   city: string;
   phoneNumber: string;
-  age: number;
-  gender: "male" | "female";
+  age?: number;
+  gender?: "male" | "female";
+  specialty?: string;
+  specialization?: string;
+  labName?: string;
   role: string;
 };
 

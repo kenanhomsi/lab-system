@@ -464,7 +464,7 @@ export function ChatShell() {
       return;
     }
     setPickerOpen(true);
-  }, [hubsConnected]);
+  }, [hubsConnected, t]);
 
   const handleJoinById = useCallback(
     async (conversationId: string) => {

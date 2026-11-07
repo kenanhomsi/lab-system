@@ -13,13 +13,14 @@ class Command {
   private fullName: string;
   private city: string;
   private phoneNumber: string;
-  private age: number;
-  private gender: "male" | "female";
+  private age?: number;
+  private gender?: "male" | "female";
+  private specialty?: string;
+  private labName?: string;
   private role: string;
 
   init(params: RegisterFrontendProps) {
-    const { email, password, fullName, city, phoneNumber, age, gender, role } =
-      params;
+    const { email, password, fullName, city, phoneNumber, age, gender, specialty, labName, role } = params;
     this.email = email;
     this.password = password;
     this.fullName = fullName;
@@ -27,6 +28,8 @@ class Command {
     this.phoneNumber = phoneNumber;
     this.age = age;
     this.gender = gender;
+    this.specialty = specialty;
+    this.labName = labName;
     this.role = role;
   }
 
@@ -39,6 +42,8 @@ class Command {
       phoneNumber: this.phoneNumber,
       age: this.age,
       gender: this.gender,
+      specialty: this.specialty,
+      labName: this.labName,
       role: this.role,
     });
     this.eventService.emit("RegisterSucceeded", res.message);

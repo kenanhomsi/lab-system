@@ -17,6 +17,8 @@ const UI = () => {
   const success = useMirror("success");
   const successMessage = useMirror("successMessage");
   const submitRegisterForm = useMirror("submitRegisterForm");
+  const selectedRole = useMirror("selectedRole");
+  const setSelectedRole = useMirror("setSelectedRole");
   const locale = useLocale();
   const t = useTranslations("auth");
   const [city, setCity] = useState("");
@@ -67,6 +69,35 @@ const UI = () => {
         )}
 
         <form onSubmit={submitRegisterForm} className="space-y-4" aria-busy={loading}>
+          <fieldset>
+            <legend className="mb-2 block text-xs font-bold uppercase tracking-widest text-secondary">
+              {t("selectAccountType")}
+            </legend>
+            <div className="grid grid-cols-3 gap-2">
+              {(
+                [
+                  ["patient", "patient"],
+                  ["doctor", "doctor"],
+                  ["LabPartner", "lab"],
+                ] as const
+              ).map(([role, label]) => (
+                <button
+                  key={role}
+                  type="button"
+                  aria-pressed={selectedRole === role}
+                  onClick={() => setSelectedRole(role)}
+                  className={cn(
+                    "rounded-xl border px-3 py-3 text-sm font-bold transition-colors",
+                    selectedRole === role
+                      ? "border-primary bg-primary text-on-primary"
+                      : "border-outline-variant bg-surface-container-low text-on-surface hover:border-primary",
+                  )}
+                >
+                  {t(`roles.${label}`)}
+                </button>
+              ))}
+            </div>
+          </fieldset>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="fullName" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
@@ -126,36 +157,43 @@ const UI = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2">
-            <div>
-              <label htmlFor="age" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
-                {t("age")}
-              </label>
-              <input
-                id="age"
-                name="age"
-                type="number"
-                min={0}
-                max={150}
-                required
-                className={inputClassName}
-              />
+          {selectedRole === "patient" ? (
+            <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2">
+              <div>
+                <label htmlFor="age" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
+                  {t("age")}
+                </label>
+                <input id="age" name="age" type="number" min={0} max={130} required className={inputClassName} />
+              </div>
+              <div>
+                <label htmlFor="gender" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
+                  {t("gender")}
+                </label>
+                <select id="gender" name="gender" required className={inputClassName}>
+                  <option value="male">{t("male")}</option>
+                  <option value="female">{t("female")}</option>
+                </select>
+              </div>
             </div>
+          ) : null}
+
+          {selectedRole === "doctor" ? (
             <div>
-              <label htmlFor="gender" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
-                {t("gender")}
+              <label htmlFor="specialty" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
+                {t("specialty")}
               </label>
-              <select
-                id="gender"
-                name="gender"
-                required
-                className={inputClassName}
-              >
-                <option value="male">{t("male")}</option>
-                <option value="female">{t("female")}</option>
-              </select>
+              <input id="specialty" name="specialty" type="text" required className={inputClassName} />
             </div>
-          </div>
+          ) : null}
+
+          {selectedRole === "LabPartner" ? (
+            <div>
+              <label htmlFor="labName" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
+                {t("labName")}
+              </label>
+              <input id="labName" name="labName" type="text" required className={inputClassName} />
+            </div>
+          ) : null}
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>

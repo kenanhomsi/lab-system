@@ -89,6 +89,7 @@ class Client extends AccessPolicyClient<AxiosState> {
   }
 
   async findAllTables(_params?: FindAllAccessPolicyTablesFrontendParams) {
+    void _params;
     const res = await super
       .sharedFindAll({
         endpoint: endpoint.findAllTables,
@@ -166,8 +167,11 @@ class Client extends AccessPolicyClient<AxiosState> {
   }
 
   async findAllPublic(_params: Record<string, never>) {
-    void _params;
-    throw new Error("Method not implemented.");
+    Object.keys(_params);
+    const res = await super
+      .sharedFindAll({ endpoint: endpoint.findAll })
+      .perform<unknown>();
+    return normalizeListPayload(res.data);
   }
 }
 

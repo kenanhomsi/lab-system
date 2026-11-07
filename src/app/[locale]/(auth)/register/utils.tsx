@@ -27,6 +27,7 @@ const Utils = (props: PropsWithChildren) => {
   const setError = useMirror("setError");
   const setSuccess = useMirror("setSuccess");
   const setSuccessMessage = useMirror("setSuccessMessage");
+  const selectedRole = useMirror("selectedRole");
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("auth");
@@ -38,15 +39,19 @@ const Utils = (props: PropsWithChildren) => {
       setLoading(true);
 
       const formData = new FormData(e.currentTarget);
+      const ageValue = formData.get("age");
+      const genderValue = formData.get("gender");
       const payload = {
-        role: "patient" as const,
+        role: selectedRole,
         email: formData.get("email") as string,
         mobile: formData.get("mobile") as string,
         fullName: formData.get("fullName") as string,
         city: formData.get("city") as string,
         password: formData.get("password") as string,
-        age: Number(formData.get("age")),
-        gender: formData.get("gender") as "male" | "female",
+        age: ageValue === null || ageValue === "" ? undefined : Number(ageValue),
+        gender: genderValue === null ? undefined : (genderValue as "male" | "female"),
+        specialty: (formData.get("specialty") as string | null)?.trim() || undefined,
+        labName: (formData.get("labName") as string | null)?.trim() || undefined,
       };
 
       const confirmPassword = formData.get("confirmPassword") as string;
@@ -70,6 +75,8 @@ const Utils = (props: PropsWithChildren) => {
           phoneNumber: payload.mobile,
           age: payload.age,
           gender: payload.gender,
+          specialty: payload.specialty,
+          labName: payload.labName,
           role: payload.role,
         });
 
@@ -91,7 +98,7 @@ const Utils = (props: PropsWithChildren) => {
         setLoading(false);
       }
     },
-    [locale, router, setError, setLoading, setSuccess, setSuccessMessage, t],
+    [locale, router, selectedRole, setError, setLoading, setSuccess, setSuccessMessage, t],
   );
 
   useMirrorRegistry("submitRegisterForm", submitRegisterForm);

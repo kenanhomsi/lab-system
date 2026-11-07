@@ -43,6 +43,13 @@ const appendQuery = (path: string, query?: Record<string, string | undefined>) =
   return qs ? `${path}?${qs}` : path;
 };
 
+const unwrapResponse = <T>(response: unknown): T => {
+  if (response && typeof response === "object" && "data" in response) {
+    return (response as { data: T }).data;
+  }
+  return response as T;
+};
+
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends SpecialAccountClient<BackendState> {
@@ -55,7 +62,7 @@ class Client extends SpecialAccountClient<BackendState> {
       .sharedGet({ endpoint: appendQuery(endpoint.payments, query) })
       .withAuth(token)
       .perform<SpecialPayment[]>();
-    return res.data;
+    return unwrapResponse<SpecialPayment[]>(res.data);
   }
 
   async createPayment(params: CreatePaymentParams): Promise<SpecialPayment> {
@@ -67,7 +74,7 @@ class Client extends SpecialAccountClient<BackendState> {
       .sharedPost({ endpoint: endpoint.payments, body })
       .withAuth(token)
       .perform<SpecialPayment>();
-    return res.data;
+    return unwrapResponse<SpecialPayment>(res.data);
   }
 
   async listExpenses(params: DateRangeQuery): Promise<SpecialExpense[]> {
@@ -79,7 +86,7 @@ class Client extends SpecialAccountClient<BackendState> {
       .sharedGet({ endpoint: appendQuery(endpoint.expenses, query) })
       .withAuth(token)
       .perform<SpecialExpense[]>();
-    return res.data;
+    return unwrapResponse<SpecialExpense[]>(res.data);
   }
 
   async createExpense(params: CreateExpenseParams): Promise<SpecialExpense> {
@@ -91,7 +98,7 @@ class Client extends SpecialAccountClient<BackendState> {
       .sharedPost({ endpoint: endpoint.expenses, body })
       .withAuth(token)
       .perform<SpecialExpense>();
-    return res.data;
+    return unwrapResponse<SpecialExpense>(res.data);
   }
 
   async getStatement(params: DateRangeQuery): Promise<AccountStatement> {
@@ -103,7 +110,7 @@ class Client extends SpecialAccountClient<BackendState> {
       .sharedGet({ endpoint: appendQuery(endpoint.statement, query) })
       .withAuth(token)
       .perform<AccountStatement>();
-    return res.data;
+    return unwrapResponse<AccountStatement>(res.data);
   }
 
   async listTasks(params: WithToken): Promise<DailyTask[]> {
@@ -115,7 +122,7 @@ class Client extends SpecialAccountClient<BackendState> {
       .sharedGet({ endpoint: endpoint.tasks })
       .withAuth(token)
       .perform<DailyTask[]>();
-    return res.data;
+    return unwrapResponse<DailyTask[]>(res.data);
   }
 
   async createTask(params: CreateTaskParams): Promise<DailyTask> {
@@ -127,7 +134,7 @@ class Client extends SpecialAccountClient<BackendState> {
       .sharedPost({ endpoint: endpoint.tasks, body })
       .withAuth(token)
       .perform<DailyTask>();
-    return res.data;
+    return unwrapResponse<DailyTask>(res.data);
   }
 
   async patchTask(params: PatchTaskParams): Promise<DailyTask> {
@@ -141,7 +148,7 @@ class Client extends SpecialAccountClient<BackendState> {
       .sharedPatch({ endpoint: endpoint.taskById(id), body })
       .withAuth(token)
       .perform<DailyTask>();
-    return res.data;
+    return unwrapResponse<DailyTask>(res.data);
   }
 
   async deleteTask(params: DeleteTaskParams): Promise<void> {
@@ -162,7 +169,7 @@ class Client extends SpecialAccountClient<BackendState> {
       .sharedGet({ endpoint: endpoint.lookupDescriptions })
       .withAuth(token)
       .perform<{ items: LookupItem[] }>();
-    return res.data.items ?? [];
+    return unwrapResponse<{ items: LookupItem[] }>(res.data).items ?? [];
   }
 
   async listExpenseTypes(params: WithToken): Promise<LookupItem[]> {
@@ -174,7 +181,7 @@ class Client extends SpecialAccountClient<BackendState> {
       .sharedGet({ endpoint: endpoint.lookupExpenseTypes })
       .withAuth(token)
       .perform<{ items: LookupItem[] }>();
-    return res.data.items ?? [];
+    return unwrapResponse<{ items: LookupItem[] }>(res.data).items ?? [];
   }
 }
 

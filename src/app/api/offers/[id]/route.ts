@@ -11,7 +11,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
   const { id } = await context.params;
   const locale = request.nextUrl.searchParams.get("locale") ?? "en";
   const encoded = encodeURIComponent(id);
-  const upstream = await fetchUpstreamGet(request, `/offers/${encoded}`, {
+  const upstream = await fetchUpstreamGet(request, `/api/offers/${encoded}`, {
     omitRequestParams: ["locale"],
   });
 
@@ -26,7 +26,11 @@ export async function GET(request: NextRequest, context: RouteContext) {
         { status: res.status },
       );
     }
-    return NextResponse.json(await res.json());
+    const payload = await res.json();
+    const data = payload && typeof payload === "object" && "data" in payload
+      ? (payload as { data: unknown }).data
+      : payload;
+    return NextResponse.json(data);
   }
 
   if (upstream.reason === "network") {

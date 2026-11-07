@@ -14,6 +14,7 @@ import {
   FiMessageSquare,
   FiPieChart,
   FiRefreshCw,
+  FiUsers,
 } from "react-icons/fi";
 import { useElementSize } from "@mantine/hooks";
 import { useLocale, useTranslations } from "next-intl";
@@ -407,6 +408,13 @@ export const DashboardApiView = ({
       label: t("quickActions.complaints"),
       icon: FiMessageSquare,
     },
+    ...(roleSegment === "doctor"
+      ? [{
+          href: `${basePath}/monthly-patients`,
+          label: t("quickActions.monthlyPatients"),
+          icon: FiUsers,
+        }]
+      : []),
   ];
 
   const breakdownSections = [

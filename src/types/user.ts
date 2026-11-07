@@ -35,7 +35,7 @@ export interface SpecialUser extends User {
 export type AnyUser = PatientUser | DoctorUser | LabUser | SpecialUser;
 
 export interface RegisterPayload {
-  role: Exclude<UserRole, "special">;
+  role: Exclude<UserRole, "special" | "admin">;
   email: string;
   mobile: string;
   fullName: string;

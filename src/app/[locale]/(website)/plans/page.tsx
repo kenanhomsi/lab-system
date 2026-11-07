@@ -1,7 +1,8 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import type { SubscriptionPackageItem } from "@/components/tables/subscription-packages-table/types";
-import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { PurchasePlanButton } from "@/components/features/subscriptions/purchase-plan-button";
+import { MySubscriptionSummary } from "@/components/features/subscriptions/my-subscription-summary";
 import { mapSubscriptionPackagesToPlans } from "@/lib/api/map-subscription-packages-to-plans";
 import { getRequestOrigin } from "@/lib/api/request-origin";
 import { BANNER_PLACEMENT } from "@/lib/banners/locations";
@@ -23,52 +24,6 @@ export default async function PlansPage() {
 
   const packages = await fetchPublicPackages();
   const plans = mapSubscriptionPackagesToPlans({ packages, t, locale });
-
-  const subscriptionHighlights = [
-    {
-      label: t("remainingTests"),
-      value: numberFormatter.format(24),
-      icon: "biotech",
-    },
-    {
-      label: t("familyMembers"),
-      value: numberFormatter.format(3),
-      icon: "groups_2",
-      detail: t("activeMembers", { count: numberFormatter.format(2) }),
-    },
-    {
-      label: t("totalSavings"),
-      value: `$${numberFormatter.format(180)}`,
-      icon: "savings",
-    },
-  ];
-
-  const vouchers = [
-    {
-      key: "v1",
-      title: t("v1Title"),
-      sub: t("v1Sub"),
-      icon: "biotech",
-    },
-    {
-      key: "v2",
-      title: t("v2Title"),
-      sub: t("v2Sub"),
-      icon: "medication",
-    },
-    {
-      key: "v3",
-      title: t("v3Title"),
-      sub: t("v3Sub"),
-      icon: "immunology",
-    },
-    {
-      key: "v4",
-      title: t("v4Title"),
-      sub: t("v4Sub"),
-      icon: "favorite",
-    },
-  ];
 
   return (
     <main className="bg-linear-to-b from-surface via-surface to-surface-container-low pb-24">
@@ -99,35 +54,9 @@ export default async function PlansPage() {
             </div>
           </div>
 
-          <div className="mx-auto mt-10 grid max-w-5xl gap-4 md:grid-cols-3">
-            {subscriptionHighlights.map((item) => (
-              <div
-                key={item.label}
-                className="rounded-[1.5rem] border border-outline-variant/15 bg-linear-to-br from-surface-container-lowest to-surface px-5 py-5 shadow-sm"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                    <Icon name={item.icon} size="sm" className="text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-2xl font-black tracking-tight text-on-surface">
-                      {item.value}
-                    </p>
-                    <p className="text-sm text-on-surface-variant">
-                      {item.label}
-                    </p>
-                  </div>
-                </div>
-                {item.detail ? (
-                  <p className="mt-3 text-xs text-on-surface-variant">
-                    {item.detail}
-                  </p>
-                ) : null}
-              </div>
-            ))}
-          </div>
         </div>
       </section>
+      <MySubscriptionSummary />
       <PageBannerSlotServer placement={BANNER_PLACEMENT.PLANS} order={1} />
 
       <section className="pt-16 md:pt-20">
@@ -216,19 +145,10 @@ export default async function PlansPage() {
                   </div>
 
                   <div className="mt-10">
-                    <Button
-                      variant={plan.recommended ? "primary" : "secondary"}
-                      className="w-full"
-                    >
-                      {plan.recommended
-                        ? t("currentSelection")
-                        : t("selectPlan")}
-                    </Button>
-                    {plan.recommended ? (
-                      <p className="mt-3 text-center text-xs font-medium text-primary">
-                        {t("activePlan")}
-                      </p>
-                    ) : null}
+                    <PurchasePlanButton
+                      packageId={Number(plan.key)}
+                      recommended={plan.recommended}
+                    />
                   </div>
                 </section>
               ))}
@@ -238,55 +158,6 @@ export default async function PlansPage() {
       </section>
       <PageBannerSlotServer placement={BANNER_PLACEMENT.PLANS} order={2} />
 
-      <section className="pt-16 md:pt-20">
-        <div className="content-container rounded-[2rem] border border-outline-variant/20 bg-linear-to-br from-surface-container-lowest via-surface-container-lowest to-primary/5 p-6 shadow-sm md:p-8">
-          <div className="flex flex-col gap-6 border-b border-outline-variant/15 pb-8 md:flex-row md:items-end md:justify-between">
-            <div className="max-w-2xl">
-              <p className="text-xs font-black tracking-[0.22em] text-primary">
-                {t("vip")}
-              </p>
-              <h2 className="mt-3 font-headline text-3xl font-black tracking-tight text-on-surface md:text-4xl">
-                {t("vouchersTitle")}
-              </h2>
-              <p className="mt-3 text-base leading-7 text-on-surface-variant">
-                {t("vouchersSubtitle")}
-              </p>
-            </div>
-            <div className="rounded-[1.25rem] border border-primary/15 bg-primary/6 px-5 py-4">
-              <p className="text-sm font-bold text-on-surface">
-                {t("planName")}
-              </p>
-              <p className="mt-1 text-xs text-on-surface-variant">
-                {t("activePlan")}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            {vouchers.map((voucher) => (
-              <article
-                key={voucher.key}
-                className="flex items-start gap-4 rounded-[1.5rem] border border-outline-variant/15 bg-linear-to-br from-surface to-surface-container-low px-5 py-5 transition-colors hover:bg-surface-container-low"
-              >
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary/16 to-primary/6 text-primary">
-                  <Icon name={voucher.icon} className="text-primary" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-headline text-xl font-black text-on-surface">
-                    {voucher.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-7 text-on-surface-variant">
-                    {voucher.sub}
-                  </p>
-                </div>
-                <Button variant="secondary" className="shrink-0">
-                  {t("claim")}
-                </Button>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
       <PageBannerSlotServer placement={BANNER_PLACEMENT.PLANS} order={3} />
       <PageBannerOverflowServer placement={BANNER_PLACEMENT.PLANS} />
     </main>

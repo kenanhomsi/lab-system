@@ -1,7 +1,5 @@
 import type { FormEvent } from "react";
-import { UserRole } from "@/types/user";
-
-type RegisterRole = Exclude<UserRole, "special">;
+type RegisterRole = "patient" | "doctor" | "LabPartner";
 
 type StateParams = {
   selectedRole: RegisterRole;

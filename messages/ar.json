@@ -2808,11 +2808,12 @@
       "quickActions": {
         "requests": "طلبات الفحص",
         "results": "النتائج",
-        "complaints": "الشكاوى"
+        "complaints": "الشكاوى",
+        "monthlyPatients": "كشف المرضى الشهري"
       },
       "liveChip": "بيانات مباشرة",
       "emptyCharts": "لا توجد بيانات لهذه الفترة",
-      "chartSubtitle": "الزيارات المكتملة لكل يوم عمل (بيانات تجريبية)",
+      "chartSubtitle": "الزيارات المكتملة لكل يوم عمل",
       "distributionSubtitle": "توزيع حسب الحالة والفئة والشبكة",
       "recentSubtitle": "أحدث الطلبات والنتائج والشكاوى",
       "recentEmpty": "لا توجد سجلات في هذا القسم بعد",
@@ -3283,6 +3284,13 @@
     "platF2": "خريطة جينوم كاملة",
     "platF3": "جمع عينات VIP منزلياً",
     "selectPlan": "اختر الباقة",
+    "processing": "جارٍ التنفيذ...",
+    "purchaseSuccess": "تم تفعيل اشتراكك بنجاح.",
+    "purchaseError": "تعذر تفعيل الاشتراك. حاول مرة أخرى.",
+    "activeSubscription": "الاشتراك الفعّال",
+    "validUntil": "صالح حتى",
+    "nextProcedure": "الإجراء القادم",
+    "notAvailable": "غير مجدول",
     "activePlan": "الباقة الحالية",
     "upgradeVip": "ترقية VIP",
     "currentSelection": "الاختيار الحالي",
@@ -4573,6 +4581,20 @@
       "tabTestResults": "نتائج الفحوصات"
     }
   },
+  "doctorPatientReport": {
+    "eyebrow": "التقرير المالي",
+    "title": "كشف المرضى الشهري",
+    "subtitle": "المرضى المحالون خلال الشهر المحدد وإجمالي المبالغ.",
+    "month": "الشهر",
+    "savePdf": "طباعة / حفظ PDF",
+    "loading": "جار تحميل التقرير...",
+    "error": "تعذر تحميل التقرير.",
+    "empty": "لا يوجد مرضى مسجلون خلال هذا الشهر.",
+    "patient": "اسم المريض",
+    "date": "التاريخ",
+    "amount": "المبلغ",
+    "total": "المجموع"
+  },
   "appointmentsFeature": {
     "bookAction": "حجز سحب دم",
     "bookTitle": "حجز موعد سحب دم",
@@ -4608,6 +4630,10 @@
     "selectGender": "اختر الجنس",
     "latitude": "خط العرض",
     "longitude": "خط الطول",
+    "savedAddress": "عنوان محفوظ",
+    "selectSavedAddress": "اختر عنواناً محفوظاً",
+    "loadingAddresses": "جار تحميل العناوين المحفوظة...",
+    "addressesLoadError": "تعذر تحميل العناوين المحفوظة.",
     "notes": "ملاحظات",
     "prescriptionAttachment": "صورة الوصفة الطبية (اختياري)",
     "prescriptionAttachmentDesc": "ارفع صورة للوصفة الطبية إن وُجدت.",
