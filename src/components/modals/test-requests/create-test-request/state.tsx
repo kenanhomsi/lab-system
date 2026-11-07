@@ -13,7 +13,7 @@ const State = ({ children }: PropsWithChildren) => {
     status: "pending",
     totalAmount: 0,
     notes: "",
-    metadata: "",
+    metadata: {},
     doctorId: "",
     labClientId: "",
     directPatientId: "",

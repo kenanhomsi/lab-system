@@ -73,6 +73,7 @@ const Utils = (props: PropsWithChildren) => {
           fullName: payload.fullName,
           city: payload.city,
           phoneNumber: payload.mobile,
+          phoneVerificationToken: (formData.get("phoneVerificationToken") as string | null) || undefined,
           age: payload.age,
           gender: payload.gender,
           specialty: payload.specialty,

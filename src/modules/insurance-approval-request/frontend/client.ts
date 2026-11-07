@@ -65,6 +65,9 @@ class Client extends InsuranceApprovalRequestClient<AxiosState> {
 
   async create(params: CreateInsuranceApprovalParams) {
     const formData = new FormData();
+    if (params.insuranceCompanyId) {
+      formData.append("InsuranceCompanyId", String(params.insuranceCompanyId));
+    }
     formData.append("InsuredName", params.insuredName);
     formData.append("InsuranceNumber", params.insuranceNumber);
     formData.append("MobileNumber", params.mobileNumber);

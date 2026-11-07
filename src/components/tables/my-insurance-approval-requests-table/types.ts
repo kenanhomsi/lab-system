@@ -9,6 +9,7 @@ export type InsuranceApprovalDetail = InsuranceApprovalRequestDetail;
 export type InsuranceApprovalListResponse = InsuranceApprovalRequestsListResponse;
 
 export type CreateInsuranceApprovalPayload = {
+  insuranceCompanyId: number;
   insuredName: string;
   insuranceNumber: string;
   mobileNumber: string;

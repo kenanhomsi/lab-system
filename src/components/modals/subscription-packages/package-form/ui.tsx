@@ -1,9 +1,11 @@
 "use client";
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
+import { AdminImageUploadField } from "@/components/ui/admin-image-upload-field";
 
 import {
   Button,
   Checkbox,
+  ColorInput,
   Group,
   Modal,
   NumberInput,
@@ -153,6 +155,23 @@ const UI = () => {
                   value={form.includedTests}
                   onChange={(e) => updateField("includedTests", e.currentTarget.value)}
                   required
+                />
+              </SimpleGrid>
+              <AdminImageUploadField
+                label={t("image")}
+                value={form.imageUrl}
+                onChange={(value) => updateField("imageUrl", value)}
+              />
+              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                <ColorInput
+                  label={t("backgroundColor")}
+                  value={form.backgroundColor}
+                  onChange={(value) => updateField("backgroundColor", value)}
+                />
+                <ColorInput
+                  label={t("textColor")}
+                  value={form.textColor}
+                  onChange={(value) => updateField("textColor", value)}
                 />
               </SimpleGrid>
             </Stack>

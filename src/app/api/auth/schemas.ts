@@ -18,6 +18,7 @@ export const registerBodySchema = z.object({
   fullName: z.string().min(1),
   city: z.string().min(1),
   phoneNumber: z.string().min(1),
+  phoneVerificationToken: z.string().min(1).optional(),
   age: z.number().int().min(0).max(130).optional(),
   gender: z.enum(["male", "female"]).optional(),
   specialty: z.string().min(1).max(120).optional(),

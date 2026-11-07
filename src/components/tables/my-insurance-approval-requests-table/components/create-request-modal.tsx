@@ -1,12 +1,14 @@
 "use client";
 
-import { Button, FileInput, Modal, Stack, Text, TextInput } from "@mantine/core";
+import { Button, FileInput, Modal, Select, Stack, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { axiosInstanceFront } from "@/lib/clients/frontend-instance";
 import { useMirror } from "../store";
 
 type FormValues = {
+  insuranceCompanyId: string;
   insuredName: string;
   insuranceNumber: string;
   mobileNumber: string;
@@ -22,9 +24,22 @@ const CreateRequestModal = () => {
   const createRequest = useMirror("createRequest");
   const isCreating = useMirror("isCreating");
   const [error, setError] = useState<string | null>(null);
+  const [companies, setCompanies] = useState<Array<{ id: number; name: string }>>([]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    void axiosInstanceFront.get<unknown>("/insurance-companies").then((response) => {
+      const payload = response.data as { data?: unknown } | unknown;
+      const items = payload && typeof payload === "object" && "data" in payload
+        ? (payload as { data: unknown }).data
+        : payload;
+      setCompanies(Array.isArray(items) ? items as Array<{ id: number; name: string }> : []);
+    }).catch(() => setCompanies([]));
+  }, [isOpen]);
 
   const form = useForm<FormValues>({
     initialValues: {
+      insuranceCompanyId: "",
       insuredName: "",
       insuranceNumber: "",
       mobileNumber: "",
@@ -32,6 +47,7 @@ const CreateRequestModal = () => {
       prescriptionImage: null,
     },
     validate: {
+      insuranceCompanyId: (value) => (value ? null : t("insuranceCompanyRequired")),
       insuredName: (value) => (value.trim() ? null : t("insuredNameRequired")),
       insuranceNumber: (value) => (value.trim() ? null : t("insuranceNumberRequired")),
       mobileNumber: (value) => (value.trim() ? null : t("mobileRequired")),
@@ -53,6 +69,7 @@ const CreateRequestModal = () => {
     setError(null);
     try {
       await createRequest({
+        insuranceCompanyId: Number(values.insuranceCompanyId),
         insuredName: values.insuredName.trim(),
         insuranceNumber: values.insuranceNumber.trim(),
         mobileNumber: values.mobileNumber.trim(),
@@ -69,6 +86,13 @@ const CreateRequestModal = () => {
     <Modal opened={isOpen} onClose={handleClose} title={t("modalTitle")} radius="lg" centered size="lg">
       <form onSubmit={handleSubmit}>
         <Stack gap="md">
+          <Select
+            label={t("insuranceCompany")}
+            placeholder={t("selectInsuranceCompany")}
+            data={companies.map((company) => ({ value: String(company.id), label: company.name }))}
+            searchable
+            {...form.getInputProps("insuranceCompanyId")}
+          />
           <TextInput
             label={tInsurance("insuredName")}
             placeholder={tInsurance("insuredNamePlaceholder")}

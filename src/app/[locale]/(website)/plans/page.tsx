@@ -81,6 +81,15 @@ export default async function PlansPage() {
               {plans.map((plan) => (
                 <section
                   key={plan.key}
+                  style={{
+                    backgroundColor: plan.backgroundColor,
+                    color: plan.textColor,
+                    backgroundImage: plan.imageUrl
+                      ? `linear-gradient(rgba(255,255,255,.88), rgba(255,255,255,.88)), url(${plan.imageUrl})`
+                      : undefined,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
                   className={[
                     "relative flex h-full flex-col rounded-[2rem] border bg-surface-container-lowest p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg",
                     plan.recommended

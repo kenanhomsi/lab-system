@@ -15,6 +15,9 @@ type CreateSubscriptionPackageParams = {
   validityDays: number;
   includedTests: string;
   targetAudience: "All" | "Patient" | "Doctor" | "LabPartner";
+  imageUrl: string;
+  backgroundColor: string;
+  textColor: string;
   isActive: boolean;
 };
 
@@ -29,6 +32,9 @@ type UpdateSubscriptionPackageParams = {
   validityDays: number;
   includedTests: string;
   targetAudience: "All" | "Patient" | "Doctor" | "LabPartner";
+  imageUrl: string;
+  backgroundColor: string;
+  textColor: string;
   isActive: boolean;
 };
 

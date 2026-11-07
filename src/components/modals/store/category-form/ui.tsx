@@ -1,6 +1,7 @@
 "use client";
 
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
+import { AdminImageUploadField } from "@/components/ui/admin-image-upload-field";
 import {
   Modal,
   NumberInput,
@@ -78,11 +79,10 @@ const UI = () => {
           onChange={(e) => updateField("description", e.currentTarget.value)}
           minRows={2}
         />
-        <TextInput
+        <AdminImageUploadField
           label={t("imageUrl")}
           value={form.imageUrl}
-          onChange={(e) => updateField("imageUrl", e.currentTarget.value)}
-          placeholder="https://"
+          onChange={(value) => updateField("imageUrl", value)}
         />
         <Select
           label={t("parentCategory")}

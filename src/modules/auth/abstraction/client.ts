@@ -8,6 +8,7 @@ type RegisterProps = {
   fullName: string;
   city: string;
   phoneNumber: string;
+  phoneVerificationToken?: string;
   age?: number;
   gender?: "male" | "female";
   specialty?: string;
