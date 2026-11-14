@@ -17,20 +17,15 @@ jobs:
       - name: Get the latest code
         uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
-          tags: |
-            kenahomsi/lab-system-front:latest
-            kenahomsi/lab-system-front:${{ github.sha }}
+          load: true
+          tags: kenahomsi/lab-system-front:${{ github.sha }}
           build-args: |
             NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
             NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
@@ -48,17 +43,19 @@ jobs:
             NEXT_PUBLIC_FIREBASE_VAPID_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_VAPID_KEY }}
             BACKEND_URL=${{ secrets.BACKEND_URL }}
 
+      - name: Package Docker image for the VPS
+        run: docker save "kenahomsi/lab-system-front:${{ github.sha }}" | gzip > lab-system-front.tar.gz
 
-      - name: Copy docker-compose.yml to VPS
+      - name: Copy deployment files to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT || 22 }}
-          timeout: 60s
-          command_timeout: 2m
-          source: "docker-compose.yml"
+          timeout: 2m
+          command_timeout: 15m
+          source: "docker-compose.yml,lab-system-front.tar.gz"
           target: "/home/lab-system-front"
 
       - name: Deploy to VPS via SSH
@@ -71,7 +68,6 @@ jobs:
           timeout: 60s
           command_timeout: 10m
           script_stop: true
-          envs: APP_IMAGE_TAG,DOCKER_USERNAME,DOCKER_PASSWORD
           script: |
             set -e
             cd /home/lab-system-front
@@ -85,7 +81,7 @@ jobs:
               exit 1
             fi
             echo "Using compose command: $DC"
-            echo '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin
-            $DC pull web
-            $DC up -d --force-recreate --remove-orphans web
+            gunzip -c lab-system-front.tar.gz | docker load
+            $DC up -d --no-build --force-recreate --remove-orphans web
+            rm -f lab-system-front.tar.gz
             docker image prune -f
