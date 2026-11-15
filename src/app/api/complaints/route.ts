@@ -1,17 +1,27 @@
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { resolveAccessToken } from "@/lib/api/resolve-access-token";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const backendUrl = process.env.BACKEND_URL || "http://localhost:4000";
   const isUpstreamReady = process.env.UPSTREAM_BACKEND_READY === "true";
 
   try {
-    const body = await request.json();
+    const body = await request.formData();
 
     if (isUpstreamReady) {
-      const res = await fetch(`${backendUrl}/complaints`, {
+      const upstreamBody = new FormData();
+      upstreamBody.set("Title", String(body.get("complaintTitle") ?? ""));
+      upstreamBody.set("Description", String(body.get("text") ?? ""));
+      upstreamBody.set("Note", String(body.get("name") ?? ""));
+      const attachment = body.get("attachment");
+      if (attachment instanceof File && attachment.size > 0) {
+        upstreamBody.set("Attachment", attachment);
+      }
+      const token = await resolveAccessToken(request);
+      const res = await fetch(`${backendUrl}/api/users/me/complaints`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: upstreamBody,
       });
       const payload = await res.json().catch(() => ({}));
       if (!res.ok) {

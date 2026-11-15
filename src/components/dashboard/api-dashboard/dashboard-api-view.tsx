@@ -7,6 +7,8 @@ import Link from "next/link";
 import {
   FiAlertCircle,
   FiArrowRight,
+  FiBriefcase,
+  FiCalendar,
   FiClipboard,
   FiExternalLink,
   FiFileText,
@@ -15,6 +17,8 @@ import {
   FiPieChart,
   FiPlus,
   FiRefreshCw,
+  FiUsers,
+  FiUserPlus,
 } from "react-icons/fi";
 import { useElementSize } from "@mantine/hooks";
 import { useLocale, useTranslations } from "next-intl";
@@ -495,6 +499,37 @@ export const DashboardApiView = ({
       label: t("quickActions.complaints"),
       icon: FiMessageSquare,
     },
+    ...(roleSegment === "doctor"
+      ? [{
+          href: `${basePath}/monthly-patients`,
+          label: t("quickActions.monthlyPatients"),
+          icon: FiUsers,
+        }]
+      : []),
+    ...(roleSegment === "admin"
+      ? [
+          {
+            href: `${basePath}/appointments`,
+            label: t("quickActions.appointments"),
+            icon: FiCalendar,
+          },
+          {
+            href: `${basePath}/employment-applications`,
+            label: t("quickActions.employment"),
+            icon: FiBriefcase,
+          },
+          {
+            href: `${basePath}/client-join-requests`,
+            label: t("quickActions.clientJoin"),
+            icon: FiUserPlus,
+          },
+          {
+            href: `${basePath}/contract-service-requests`,
+            label: t("quickActions.contracts"),
+            icon: FiFileText,
+          },
+        ]
+      : []),
   ];
 
   const breakdownSections = [

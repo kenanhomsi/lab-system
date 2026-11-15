@@ -7,7 +7,7 @@ type TestRequestForm = {
   status: string;
   totalAmount: number;
   notes: string;
-  metadata: string;
+  metadata: Record<string, unknown>;
   doctorId: string;
   labClientId: string;
   directPatientId: string;
@@ -20,7 +20,7 @@ const initialForm: TestRequestForm = {
   status: "pending",
   totalAmount: 0,
   notes: "",
-  metadata: "",
+  metadata: {},
   doctorId: "",
   labClientId: "",
   directPatientId: "",

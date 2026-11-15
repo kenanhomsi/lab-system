@@ -15,6 +15,9 @@ type FormState = {
   validityDays: number;
   includedTests: string;
   targetAudience: TargetAudience;
+  imageUrl: string;
+  backgroundColor: string;
+  textColor: string;
   isActive: boolean;
 };
 
@@ -24,6 +27,9 @@ const defaultForm: FormState = {
   validityDays: 0,
   includedTests: "",
   targetAudience: "All",
+  imageUrl: "",
+  backgroundColor: "#ffffff",
+  textColor: "#0f172a",
   isActive: true,
 };
 

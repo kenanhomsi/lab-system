@@ -3,6 +3,7 @@
 import { ImageUploadField } from "../shared/image-upload-field";
 
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
+import { AdminImageUploadField } from "@/components/ui/admin-image-upload-field";
 import {
   Button,
   Group,
@@ -125,7 +126,11 @@ const UI = () => {
               onChange={(e) => updateField("description", e.currentTarget.value)}
               minRows={2}
             />
-            <ImageUploadField label={t("imageUrl")} value={form.imageUrl} onChange={(url) => updateField("imageUrl", url)} />
+            <AdminImageUploadField
+              label={t("imageUrl")}
+              value={form.imageUrl}
+              onChange={(value) => updateField("imageUrl", value)}
+            />
             <TextInput
               label={t("saleUnit")}
               value={form.saleUnit}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
 import { AuthPasswordField } from "@/components/ui/auth-password-field";
@@ -10,6 +10,7 @@ import { getPasswordStrength } from "@/lib/password-strength";
 import { SyrianCityNativeSelect } from "@/components/ui/syrian-city-select";
 import { cn } from "@/lib/cn";
 import { useMirror } from "./store";
+import { axiosInstanceFront } from "@/lib/clients/frontend-instance";
 
 const UI = () => {
   const loading = useMirror("loading");
@@ -17,10 +18,64 @@ const UI = () => {
   const success = useMirror("success");
   const successMessage = useMirror("successMessage");
   const submitRegisterForm = useMirror("submitRegisterForm");
+  const selectedRole = useMirror("selectedRole");
+  const setSelectedRole = useMirror("setSelectedRole");
   const locale = useLocale();
   const t = useTranslations("auth");
   const [city, setCity] = useState("");
   const [password, setPassword] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [otpEnabled, setOtpEnabled] = useState(false);
+  const [otpRequired, setOtpRequired] = useState(false);
+  const [otpRequested, setOtpRequested] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [phoneVerificationToken, setPhoneVerificationToken] = useState("");
+  const [otpBusy, setOtpBusy] = useState(false);
+  const [otpMessage, setOtpMessage] = useState("");
+
+  useEffect(() => {
+    void axiosInstanceFront.get<unknown>("/auth/phone-otp/config").then((response) => {
+      const raw = response.data as { data?: unknown; enabled?: boolean; required?: boolean };
+      const config = raw?.data && typeof raw.data === "object"
+        ? raw.data as { enabled?: boolean; required?: boolean }
+        : raw;
+      setOtpEnabled(Boolean(config.enabled));
+      setOtpRequired(Boolean(config.required));
+    }).catch(() => undefined);
+  }, []);
+
+  const requestOtp = async () => {
+    if (!mobile.trim()) return;
+    setOtpBusy(true);
+    setOtpMessage("");
+    try {
+      await axiosInstanceFront.post("/auth/phone-otp/request", { phoneNumber: mobile });
+      setOtpRequested(true);
+      setOtpMessage(t("otpSent"));
+    } catch {
+      setOtpMessage(t("otpSendError"));
+    } finally {
+      setOtpBusy(false);
+    }
+  };
+
+  const verifyOtp = async () => {
+    setOtpBusy(true);
+    setOtpMessage("");
+    try {
+      const response = await axiosInstanceFront.post<unknown>("/auth/phone-otp/verify", { phoneNumber: mobile, code: otpCode });
+      const raw = response.data as { data?: unknown; verificationToken?: string };
+      const result = raw?.data && typeof raw.data === "object"
+        ? raw.data as { verificationToken?: string }
+        : raw;
+      setPhoneVerificationToken(result.verificationToken ?? "");
+      setOtpMessage(t("otpVerified"));
+    } catch {
+      setOtpMessage(t("otpInvalid"));
+    } finally {
+      setOtpBusy(false);
+    }
+  };
   const passwordStrength = getPasswordStrength(password);
   const inputClassName =
     "w-full rounded-xl border-none bg-surface-container-low px-4 py-3 text-sm transition-all focus:bg-surface-container-lowest focus:ring-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40";
@@ -67,6 +122,35 @@ const UI = () => {
         )}
 
         <form onSubmit={submitRegisterForm} className="space-y-4" aria-busy={loading}>
+          <fieldset>
+            <legend className="mb-2 block text-xs font-bold uppercase tracking-widest text-secondary">
+              {t("selectAccountType")}
+            </legend>
+            <div className="grid grid-cols-3 gap-2">
+              {(
+                [
+                  ["patient", "patient"],
+                  ["doctor", "doctor"],
+                  ["LabPartner", "lab"],
+                ] as const
+              ).map(([role, label]) => (
+                <button
+                  key={role}
+                  type="button"
+                  aria-pressed={selectedRole === role}
+                  onClick={() => setSelectedRole(role)}
+                  className={cn(
+                    "rounded-xl border px-3 py-3 text-sm font-bold transition-colors",
+                    selectedRole === role
+                      ? "border-primary bg-primary text-on-primary"
+                      : "border-outline-variant bg-surface-container-low text-on-surface hover:border-primary",
+                  )}
+                >
+                  {t(`roles.${label}`)}
+                </button>
+              ))}
+            </div>
+          </fieldset>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="fullName" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
@@ -91,10 +175,43 @@ const UI = () => {
                 type="tel"
                 required
                 autoComplete="tel"
+                value={mobile}
+                onChange={(event) => {
+                  setMobile(event.currentTarget.value);
+                  setPhoneVerificationToken("");
+                }}
                 className={inputClassName}
               />
             </div>
           </div>
+
+          {otpEnabled ? (
+            <div className="rounded-xl bg-surface-container-low p-4">
+              <input type="hidden" name="phoneVerificationToken" value={phoneVerificationToken} />
+              <div className="flex gap-2">
+                <input
+                  aria-label={t("otpCode")}
+                  value={otpCode}
+                  onChange={(event) => setOtpCode(event.currentTarget.value)}
+                  placeholder={t("otpCode")}
+                  inputMode="numeric"
+                  maxLength={6}
+                  disabled={!otpRequested || Boolean(phoneVerificationToken)}
+                  className={inputClassName}
+                />
+                {!otpRequested ? (
+                  <button type="button" disabled={otpBusy || !mobile.trim()} onClick={() => void requestOtp()} className="rounded-xl bg-primary px-4 font-bold text-on-primary disabled:opacity-50">
+                    {t("sendOtp")}
+                  </button>
+                ) : (
+                  <button type="button" disabled={otpBusy || otpCode.length !== 6 || Boolean(phoneVerificationToken)} onClick={() => void verifyOtp()} className="rounded-xl bg-primary px-4 font-bold text-on-primary disabled:opacity-50">
+                    {t("verifyOtp")}
+                  </button>
+                )}
+              </div>
+              {otpMessage ? <p className="mt-2 text-xs text-secondary">{otpMessage}</p> : null}
+            </div>
+          ) : null}
 
           <div>
             <label htmlFor="email" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
@@ -126,36 +243,43 @@ const UI = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2">
-            <div>
-              <label htmlFor="age" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
-                {t("age")}
-              </label>
-              <input
-                id="age"
-                name="age"
-                type="number"
-                min={0}
-                max={150}
-                required
-                className={inputClassName}
-              />
+          {selectedRole === "patient" ? (
+            <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2">
+              <div>
+                <label htmlFor="age" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
+                  {t("age")}
+                </label>
+                <input id="age" name="age" type="number" min={0} max={130} required className={inputClassName} />
+              </div>
+              <div>
+                <label htmlFor="gender" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
+                  {t("gender")}
+                </label>
+                <select id="gender" name="gender" required className={inputClassName}>
+                  <option value="male">{t("male")}</option>
+                  <option value="female">{t("female")}</option>
+                </select>
+              </div>
             </div>
+          ) : null}
+
+          {selectedRole === "doctor" ? (
             <div>
-              <label htmlFor="gender" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
-                {t("gender")}
+              <label htmlFor="specialty" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
+                {t("specialty")}
               </label>
-              <select
-                id="gender"
-                name="gender"
-                required
-                className={inputClassName}
-              >
-                <option value="male">{t("male")}</option>
-                <option value="female">{t("female")}</option>
-              </select>
+              <input id="specialty" name="specialty" type="text" required className={inputClassName} />
             </div>
-          </div>
+          ) : null}
+
+          {selectedRole === "LabPartner" ? (
+            <div>
+              <label htmlFor="labName" className="mb-1 block text-xs font-bold uppercase tracking-widest text-secondary">
+                {t("labName")}
+              </label>
+              <input id="labName" name="labName" type="text" required className={inputClassName} />
+            </div>
+          ) : null}
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
@@ -204,7 +328,7 @@ const UI = () => {
           <div className="pt-2">
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (otpRequired && !phoneVerificationToken)}
               className="clinical-gradient flex w-full items-center justify-center gap-2 rounded-xl py-4 font-headline font-bold text-on-primary shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? t("creatingAccount") : t("createAccount")}

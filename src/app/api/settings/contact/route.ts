@@ -7,14 +7,18 @@ export async function GET() {
 
   if (isUpstreamReady) {
     try {
-      const res = await fetch(`${backendUrl}/settings/contact`, { cache: "no-store" });
+      const res = await fetch(`${backendUrl}/api/settings/contact`, { cache: "no-store" });
       if (!res.ok) {
         return NextResponse.json(
           { error: "Upstream request failed" },
           { status: res.status },
         );
       }
-      return NextResponse.json(await res.json());
+      const payload = await res.json();
+      const data = payload && typeof payload === "object" && "data" in payload
+        ? (payload as { data: unknown }).data
+        : payload;
+      return NextResponse.json(data);
     } catch {
       return NextResponse.json({ error: "Upstream unavailable" }, { status: 502 });
     }

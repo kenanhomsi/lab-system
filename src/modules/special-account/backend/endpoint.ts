@@ -1,4 +1,4 @@
-const base = "/special";
+const base = "/api/special";
 const endpoint = {
   payments: `${base}/payments`,
   expenses: `${base}/expenses`,

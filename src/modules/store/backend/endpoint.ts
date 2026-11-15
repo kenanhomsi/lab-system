@@ -2,7 +2,7 @@ const base = "/api/store";
 
 const endpoint = {
   home: `${base}/home`,
-  categoryPage: (id: number) => `${base}/category/${id}/page`,
+  categoryPage: (id: number) => `${base}/categories/${id}/page`,
   settings: `${base}/settings`,
   categories: `${base}/categories`,
   categoryById: (id: number) => `${base}/categories/${id}`,

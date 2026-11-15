@@ -15,8 +15,11 @@ type RegisterProps = {
   fullName: string;
   city: string;
   phoneNumber: string;
-  age: number;
-  gender: "male" | "female";
+  phoneVerificationToken?: string;
+  age?: number;
+  gender?: "male" | "female";
+  specialty?: string;
+  labName?: string;
   role: string;
 };
 
@@ -55,7 +58,8 @@ class AuthBackendClient extends AuthClient<BackendState> {
   }
 
   async Register(params: RegisterProps) {
-    const body = params;
+    const { specialty, ...rest } = params;
+    const body = { ...rest, specialization: specialty };
     const res = await super
       .sharedRegister({ ...body, endpoint: endpoint.register })
       .perform<RegisterSchemaType>();

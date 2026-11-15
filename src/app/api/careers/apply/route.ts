@@ -5,13 +5,16 @@ export async function POST(request: Request) {
   const isUpstreamReady = process.env.UPSTREAM_BACKEND_READY === "true";
 
   try {
-    const body = await request.json();
+    const contentType = request.headers.get("content-type") ?? "";
+    const body = contentType.includes("multipart/form-data")
+      ? await request.formData()
+      : await request.json();
 
     if (isUpstreamReady) {
-      const res = await fetch(`${backendUrl}/careers/apply`, {
+      const res = await fetch(`${backendUrl}/api/employment-applications`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        headers: body instanceof FormData ? undefined : { "Content-Type": "application/json" },
+        body: body instanceof FormData ? body : JSON.stringify(body),
       });
       const payload = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -28,7 +31,9 @@ export async function POST(request: Request) {
         ok: true,
         applicationId: `mock-career-${Date.now()}`,
         receivedAt: new Date().toISOString(),
-        vacancyId: (body as { vacancyId?: string }).vacancyId ?? null,
+        vacancyId: body instanceof FormData
+          ? String(body.get("vacancyId") ?? "") || null
+          : (body as { vacancyId?: string }).vacancyId ?? null,
       },
       { status: 201 },
     );

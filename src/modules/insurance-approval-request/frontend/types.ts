@@ -14,6 +14,7 @@ type FindMineInsuranceApprovalParams = {
 };
 
 type CreateInsuranceApprovalParams = {
+  insuranceCompanyId?: number;
   insuredName: string;
   insuranceNumber: string;
   mobileNumber: string;

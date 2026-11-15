@@ -1,14 +1,6 @@
 import { NextResponse } from "next/server";
 import type { SubscriptionPackageItem } from "@/components/tables/subscription-packages-table/types";
-import { backendContainer } from "@/container";
-import {
-  SubscriptionPackageBackendService,
-  subscriptionPackageModuleNames,
-} from "@/modules/subscription-package";
-
-const packageService = backendContainer.get<SubscriptionPackageBackendService>(
-  subscriptionPackageModuleNames.service,
-);
+import { unwrapUpstreamPayload } from "@/lib/api/unwrap-upstream-payload";
 
 const filterPublicPackages = (items: SubscriptionPackageItem[]) =>
   items
@@ -21,10 +13,13 @@ const filterPublicPackages = (items: SubscriptionPackageItem[]) =>
 
 export async function GET() {
   try {
-    const list = await packageService.findAllPublic({
-      query: { IsActive: "true", PageSize: "20", Page: "1" },
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:4000";
+    const response = await fetch(`${backendUrl}/api/subscriptions/packages`, {
+      cache: "no-store",
     });
-    const items = list.items ?? [];
+    if (!response.ok) return NextResponse.json([], { status: response.status });
+    const payload = unwrapUpstreamPayload(await response.json());
+    const items = Array.isArray(payload) ? (payload as SubscriptionPackageItem[]) : [];
     return NextResponse.json(filterPublicPackages(items));
   } catch {
     return NextResponse.json([]);

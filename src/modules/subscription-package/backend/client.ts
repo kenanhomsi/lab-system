@@ -19,6 +19,9 @@ type ListItem = {
   validityDays: number;
   includedTests: string;
   targetAudience: "All" | "Patient" | "Doctor" | "LabPartner";
+  imageUrl: string;
+  backgroundColor: string;
+  textColor: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

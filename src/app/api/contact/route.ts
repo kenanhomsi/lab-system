@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     if (isUpstreamReady) {
-      const res = await fetch(`${backendUrl}/contact`, {
+      const res = await fetch(`${backendUrl}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

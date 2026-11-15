@@ -11,6 +11,9 @@ export type PlanCard = {
   icon: string;
   eyebrow: string;
   pricePeriodLabel: string;
+  imageUrl?: string;
+  backgroundColor?: string;
+  textColor?: string;
   recommended?: boolean;
 };
 
@@ -63,6 +66,9 @@ export function mapSubscriptionPackagesToPlans({
       icon: PLAN_ICONS[index] ?? PLAN_ICONS[PLAN_ICONS.length - 1],
       eyebrow,
       pricePeriodLabel,
+      imageUrl: pkg.imageUrl || undefined,
+      backgroundColor: pkg.backgroundColor || undefined,
+      textColor: pkg.textColor || undefined,
       recommended: index === recommendedIndex,
     };
   });

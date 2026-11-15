@@ -39,8 +39,8 @@ export async function WebsiteFooter({
     {
       title: t("footer.legal"),
       links: [
-        { href: "#", label: t("footer.privacy") },
-        { href: "#", label: t("footer.terms") },
+        { href: "/privacy-policy", label: t("footer.privacy") },
+        { href: "/terms-and-conditions", label: t("footer.terms") },
         { href: "/quality-control", label: t("footer.quality") },
       ],
     },

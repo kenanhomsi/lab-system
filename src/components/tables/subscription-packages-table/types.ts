@@ -7,6 +7,9 @@ export type SubscriptionPackageItem = {
   validityDays: number;
   includedTests: string;
   targetAudience: TargetAudience;
+  imageUrl: string;
+  backgroundColor: string;
+  textColor: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -28,6 +31,9 @@ export type CreateSubscriptionPackageRequest = {
   validityDays: number;
   includedTests: string;
   targetAudience: TargetAudience;
+  imageUrl: string;
+  backgroundColor: string;
+  textColor: string;
   isActive: boolean;
 };
 

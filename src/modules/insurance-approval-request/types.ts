@@ -12,6 +12,8 @@ type InsuranceApprovalRequestItem = {
   id: number;
   patientId: string;
   patientName: string;
+  insuranceCompanyId: number | null;
+  insuranceCompanyName: string | null;
   insuredName: string;
   insuranceNumber: string;
   mobileNumber: string;

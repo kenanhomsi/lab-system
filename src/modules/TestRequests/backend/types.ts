@@ -26,7 +26,7 @@ type CreateTestRequestParams = AuthParams & {
   status: string;
   totalAmount: number;
   notes: string;
-  metadata: string;
+  metadata: Record<string, unknown>;
   doctorId: string | null;
   labClientId: string | null;
   directPatientId: string | null;

@@ -66,6 +66,7 @@ const INITIAL_FORM = {
   status: "pending",
   totalAmount: 0,
   notes: "",
+  manualTests: "",
   metadata: "",
   doctorId: "",
   labClientId: "",
@@ -142,7 +143,7 @@ const CreateTestRequestForm = () => {
     status: string;
     totalAmount: number;
     notes: string;
-    metadata: string;
+    metadata: Record<string, unknown>;
     doctorId: string | null;
     labClientId: string | null;
     directPatientId: string | null;
@@ -291,7 +292,7 @@ const CreateTestRequestForm = () => {
     status: string;
     totalAmount: number;
     notes: string;
-    metadata: string;
+    metadata: Record<string, unknown>;
     doctorId: string | null;
     labClientId: string | null;
     directPatientId: string | null;
@@ -313,7 +314,13 @@ const CreateTestRequestForm = () => {
       status: "pending",
       totalAmount: form.totalAmount,
       notes: form.notes,
-      metadata: locationType,
+      metadata: {
+        locationType,
+        manualTests: form.manualTests
+          .split(/[,\n]/)
+          .map((value) => value.trim())
+          .filter(Boolean),
+      },
       externalPatientId: form.externalPatientId > 0 ? form.externalPatientId : null,
       ...party,
     };
@@ -652,6 +659,15 @@ const CreateTestRequestForm = () => {
                     value={form.totalAmount}
                     readOnly
                     leftSection={<IconCurrencyDollar size={16} />}
+                  />
+                  <Textarea
+                    label={t("fieldManualTests")}
+                    description={t("fieldManualTestsDesc")}
+                    placeholder={t("fieldManualTestsPlaceholder")}
+                    value={form.manualTests}
+                    onChange={(event) => setForm({ ...form, manualTests: event.currentTarget.value })}
+                    autosize
+                    minRows={3}
                   />
                   {showStaffPartyFields && (
                     <>

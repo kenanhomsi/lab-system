@@ -324,6 +324,12 @@ export const roleStrategy = {
         group: "navGroupBusiness",
       },
       {
+        label: "adminInsuranceCompanies",
+        href: "/admin/insurance-companies",
+        icon: "shieldCheck",
+        group: "navGroupBusiness",
+      },
+      {
         label: "adminClientJoinRequests",
         href: "/admin/client-join-requests",
         icon: "userPlus",

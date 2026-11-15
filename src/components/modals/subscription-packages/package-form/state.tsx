@@ -23,6 +23,9 @@ const State = ({ children }: PropsWithChildren) => {
         validityDays: subscriptionPackage.validityDays,
         includedTests: subscriptionPackage.includedTests,
         targetAudience: subscriptionPackage.targetAudience,
+        imageUrl: subscriptionPackage.imageUrl ?? "",
+        backgroundColor: subscriptionPackage.backgroundColor || "#ffffff",
+        textColor: subscriptionPackage.textColor || "#0f172a",
         isActive: subscriptionPackage.isActive,
       });
       return;

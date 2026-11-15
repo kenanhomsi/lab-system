@@ -32,6 +32,16 @@ import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import type { TestRequestItem } from "@/components/tables/test-requests-table/types";
+import { axiosInstanceFront } from "@/lib/clients/frontend-instance";
+
+type SavedAddress = {
+  id: string;
+  label: string;
+  address: string;
+  lat: number;
+  lng: number;
+  isDefault?: boolean;
+};
 
 type BookBloodDrawModalProps = {
   opened: boolean;
@@ -56,6 +66,15 @@ export function BookBloodDrawModal({
   const [gender, setGender] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
   const [attachment, setAttachment] = useState<File | null>(null);
+
+  const addressesQuery = useQuery({
+    queryKey: ["saved-addresses"],
+    queryFn: async () => {
+      const response = await axiosInstanceFront.get<SavedAddress[]>("/addresses");
+      return response.data;
+    },
+    enabled: opened && locationType !== "lab",
+  });
 
   const slotsQuery = useQuery({
     queryKey: ["appointment-day-availability", appointmentDate],
@@ -230,6 +249,29 @@ export function BookBloodDrawModal({
                 decimalScale={6}
               />
             </SimpleGrid>
+            {locationType !== "lab" ? (
+              <Select
+                label={t("savedAddress")}
+                placeholder={addressesQuery.isPending ? t("loadingAddresses") : t("selectSavedAddress")}
+                data={(addressesQuery.data ?? []).map((address) => ({
+                  value: address.id,
+                  label: `${address.label} — ${address.address}`,
+                }))}
+                searchable
+                clearable
+                disabled={addressesQuery.isPending || addressesQuery.isError}
+                error={addressesQuery.isError ? t("addressesLoadError") : undefined}
+                leftSection={<IconMapPin size={16} />}
+                onChange={(id) => {
+                  const address = addressesQuery.data?.find((item) => item.id === id);
+                  if (address) {
+                    setLatitude(address.lat);
+                    setLongitude(address.lng);
+                    setNotes((current) => current || address.address);
+                  }
+                }}
+              />
+            ) : null}
             <SimpleGrid cols={{ base: 1, sm: 2 }}>
               <NumberInput
                 label={t("patientAge")}
