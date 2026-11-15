@@ -110,19 +110,27 @@ export function SlideCardFormModal({
   }, [image, previewUrl]);
 
   const handleSubmit = async () => {
-    if (!title.trim()) return;
-    if (mode === "create" && !image) return;
+    if (
+      !title.trim() ||
+      !description.trim() ||
+      !expiryDate ||
+      !badge.trim() ||
+      !detailPageLink.trim() ||
+      (mode === "create" && !image)
+    ) {
+      return;
+    }
     setIsSubmitting(true);
     try {
       await onSubmit({
         id: card?.id,
-        title,
-        description,
+        title: title.trim(),
+        description: description.trim(),
         price,
         discount,
-        expiryDate: expiryDate ? expiryDate.toISOString() : "",
-        badge,
-        detailPageLink,
+        expiryDate: expiryDate.toISOString(),
+        badge: badge.trim(),
+        detailPageLink: detailPageLink.trim(),
         displayOrder,
         isActive,
         image: image ?? undefined,
@@ -134,7 +142,15 @@ export function SlideCardFormModal({
   };
 
   const canSubmit =
-    Boolean(title.trim()) && (mode === "edit" || image) && !isSubmitting;
+    Boolean(
+      title.trim() &&
+      description.trim() &&
+      expiryDate &&
+      badge.trim() &&
+      detailPageLink.trim(),
+    ) &&
+    (mode === "edit" || Boolean(image)) &&
+    !isSubmitting;
 
   return (
     <Modal
@@ -159,14 +175,14 @@ export function SlideCardFormModal({
       <Stack gap="md">
         <MutationErrorAlert />
         <TextInput label={t("titleLabel")} value={title} onChange={(e) => setTitle(e.currentTarget.value)} required />
-        <Textarea label={t("descriptionLabel")} value={description} onChange={(e) => setDescription(e.currentTarget.value)} minRows={2} />
+        <Textarea label={t("descriptionLabel")} value={description} onChange={(e) => setDescription(e.currentTarget.value)} minRows={2} required />
         <Group grow>
           <NumberInput label={t("priceLabel")} value={price} onChange={(v) => setPrice(Number(v) || 0)} min={0} />
           <NumberInput label={t("discountLabel")} value={discount} onChange={(v) => setDiscount(Number(v) || 0)} min={0} max={100} />
         </Group>
-        <DateTimePicker label={t("expiryDateLabel")} value={expiryDate} onChange={(value) => setExpiryDate(typeof value === "string" ? (value ? new Date(value) : null) : value)} clearable />
-        <TextInput label={t("badgeLabel")} value={badge} onChange={(e) => setBadge(e.currentTarget.value)} />
-        <SiteLinkSelect label={t("detailPageLinkLabel")} value={detailPageLink} onChange={setDetailPageLink} />
+        <DateTimePicker label={t("expiryDateLabel")} value={expiryDate} onChange={(value) => setExpiryDate(typeof value === "string" ? (value ? new Date(value) : null) : value)} clearable required />
+        <TextInput label={t("badgeLabel")} value={badge} onChange={(e) => setBadge(e.currentTarget.value)} required />
+        <TextInput label={t("detailPageLinkLabel")} value={detailPageLink} onChange={(e) => setDetailPageLink(e.currentTarget.value)} required />
         <NumberInput label={t("displayOrderLabel")} value={displayOrder} onChange={(v) => setDisplayOrder(Number(v) || 0)} min={0} />
         <Switch label={t("isActiveLabel")} checked={isActive} onChange={(e) => setIsActive(e.currentTarget.checked)} />
         <FileInput label={t("imageLabel")} accept="image/*" value={image} onChange={setImage} leftSection={<IconUpload size={14} />} required={mode === "create"} clearable />

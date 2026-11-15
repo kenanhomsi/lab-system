@@ -2219,7 +2219,7 @@
         "sectionPricingTitle": "Pricing & schedule",
         "sectionPricingDesc": "Amounts, discount, carousel order, and when the offer ends.",
         "sectionLinksTitle": "Links & label",
-        "sectionLinksDesc": "Optional badge text and where the card should navigate.",
+        "sectionLinksDesc": "Badge text and the destination the card should navigate to.",
         "sectionMediaTitle": "Image",
         "sectionMediaDesc": "Upload a wide image that fits the slide area.",
         "titlePlaceholder": "e.g. Spring check-up package",
