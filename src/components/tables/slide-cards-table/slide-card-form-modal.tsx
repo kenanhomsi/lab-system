@@ -18,7 +18,6 @@ import {
 import { DateTimePicker } from "@mantine/dates";
 import { IconCards, IconUpload } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
-import { SiteLinkSelect } from "@/components/admin/site-link-select";
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import type { SlideCardItem } from "@/types/slide-card";
 

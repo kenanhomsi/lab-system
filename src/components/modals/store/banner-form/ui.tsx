@@ -1,7 +1,5 @@
 "use client";
 
-import { ImageUploadField } from "../shared/image-upload-field";
-
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import { AdminImageUploadField } from "@/components/ui/admin-image-upload-field";
 import { Modal, NumberInput, Select, Stack, Switch, TextInput } from "@mantine/core";
