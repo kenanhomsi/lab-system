@@ -1,6 +1,6 @@
 "use client";
 
-import { Text } from "@mantine/core";
+import { Anchor, Group, Text } from "@mantine/core";
 import type { InsuranceApprovalItem } from "../types";
 import { ActionsRender } from "./columns-rendering/actions-render";
 import { DateRender } from "./columns-rendering/date-render";
@@ -31,13 +31,37 @@ const getColumns = (t: TFunction): DataTableColumn<InsuranceApprovalItem>[] => [
   {
     accessor: "status",
     title: t("colStatus"),
-    width: "14%",
+    width: "12%",
     render: (row) => <StatusBadge value={row.status} />,
+  },
+  {
+    accessor: "images",
+    title: t("colImages"),
+    width: "16%",
+    render: (row) => (
+      <Group gap="xs" wrap="nowrap">
+        {row.insuranceCardImageUrl ? (
+          <Anchor href={row.insuranceCardImageUrl} target="_blank" rel="noreferrer" size="sm">
+            {t("cardImageShort")}
+          </Anchor>
+        ) : null}
+        {row.prescriptionImageUrl ? (
+          <Anchor href={row.prescriptionImageUrl} target="_blank" rel="noreferrer" size="sm">
+            {t("prescriptionImageShort")}
+          </Anchor>
+        ) : null}
+        {!row.insuranceCardImageUrl && !row.prescriptionImageUrl ? (
+          <Text size="sm" c="dimmed">
+            -
+          </Text>
+        ) : null}
+      </Group>
+    ),
   },
   {
     accessor: "createdAt",
     title: t("colCreated"),
-    width: "14%",
+    width: "12%",
     render: (row) => <DateRender value={row.createdAt} />,
   },
   {

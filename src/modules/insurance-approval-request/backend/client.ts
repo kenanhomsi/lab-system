@@ -6,6 +6,7 @@ import {
   InsuranceApprovalRequestDetail,
   InsuranceApprovalRequestsListResponse,
 } from "../types";
+import { normalizeDetail, normalizeListResponse, unwrapResponse } from "../normalize";
 import { endpoint } from "./endpoint";
 import {
   CreateInsuranceApprovalParams,
@@ -31,13 +32,6 @@ const appendQueryParams = (
   return queryString ? `${path}?${queryString}` : path;
 };
 
-const unwrapResponse = <T>(response: unknown): T => {
-  if (response && typeof response === "object" && "data" in response) {
-    return (response as Record<string, unknown>).data as T;
-  }
-  return response as T;
-};
-
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends InsuranceApprovalRequestClient<BackendState> {
@@ -48,7 +42,7 @@ class Client extends InsuranceApprovalRequestClient<BackendState> {
       })
       .withAuth(params.token)
       .perform<unknown>();
-    return unwrapResponse<InsuranceApprovalRequestsListResponse>(res.data);
+    return normalizeListResponse(unwrapResponse<InsuranceApprovalRequestsListResponse>(res.data));
   }
 
   async findMine(params: FindMineInsuranceApprovalParams) {
@@ -58,7 +52,7 @@ class Client extends InsuranceApprovalRequestClient<BackendState> {
       })
       .withAuth(params.token)
       .perform<unknown>();
-    return unwrapResponse<InsuranceApprovalRequestsListResponse>(res.data);
+    return normalizeListResponse(unwrapResponse<InsuranceApprovalRequestsListResponse>(res.data));
   }
 
   async findMineOne(params: FindOneInsuranceApprovalParams) {
@@ -66,7 +60,7 @@ class Client extends InsuranceApprovalRequestClient<BackendState> {
       .sharedFindOne({ endpoint: endpoint.findMineOne(params.id) })
       .withAuth(params.token)
       .perform<unknown>();
-    return unwrapResponse<InsuranceApprovalRequestDetail>(res.data);
+    return normalizeDetail(unwrapResponse<InsuranceApprovalRequestDetail>(res.data));
   }
 
   async findOne(params: FindOneInsuranceApprovalParams) {
@@ -74,7 +68,7 @@ class Client extends InsuranceApprovalRequestClient<BackendState> {
       .sharedFindOne({ endpoint: endpoint.findOne(params.id) })
       .withAuth(params.token)
       .perform<unknown>();
-    return unwrapResponse<InsuranceApprovalRequestDetail>(res.data);
+    return normalizeDetail(unwrapResponse<InsuranceApprovalRequestDetail>(res.data));
   }
 
   async create(params: CreateInsuranceApprovalParams) {

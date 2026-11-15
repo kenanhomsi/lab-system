@@ -1,5 +1,7 @@
 "use client";
 
+import { ImageUploadField } from "../shared/image-upload-field";
+
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import { Modal, NumberInput, Select, Stack, Switch, TextInput } from "@mantine/core";
 import { IconLayoutBoard } from "@tabler/icons-react";
@@ -51,7 +53,7 @@ const UI = () => {
       <Stack gap="md">
         <MutationErrorAlert />
         <TextInput label={t("colTitle")} value={form.title} onChange={(e) => updateField("title", e.currentTarget.value)} required />
-        <TextInput label={t("imageUrl")} value={form.imageUrl} onChange={(e) => updateField("imageUrl", e.currentTarget.value)} placeholder="https://" required />
+        <ImageUploadField label={t("imageUrl")} value={form.imageUrl} onChange={(url) => updateField("imageUrl", url)} required />
         <TextInput label={t("linkUrl")} value={form.linkUrl} onChange={(e) => updateField("linkUrl", e.currentTarget.value)} placeholder="https://" />
         <TextInput label={t("colLocation")} value={form.location} onChange={(e) => updateField("location", e.currentTarget.value)} required />
         {categoryOptions.length > 0 ? (

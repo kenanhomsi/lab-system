@@ -28,10 +28,13 @@ export default async function LocaleLayout({
       ? (requestedRole as RoleKey)
       : "admin";
   const siderBarItems = roleStrategy[role].getSiderBarItems();
-  const navbarConfig = roleStrategy[role].getNavbarConfig({
-    name: session?.user.fullName,
-    roleTitle: requestedRole ? formatRoleTitle(requestedRole) : undefined,
-  });
+  const navbarConfig = {
+    ...roleStrategy[role].getNavbarConfig({
+      name: session?.user.fullName,
+      roleTitle: requestedRole ? formatRoleTitle(requestedRole) : undefined,
+    }),
+    navItems: siderBarItems,
+  };
   return (
     <DashboardProviders>
       <LazyDashboardPushNotifications>

@@ -1,5 +1,7 @@
 "use client";
 
+import { ImageUploadField } from "../shared/image-upload-field";
+
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import {
   Button,
@@ -123,12 +125,7 @@ const UI = () => {
               onChange={(e) => updateField("description", e.currentTarget.value)}
               minRows={2}
             />
-            <TextInput
-              label={t("imageUrl")}
-              value={form.imageUrl}
-              onChange={(e) => updateField("imageUrl", e.currentTarget.value)}
-              placeholder="https://"
-            />
+            <ImageUploadField label={t("imageUrl")} value={form.imageUrl} onChange={(url) => updateField("imageUrl", url)} />
             <TextInput
               label={t("saleUnit")}
               value={form.saleUnit}

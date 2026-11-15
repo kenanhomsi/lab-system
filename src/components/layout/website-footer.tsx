@@ -47,9 +47,9 @@ export async function WebsiteFooter({
     {
       title: t("footer.contactCol"),
       links: [
-        { href: "tel:0991828342", label: t("footer.phone1") },
-        { href: "tel:0113340604", label: t("footer.phone2") },
-        { href: "mailto:metwalilab@gmail.com", label: t("footer.email") },
+        { href: `tel:${t("footer.phone1").replace(/[^\d+]/g, "")}`, label: t("footer.phone1") },
+        { href: `tel:${t("footer.phone2").replace(/[^\d+]/g, "")}`, label: t("footer.phone2") },
+        { href: `mailto:${t("footer.email")}`, label: t("footer.email") },
       ],
     },
   ];

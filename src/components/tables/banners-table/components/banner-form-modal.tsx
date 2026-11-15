@@ -46,6 +46,7 @@ import {
     normalizeBannerPlacement,
     type BannerPlacement,
 } from "@/lib/banners/locations";
+import { SiteLinkSelect } from "@/components/admin/site-link-select";
 import { PageTargetSelect } from "@/components/admin/page-target-select";
 import { toIso8601Utc } from "@/lib/dates/to-iso-8601";
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
@@ -125,7 +126,7 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner, preset, mutations }: P
     const [displayOrder, setDisplayOrder] = useState("1");
     const [internalLink, setInternalLink] = useState("");
     const [externalLink, setExternalLink] = useState("");
-    const [targetType, setTargetType] = useState("");
+    const [targetType, setTargetType] = useState("_self");
     const [visibilityRulesJson, setVisibilityRulesJson] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
@@ -148,7 +149,7 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner, preset, mutations }: P
             setDisplayOrder(String(banner.displayOrder));
             setInternalLink(banner.internalLink ?? "");
             setExternalLink(banner.externalLink ?? "");
-            setTargetType(banner.targetType ?? "");
+            setTargetType(banner.targetType === "_blank" ? "_blank" : "_self");
             setVisibilityRulesJson(banner.visibilityRules ?? "");
             setStartDate(banner.startDate ?? "");
             setEndDate(banner.endDate ?? "");
@@ -173,7 +174,7 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner, preset, mutations }: P
         );
         setInternalLink("");
         setExternalLink("");
-        setTargetType("");
+        setTargetType("_self");
         setVisibilityRulesJson("");
         setStartDate("");
         setEndDate("");
@@ -190,7 +191,7 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner, preset, mutations }: P
         setDisplayOrder("1");
         setInternalLink("");
         setExternalLink("");
-        setTargetType("");
+        setTargetType("_self");
         setVisibilityRulesJson("");
         setStartDate("");
         setEndDate("");
@@ -416,23 +417,27 @@ const BannerFormModal = ({ mode, isOpen, onClose, banner, preset, mutations }: P
                             description={t("linksSectionDesc")}
                         />
                         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-                        <TextInput
+                        <SiteLinkSelect
                             label={t("internalLinkLabel")}
-                            placeholder="/dashboard/offers"
                             value={internalLink}
-                            onChange={(e) => setInternalLink(e.currentTarget.value)}
+                            onChange={setInternalLink}
                         />
                         <TextInput
                             label={t("externalLinkLabel")}
                             placeholder="https://example.com"
                             value={externalLink}
                             onChange={(e) => setExternalLink(e.currentTarget.value)}
+                            disabled={Boolean(internalLink.trim())}
                         />
-                        <TextInput
+                        <Select
                             label={t("targetTypeLabel")}
-                            placeholder="e.g. _blank, _self"
-                            value={targetType}
-                            onChange={(e) => setTargetType(e.currentTarget.value)}
+                            data={[
+                                { value: "_self", label: t("targetSelf") },
+                                { value: "_blank", label: t("targetBlank") },
+                            ]}
+                            value={targetType === "_blank" ? "_blank" : "_self"}
+                            onChange={(value) => setTargetType(value ?? "_self")}
+                            allowDeselect={false}
                             required
                         />
                         </SimpleGrid>

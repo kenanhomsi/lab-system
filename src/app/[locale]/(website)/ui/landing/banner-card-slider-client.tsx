@@ -234,7 +234,7 @@ export function BannerCardSliderClient({
                     {banner.title}
                   </h3>
                   <p className="mt-2 line-clamp-3 text-sm leading-6 text-on-surface-variant">
-                    {banner.targetType || description}
+                    {banner.targetType && banner.targetType !== "_self" && banner.targetType !== "_blank" ? banner.targetType : description}
                   </p>
                   <div className="mt-auto flex items-end justify-between gap-3 pt-5">
                     <div className="min-w-0 text-xs font-semibold text-on-surface-variant">

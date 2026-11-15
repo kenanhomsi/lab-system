@@ -6,6 +6,7 @@ import {
   InsuranceApprovalRequestDetail,
   InsuranceApprovalRequestsListResponse,
 } from "../types";
+import { normalizeDetail, normalizeListResponse, unwrapResponse } from "../normalize";
 import { endpoint } from "./endpoint";
 import {
   CreateInsuranceApprovalParams,
@@ -29,13 +30,6 @@ const appendQueryParams = (
   return queryString ? `${path}?${queryString}` : path;
 };
 
-const unwrapResponse = <T>(response: unknown): T => {
-  if (response && typeof response === "object" && "data" in response) {
-    return (response as Record<string, unknown>).data as T;
-  }
-  return response as T;
-};
-
 @injectable()
 @injectFromBase({ extendProperties: true })
 class Client extends InsuranceApprovalRequestClient<AxiosState> {
@@ -43,24 +37,24 @@ class Client extends InsuranceApprovalRequestClient<AxiosState> {
     const res = await super
       .sharedFindAll({ endpoint: appendQueryParams(endpoint.findAll, params.query) })
       .perform<unknown>();
-    return unwrapResponse<InsuranceApprovalRequestsListResponse>(res.data);
+    return normalizeListResponse(unwrapResponse<InsuranceApprovalRequestsListResponse>(res.data));
   }
 
   async findMine(params: FindMineInsuranceApprovalParams) {
     const res = await super
       .sharedFindAll({ endpoint: appendQueryParams(endpoint.findMine, params.query) })
       .perform<unknown>();
-    return unwrapResponse<InsuranceApprovalRequestsListResponse>(res.data);
+    return normalizeListResponse(unwrapResponse<InsuranceApprovalRequestsListResponse>(res.data));
   }
 
   async findMineOne(id: string) {
     const res = await super.sharedFindOne({ endpoint: endpoint.findMineOne(id) }).perform<unknown>();
-    return unwrapResponse<InsuranceApprovalRequestDetail>(res.data);
+    return normalizeDetail(unwrapResponse<InsuranceApprovalRequestDetail>(res.data));
   }
 
   async findOne(id: string) {
     const res = await super.sharedFindOne({ endpoint: endpoint.findOne(id) }).perform<unknown>();
-    return unwrapResponse<InsuranceApprovalRequestDetail>(res.data);
+    return normalizeDetail(unwrapResponse<InsuranceApprovalRequestDetail>(res.data));
   }
 
   async create(params: CreateInsuranceApprovalParams) {

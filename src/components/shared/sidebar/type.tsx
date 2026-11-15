@@ -22,7 +22,15 @@ type SidebarIconKey =
   | "minusCircle"
   | "barChart"
   | "checkSquare"
-  | "bell";
+  | "bell"
+  | "lock"
+  | "globe"
+  | "map"
+  | "image"
+  | "monitor"
+  | "smile"
+  | "database"
+  | "layout";
 
 type sideBarItem = {
   label: string;

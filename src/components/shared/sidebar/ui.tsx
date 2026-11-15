@@ -11,72 +11,21 @@ import {
   type ReactNode,
 } from "react";
 import { ActionIcon, Divider, Group, Stack, Tooltip, UnstyledButton } from "@mantine/core";
-import {
-  FiChevronLeft,
-  FiChevronRight,
-  FiCreditCard,
-  FiCalendar,
-  FiHome,
-  FiMessageSquare,
-  FiSettings,
-  FiUsers,
-  FiUserPlus,
-  FiActivity,
-  FiTag,
-  FiClipboard,
-  FiCheckCircle,
-  FiAlertCircle,
-  FiShield,
-  FiBriefcase,
-  FiFileText,
-  FiShoppingBag,
-  FiDollarSign,
-  FiLayers,
-  FiUserCheck,
-  FiFilePlus,
-  FiMinusCircle,
-  FiBarChart2,
-  FiCheckSquare,
-  FiBell,
-} from "react-icons/fi";
-import { IconType } from "react-icons/lib";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useLocale, useTranslations } from "next-intl";
 import { useMirror } from "./store";
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
-import type { SidebarIconKey, sideBarItem } from "./type";
+import type { sideBarItem } from "./type";
+import { SIDEBAR_ICONS } from "./icons";
 import styles from "./styles.module.scss";
-
-const SIDEBAR_ICONS: Record<SidebarIconKey, IconType> = {
-  home: FiHome,
-  users: FiUsers,
-  calendar: FiCalendar,
-  creditCard: FiCreditCard,
-  messageSquare: FiMessageSquare,
-  settings: FiSettings,
-  flask: FiActivity,
-  category: FiTag,
-  clipboardList: FiClipboard,
-  clipboardCheck: FiCheckCircle,
-  userPlus: FiUserPlus,
-  alertCircle: FiAlertCircle,
-  shieldCheck: FiShield,
-  briefcase: FiBriefcase,
-  fileText: FiFileText,
-  store: FiShoppingBag,
-  dollarSign: FiDollarSign,
-  layers: FiLayers,
-  userCheck: FiUserCheck,
-  filePlus: FiFilePlus,
-  minusCircle: FiMinusCircle,
-  barChart: FiBarChart2,
-  checkSquare: FiCheckSquare,
-  bell: FiBell,
-};
 
 const RAIL_W = "72px";
 const EXPANDED_W = "260px";
 const MOBILE_MAX_WIDTH = 992;
 const mobileViewportQuery = `(max-width: ${MOBILE_MAX_WIDTH}px)`;
+/** Screens at least this wide start with the labelled sidebar when the user has no saved preference. */
+const AUTO_EXPAND_MIN_WIDTH = 1280;
+const EXPANDED_STORAGE_KEY = "dashboard:sidebar-expanded";
 
 type NavSection = {
   group?: string;
@@ -106,6 +55,40 @@ const subscribeToMobileViewport = (onStoreChange: () => void) => {
   return () => mediaQuery.removeEventListener("change", onStoreChange);
 };
 
+const expandedListeners = new Set<() => void>();
+
+const readStoredExpanded = (): string | null => {
+  try {
+    return window.localStorage.getItem(EXPANDED_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+};
+
+const subscribeToExpandedPreference = (onStoreChange: () => void) => {
+  expandedListeners.add(onStoreChange);
+  window.addEventListener("storage", onStoreChange);
+  return () => {
+    expandedListeners.delete(onStoreChange);
+    window.removeEventListener("storage", onStoreChange);
+  };
+};
+
+const getExpandedSnapshot = () => {
+  const stored = readStoredExpanded();
+  return stored === null ? window.innerWidth >= AUTO_EXPAND_MIN_WIDTH : stored === "1";
+};
+const getServerExpandedSnapshot = () => true;
+
+const writeExpandedPreference = (value: boolean) => {
+  try {
+    window.localStorage.setItem(EXPANDED_STORAGE_KEY, value ? "1" : "0");
+  } catch {
+    // Storage unavailable (e.g. private mode) — preference just won't persist.
+  }
+  expandedListeners.forEach((listener) => listener());
+};
+
 const getMobileViewportSnapshot = () => window.matchMedia(mobileViewportQuery).matches;
 const getServerMobileViewportSnapshot = () => false;
 
@@ -117,7 +100,14 @@ const UI = () => {
   const locale = useLocale();
   const rtl = locale === "ar";
 
-  const [expanded, setExpanded] = useState(false);
+  // Labels visible by default on wide screens (icons alone hurt discoverability);
+  // the user's explicit choice is remembered across visits.
+  const expanded = useSyncExternalStore(
+    subscribeToExpandedPreference,
+    getExpandedSnapshot,
+    getServerExpandedSnapshot,
+  );
+  const setExpanded = writeExpandedPreference;
   const [mobileOpen, setMobileOpen] = useState(false);
   const navScrollRef = useRef<HTMLDivElement>(null);
   const isMobileViewport = useSyncExternalStore(

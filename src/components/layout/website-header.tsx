@@ -13,12 +13,15 @@ import {
   LazySparkleNavbar,
 } from "@/components/ui/lazy-sparkle-navbar";
 import type { SparkleNavItem } from "@/components/ui/sparkle-navbar";
+import type { NavbarConfig, NavbarItemKey } from "@/lib/navbar-config/types";
 
 type WebsiteHeaderProps = {
   variant?: "light" | "dark";
   showCta?: boolean;
   ctaHref?: string;
   cmsNavigationLinks?: WebsiteHeaderNavigationLink[];
+  /** Admin overrides: rename or hide fixed entries (hrefs never change). */
+  navbarConfig?: NavbarConfig;
 };
 
 export type WebsiteHeaderNavigationLink = {
@@ -71,6 +74,7 @@ export function WebsiteHeader({
   showCta = true,
   ctaHref = "/login",
   cmsNavigationLinks = [],
+  navbarConfig,
 }: WebsiteHeaderProps) {
   const t = useTranslations();
   const locale = useLocale();
@@ -93,23 +97,52 @@ export function WebsiteHeader({
     setMounted(true);
   }, []);
 
-  const fixedLinks: SparkleNavItem[] = [
-    { href: "/", label: t("nav.home") },
+  const navOverrides = new Map(
+    (navbarConfig?.items ?? []).map((item) => [item.key, item] as const),
+  );
+  const isNavVisible = (key: NavbarItemKey) => navOverrides.get(key)?.visible ?? true;
+  const navLabel = (key: NavbarItemKey, fallback: string) => {
+    const override = navOverrides.get(key);
+    const custom = (locale === "ar" ? override?.labelAr : override?.labelEn)?.trim();
+    return custom || fallback;
+  };
+
+  const defaultFixedLinks: Array<SparkleNavItem & { key: NavbarItemKey }> = [
+    { key: "home", href: "/", label: navLabel("home", t("nav.home")) },
     {
-      label: t("nav.labGroup"),
+      key: "labGroup",
+      label: navLabel("labGroup", t("nav.labGroup")),
       children: [
-        { href: "/about", label: t("nav.about") },
-        { href: "/quality-control", label: t("footer.quality") },
-      ],
+        isNavVisible("about")
+          ? { href: "/about", label: navLabel("about", t("nav.about")) }
+          : null,
+        isNavVisible("quality")
+          ? { href: "/quality-control", label: navLabel("quality", t("footer.quality")) }
+          : null,
+      ].filter((child): child is { href: string; label: string } => child !== null),
     },
-    { href: "/services", label: t("nav.services") },
-    { href: "/tests", label: t("nav.tests") },
+    { key: "services", href: "/services", label: navLabel("services", t("nav.services")) },
+    { key: "tests", href: "/tests", label: navLabel("tests", t("nav.tests")) },
     // { href: "/order-test-request", label: t("nav.orderTestRequest") },
-    { href: "/careers", label: t("nav.careers") },
-    { href: "/join-as-client", label: t("nav.joinAsClient") },
-    { href: "/blog", label: t("nav.blog") },
-    { href: "/contact", label: t("nav.contact") },
+    { key: "careers", href: "/careers", label: navLabel("careers", t("nav.careers")) },
+    {
+      key: "joinAsClient",
+      href: "/join-as-client",
+      label: navLabel("joinAsClient", t("nav.joinAsClient")),
+    },
+    { key: "blog", href: "/blog", label: navLabel("blog", t("nav.blog")) },
+    { key: "contact", href: "/contact", label: navLabel("contact", t("nav.contact")) },
   ];
+  // Hidden group, or a group whose children are all hidden, disappears entirely.
+  const fixedLinks: SparkleNavItem[] = defaultFixedLinks
+    .filter((item) => isNavVisible(item.key))
+    .filter((item) => !("children" in item) || (item.children?.length ?? 0) > 0)
+    .map((item) => {
+      const rest: SparkleNavItem = { label: item.label };
+      if (item.href) rest.href = item.href;
+      if (item.children) rest.children = item.children;
+      return rest;
+    });
   const reservedHrefs = collectReservedHrefs(fixedLinks);
   const cmsTopLevelLinks: SparkleNavItem[] = mergeNavigationLinks(cmsNavigationLinks)
     .filter((link) => !reservedHrefs.has(link.href))

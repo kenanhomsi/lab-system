@@ -84,7 +84,18 @@ export default async function LandingPage() {
 
       <QualitySection />
       <HomePageBannerSlot groups={bannerGroups} order={7} />
-      <DepartmentsSection />
+      <Suspense fallback={null}>
+        <BannerCardSliderSection
+          placement={BANNER_PLACEMENT.DEPARTMENTS}
+          titleAr="أقسام المخبر"
+          titleEn="Laboratory Departments"
+          descriptionAr="أقسام المخبر وخدماته التخصصية، مع زر تفاصيل على كل بطاقة."
+          descriptionEn="Laboratory departments and specialties, with a details button on each card."
+          viewAllHref="/services"
+          surface="muted"
+          fallback={<DepartmentsSection />}
+        />
+      </Suspense>
       <HomePageBannerSlot groups={bannerGroups} order={8} />
 
       <Suspense fallback={null}>

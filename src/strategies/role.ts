@@ -1,26 +1,38 @@
 import type { sideBarItem } from "@/components/shared/sidebar/type";
-import type { navbarConfig, navbarQuickAction } from "@/components/shared/navbar/type";
+import type {
+  navbarConfig,
+  navbarPaletteLink,
+  navbarQuickAction,
+} from "@/components/shared/navbar/type";
+import { SETTINGS_SECTIONS } from "@/components/admin/settings/sections";
 
 type NavbarProfileOverrides = {
   name?: string;
   roleTitle?: string;
 };
 
+/** Every admin settings section, searchable from the command palette. */
+const adminPaletteLinks: navbarPaletteLink[] = SETTINGS_SECTIONS.map((section) => ({
+  id: `settings-${section.key}`,
+  labelKey: `admin.settings.${section.labelKey}`,
+  hintKey: `admin.settings.groups.${section.group}.title`,
+  href: `/admin/settings?tab=${section.key}`,
+  icon: section.icon,
+}));
+
 const buildNavbarConfig = (
   name: string,
   roleTitle: string,
   quickActions: navbarQuickAction[] = [],
   profileHref = "/profile",
+  paletteLinks: navbarPaletteLink[] = [],
 ): navbarConfig => ({
+  paletteLinks,
   searchPlaceholder: "searchPlaceholder",
   actions: [
     {
       label: "notifications",
       icon: "notification",
-    },
-    {
-      label: "help",
-      icon: "help",
     },
   ],
   quickActions,
@@ -218,6 +230,7 @@ const withNavbarProfileOverrides =
     defaultRoleTitle: string,
     quickActions: navbarQuickAction[] = [],
     profileHref = "/profile",
+    paletteLinks: navbarPaletteLink[] = [],
   ) =>
   (profile?: NavbarProfileOverrides): navbarConfig =>
     buildNavbarConfig(
@@ -225,6 +238,7 @@ const withNavbarProfileOverrides =
       profile?.roleTitle?.trim() || defaultRoleTitle,
       quickActions,
       profileHref,
+      paletteLinks,
     );
 
 export const roleStrategy = {
@@ -351,6 +365,7 @@ export const roleStrategy = {
       "LAB DIRECTOR",
       adminQuickActions,
       "/admin/profile",
+      adminPaletteLinks,
     ),
     canAccess: (route: string) => route.startsWith("/admin"),
   },

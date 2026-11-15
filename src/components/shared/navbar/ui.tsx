@@ -1,8 +1,7 @@
 "use client";
 
-import { Link, useRouter } from "@/i18n/navigation";
-import { buildQuickActionHref } from "@/lib/quick-actions/build-href";
-import { writePendingQuickAction } from "@/lib/quick-actions/storage";
+import { Link } from "@/i18n/navigation";
+import { useQuickActionNavigate } from "@/hooks/use-quick-action-navigate";
 import type { navbarQuickAction } from "./type";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import {
@@ -11,34 +10,24 @@ import {
   Group,
   Menu,
   Text,
-  TextInput,
   UnstyledButton,
 } from "@mantine/core";
 import {
-  FiActivity,
-  FiAlertCircle,
   FiBell,
-  FiCheckCircle,
-  FiClipboard,
-  FiCreditCard,
-  FiFilePlus,
+  FiChevronDown,
   FiHelpCircle,
-  FiMenu,
   FiLogOut,
+  FiMenu,
+  FiPlus,
   FiSearch,
   FiSettings,
-  FiShield,
   FiUser,
-  FiUserPlus,
-  FiChevronDown,
 } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
-import { useTranslations, useLocale } from "next-intl";
-import {
-  navbarActionIcon,
-  navbarProfileMenuItemId,
-  navbarQuickActionIcon,
-} from "./type";
+import { useTranslations } from "next-intl";
+import { navbarActionIcon, navbarProfileMenuItemId } from "./type";
+import { QUICK_ACTION_ICONS } from "./icons";
+import { CommandPalette } from "./command-palette";
 import { useMirror } from "./store";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { NotificationsMenu } from "@/features/push-notifications/ui/notifications-menu";
@@ -55,17 +44,6 @@ const profileMenuIconMap: Record<navbarProfileMenuItemId, IconType> = {
   logout: FiLogOut,
 };
 
-const quickActionIconMap: Record<navbarQuickActionIcon, IconType> = {
-  userPlus: FiUserPlus,
-  flask: FiActivity,
-  clipboardList: FiClipboard,
-  clipboardCheck: FiCheckCircle,
-  creditCard: FiCreditCard,
-  alertCircle: FiAlertCircle,
-  shield: FiShield,
-  filePlus: FiFilePlus,
-};
-
 const mobileViewportQuery = "(max-width: 992px)";
 
 const subscribeToMobileViewport = (onStoreChange: () => void) => {
@@ -78,6 +56,10 @@ const subscribeToMobileViewport = (onStoreChange: () => void) => {
 const getMobileViewportSnapshot = () => window.matchMedia(mobileViewportQuery).matches;
 const getServerMobileViewportSnapshot = () => false;
 
+const subscribeNoop = () => () => undefined;
+const getIsMacSnapshot = () => /Mac|iPhone|iPad/.test(window.navigator.platform);
+const getServerIsMacSnapshot = () => false;
+
 const UI = () => {
   const isMobileViewport = useSyncExternalStore(
     subscribeToMobileViewport,
@@ -85,8 +67,6 @@ const UI = () => {
     getServerMobileViewportSnapshot,
   );
   const t = useTranslations() as (key: string) => string;
-  const locale = useLocale();
-  const rtl = locale === "ar";
   const translate = (key: string, fallback?: string) => {
     try {
       return t(`navbar.${key}`);
@@ -113,74 +93,43 @@ const UI = () => {
     }
   });
 
-  const router = useRouter();
   const config = useMirror("config");
-  const searchQuery = useMirror("searchQuery");
-  const setSearchQuery = useMirror("setSearchQuery");
   const onLogout = useMirror("onLogout");
-  const [quickActionsOpen, setQuickActionsOpen] = useState(false);
-  const [quickActionQuery, setQuickActionQuery] = useState("");
+  const tPalette = useTranslations("commandPalette");
+  const runQuickAction = useQuickActionNavigate();
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const isMac = useSyncExternalStore(
+    subscribeNoop,
+    getIsMacSnapshot,
+    getServerIsMacSnapshot,
+  );
   const quickActions = config.quickActions ?? [];
+  const navItems = config.navItems ?? [];
 
-  const handleQuickActionsOpenChange = (opened: boolean) => {
-    setQuickActionsOpen(opened);
-
-    if (!opened) {
-      setQuickActionQuery("");
-    }
-  };
-
-  const navigateQuickAction = (action: navbarQuickAction) => {
-    setQuickActionsOpen(false);
-    setQuickActionQuery("");
-
-    if (action.modal) {
-      writePendingQuickAction({
-        modal: action.modal,
-        tab: action.tab,
-        targetPath: action.href,
-      });
-    }
-
-    const target = buildQuickActionHref(action.href, {
-      modal: action.modal,
-      tab: action.tab,
-    });
-
-    router.push(target);
-  };
-
+  // Global shortcuts: Ctrl/⌘+K anywhere, or "/" when not typing in a field.
   useEffect(() => {
-    if (!quickActionsOpen) {
-      return;
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setPaletteOpen((open) => !open);
+        return;
+      }
+      if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      const typing =
+        target?.isContentEditable ||
+        ["INPUT", "TEXTAREA", "SELECT"].includes(target?.tagName ?? "");
+      if (typing) return;
+      event.preventDefault();
+      setPaletteOpen(true);
     };
-  }, [quickActionsOpen]);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
-  const normalizedQuickActionQuery = quickActionQuery
-    .trim()
-    .toLocaleLowerCase(locale);
-  const filteredQuickActions = quickActions.filter((action) => {
-    if (!normalizedQuickActionQuery) {
-      return true;
-    }
+  const shortcutLabel = isMac ? "⌘K" : "Ctrl K";
 
-    const label = translate(`quickActions.${action.label}`, action.label);
-    const description = translate(
-      `quickActions.${action.description}`,
-      action.description,
-    );
-
-    return `${label} ${description}`
-      .toLocaleLowerCase(locale)
-      .includes(normalizedQuickActionQuery);
-  });
+  const navigateQuickAction = (action: navbarQuickAction) => runQuickAction(action);
 
   return (
     <header className={styles.navbar}>
@@ -197,100 +146,56 @@ const UI = () => {
             </ActionIcon>
           )}
 
-          <TextInput
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.currentTarget.value)}
-            placeholder={translate(
-              config.searchPlaceholder || "searchPlaceholder",
-              translate("searchPlaceholder", "Search..."),
-            )}
-            className={styles.searchInput}
-            leftSection={!rtl ? <FiSearch size={16} /> : undefined}
-            rightSection={rtl ? <FiSearch size={16} /> : undefined}
-            aria-label={translate("searchPlaceholder", "Search")}
-          />
+          <UnstyledButton
+            className={styles.searchTrigger}
+            onClick={() => setPaletteOpen(true)}
+            aria-label={tPalette("trigger")}
+            aria-keyshortcuts="Control+K Meta+K"
+          >
+            <FiSearch size={16} aria-hidden className={styles.searchTriggerIcon} />
+            <span className={styles.searchTriggerLabel}>{tPalette("trigger")}</span>
+            <kbd className={styles.quickActionsButtonKbd} dir="ltr">
+              {shortcutLabel}
+            </kbd>
+          </UnstyledButton>
         </Group>
 
         <Group gap="xs" wrap="nowrap">
           {quickActions.length > 0 && (
-            <Menu
-              shadow="xl"
-              width={560}
-              position="bottom-end"
-              offset={10}
-              opened={quickActionsOpen}
-              onChange={handleQuickActionsOpenChange}
-              classNames={{ dropdown: styles.quickActionsDropdown }}
-              keepMounted={false}
-            >
+            <Menu shadow="lg" width={280} position="bottom-end" offset={10}>
               <Menu.Target>
                 <UnstyledButton
-                  className={styles.quickActionsButton}
-                  data-expanded={quickActionsOpen ? "true" : "false"}
-                  aria-label={translate("quickActions.title", "Quick Actions")}
+                  className={styles.createButton}
+                  aria-label={tPalette("create")}
                 >
-                  <FiSearch size={15} className={styles.quickActionsButtonSearchIcon} />
-                  <span className={styles.quickActionsButtonLabel}>
-                    {translate("quickActions.title", "Quick Actions")}
-                  </span>
-                  <kbd className={styles.quickActionsButtonKbd} dir="ltr">⌘K</kbd>
+                  <FiPlus size={16} aria-hidden />
+                  <span className={styles.createButtonLabel}>{tPalette("create")}</span>
                 </UnstyledButton>
               </Menu.Target>
 
               <Menu.Dropdown>
-                <div className={styles.quickActionsCommandBar}>
-                  <TextInput
-                    value={quickActionQuery}
-                    onChange={(event) => setQuickActionQuery(event.currentTarget.value)}
-                    placeholder={translate(
-                      "quickActions.searchPlaceholder",
-                      "Type a command or search",
-                    )}
-                    className={styles.quickActionsCommandSearch}
-                    leftSection={<FiSearch size={17} />}
-                    rightSection={<kbd className={styles.quickActionsSearchKbd} dir="ltr">⌘/</kbd>}
-                    aria-label={translate("quickActions.searchPlaceholder", "Search actions")}
-                    autoFocus
-                  />
-                </div>
-
-                <Text className={styles.quickActionsSectionLabel}>
-                  {translate("quickActions.recent", "Recent")}
-                </Text>
-
-                <div className={styles.quickActionsList}>
-                  {filteredQuickActions.map((action, index) => {
-                    const Icon = quickActionIconMap[action.icon];
-
-                    return (
-                      <Menu.Item
-                        key={action.id}
-                        className={styles.quickActionsMenuItem}
-                        onClick={() => navigateQuickAction(action)}
-                      >
-                        <div className="flex w-full min-w-0 items-center justify-between">
-                          <span className={styles.quickActionsIconBadge}>
-                            <Icon size={16} />
-                          </span>
-
-                          <span className={styles.quickActionsItemLabel}>
-                            {translate(`quickActions.${action.label}`, action.label)}
-                          </span>
-
-                          <kbd className={styles.quickActionsShortcut} dir="ltr">
-                            ⌘{index + 1}
-                          </kbd>
-                        </div>
-                      </Menu.Item>
-                    );
-                  })}
-
-                  {quickActions.length > 0 && filteredQuickActions.length === 0 && (
-                    <Text className={styles.quickActionsEmpty}>
-                      {translate("quickActions.empty", "No actions found")}
-                    </Text>
-                  )}
-                </div>
+                <Menu.Label>{tPalette("actions")}</Menu.Label>
+                {quickActions.map((action) => {
+                  const Icon = QUICK_ACTION_ICONS[action.icon];
+                  return (
+                    <Menu.Item
+                      key={action.id}
+                      leftSection={
+                        <span className={styles.quickActionsIconBadge}>
+                          <Icon size={15} />
+                        </span>
+                      }
+                      onClick={() => navigateQuickAction(action)}
+                    >
+                      <Text size="sm" fw={600} lh={1.3}>
+                        {translate(`quickActions.${action.label}`, action.label)}
+                      </Text>
+                      <Text size="xs" c="dimmed" lh={1.3}>
+                        {translate(`quickActions.${action.description}`, action.description)}
+                      </Text>
+                    </Menu.Item>
+                  );
+                })}
               </Menu.Dropdown>
             </Menu>
           )}
@@ -396,6 +301,13 @@ const UI = () => {
           </Menu>
         </Group>
       </Group>
+      <CommandPalette
+        opened={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        navItems={navItems}
+        quickActions={quickActions}
+        paletteLinks={config.paletteLinks}
+      />
     </header>
   );
 };

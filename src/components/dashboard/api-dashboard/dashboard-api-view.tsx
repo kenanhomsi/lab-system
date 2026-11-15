@@ -13,6 +13,7 @@ import {
   FiInbox,
   FiMessageSquare,
   FiPieChart,
+  FiPlus,
   FiRefreshCw,
 } from "react-icons/fi";
 import { useElementSize } from "@mantine/hooks";
@@ -31,6 +32,9 @@ import {
   type SummaryKey,
 } from "./summary-config";
 import { getStatusVariant } from "./status-utils";
+import { roleStrategy } from "@/strategies/role";
+import { useQuickActionNavigate } from "@/hooks/use-quick-action-navigate";
+import type { navbarQuickAction } from "@/components/shared/navbar/type";
 import styles from "./styles.module.scss";
 
 const DashboardCharts = dynamic(
@@ -80,6 +84,29 @@ const STATUS_CLASS: Record<string, string> = {
 
 const BREAKDOWN_COLORS = ["#009cc2", "#8b5cf6", "#10b981", "#f59e0b", "#ec4899", "#06b6d4"];
 
+/** URL segment (under the role base path) where each KPI's records live. */
+const SUMMARY_ROUTES: Partial<Record<SummaryKey, string>> = {
+  totalUsers: "users",
+  totalDoctors: "users",
+  totalPatients: "users",
+  totalLabPartners: "users",
+  totalMedicalTests: "medical-tests",
+  totalTestRequests: "test-requests",
+  totalResults: "test-results",
+  completedResults: "test-results",
+  totalExternalPatients: "external-patients",
+  totalComplaints: "complaints",
+  totalRevenue: "accounting",
+};
+
+/** Maps the URL role segment to its key in `roleStrategy`. */
+const ROLE_KEYS = {
+  admin: "admin",
+  doctor: "doctor",
+  patient: "patient",
+  lab: "labpartner",
+} as const;
+
 const formatNumber = (value: number, locale: string) =>
   value.toLocaleString(locale, { maximumFractionDigits: 0 });
 
@@ -128,11 +155,32 @@ type QuickAction = {
   icon: typeof FiClipboard;
 };
 
-const QuickActionBar = ({ actions }: { actions: QuickAction[] }) => {
-  if (actions.length === 0) return null;
+const QuickActionBar = ({
+  createActions,
+  actions,
+  translateCreate,
+  onCreate,
+}: {
+  createActions: navbarQuickAction[];
+  actions: QuickAction[];
+  translateCreate: (key: string) => string;
+  onCreate: (action: navbarQuickAction) => void;
+}) => {
+  if (actions.length === 0 && createActions.length === 0) return null;
 
   return (
     <nav className={styles.quickActions} aria-label="Quick navigation">
+      {createActions.map((action) => (
+        <button
+          key={action.id}
+          type="button"
+          className={`${styles.quickActionChip} ${styles.quickActionChipPrimary}`}
+          onClick={() => onCreate(action)}
+        >
+          <FiPlus size={14} aria-hidden="true" />
+          <span>{translateCreate(`quickActions.${action.label}`)}</span>
+        </button>
+      ))}
       {actions.map((action) => {
         const Icon = action.icon;
         return (
@@ -200,7 +248,11 @@ const StatCard = ({
   locale,
   className,
   animationDelayMs,
+  href,
+  actionLabel,
 }: {
+  href?: string;
+  actionLabel: string;
   statKey: SummaryKey;
   value: number;
   label: string;
@@ -212,17 +264,14 @@ const StatCard = ({
   const meta = SUMMARY_META[statKey];
   const Icon = meta.icon;
   const barPct = maxInRow > 0 ? Math.min(100, Math.round((value / maxInRow) * 100)) : 0;
+  const cardClassName = `${styles.statCard} ${styles.statCardAnimated} ${href ? styles.statCardLink : ""} ${className}`;
+  const cardStyle = {
+    animationDelay: `${animationDelayMs}ms`,
+    "--stat-accent": meta.accentColor,
+  } as CSSProperties;
 
-  return (
-    <div
-      className={`${styles.statCard} ${styles.statCardAnimated} ${className}`}
-      style={
-        {
-          animationDelay: `${animationDelayMs}ms`,
-          "--stat-accent": meta.accentColor,
-        } as CSSProperties
-      }
-    >
+  const body = (
+    <>
       <div className={styles.statTop}>
         <div
           className={styles.statIconWrap}
@@ -254,6 +303,26 @@ const StatCard = ({
           }
         />
       </div>
+      {href ? (
+        <span className={styles.statAction}>
+          {actionLabel}
+          <FiArrowRight size={12} aria-hidden="true" />
+        </span>
+      ) : null}
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className={cardClassName} style={cardStyle} aria-label={`${label}: ${value}`}>
+        {body}
+      </Link>
+    );
+  }
+
+  return (
+    <div className={cardClassName} style={cardStyle}>
+      {body}
     </div>
   );
 };
@@ -353,8 +422,27 @@ export const DashboardApiView = ({
     return keys.map((key) => ({ summaryKey: key, labelKey: `summary.${key}` }));
   }, [dashboard, summaryKeys, translationNamespace]);
 
-  const roleSegment = translationNamespace.split(".")[0];
+  const roleSegment = translationNamespace.split(".")[0] as keyof typeof ROLE_KEYS;
   const basePath = `/${locale}/${roleSegment}`;
+  const tNavbar = useTranslations("navbar") as (key: string) => string;
+  const tCommon = useTranslations("commandPalette");
+  const runQuickAction = useQuickActionNavigate();
+  const strategy = roleStrategy[ROLE_KEYS[roleSegment]];
+  // Show the role's two most common create actions as primary buttons on the home page.
+  const createActions = useMemo(
+    () => (strategy.getNavbarConfig().quickActions ?? []).slice(0, 2),
+    [strategy],
+  );
+  const availableRoutes = useMemo(
+    () => new Set(strategy.getSiderBarItems().map((item) => item.href)),
+    [strategy],
+  );
+  const statHref = (key: SummaryKey) => {
+    const segment = SUMMARY_ROUTES[key];
+    if (!segment) return undefined;
+    const route = `/${roleSegment}/${segment}`;
+    return availableRoutes.has(route) ? `${basePath}/${segment}` : undefined;
+  };
 
   if (!dashboard) {
     return (
@@ -518,7 +606,12 @@ export const DashboardApiView = ({
         ) : null}
 
         <div className={styles.span12}>
-          <QuickActionBar actions={quickActions} />
+          <QuickActionBar
+            createActions={createActions}
+            actions={quickActions}
+            translateCreate={tNavbar}
+            onCreate={runQuickAction}
+          />
         </div>
 
         {/* Row 2: KPI stats */}
@@ -537,50 +630,12 @@ export const DashboardApiView = ({
             locale={locale}
             className={statSpan}
             animationDelayMs={index * 45}
+            href={statHref(key)}
+            actionLabel={tCommon("viewDetails")}
           />
         ))}
 
-        {/* Row 3: Charts */}
-        <SectionBand
-          id="dashboard-analytics"
-          title={t("sections.analytics")}
-          subtitle={t("chartSubtitle")}
-        />
-        <DashboardCharts
-          chartRef={chartRef}
-          chartWidth={chartWidth}
-          monthlyRequestsData={monthlyRequestsData}
-          monthlyRevenueData={monthlyRevenueData}
-          monthlyRequestsTitle={t("sections.monthlyRequests")}
-          monthlyRevenueTitle={t("sections.monthlyRevenue")}
-          chartSubtitle={t("chartSubtitle")}
-          emptyChartsLabel={t("emptyCharts")}
-        />
-
-        {/* Row 4: Distribution */}
-        {breakdownSections.length > 0 ? (
-          <>
-            <SectionBand
-              title={t("sections.distribution")}
-              subtitle={t("distributionSubtitle")}
-            />
-            {breakdownSections.map((section) => (
-              <div key={section.key} className={`${styles.glassCard} ${breakdownSpan}`}>
-                <div className={styles.cardHead}>
-                  <div className={styles.cardHeadIcon}>
-                    <FiPieChart size={16} />
-                  </div>
-                  <div>
-                    <p className={styles.cardHeadTitle}>{section.title}</p>
-                  </div>
-                </div>
-                <BreakdownList items={section.items} emptyLabel={t("emptyCharts")} />
-              </div>
-            ))}
-          </>
-        ) : null}
-
-        {/* Row 5: Recent activity */}
+        {/* Row 3: Recent activity — what needs attention comes before analytics */}
         <div className={`${styles.recentPanel} ${styles.span12}`}>
           <div className={styles.recentPanelHead}>
             <SectionBand
@@ -621,6 +676,46 @@ export const DashboardApiView = ({
             />
           </div>
         </div>
+
+        {/* Row 4: Charts */}
+        <SectionBand
+          id="dashboard-analytics"
+          title={t("sections.analytics")}
+          subtitle={t("chartSubtitle")}
+        />
+        <DashboardCharts
+          chartRef={chartRef}
+          chartWidth={chartWidth}
+          monthlyRequestsData={monthlyRequestsData}
+          monthlyRevenueData={monthlyRevenueData}
+          monthlyRequestsTitle={t("sections.monthlyRequests")}
+          monthlyRevenueTitle={t("sections.monthlyRevenue")}
+          chartSubtitle={t("chartSubtitle")}
+          emptyChartsLabel={t("emptyCharts")}
+        />
+
+        {/* Row 5: Distribution */}
+        {breakdownSections.length > 0 ? (
+          <>
+            <SectionBand
+              title={t("sections.distribution")}
+              subtitle={t("distributionSubtitle")}
+            />
+            {breakdownSections.map((section) => (
+              <div key={section.key} className={`${styles.glassCard} ${breakdownSpan}`}>
+                <div className={styles.cardHead}>
+                  <div className={styles.cardHeadIcon}>
+                    <FiPieChart size={16} />
+                  </div>
+                  <div>
+                    <p className={styles.cardHeadTitle}>{section.title}</p>
+                  </div>
+                </div>
+                <BreakdownList items={section.items} emptyLabel={t("emptyCharts")} />
+              </div>
+            ))}
+          </>
+        ) : null}
 
       </div>
     </div>

@@ -333,6 +333,8 @@ const Modals = () => {
   const setActiveModal = useMirror("setActiveModal");
   const selectedPolicy = useMirror("selectedPolicy");
   const setSelectedPolicy = useMirror("setSelectedPolicy");
+  const createDraft = useMirror("createDraft");
+  const setCreateDraft = useMirror("setCreateDraft");
   const createPolicy = useMirror("createAccessPolicy") as (
     p: CreateAccessPolicyRequest,
   ) => Promise<unknown>;
@@ -412,7 +414,7 @@ const Modals = () => {
 
   useEffect(() => {
     if (activeModal === "create") {
-      const payload = emptyPayload();
+      const payload = { ...emptyPayload(), ...(createDraft ?? {}) };
       setForm(payload);
       setConditionTab("builder");
       setConditionHelpOpen(false);
@@ -428,11 +430,12 @@ const Modals = () => {
       setConditionHelpOpen(false);
       setConditionTab(parsed.isJsonValid ? "builder" : "json");
     }
-  }, [activeModal, selectedPolicy]);
+  }, [activeModal, selectedPolicy, createDraft]);
 
   const close = () => {
     setActiveModal(null);
     setSelectedPolicy(null);
+    setCreateDraft(null);
     setIsSubmitting(false);
     setShowErrors(false);
     setConditionHelpOpen(false);

@@ -19,7 +19,7 @@
   },
   "header": {
     "brand": "Al Mutawali Medical Laboratory",
-    "ctaNewLab": "New lab request",
+    "ctaNewLab": "Log in",
     "menuTitle": "Menu",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
@@ -570,10 +570,10 @@
     "colAttachment": "Attachment",
     "colCreated": "Submitted At",
     "openAttachment": "Open",
-    "pending": "Pending",
-    "inReview": "In Review",
-    "resolved": "Resolved",
-    "rejected": "Rejected",
+    "pending": "Received",
+    "inReview": "Replied",
+    "resolved": "Handled",
+    "rejected": "Closed",
     "empty": "No complaints yet.",
     "createSuccess": "Complaint submitted successfully.",
     "createError": "Failed to submit complaint."
@@ -587,6 +587,7 @@
     "colInsuranceNumber": "Insurance number",
     "colMobile": "Mobile",
     "colStatus": "Status",
+    "colImages": "Images",
     "colCreated": "Submitted at",
     "colActions": "Actions",
     "statusNew": "New",
@@ -603,6 +604,8 @@
     "rejectionReason": "Rejection reason",
     "viewCardImage": "View insurance card",
     "viewPrescriptionImage": "View prescription",
+    "cardImageShort": "Card",
+    "prescriptionImageShort": "Prescription",
     "selectFile": "Choose a file",
     "insuredNameRequired": "Insured name is required",
     "insuranceNumberRequired": "Insurance number is required",
@@ -1458,13 +1461,13 @@
     },
     "settings": {
       "title": "Settings",
-      "description": "Manage roles, access policies, and appointment types.",
+      "description": "Everything that controls access, the public website, and reference data — grouped by purpose. Pick a section to start.",
       "tabRoles": "Roles",
       "tabAccessPolicies": "Access policies",
       "tabAppointmentTypes": "Appointment types",
       "tabAds": "Ads",
       "tabBanners": "Banners",
-      "tabSlideCards": "Silders",
+      "tabSlideCards": "Sliders",
       "tabWelcomePages": "Welcome pages",
       "tabWebsitePages": "Website pages",
       "tabWebsiteContentMap": "Page content map",
@@ -1557,7 +1560,7 @@
           "clientsSlider": "Clients cards"
         }
       },
-      "tabAccounting": "Accounting settings",
+      "tabAccounting": "Accounting page settings",
       "accounting": {
         "title": "Accounting page settings",
         "subtitle": "Control the announcement header and description shown on lab accounting pages.",
@@ -1729,7 +1732,43 @@
         "errorActionInvalid": "Action must be one of: *, read, create, delete, approve, assign.",
         "errorConditionInvalidJson": "Condition must be valid JSON.",
         "errorConditionInvalidShape": "Condition must include non-empty all[] or any[] rules.",
-        "errorConditionRuleKeys": "Each rule needs field, operator, and value."
+        "errorConditionRuleKeys": "Each rule needs field, operator, and value.",
+        "matrix": {
+          "viewMatrix": "Permissions matrix",
+          "viewList": "Rules list",
+          "viewLabel": "Choose view",
+          "actionPickerLabel": "Show permission to",
+          "searchPlaceholder": "Search resources…",
+          "searchEmpty": "No resources match your search",
+          "resourceColumn": "Resource",
+          "caption": "Effective {action} permission per role and resource",
+          "actions": {
+            "read": "View",
+            "create": "Create",
+            "delete": "Delete",
+            "approve": "Approve",
+            "assign": "Assign"
+          },
+          "decision": {
+            "allow": "Allowed",
+            "deny": "Denied",
+            "none": "No rule (not granted)"
+          },
+          "legendConditional": "Conditional",
+          "legendInherited": "From a rule for all users",
+          "emptyTitle": "No permissions to show yet",
+          "emptyHint": "Create roles and access rules first — the matrix fills in automatically.",
+          "howItWorks": "This is a preview computed from the rules below: disabled or expired rules are ignored, the highest priority wins, and on equal priority Deny wins. Click any cell to see the deciding rule.",
+          "userRulesHidden": "{count, plural, one {# rule targets a specific user} other {# rules target specific users}} and {count, plural, one {is} other {are}} not shown here — see the Rules list.",
+          "detailIntro": "Effective permission for each action, and the rule that decides it.",
+          "reasonRole": "Decided by a rule for this role (priority {priority})",
+          "reasonInherited": "Decided by a rule for all users (priority {priority})",
+          "reasonNone": "No rule matches, so it is not granted",
+          "otherRules": "{count, plural, one {# other matching rule} other {# other matching rules}}",
+          "editRule": "Edit rule",
+          "allowAction": "Allow",
+          "denyAction": "Deny"
+        }
       },
       "appointmentTypes": {
         "columnName": "Name",
@@ -1899,7 +1938,9 @@
         "cancel": "Cancel",
         "save": "Save",
         "active": "Active",
-        "inactive": "Inactive"
+        "inactive": "Inactive",
+        "targetSelf": "Same tab",
+        "targetBlank": "New tab"
       },
       "pageTarget": {
         "targetModeLabel": "Targeting mode",
@@ -2194,6 +2235,73 @@
         "inactive": "Inactive",
         "modalDeleteTitle": "Delete slide card",
         "modalDeleteBody": "Delete slide card \"{name}\"? This cannot be undone."
+      },
+      "tabNavbar": "Top navbar",
+      "navbarConfig": {
+        "title": "Customize top navbar",
+        "description": "Rename or hide navbar items. Links are fixed and cannot be changed, and no new items can be added here.",
+        "colItem": "Item",
+        "colLabelAr": "Arabic label",
+        "colLabelEn": "English label",
+        "colVisible": "Visible",
+        "subItem": "Sub-item",
+        "defaultLabel": "Default label",
+        "items": {
+          "home": "Home",
+          "labGroup": "Our lab (menu)",
+          "about": "About us",
+          "quality": "Quality control",
+          "services": "Services",
+          "tests": "Medical tests",
+          "careers": "Careers",
+          "joinAsClient": "Join as client",
+          "blog": "Blog",
+          "contact": "Contact us"
+        },
+        "note": "Leave a label empty to use the default. Hiding the \"Our lab\" menu also hides its sub-items.",
+        "atLeastOne": "At least one item must stay visible.",
+        "save": "Save",
+        "reset": "Restore defaults",
+        "saved": "Settings saved",
+        "resetDone": "Defaults restored",
+        "loadError": "Could not load settings",
+        "saveError": "Could not save settings"
+      },
+      "overviewTitle": "Overview",
+      "pickSection": "Choose a settings section",
+      "searchPlaceholder": "Search settings…",
+      "searchEmpty": "No settings match your search",
+      "breadcrumbLabel": "Breadcrumb",
+      "groups": {
+        "access": {
+          "title": "Users & access",
+          "description": "Who can sign in to the system and what each role is allowed to see and change."
+        },
+        "website": {
+          "title": "Website content",
+          "description": "Everything visitors see on the public website and mobile app: pages, sliders, banners and pop-ups."
+        },
+        "lookups": {
+          "title": "Lookups & reference data",
+          "description": "Shared lists used across the system, such as how medical tests are categorised."
+        },
+        "dashboardContent": {
+          "title": "Dashboard content",
+          "description": "Texts and headers shown inside the user dashboards."
+        }
+      },
+      "sectionInfo": {
+        "roles": "Named roles (doctor, lab, secretary…) that users are assigned to.",
+        "accessPolicies": "Rules deciding what each role can view, create, edit or delete.",
+        "websiteContentMap": "Visual map of each website page showing which ads, banners and sliders appear where. Start here.",
+        "websitePages": "Create and edit public website pages, their SEO and content blocks.",
+        "slideCards": "Rotating offer cards shown in the homepage slider and dashboards.",
+        "banners": "Promotional banners placed on specific website pages or sections.",
+        "ads": "Pop-up ads shown as a window on the homepage.",
+        "welcomePages": "Welcome screens shown once to first-time visitors of the website and mobile app.",
+        "medicalTestCategories": "Categories used to organise medical tests in the catalogue and filters.",
+        "accounting": "Header and intro text shown on the lab accounting page.",
+        "navbar": "Rename or hide top navbar items on the website without changing links."
       }
     },
     "users": {
@@ -2576,19 +2684,19 @@
       "searchPlaceholder": "Search by title or description",
       "userIdPlaceholder": "Filter by user ID",
       "allStatuses": "All statuses",
-      "pending": "Pending",
-      "inReview": "In Review",
-      "resolved": "Resolved",
-      "rejected": "Rejected",
+      "pending": "Received",
+      "inReview": "Replied",
+      "resolved": "Handled",
+      "rejected": "Closed",
       "recordsShowing": "Showing {count} records",
       "filtersApplied": "Filters applied",
       "attachment": "Attachment",
       "createdAt": "Created At",
       "updatedAt": "Updated At",
-      "markAsPending": "Mark as Pending",
-      "markAsInReview": "Mark as In Review",
-      "markAsResolved": "Mark as Resolved",
-      "markAsRejected": "Mark as Rejected",
+      "markAsPending": "Mark as Received",
+      "markAsInReview": "Mark as Replied",
+      "markAsResolved": "Mark as Handled",
+      "markAsRejected": "Mark as Closed",
       "colTitle": "Title",
       "colDescription": "Description",
       "colUser": "User ID",
@@ -2614,6 +2722,7 @@
       "colInsuranceNumber": "Insurance number",
       "colMobile": "Mobile",
       "colStatus": "Status",
+      "colImages": "Images",
       "colCreated": "Submitted at",
       "colActions": "Actions",
       "updateStatus": "Update status",
@@ -2626,6 +2735,8 @@
       "rejectionReason": "Rejection reason",
       "viewCardImage": "View insurance card",
       "viewPrescriptionImage": "View prescription",
+      "cardImageShort": "Card",
+      "prescriptionImageShort": "Prescription",
       "statusUpdateTitle": "Update request status",
       "statusLabel": "Status",
       "notesLabel": "Notes",
@@ -4661,5 +4772,19 @@
     "operationFailedTitle": "Operation failed",
     "genericFallback": "Something went wrong. Please try again.",
     "alertTitle": "Error"
+  },
+  "commandPalette": {
+    "trigger": "Search pages & actions…",
+    "placeholder": "Where do you want to go? Type a page or action…",
+    "title": "Command palette",
+    "actions": "Create",
+    "pages": "Go to",
+    "current": "Current",
+    "empty": "No matching pages or actions",
+    "hintNavigate": "to move",
+    "hintSelect": "to open",
+    "create": "New",
+    "viewDetails": "View details",
+    "settings": "Settings"
   }
 }

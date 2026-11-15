@@ -19,7 +19,7 @@
   },
   "header": {
     "brand": "مخبر المتوالي",
-    "ctaNewLab": "طلب تحليل جديد",
+    "ctaNewLab": "تسجيل الدخول",
     "menuTitle": "القائمة",
     "openMenu": "فتح القائمة",
     "closeMenu": "إغلاق القائمة"
@@ -570,10 +570,10 @@
     "colAttachment": "المرفق",
     "colCreated": "تاريخ التقديم",
     "openAttachment": "فتح",
-    "pending": "قيد الانتظار",
-    "inReview": "قيد المراجعة",
-    "resolved": "تم الحل",
-    "rejected": "مرفوض",
+    "pending": "تم الاستلام",
+    "inReview": "تم الرد",
+    "resolved": "تمت المعالجة",
+    "rejected": "مقفلة",
     "empty": "لا توجد شكاوى بعد.",
     "createSuccess": "تم تقديم الشكوى بنجاح.",
     "createError": "فشل تقديم الشكوى."
@@ -616,7 +616,10 @@
     "deleteConfirmMessage": "هل أنت متأكد من حذف هذا الطلب؟ لا يمكن التراجع.",
     "deleteSuccessTitle": "تم الحذف",
     "deleteSuccessMessage": "تم حذف الطلب.",
-    "deleteError": "فشل حذف الطلب."
+    "deleteError": "فشل حذف الطلب.",
+    "colImages": "الصور",
+    "cardImageShort": "البطاقة",
+    "prescriptionImageShort": "الوصفة"
   },
   "externalPatients": {
     "title": "المرضى الخارجيون",
@@ -1458,12 +1461,12 @@
     },
     "settings": {
       "title": "الإعدادات",
-      "description": "إدارة الأدوار وسياسات الوصول وأنواع المواعيد.",
+      "description": "كل ما يتحكم بالصلاحيات والموقع العام والبيانات المرجعية — مقسّم حسب الغرض. اختر قسماً للبدء.",
       "tabRoles": "الأدوار",
       "tabAccessPolicies": "سياسات الوصول",
       "tabAppointmentTypes": "أنواع المواعيد",
       "tabAds": "الإعلانات المنبثقة",
-      "tabBanners": "بنرات",
+      "tabBanners": "البنرات",
       "tabSlideCards": "سلايدر",
       "tabWelcomePages": "صفحات الترحيب",
       "tabWebsitePages": "صفحات الموقع",
@@ -1557,7 +1560,7 @@
           "clientsSlider": "بطاقات العملاء"
         }
       },
-      "tabAccounting": "إعدادات المحاسبة",
+      "tabAccounting": "إعدادات صفحة المحاسبة",
       "accounting": {
         "title": "إعدادات صفحة المحاسبة",
         "subtitle": "التحكم في الهيدر الإعلاني والنص التعريفي لصفحة محاسبة المخابر.",
@@ -1729,7 +1732,43 @@
         "errorActionInvalid": "الإجراء يجب أن يكون واحداً من: *, read, create, delete, approve, assign.",
         "errorConditionInvalidJson": "الشرط يجب أن يكون JSON صالحاً.",
         "errorConditionInvalidShape": "الشرط يجب أن يحتوي على all[] أو any[] غير فارغة.",
-        "errorConditionRuleKeys": "كل قاعدة يجب أن تحتوي على field و operator و value."
+        "errorConditionRuleKeys": "كل قاعدة يجب أن تحتوي على field و operator و value.",
+        "matrix": {
+          "viewMatrix": "جدول الصلاحيات",
+          "viewList": "قائمة القواعد",
+          "viewLabel": "اختر طريقة العرض",
+          "actionPickerLabel": "اعرض صلاحية",
+          "searchPlaceholder": "ابحث في الموارد…",
+          "searchEmpty": "لا توجد موارد مطابقة لبحثك",
+          "resourceColumn": "المورد",
+          "caption": "صلاحية {action} الفعلية لكل دور ومورد",
+          "actions": {
+            "read": "العرض",
+            "create": "الإنشاء",
+            "delete": "الحذف",
+            "approve": "الموافقة",
+            "assign": "التعيين"
+          },
+          "decision": {
+            "allow": "مسموح",
+            "deny": "ممنوع",
+            "none": "لا توجد قاعدة (غير مسموح)"
+          },
+          "legendConditional": "مشروط",
+          "legendInherited": "من قاعدة لكل المستخدمين",
+          "emptyTitle": "لا توجد صلاحيات لعرضها بعد",
+          "emptyHint": "أنشئ الأدوار وقواعد الوصول أولاً — وسيمتلئ الجدول تلقائياً.",
+          "howItWorks": "هذا عرض محسوب من القواعد: القواعد المعطّلة أو المنتهية لا تُحتسب، والأولوية الأعلى تربح، وعند تساوي الأولوية يربح المنع. اضغط على أي خانة لترى القاعدة التي تحدد النتيجة.",
+          "userRulesHidden": "القواعد الخاصة بمستخدمين محددين ({count}) غير معروضة في هذا الجدول — راجع قائمة القواعد.",
+          "detailIntro": "الصلاحية الفعلية لكل إجراء، والقاعدة التي تحددها.",
+          "reasonRole": "تحددها قاعدة لهذا الدور (الأولوية {priority})",
+          "reasonInherited": "تحددها قاعدة لكل المستخدمين (الأولوية {priority})",
+          "reasonNone": "لا توجد قاعدة مطابقة، لذلك غير مسموح",
+          "otherRules": "{count, plural, one {قاعدة أخرى مطابقة} two {قاعدتان أخريان مطابقتان} few {# قواعد أخرى مطابقة} many {# قاعدة أخرى مطابقة} other {# قاعدة أخرى مطابقة}}",
+          "editRule": "تعديل القاعدة",
+          "allowAction": "اسمح",
+          "denyAction": "امنع"
+        }
       },
       "appointmentTypes": {
         "columnName": "الاسم",
@@ -1899,7 +1938,9 @@
           "Large": "كبير",
           "Small": "صغير",
           "XSmall": "صغير جدًا"
-        }
+        },
+        "targetSelf": "نفس النافذة",
+        "targetBlank": "نافذة جديدة"
       },
       "pageTarget": {
         "targetModeLabel": "نوع الاستهداف",
@@ -2194,6 +2235,73 @@
         "inactive": "غير نشط",
         "modalDeleteTitle": "حذف بطاقة منزلقة",
         "modalDeleteBody": "حذف بطاقة \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء."
+      },
+      "tabNavbar": "الشريط العلوي",
+      "navbarConfig": {
+        "title": "تخصيص الشريط العلوي",
+        "description": "غيّر أسماء عناصر الشريط العلوي أو أخفِها. الروابط ثابتة ولا يمكن تغييرها أو إضافة عناصر جديدة من هنا.",
+        "colItem": "العنصر",
+        "colLabelAr": "الاسم بالعربية",
+        "colLabelEn": "الاسم بالإنكليزية",
+        "colVisible": "ظاهر",
+        "subItem": "فرعي",
+        "defaultLabel": "الاسم الافتراضي",
+        "items": {
+          "home": "الرئيسية",
+          "labGroup": "مختبرنا (قائمة)",
+          "about": "من نحن",
+          "quality": "ضبط الجودة",
+          "services": "خدماتنا",
+          "tests": "التحاليل الطبية",
+          "careers": "التوظيف",
+          "joinAsClient": "انضم لعملائنا",
+          "blog": "المدونة",
+          "contact": "تواصل معنا"
+        },
+        "note": "اترك حقل الاسم فارغاً لاستعمال الاسم الافتراضي. إخفاء قائمة «مختبرنا» يخفي عناصرها الفرعية أيضاً.",
+        "atLeastOne": "يجب أن يبقى عنصر واحد على الأقل ظاهراً.",
+        "save": "حفظ",
+        "reset": "استعادة الافتراضي",
+        "saved": "تم حفظ الإعدادات",
+        "resetDone": "تمت استعادة الإعدادات الافتراضية",
+        "loadError": "تعذر تحميل الإعدادات",
+        "saveError": "تعذر حفظ الإعدادات"
+      },
+      "overviewTitle": "نظرة عامة",
+      "pickSection": "اختر قسماً من الإعدادات",
+      "searchPlaceholder": "ابحث في الإعدادات…",
+      "searchEmpty": "لا توجد إعدادات مطابقة لبحثك",
+      "breadcrumbLabel": "مسار الصفحة",
+      "groups": {
+        "access": {
+          "title": "المستخدمون والصلاحيات",
+          "description": "من يستطيع الدخول إلى النظام، وما الذي يُسمح لكل دور برؤيته وتعديله."
+        },
+        "website": {
+          "title": "محتوى الموقع",
+          "description": "كل ما يراه الزوار على الموقع العام وتطبيق الموبايل: الصفحات، السلايدر، البنرات والإعلانات المنبثقة."
+        },
+        "lookups": {
+          "title": "القوائم المرجعية",
+          "description": "قوائم مشتركة تُستخدم في كل النظام، مثل تصنيفات الفحوصات الطبية."
+        },
+        "dashboardContent": {
+          "title": "محتوى لوحات التحكم",
+          "description": "النصوص والعناوين التي تظهر داخل لوحات تحكم المستخدمين."
+        }
+      },
+      "sectionInfo": {
+        "roles": "الأدوار المسماة (طبيب، مخبر، سكرتير…) التي يُعيَّن لها المستخدمون.",
+        "accessPolicies": "قواعد تحدد ما يستطيع كل دور عرضه أو إنشاءه أو تعديله أو حذفه.",
+        "websiteContentMap": "خريطة مرئية لكل صفحة في الموقع توضح أين تظهر الإعلانات والبنرات والسلايدر. ابدأ من هنا.",
+        "websitePages": "إنشاء وتعديل صفحات الموقع العامة، مع السيو وكتل المحتوى.",
+        "slideCards": "بطاقات العروض المتحركة في سلايدر الصفحة الرئيسية ولوحات التحكم.",
+        "banners": "بنرات ترويجية توضع على صفحات أو أقسام محددة من الموقع.",
+        "ads": "إعلانات تظهر كنافذة منبثقة في الصفحة الرئيسية.",
+        "welcomePages": "شاشات ترحيب تظهر مرة واحدة للزوار الجدد على الموقع وتطبيق الموبايل.",
+        "medicalTestCategories": "تصنيفات لتنظيم الفحوصات الطبية في الكتالوج والفلاتر.",
+        "accounting": "العنوان والنص التعريفي الذي يظهر في صفحة محاسبة المخابر.",
+        "navbar": "تغيير أسماء عناصر الشريط العلوي للموقع أو إخفاؤها دون تغيير الروابط."
       }
     },
     "users": {
@@ -2578,19 +2686,19 @@
       "searchPlaceholder": "ابحث بالعنوان أو الوصف",
       "userIdPlaceholder": "تصفية بمعرّف المستخدم",
       "allStatuses": "كل الحالات",
-      "pending": "قيد الانتظار",
-      "inReview": "قيد المراجعة",
-      "resolved": "تم الحل",
-      "rejected": "مرفوض",
+      "pending": "تم الاستلام",
+      "inReview": "تم الرد",
+      "resolved": "تمت المعالجة",
+      "rejected": "مقفلة",
       "recordsShowing": "عرض {count} سجل",
       "filtersApplied": "تم تطبيق المرشحات",
       "attachment": "المرفق",
       "createdAt": "تاريخ الإنشاء",
       "updatedAt": "آخر تحديث",
-      "markAsPending": "تحديد كـ قيد الانتظار",
-      "markAsInReview": "تحديد كـ قيد المراجعة",
-      "markAsResolved": "تحديد كـ تم الحل",
-      "markAsRejected": "تحديد كـ مرفوض",
+      "markAsPending": "تحديد كـ تم الاستلام",
+      "markAsInReview": "تحديد كـ تم الرد",
+      "markAsResolved": "تحديد كـ تمت المعالجة",
+      "markAsRejected": "تحديد كـ مقفلة",
       "colTitle": "العنوان",
       "colDescription": "الوصف",
       "colUser": "معرّف المستخدم",
@@ -2640,7 +2748,10 @@
       "deleteConfirmMessage": "هل أنت متأكد من حذف هذا الطلب؟",
       "deleteSuccessTitle": "تم الحذف",
       "deleteSuccessMessage": "تم حذف الطلب.",
-      "deleteError": "فشل حذف الطلب."
+      "deleteError": "فشل حذف الطلب.",
+      "colImages": "الصور",
+      "cardImageShort": "البطاقة",
+      "prescriptionImageShort": "الوصفة"
     },
     "appointmentTypes": {
       "title": "أنواع المواعيد",
@@ -4663,5 +4774,19 @@
     "operationFailedTitle": "فشلت العملية",
     "genericFallback": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
     "alertTitle": "خطأ"
+  },
+  "commandPalette": {
+    "trigger": "ابحث عن الصفحات والإجراءات…",
+    "placeholder": "إلى أين تريد الذهاب؟ اكتب اسم صفحة أو إجراء…",
+    "title": "لوحة الأوامر",
+    "actions": "إنشاء",
+    "pages": "انتقل إلى",
+    "current": "الحالية",
+    "empty": "لا توجد صفحات أو إجراءات مطابقة",
+    "hintNavigate": "للتنقل",
+    "hintSelect": "للفتح",
+    "create": "جديد",
+    "viewDetails": "عرض التفاصيل",
+    "settings": "الإعدادات"
   }
 }

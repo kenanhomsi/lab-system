@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { getLocale } from "next-intl/server";
 import { fetchPublicBannersForPlacement } from "@/lib/banners/fetch-public-banners";
@@ -18,6 +19,8 @@ type BannerCardSliderSectionProps = {
   viewAllHref?: string;
   displayMode?: "cards" | "logos";
   surface?: "plain" | "muted";
+  /** Rendered instead of the slider when the placement has no banners. */
+  fallback?: ReactNode;
 };
 
 /**
@@ -32,13 +35,14 @@ export async function BannerCardSliderSection({
   viewAllHref,
   displayMode,
   surface,
+  fallback = null,
 }: BannerCardSliderSectionProps) {
   const [locale, banners] = await Promise.all([
     getLocale(),
     fetchPublicBannersForPlacement(placement, false),
   ]);
 
-  if (banners.length === 0) return null;
+  if (banners.length === 0) return <>{fallback}</>;
 
   const isArabic = locale === "ar";
 

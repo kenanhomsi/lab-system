@@ -18,6 +18,7 @@ import {
 import { DateTimePicker } from "@mantine/dates";
 import { IconCards, IconUpload } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
+import { SiteLinkSelect } from "@/components/admin/site-link-select";
 import { MutationErrorAlert } from "@/components/ui/mutation-error-alert";
 import type { SlideCardItem } from "@/types/slide-card";
 
@@ -165,7 +166,7 @@ export function SlideCardFormModal({
         </Group>
         <DateTimePicker label={t("expiryDateLabel")} value={expiryDate} onChange={(value) => setExpiryDate(typeof value === "string" ? (value ? new Date(value) : null) : value)} clearable />
         <TextInput label={t("badgeLabel")} value={badge} onChange={(e) => setBadge(e.currentTarget.value)} />
-        <TextInput label={t("detailPageLinkLabel")} value={detailPageLink} onChange={(e) => setDetailPageLink(e.currentTarget.value)} />
+        <SiteLinkSelect label={t("detailPageLinkLabel")} value={detailPageLink} onChange={setDetailPageLink} />
         <NumberInput label={t("displayOrderLabel")} value={displayOrder} onChange={(v) => setDisplayOrder(Number(v) || 0)} min={0} />
         <Switch label={t("isActiveLabel")} checked={isActive} onChange={(e) => setIsActive(e.currentTarget.checked)} />
         <FileInput label={t("imageLabel")} accept="image/*" value={image} onChange={setImage} leftSection={<IconUpload size={14} />} required={mode === "create"} clearable />

@@ -21,7 +21,7 @@ const extractUploadUrl = (payload: unknown): string => {
   throw new Error("Invalid upload response");
 };
 
-const uploadImageFile = async (file: File): Promise<string> => {
+export const uploadImageFile = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append("file", file);
 

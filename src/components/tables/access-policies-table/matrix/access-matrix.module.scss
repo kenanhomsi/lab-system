@@ -1,0 +1,271 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.actionPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.toolbarLabel {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.search {
+  width: min(100%, 260px);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--on-surface-variant, #64748b);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendSwatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #eab308;
+}
+
+.legendStar {
+  color: var(--primary, #009cc2);
+}
+
+/* ── Grid ── */
+.scroller {
+  overflow: auto;
+  max-height: min(70dvh, 720px);
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: var(--mantine-color-body, #fff);
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 13px;
+}
+
+.caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.cornerTh,
+.roleTh {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--primary, #009cc2) 8%, var(--mantine-color-body, #fff));
+  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cornerTh {
+  inset-inline-start: 0;
+  z-index: 3;
+  text-align: start;
+  min-width: 200px;
+}
+
+.roleTh {
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.resourceTh {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  padding: 8px 12px;
+  background: var(--mantine-color-body, #fff);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  border-inline-end: 1px solid rgba(148, 163, 184, 0.2);
+  text-align: start;
+  font-weight: 400;
+}
+
+.resourceName {
+  display: block;
+  font-weight: 600;
+}
+
+.resourceKey {
+  display: block;
+  font-size: 11px;
+  color: var(--on-surface-variant, #64748b);
+  font-family: ui-monospace, monospace;
+}
+
+.cellTd {
+  padding: 6px;
+  text-align: center;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+tbody tr:hover .cellTd,
+tbody tr:hover .resourceTh {
+  background: color-mix(in srgb, var(--primary, #009cc2) 5%, var(--mantine-color-body, #fff));
+}
+
+.cell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+
+  &:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px -6px rgba(15, 23, 42, 0.4);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary, #009cc2);
+    outline-offset: 2px;
+  }
+}
+
+.cell_allow {
+  background: rgba(22, 163, 74, 0.14);
+  color: #15803d;
+}
+
+.cell_deny {
+  background: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+}
+
+.cell_none {
+  background: rgba(148, 163, 184, 0.14);
+  color: #94a3b8;
+}
+
+:global(html.dark) .cell_allow {
+  color: #4ade80;
+}
+
+:global(html.dark) .cell_deny {
+  color: #f87171;
+}
+
+.condDot {
+  position: absolute;
+  top: 3px;
+  inset-inline-end: 3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #eab308;
+}
+
+.inheritMark {
+  position: absolute;
+  bottom: 0;
+  inset-inline-end: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--primary, #009cc2);
+}
+
+.note {
+  border-radius: 12px;
+}
+
+.empty {
+  padding: 36px 16px;
+  text-align: center;
+}
+
+/* ── Cell details ── */
+.detailList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detailRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.detailIcon {
+  flex-shrink: 0;
+  cursor: default;
+
+  &:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.detailText {
+  flex: 1;
+  min-width: 0;
+}
+
+.detailActions {
+  flex-shrink: 0;
+}
+
+@media (max-width: 48rem) {
+  .detailRow {
+    flex-wrap: wrap;
+  }
+
+  .detailActions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

@@ -10,6 +10,7 @@ import { LazyWebsiteWelcomePagesModal } from "@/components/welcome-pages/lazy-we
 import { HomepageAdPopupGate } from "@/components/homepage/homepage-ad-popup-gate";
 import { PathTargetedBannerGate } from "@/components/layout/path-targeted-banner-gate";
 import { fetchWebsiteNavigation } from "@/lib/website-pages/server";
+import { readNavbarConfig } from "@/lib/navbar-config/store";
 
 const toNavigationHref = (slug?: string | null) => {
   const trimmed = slug?.trim().replace(/^\/+/, "");
@@ -24,6 +25,7 @@ export default async function WebsiteLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const navbarConfig = await readNavbarConfig();
   const cmsNavigationLinks: WebsiteHeaderNavigationLink[] = (
     await fetchWebsiteNavigation(locale)
   )
@@ -39,7 +41,7 @@ export default async function WebsiteLayout({
     <WebsiteProviders>
       <div className="flex min-h-screen flex-col overflow-x-hidden bg-background text-on-surface [--primary:#009cc2] [--color-primary:#009cc2]">
         <WebsiteMaterialSymbolsLink />
-        <WebsiteHeader cmsNavigationLinks={cmsNavigationLinks} />
+        <WebsiteHeader cmsNavigationLinks={cmsNavigationLinks} navbarConfig={navbarConfig} />
         <PathTargetedBannerGate />
         <div id="website-page-content" className="mx-auto w-full">
           {children}

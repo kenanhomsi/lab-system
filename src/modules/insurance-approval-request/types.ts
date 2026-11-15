@@ -18,15 +18,19 @@ type InsuranceApprovalRequestItem = {
   status: InsuranceApprovalStatus | string;
   notes: string;
   rejectionReason: string;
+  insuranceCardImageUrl?: string | null;
+  insuranceCardOriginalFileName?: string | null;
+  prescriptionImageUrl?: string | null;
+  prescriptionOriginalFileName?: string | null;
   createdAt: string;
   updatedAt: string;
 };
 
 type InsuranceApprovalRequestDetail = InsuranceApprovalRequestItem & {
-  insuranceCardImageUrl: string;
-  insuranceCardOriginalFileName: string;
-  prescriptionImageUrl: string;
-  prescriptionOriginalFileName: string;
+  insuranceCardImageUrl: string | null;
+  insuranceCardOriginalFileName: string | null;
+  prescriptionImageUrl: string | null;
+  prescriptionOriginalFileName: string | null;
 };
 
 type InsuranceApprovalRequestsListResponse = {
